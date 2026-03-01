@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Twitter Bookmarks Dashboard
 
-## Getting Started
+Personal dashboard at `bookmarks.ummerr.com` that ingests Twitter/X bookmarks, auto-classifies them with Claude Haiku, and displays them in a searchable, filterable UI.
 
-First, run the development server:
+## Stack
 
+- **Frontend**: Next.js 15 (App Router) + Tailwind CSS v4
+- **Database**: Supabase (Postgres)
+- **AI**: Claude Haiku (`claude-haiku-4-5-20251001`)
+- **Hosting**: Vercel Hobby
+
+## Setup
+
+### 1. Clone & install
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Environment variables
+Copy `.env.example` to `.env.local` and fill in your values:
+```bash
+cp .env.example .env.local
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Variable | Where to find |
+|----------|--------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Project Settings → API |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → Project Settings → API |
+| `ANTHROPIC_API_KEY` | console.anthropic.com/settings/keys |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Database
+Run the migration in Supabase SQL editor:
+```
+supabase/migrations/001_create_bookmarks.sql
+```
 
-## Learn More
+### 4. Run locally
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Usage
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Import bookmarks
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Go to `/import`
+2. Upload your Twitter archive `bookmarks.js` file (from `data/bookmarks.js` in your Twitter data export), or a CSV
+3. Click **Classify All with AI** to run Claude Haiku classification
 
-## Deploy on Vercel
+### Dashboard
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Filter by category in the sidebar
+- Search full-text
+- Sort by date, confidence, or author
+- Re-categorize individual bookmarks inline
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## File structure
+
+```
+app/
+  page.tsx              # Main dashboard
+  import/page.tsx       # Upload & import
+  api/classify/route.ts # POST: run AI classification
+  api/ingest/route.ts   # POST: receive bookmarks
+components/
+  BookmarkCard.tsx
+  Sidebar.tsx
+  CategoryBadge.tsx
+  ClassifyButton.tsx
+lib/
+  supabase.ts           # Supabase client
+  classifier.ts         # Claude Haiku logic
+  parser.ts             # JSON/CSV parsers
+  types.ts              # TypeScript types
+supabase/migrations/
+  001_create_bookmarks.sql
+```
+
+## Categories
+
+| Category | Description |
+|----------|-------------|
+| `tech_ai_product` | AI, ML, tech, dev tools, startups |
+| `career_productivity` | Career, productivity, professional dev |
+| `prompts` | AI prompts, prompt engineering |
+| `uncategorized` | Low-confidence or unclassified |

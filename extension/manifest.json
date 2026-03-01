@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Bookmarks Dashboard",
+  "version": "1.0.0",
+  "description": "Scrape your X/Twitter bookmarks and send them to your personal dashboard.",
+
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://x.com/*",
+    "http://localhost:3000/*",
+    "https://bookmarks.ummerr.com/*"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": ["https://x.com/*"],
+      "js": ["intercept.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["https://x.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Bookmarks Dashboard"
+  }
+}
