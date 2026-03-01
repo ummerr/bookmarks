@@ -1,0 +1,39 @@
+'use client'
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+
+const LINKS = [
+  { href: '/',        label: 'Dashboard' },
+  { href: '/prompts', label: 'Prompts' },
+  { href: '/import',  label: 'Import & Classify' },
+]
+
+export default function Nav() {
+  const pathname = usePathname()
+
+  return (
+    <nav className="border-b border-white/8 bg-[#0a0a0a]/90 backdrop-blur sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-6 flex items-center gap-6 h-12">
+        <span className="flex items-center gap-2 text-sm font-semibold text-white shrink-0">
+          <span className="text-[#1DA1F2]">✦</span> Bookmarks
+        </span>
+        <div className="flex items-center gap-1">
+          {LINKS.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
+                pathname === l.href
+                  ? 'bg-white/10 text-white'
+                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              {l.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </nav>
+  )
+}

@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3'
 import path from 'path'
 import { randomUUID } from 'crypto'
-import type { Bookmark, BookmarkInsert, Category, CategoryCounts } from './types'
+import type { Bookmark, BookmarkInsert, Category, CategoryCounts, PromptCategory } from './types'
 
 const DB_PATH = path.join(process.cwd(), 'bookmarks.db')
 
@@ -42,6 +42,8 @@ function initSchema(db: Database.Database) {
     CREATE INDEX IF NOT EXISTS idx_bm_bookmarked_at ON bookmarks(bookmarked_at DESC);
     CREATE INDEX IF NOT EXISTS idx_bm_confidence    ON bookmarks(confidence DESC);
   `)
+  // Migrations
+  try { db.exec(`ALTER TABLE bookmarks ADD COLUMN prompt_category TEXT`) } catch {}
 }
 
 // ── Row → Bookmark ────────────────────────────────────────────────────────
@@ -54,6 +56,7 @@ function toBookmark(row: Record<string, any>): Bookmark {
     thread_tweets: JSON.parse(row.thread_tweets ?? '[]'),
     is_thread: Boolean(row.is_thread),
     confidence: Number(row.confidence),
+    prompt_category: row.prompt_category ?? null,
   } as Bookmark
 }
 
@@ -202,4 +205,28 @@ function getBookmarkById(id: string): Bookmark | null {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const row = db.prepare(`SELECT * FROM bookmarks WHERE id = ?`).get(id) as Record<string, any> | undefined
   return row ? toBookmark(row) : null
+}
+
+export function getPrompts(promptCategory?: PromptCategory | 'all'): Bookmark[] {
+  const db = getDb()
+  const where = promptCategory && promptCategory !== 'all'
+    ? `WHERE category = 'prompts' AND prompt_category = ?`
+    : `WHERE category = 'prompts'`
+  const params = promptCategory && promptCategory !== 'all' ? [promptCategory] : []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const rows = db.prepare(`SELECT * FROM bookmarks ${where} ORDER BY bookmarked_at DESC NULLS LAST, created_at DESC`).all(...params) as Record<string, any>[]
+  return rows.map(toBookmark)
+}
+
+export function getUnclassifiedPrompts(limit = 50): Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[] {
+  const db = getDb()
+  return db
+    .prepare(`SELECT id, tweet_id, tweet_text FROM bookmarks WHERE category = 'prompts' AND prompt_category IS NULL ORDER BY created_at ASC LIMIT ?`)
+    .all(limit) as Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[]
+}
+
+export function updatePromptCategory(id: string, prompt_category: PromptCategory) {
+  getDb()
+    .prepare(`UPDATE bookmarks SET prompt_category = ?, updated_at = datetime('now') WHERE id = ?`)
+    .run(prompt_category, id)
 }

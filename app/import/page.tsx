@@ -151,16 +151,14 @@ export default function ImportPage() {
           </div>
         )}
 
-        {/* Classify section — shown once import is done */}
-        {status === 'done' && result && result.inserted > 0 && (
-          <div className="mt-8 rounded-xl border border-white/8 bg-white/3 p-5">
-            <h2 className="text-sm font-medium text-white mb-1">Next step: Classify with AI</h2>
-            <p className="text-xs text-zinc-500 mb-4">
-              Run Claude Haiku on all unclassified bookmarks to sort them into categories.
-            </p>
-            <ClassifyButton />
-          </div>
-        )}
+        {/* Classify section — always visible */}
+        <div className="mt-8 rounded-xl border border-white/8 bg-white/3 p-5">
+          <h2 className="text-sm font-medium text-white mb-1">Classify with AI</h2>
+          <p className="text-xs text-zinc-500 mb-4">
+            Run Claude Haiku on all unclassified bookmarks to sort them into categories.
+          </p>
+          <ClassifyButton />
+        </div>
 
         {/* Format help */}
         <div className="mt-10 space-y-4">

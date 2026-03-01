@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import type { Bookmark, Category, CategoryCounts } from '@/lib/types'
 import Sidebar from '@/components/Sidebar'
 import BookmarkCard from '@/components/BookmarkCard'
+import ClassifyButton from '@/components/ClassifyButton'
 
 type SortOption = 'newest' | 'oldest' | 'confidence' | 'author'
 const PAGE_SIZE = 30
@@ -99,16 +100,19 @@ export default function Dashboard() {
               </span>
             </h1>
 
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value as SortOption)}
-              className="bg-white/5 border border-white/8 rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-[#1DA1F2]/50"
-            >
-              <option value="newest">Newest first</option>
-              <option value="oldest">Oldest first</option>
-              <option value="confidence">By confidence</option>
-              <option value="author">By author</option>
-            </select>
+            <div className="flex items-center gap-3">
+              <ClassifyButton onDone={() => { fetchCounts(); fetchBookmarks(0, true) }} />
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value as SortOption)}
+                className="bg-white/5 border border-white/8 rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-[#1DA1F2]/50"
+              >
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+                <option value="confidence">By confidence</option>
+                <option value="author">By author</option>
+              </select>
+            </div>
           </div>
 
           {loading && bookmarks.length === 0 ? (
