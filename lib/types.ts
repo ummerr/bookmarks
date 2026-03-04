@@ -8,11 +8,13 @@ export type PromptCategory =
   // ── Image Generation ──────────────────────────────
   | 'image_t2i'           // Text → Image (Midjourney, DALL-E, Flux, SD, Firefly, Ideogram)
   | 'image_i2i'           // Image → Image (img2img, style transfer, ControlNet)
+  | 'image_r2i'           // Reference → Image (uploaded/reference image guides output subject/style)
   | 'image_character_ref' // Character / face / person / IP-Adapter reference
   | 'image_inpainting'    // Inpainting, outpainting, masking, regional editing
   // ── Video Generation ──────────────────────────────
   | 'video_t2v'           // Text → Video (Sora, Kling, Runway Gen3, Pika, Hailuo)
   | 'video_i2v'           // Image → Video / animate still (Runway, Kling, Luma Dream Machine)
+  | 'video_r2v'           // Reference → Video (reference/uploaded image guides video generation)
   | 'video_v2v'           // Video → Video (restyle, motion transfer, lip sync)
   // ── Other Media ───────────────────────────────────
   | 'audio'               // Music, voice, sound effects (Suno, Udio, ElevenLabs)

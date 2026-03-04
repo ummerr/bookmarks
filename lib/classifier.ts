@@ -35,14 +35,16 @@ const PROMPT_SYSTEM = `You are an AI prompt classifier and extractor. For each t
 CATEGORIES:
 
 Image Generation:
-- image_t2i: Text-to-image (Midjourney, DALL-E, Flux, Stable Diffusion, Firefly, Ideogram, Leonardo)
-- image_i2i: Image-to-image — style transfer, img2img, ControlNet, IP-Adapter style reference
-- image_character_ref: Character / face / person consistency (IP-Adapter, InstantID, face swap)
+- image_t2i: Text-to-image — prompt only, no input image (Midjourney, DALL-E, Flux, Stable Diffusion, Firefly, Ideogram, Leonardo)
+- image_i2i: Image-to-image — structural/style transfer, img2img, ControlNet depth/pose/canny
+- image_r2i: Reference-to-image — an uploaded or reference image guides the OUTPUT subject, object, or scene (IP-Adapter subject reference, style reference from an uploaded image, "generate something like this image")
+- image_character_ref: Character / face / person consistency across generations (InstantID, face swap, consistent character LoRA)
 - image_inpainting: Inpainting, outpainting, masking, regional editing
 
 Video Generation:
-- video_t2v: Text-to-video (Sora, Kling, Runway Gen3, Pika, Hailuo, Luma, Wan)
-- video_i2v: Image-to-video / animate still (Runway, Kling, Luma Dream Machine)
+- video_t2v: Text-to-video — prompt only, no input image (Sora, Kling, Runway Gen3, Pika, Hailuo, Luma, Wan)
+- video_i2v: Image-to-video — directly animating or extending a specific still image
+- video_r2v: Reference-to-video — an uploaded or reference image guides the video output (subject/character/scene consistency, not direct animation of that image)
 - video_v2v: Video-to-video — restyle, motion transfer, lip sync
 
 Other Media:
@@ -81,8 +83,8 @@ export async function classifyPromptBatch(
 
   const raw = message.content[0].type === 'text' ? message.content[0].text : ''
   const VALID = new Set<PromptCategory>([
-    'image_t2i', 'image_i2i', 'image_character_ref', 'image_inpainting',
-    'video_t2v', 'video_i2v', 'video_v2v',
+    'image_t2i', 'image_i2i', 'image_r2i', 'image_character_ref', 'image_inpainting',
+    'video_t2v', 'video_i2v', 'video_r2v', 'video_v2v',
     'audio', 'threed',
     'system_prompt', 'writing', 'coding', 'analysis', 'other',
   ])
