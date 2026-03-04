@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getUnclassified, updateBookmarkByTweetId, getCounts } from '@/lib/db'
 import { classifyBatch } from '@/lib/classifier'
 
-const BATCH_SIZE = 15
+const BATCH_SIZE = 10
 
 export async function POST(_req: NextRequest) {
   const bookmarks = getUnclassified(100)
@@ -27,7 +27,9 @@ export async function POST(_req: NextRequest) {
       }
       totalClassified += results.length
     } catch (err) {
-      errors.push(`Batch ${Math.floor(i / BATCH_SIZE) + 1}: ${String(err)}`)
+      const msg = `Batch ${Math.floor(i / BATCH_SIZE) + 1}: ${String(err)}`
+      console.error('[CLASSIFY]', msg)
+      errors.push(msg)
     }
   }
 

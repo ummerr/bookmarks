@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server'
-import { getUnclassifiedPrompts, updatePromptCategory } from '@/lib/db'
+import { countUnclassifiedPrompts, getUnclassifiedPrompts, updatePromptExtraction } from '@/lib/db'
 import { classifyPromptBatch } from '@/lib/classifier'
 
-const BATCH_SIZE = 15
+const BATCH_SIZE = 10
 
 export async function GET() {
-  const unclassified = getUnclassifiedPrompts(0)
-  return NextResponse.json({ unclassified: unclassified.length })
+  return NextResponse.json({ unclassified: countUnclassifiedPrompts() })
 }
 
 export async function POST() {
@@ -25,15 +24,21 @@ export async function POST() {
       try {
         const results = await classifyPromptBatch(batch)
         for (const r of results) {
-          updatePromptCategory(r.id, r.prompt_category)
+          updatePromptExtraction(r.id, {
+            prompt_category: r.prompt_category,
+            extracted_prompt: r.extracted_prompt,
+            detected_model: r.detected_model,
+          })
           classified++
         }
       } catch (err) {
-        errors.push(`Batch ${Math.floor(i / BATCH_SIZE) + 1}: ${String(err)}`)
+        const msg = `Batch ${Math.floor(i / BATCH_SIZE) + 1}: ${String(err)}`
+        console.error('[PROMPTS/CLASSIFY]', msg)
+        errors.push(msg)
       }
     }
 
-    return NextResponse.json({ classified, total: prompts.length, errors })
+    return NextResponse.json({ classified, total: prompts.length, errors: errors.length > 0 ? errors : undefined })
   } catch (err) {
     console.error('[PROMPTS/CLASSIFY]', err)
     return NextResponse.json({ error: String(err) }, { status: 500 })

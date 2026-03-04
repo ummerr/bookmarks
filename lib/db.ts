@@ -44,6 +44,8 @@ function initSchema(db: Database.Database) {
   `)
   // Migrations
   try { db.exec(`ALTER TABLE bookmarks ADD COLUMN prompt_category TEXT`) } catch {}
+  try { db.exec(`ALTER TABLE bookmarks ADD COLUMN extracted_prompt TEXT`) } catch {}
+  try { db.exec(`ALTER TABLE bookmarks ADD COLUMN detected_model TEXT`) } catch {}
 }
 
 // ── Row → Bookmark ────────────────────────────────────────────────────────
@@ -57,6 +59,8 @@ function toBookmark(row: Record<string, any>): Bookmark {
     is_thread: Boolean(row.is_thread),
     confidence: Number(row.confidence),
     prompt_category: row.prompt_category ?? null,
+    extracted_prompt: row.extracted_prompt ?? null,
+    detected_model: row.detected_model ?? null,
   } as Bookmark
 }
 
@@ -120,11 +124,13 @@ export function getCounts(): CategoryCounts {
     .prepare(`SELECT category, COUNT(*) as n FROM bookmarks GROUP BY category`)
     .all() as { category: string; n: number }[]
 
-  const c: CategoryCounts = { all: 0, tech_ai_product: 0, career_productivity: 0, prompts: 0, uncategorized: 0 }
+  const c: CategoryCounts = { all: 0, tech_ai_product: 0, career_productivity: 0, prompts: 0, uncategorized: 0, pending: 0 }
   for (const row of rows) {
     c[row.category as Category] = row.n
     c.all += row.n
   }
+  const { pending } = db.prepare(`SELECT COUNT(*) as pending FROM bookmarks WHERE confidence = 0`).get() as { pending: number }
+  c.pending = pending
   return c
 }
 
@@ -218,15 +224,34 @@ export function getPrompts(promptCategory?: PromptCategory | 'all'): Bookmark[] 
   return rows.map(toBookmark)
 }
 
+export function countUnclassifiedPrompts(): number {
+  const db = getDb()
+  const row = db
+    .prepare(`SELECT COUNT(*) as n FROM bookmarks WHERE category = 'prompts' AND (prompt_category IS NULL OR extracted_prompt IS NULL)`)
+    .get() as { n: number }
+  return row.n
+}
+
 export function getUnclassifiedPrompts(limit = 50): Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[] {
   const db = getDb()
   return db
-    .prepare(`SELECT id, tweet_id, tweet_text FROM bookmarks WHERE category = 'prompts' AND prompt_category IS NULL ORDER BY created_at ASC LIMIT ?`)
+    .prepare(`
+      SELECT id, tweet_id, tweet_text FROM bookmarks
+      WHERE category = 'prompts' AND (prompt_category IS NULL OR extracted_prompt IS NULL)
+      ORDER BY created_at ASC LIMIT ?
+    `)
     .all(limit) as Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[]
 }
 
-export function updatePromptCategory(id: string, prompt_category: PromptCategory) {
+export function updatePromptExtraction(
+  id: string,
+  data: { prompt_category: PromptCategory; extracted_prompt: string | null; detected_model: string | null }
+) {
   getDb()
-    .prepare(`UPDATE bookmarks SET prompt_category = ?, updated_at = datetime('now') WHERE id = ?`)
-    .run(prompt_category, id)
+    .prepare(`
+      UPDATE bookmarks
+      SET prompt_category = ?, extracted_prompt = ?, detected_model = ?, updated_at = datetime('now')
+      WHERE id = ?
+    `)
+    .run(data.prompt_category, data.extracted_prompt, data.detected_model, id)
 }

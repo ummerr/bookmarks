@@ -84,6 +84,16 @@ export default function Sidebar({
         })}
       </nav>
 
+      {/* Classified status */}
+      <div className="flex items-center justify-between text-xs px-1">
+        <span className="text-zinc-600">
+          {counts.all - counts.pending} classified
+        </span>
+        {counts.pending > 0 && (
+          <span className="text-amber-500/80">{counts.pending} pending</span>
+        )}
+      </div>
+
       {/* Nav links */}
       <div className="mt-auto flex flex-col gap-0.5 border-t border-white/8 pt-4">
         <Link

@@ -54,14 +54,25 @@ export default function ClassifyButton({ onDone }: { onDone?: () => void }) {
       </button>
 
       {status === 'done' && result && (
-        <p className="text-sm text-zinc-400">
-          {result.message
-            ? result.message
-            : `Classified ${result.classified} of ${result.total} bookmarks`}
+        <div className="flex flex-col gap-1">
+          <p className="text-sm text-zinc-400">
+            {result.message
+              ? result.message
+              : `Classified ${result.classified} of ${result.total} bookmarks`}
+          </p>
           {result.errors && result.errors.length > 0 && (
-            <span className="text-red-400"> ({result.errors.length} batch errors)</span>
+            <details className="text-xs">
+              <summary className="cursor-pointer text-red-400 select-none">
+                {result.errors.length} batch error{result.errors.length > 1 ? 's' : ''}
+              </summary>
+              <ul className="mt-1 flex flex-col gap-0.5 pl-2 border-l border-red-500/30">
+                {result.errors.map((e, i) => (
+                  <li key={i} className="text-red-400/80 font-mono">{e}</li>
+                ))}
+              </ul>
+            </details>
           )}
-        </p>
+        </div>
       )}
 
       {status === 'error' && (

@@ -20,44 +20,64 @@ function getClient() {
   return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 }
 
-const PROMPT_SYSTEM = `You are a prompt classifier for AI-generated media and text content. Classify each prompt into exactly one category:
+async function withRetry<T>(fn: () => Promise<T>, retries = 1, delayMs = 2000): Promise<T> {
+  try {
+    return await fn()
+  } catch (err) {
+    if (retries <= 0) throw err
+    await new Promise((r) => setTimeout(r, delayMs))
+    return withRetry(fn, retries - 1, delayMs)
+  }
+}
 
-IMAGE GENERATION:
-- image_t2i: Text-to-image prompts for tools like Midjourney, DALL-E, Flux, Stable Diffusion, Firefly, Ideogram. Includes style descriptions, scene compositions, lighting, camera settings.
-- image_i2i: Image-to-image prompts — style transfer, img2img, ControlNet, IP-Adapter style reference. The prompt references transforming or remixing an existing image.
-- image_character_ref: Character consistency / face reference / person likeness prompts. References maintaining a specific face, character, or person across generations (IP-Adapter, InstantID, face swap, etc.).
-- image_inpainting: Inpainting, outpainting, masking, or regional editing prompts. Involves editing specific areas of an image.
+const PROMPT_SYSTEM = `You are an AI prompt classifier and extractor. For each tweet that contains an AI prompt, classify it, detect the tool used, and extract the clean prompt text.
 
-VIDEO GENERATION:
-- video_t2v: Text-to-video prompts for Sora, Kling, Runway Gen3, Pika, Hailuo, Luma. Pure text description generating a video.
-- video_i2v: Image-to-video / animate still image prompts. Takes an image and animates it or extends it into video (Runway, Kling, Luma Dream Machine, etc.).
-- video_v2v: Video-to-video prompts — restyle, motion transfer, lip sync, video editing using AI (Runway, Pika elements, lip sync tools).
+CATEGORIES:
 
-OTHER MEDIA:
-- audio: Music generation, voice synthesis, sound effects prompts (Suno, Udio, ElevenLabs, Eleven, voice cloning, etc.).
-- threed: 3D model, scene, texture, or asset generation prompts (Meshy, Tripo3D, Shap-E, Luma 3D, etc.).
+Image Generation:
+- image_t2i: Text-to-image (Midjourney, DALL-E, Flux, Stable Diffusion, Firefly, Ideogram, Leonardo)
+- image_i2i: Image-to-image — style transfer, img2img, ControlNet, IP-Adapter style reference
+- image_character_ref: Character / face / person consistency (IP-Adapter, InstantID, face swap)
+- image_inpainting: Inpainting, outpainting, masking, regional editing
 
-TEXT / NON-MEDIA:
-- system_prompt: System prompts, persona definitions, custom instructions, or role definitions for LLM assistants (ChatGPT, Claude, etc.).
-- writing: Creative writing, copywriting, storytelling, or content generation prompts for text output.
-- coding: Code generation, debugging, refactoring, architecture, or technical/programming prompts.
-- analysis: Analysis, research, summarisation, data extraction, or reasoning prompts.
-- other: Anything that doesn't fit the above categories.
+Video Generation:
+- video_t2v: Text-to-video (Sora, Kling, Runway Gen3, Pika, Hailuo, Luma, Wan)
+- video_i2v: Image-to-video / animate still (Runway, Kling, Luma Dream Machine)
+- video_v2v: Video-to-video — restyle, motion transfer, lip sync
 
-Return ONLY a JSON array: [{"id": "...", "prompt_category": "..."}]`
+Other Media:
+- audio: Music, voice, sound effects (Suno, Udio, ElevenLabs, voice cloning)
+- threed: 3D model / scene / texture (Meshy, Tripo3D, Shap-E, Luma 3D)
+
+Text:
+- system_prompt: System prompts, persona definitions, custom instructions for LLMs
+- writing: Creative writing, copywriting, storytelling prompts
+- coding: Code generation, debugging, architecture prompts
+- analysis: Analysis, research, summarisation, reasoning prompts
+- other: Anything else
+
+For each item return:
+- id: the item id
+- prompt_category: one category from above
+- detected_model: the AI tool name if identifiable (e.g. "Midjourney", "Flux", "Stable Diffusion", "DALL-E", "Firefly", "Ideogram", "Sora", "Kling", "Runway", "Pika", "Hailuo", "Luma", "ElevenLabs", "Suno", "Udio", "ChatGPT", "Claude", "Gemini", "Meshy", etc.) — use null if unclear
+- extracted_prompt: ONLY the clean prompt text — strip social framing ("here's my prompt:", "prompt below:", hashtags, engagement bait, author commentary). Keep model syntax (--ar, --v, negative prompts, cfg, etc.). If the entire tweet is the prompt with no framing, return the full tweet text. Return null only if no clear prompt text exists.
+
+Return ONLY a JSON array: [{"id": "...", "prompt_category": "...", "detected_model": "...", "extracted_prompt": "..."}]`
 
 export async function classifyPromptBatch(
   prompts: Pick<Bookmark, 'id' | 'tweet_text'>[]
-): Promise<{ id: string; prompt_category: PromptCategory }[]> {
+): Promise<{ id: string; prompt_category: PromptCategory; extracted_prompt: string | null; detected_model: string | null }[]> {
   const client = getClient()
-  const input = prompts.map((p) => ({ id: p.id, text: p.tweet_text.slice(0, 600) }))
+  const input = prompts.map((p) => ({ id: p.id, text: p.tweet_text.slice(0, 1200) }))
 
-  const message = await client.messages.create({
-    model: 'claude-haiku-4-5-20251001',
-    max_tokens: 1024,
-    system: PROMPT_SYSTEM,
-    messages: [{ role: 'user', content: `Classify these prompts:\n${JSON.stringify(input, null, 2)}` }],
-  })
+  const message = await withRetry(() =>
+    client.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 4096,
+      system: PROMPT_SYSTEM,
+      messages: [{ role: 'user', content: `Classify and extract these prompts:\n${JSON.stringify(input, null, 2)}` }],
+    })
+  )
 
   const raw = message.content[0].type === 'text' ? message.content[0].text : ''
   const VALID = new Set<PromptCategory>([
@@ -67,18 +87,20 @@ export async function classifyPromptBatch(
     'system_prompt', 'writing', 'coding', 'analysis', 'other',
   ])
 
-  let results: { id: string; prompt_category: string }[]
+  let results: { id: string; prompt_category: string; detected_model?: string | null; extracted_prompt?: string | null }[]
   try {
     results = JSON.parse(raw)
   } catch {
     const match = raw.match(/\[[\s\S]*\]/)
-    if (!match) throw new Error('Failed to parse prompt classification response')
+    if (!match) throw new Error(`Failed to parse prompt classification response. stop_reason=${message.stop_reason} raw=${raw.slice(0, 200)}`)
     results = JSON.parse(match[0])
   }
 
   return results.map((r) => ({
     id: r.id,
     prompt_category: VALID.has(r.prompt_category as PromptCategory) ? (r.prompt_category as PromptCategory) : 'other',
+    extracted_prompt: r.extracted_prompt ?? null,
+    detected_model: r.detected_model ?? null,
   }))
 }
 
@@ -86,19 +108,21 @@ export async function classifyBatch(
   bookmarks: Pick<Bookmark, 'tweet_id' | 'tweet_text'>[]
 ): Promise<ClassificationResult[]> {
   const client = getClient()
-  const input = bookmarks.map((b) => ({ tweet_id: b.tweet_id, text: b.tweet_text }))
+  const input = bookmarks.map((b) => ({ tweet_id: b.tweet_id, text: b.tweet_text.slice(0, 800) }))
 
-  const message = await client.messages.create({
-    model: 'claude-haiku-4-5-20251001',
-    max_tokens: 2048,
-    system: SYSTEM_PROMPT,
-    messages: [
-      {
-        role: 'user',
-        content: `Classify these tweets:\n${JSON.stringify(input, null, 2)}`,
-      },
-    ],
-  })
+  const message = await withRetry(() =>
+    client.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 4096,
+      system: SYSTEM_PROMPT,
+      messages: [
+        {
+          role: 'user',
+          content: `Classify these tweets:\n${JSON.stringify(input, null, 2)}`,
+        },
+      ],
+    })
+  )
 
   const raw = message.content[0].type === 'text' ? message.content[0].text : ''
 
@@ -107,7 +131,7 @@ export async function classifyBatch(
     results = JSON.parse(raw)
   } catch {
     const match = raw.match(/\[[\s\S]*\]/)
-    if (!match) throw new Error('Failed to parse classification response')
+    if (!match) throw new Error(`Failed to parse classification response. stop_reason=${message.stop_reason} raw=${raw.slice(0, 200)}`)
     results = JSON.parse(match[0])
   }
 

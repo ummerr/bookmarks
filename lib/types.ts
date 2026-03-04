@@ -39,6 +39,8 @@ export interface Bookmark {
   thread_tweets: TweetInThread[]
   user_notes: string | null
   prompt_category: PromptCategory | null
+  extracted_prompt: string | null
+  detected_model: string | null
   bookmarked_at: string | null
   created_at: string
   updated_at: string
@@ -78,4 +80,5 @@ export interface CategoryCounts {
   career_productivity: number
   prompts: number
   uncategorized: number
+  pending: number
 }
