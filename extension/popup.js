@@ -3,7 +3,7 @@ const saveBtn = document.getElementById('save-btn')
 const savedMsg = document.getElementById('saved-msg')
 
 // Load saved URL
-chrome.storage.sync.get({ dashboardUrl: 'http://localhost:3000' }, (res) => {
+chrome.storage.sync.get({ dashboardUrl: 'https://bookmarks-seven-drab.vercel.app' }, (res) => {
   input.value = res.dashboardUrl
 })
 

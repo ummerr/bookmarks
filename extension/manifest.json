@@ -8,7 +8,7 @@
   "host_permissions": [
     "https://x.com/*",
     "http://localhost:3000/*",
-    "https://bookmarks.ummerr.com/*"
+    "https://bookmarks-seven-drab.vercel.app/*"
   ],
 
   "content_scripts": [
