@@ -13,9 +13,9 @@ export async function GET() {
     bookmarked_at: new Date().toISOString(),
   }
 
-  const before = getCounts()
-  const result = insertBookmarks([testTweet])
-  const after = getCounts()
+  const before = await getCounts()
+  const result = await insertBookmarks([testTweet])
+  const after = await getCounts()
 
   // clean up
   // (don't wipe real data — just report)

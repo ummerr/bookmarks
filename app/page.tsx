@@ -10,7 +10,7 @@ type SortOption = 'newest' | 'oldest' | 'confidence' | 'author'
 const PAGE_SIZE = 30
 
 const EMPTY_COUNTS: CategoryCounts = {
-  all: 0, tech_ai_product: 0, career_productivity: 0, prompts: 0, uncategorized: 0,
+  all: 0, tech_ai_product: 0, career_productivity: 0, prompts: 0, uncategorized: 0, pending: 0,
 }
 
 export default function Dashboard() {

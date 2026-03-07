@@ -1,52 +1,8 @@
-import Database from 'better-sqlite3'
-import path from 'path'
+import postgres from 'postgres'
 import { randomUUID } from 'crypto'
 import type { Bookmark, BookmarkInsert, Category, CategoryCounts, PromptCategory } from './types'
 
-const DB_PATH = path.join(process.cwd(), 'bookmarks.db')
-
-// Singleton — survives Next.js hot reloads in dev
-const g = global as typeof globalThis & { _bmDb?: Database.Database }
-
-function getDb(): Database.Database {
-  if (!g._bmDb) {
-    g._bmDb = new Database(DB_PATH)
-    g._bmDb.pragma('journal_mode = WAL')
-    initSchema(g._bmDb)
-  }
-  return g._bmDb
-}
-
-function initSchema(db: Database.Database) {
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS bookmarks (
-      id          TEXT PRIMARY KEY,
-      tweet_id    TEXT UNIQUE NOT NULL,
-      tweet_text  TEXT NOT NULL,
-      author_handle TEXT NOT NULL,
-      author_name TEXT,
-      tweet_url   TEXT NOT NULL,
-      media_urls  TEXT NOT NULL DEFAULT '[]',
-      category    TEXT NOT NULL DEFAULT 'uncategorized',
-      confidence  REAL NOT NULL DEFAULT 0,
-      rationale   TEXT,
-      is_thread   INTEGER NOT NULL DEFAULT 0,
-      thread_tweets TEXT NOT NULL DEFAULT '[]',
-      user_notes  TEXT,
-      bookmarked_at TEXT,
-      created_at  TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-    CREATE INDEX IF NOT EXISTS idx_bm_category      ON bookmarks(category);
-    CREATE INDEX IF NOT EXISTS idx_bm_author        ON bookmarks(author_handle);
-    CREATE INDEX IF NOT EXISTS idx_bm_bookmarked_at ON bookmarks(bookmarked_at DESC);
-    CREATE INDEX IF NOT EXISTS idx_bm_confidence    ON bookmarks(confidence DESC);
-  `)
-  // Migrations
-  try { db.exec(`ALTER TABLE bookmarks ADD COLUMN prompt_category TEXT`) } catch {}
-  try { db.exec(`ALTER TABLE bookmarks ADD COLUMN extracted_prompt TEXT`) } catch {}
-  try { db.exec(`ALTER TABLE bookmarks ADD COLUMN detected_model TEXT`) } catch {}
-}
+const sql = postgres(process.env.DATABASE_URL!, { ssl: 'require' })
 
 // ── Row → Bookmark ────────────────────────────────────────────────────────
 
@@ -54,8 +10,9 @@ function initSchema(db: Database.Database) {
 function toBookmark(row: Record<string, any>): Bookmark {
   return {
     ...row,
-    media_urls: JSON.parse(row.media_urls ?? '[]'),
-    thread_tweets: JSON.parse(row.thread_tweets ?? '[]'),
+    // Postgres returns JSONB as objects already; handle TEXT fallback just in case
+    media_urls: typeof row.media_urls === 'string' ? JSON.parse(row.media_urls) : (row.media_urls ?? []),
+    thread_tweets: typeof row.thread_tweets === 'string' ? JSON.parse(row.thread_tweets) : (row.thread_tweets ?? []),
     is_thread: Boolean(row.is_thread),
     confidence: Number(row.confidence),
     prompt_category: row.prompt_category ?? null,
@@ -74,25 +31,25 @@ export interface QueryOptions {
   limit?: number
 }
 
-export function queryBookmarks(opts: QueryOptions = {}): {
+export async function queryBookmarks(opts: QueryOptions = {}): Promise<{
   bookmarks: Bookmark[]
   hasMore: boolean
-} {
-  const db = getDb()
+}> {
   const { category = 'all', search = '', sort = 'newest', page = 0, limit = 30 } = opts
 
   const conditions: string[] = []
-  const params: unknown[] = []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const params: any[] = []
 
   if (category !== 'all') {
-    conditions.push('category = ?')
     params.push(category)
+    conditions.push(`category = $${params.length}`)
   }
 
   if (search.trim()) {
-    conditions.push('(tweet_text LIKE ? OR author_handle LIKE ?)')
     const term = `%${search.trim()}%`
     params.push(term, term)
+    conditions.push(`(tweet_text ILIKE $${params.length - 1} OR author_handle ILIKE $${params.length})`)
   }
 
   const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : ''
@@ -104,154 +61,162 @@ export function queryBookmarks(opts: QueryOptions = {}): {
     author: 'author_handle ASC',
   }
 
-  const sql = `
+  params.push(limit + 1, page * limit)
+  const query = `
     SELECT * FROM bookmarks
     ${where}
     ORDER BY ${orderMap[sort]}
-    LIMIT ? OFFSET ?
+    LIMIT $${params.length - 1} OFFSET $${params.length}
   `
-  params.push(limit + 1, page * limit)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const rows = db.prepare(sql).all(...params) as Record<string, any>[]
+  // postgres.js doesn't support positional params with raw query strings easily;
+  // use the tagged template approach via unsafe for dynamic queries
+  const rows = await sql.unsafe(query, params) as Record<string, unknown>[]
   const hasMore = rows.length > limit
   return { bookmarks: rows.slice(0, limit).map(toBookmark), hasMore }
 }
 
-export function getCounts(): CategoryCounts {
-  const db = getDb()
-  const rows = db
-    .prepare(`SELECT category, COUNT(*) as n FROM bookmarks GROUP BY category`)
-    .all() as { category: string; n: number }[]
-
+export async function getCounts(): Promise<CategoryCounts> {
+  const rows = await sql<{ category: string; n: string }[]>`
+    SELECT category, COUNT(*) as n FROM bookmarks GROUP BY category
+  `
   const c: CategoryCounts = { all: 0, tech_ai_product: 0, career_productivity: 0, prompts: 0, uncategorized: 0, pending: 0 }
   for (const row of rows) {
-    c[row.category as Category] = row.n
-    c.all += row.n
+    c[row.category as Category] = Number(row.n)
+    c.all += Number(row.n)
   }
-  const { pending } = db.prepare(`SELECT COUNT(*) as pending FROM bookmarks WHERE confidence = 0`).get() as { pending: number }
-  c.pending = pending
+  const [{ pending }] = await sql<{ pending: string }[]>`
+    SELECT COUNT(*) as pending FROM bookmarks WHERE confidence = 0
+  `
+  c.pending = Number(pending)
   return c
 }
 
-export function insertBookmarks(bookmarks: BookmarkInsert[]): { inserted: number; skipped: number } {
-  const db = getDb()
-  const stmt = db.prepare(`
-    INSERT OR IGNORE INTO bookmarks
-      (id, tweet_id, tweet_text, author_handle, author_name, tweet_url,
-       media_urls, category, confidence, bookmarked_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `)
-
+export async function insertBookmarks(bookmarks: BookmarkInsert[]): Promise<{ inserted: number; skipped: number }> {
   let inserted = 0
-  const insert = db.transaction((rows: BookmarkInsert[]) => {
-    for (const b of rows) {
-      const res = stmt.run(
-        randomUUID(),
-        b.tweet_id ?? null,
-        b.tweet_text ?? '',
-        b.author_handle ?? '',   // empty string prevents NOT NULL violation
-        b.author_name ?? null,
-        b.tweet_url ?? '',       // same for tweet_url
-        JSON.stringify(b.media_urls ?? []),
-        b.category ?? 'uncategorized',
-        b.confidence ?? 0,
-        b.bookmarked_at ?? null,
-      )
-      inserted += Number(res.changes)
-    }
-  })
 
-  insert(bookmarks)
+  for (const b of bookmarks) {
+    const result = await sql`
+      INSERT INTO bookmarks
+        (id, tweet_id, tweet_text, author_handle, author_name, tweet_url,
+         media_urls, category, confidence, bookmarked_at)
+      VALUES (
+        ${randomUUID()},
+        ${b.tweet_id ?? null},
+        ${b.tweet_text ?? ''},
+        ${b.author_handle ?? ''},
+        ${b.author_name ?? null},
+        ${b.tweet_url ?? ''},
+        ${JSON.stringify(b.media_urls ?? [])}::jsonb,
+        ${b.category ?? 'uncategorized'},
+        ${b.confidence ?? 0},
+        ${b.bookmarked_at ?? null}
+      )
+      ON CONFLICT (tweet_id) DO NOTHING
+    `
+    inserted += result.count
+  }
+
   return { inserted, skipped: bookmarks.length - inserted }
 }
 
-export function clearAll() {
-  getDb().exec('DELETE FROM bookmarks')
+export async function clearAll(): Promise<void> {
+  await sql`DELETE FROM bookmarks`
 }
 
-export function getUnclassified(limit = 100): Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[] {
-  const db = getDb()
-  return db
-    .prepare(`SELECT id, tweet_id, tweet_text FROM bookmarks WHERE confidence = 0 ORDER BY created_at ASC LIMIT ?`)
-    .all(limit) as Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[]
+export async function getUnclassified(limit = 100): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[]> {
+  return sql<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[]>`
+    SELECT id, tweet_id, tweet_text FROM bookmarks
+    WHERE confidence = 0
+    ORDER BY created_at ASC
+    LIMIT ${limit}
+  `
 }
 
-export function updateBookmark(id: string, updates: Partial<Pick<Bookmark, 'category' | 'confidence' | 'rationale' | 'user_notes'>>): Bookmark | null {
-  const db = getDb()
-  const sets: string[] = ['updated_at = datetime(\'now\')']
-  const params: unknown[] = []
+export async function updateBookmark(
+  id: string,
+  updates: Partial<Pick<Bookmark, 'category' | 'confidence' | 'rationale' | 'user_notes'>>
+): Promise<Bookmark | null> {
+  const sets: string[] = [`updated_at = NOW()::TEXT`]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const params: any[] = []
 
-  if (updates.category !== undefined) { sets.push('category = ?'); params.push(updates.category) }
-  if (updates.confidence !== undefined) { sets.push('confidence = ?'); params.push(updates.confidence) }
-  if (updates.rationale !== undefined) { sets.push('rationale = ?'); params.push(updates.rationale) }
-  if (updates.user_notes !== undefined) { sets.push('user_notes = ?'); params.push(updates.user_notes) }
+  if (updates.category !== undefined) { params.push(updates.category); sets.push(`category = $${params.length}`) }
+  if (updates.confidence !== undefined) { params.push(updates.confidence); sets.push(`confidence = $${params.length}`) }
+  if (updates.rationale !== undefined) { params.push(updates.rationale); sets.push(`rationale = $${params.length}`) }
+  if (updates.user_notes !== undefined) { params.push(updates.user_notes); sets.push(`user_notes = $${params.length}`) }
 
-  if (sets.length === 1) return getBookmarkById(id) // nothing to update
+  if (params.length === 0) return getBookmarkById(id) // nothing to update
 
   params.push(id)
-  db.prepare(`UPDATE bookmarks SET ${sets.join(', ')} WHERE id = ?`).run(...params)
+  await sql.unsafe(
+    `UPDATE bookmarks SET ${sets.join(', ')} WHERE id = $${params.length}`,
+    params
+  )
   return getBookmarkById(id)
 }
 
-export function updateBookmarkByTweetId(
+export async function updateBookmarkByTweetId(
   tweet_id: string,
   updates: { category: Category; confidence: number; rationale: string }
-) {
-  const db = getDb()
-  db.prepare(`
+): Promise<void> {
+  await sql`
     UPDATE bookmarks
-    SET category = ?, confidence = ?, rationale = ?, updated_at = datetime('now')
-    WHERE tweet_id = ?
-  `).run(updates.category, updates.confidence, updates.rationale, tweet_id)
+    SET category = ${updates.category},
+        confidence = ${updates.confidence},
+        rationale = ${updates.rationale},
+        updated_at = NOW()::TEXT
+    WHERE tweet_id = ${tweet_id}
+  `
 }
 
-function getBookmarkById(id: string): Bookmark | null {
-  const db = getDb()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const row = db.prepare(`SELECT * FROM bookmarks WHERE id = ?`).get(id) as Record<string, any> | undefined
-  return row ? toBookmark(row) : null
+async function getBookmarkById(id: string): Promise<Bookmark | null> {
+  const rows = await sql<Record<string, unknown>[]>`SELECT * FROM bookmarks WHERE id = ${id}`
+  return rows.length ? toBookmark(rows[0]) : null
 }
 
-export function getPrompts(promptCategory?: PromptCategory | 'all'): Bookmark[] {
-  const db = getDb()
-  const where = promptCategory && promptCategory !== 'all'
-    ? `WHERE category = 'prompts' AND prompt_category = ?`
-    : `WHERE category = 'prompts'`
-  const params = promptCategory && promptCategory !== 'all' ? [promptCategory] : []
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const rows = db.prepare(`SELECT * FROM bookmarks ${where} ORDER BY bookmarked_at DESC NULLS LAST, created_at DESC`).all(...params) as Record<string, any>[]
+export async function getPrompts(promptCategory?: PromptCategory | 'all'): Promise<Bookmark[]> {
+  const rows = promptCategory && promptCategory !== 'all'
+    ? await sql<Record<string, unknown>[]>`
+        SELECT * FROM bookmarks
+        WHERE category = 'prompts' AND prompt_category = ${promptCategory}
+        ORDER BY bookmarked_at DESC NULLS LAST, created_at DESC
+      `
+    : await sql<Record<string, unknown>[]>`
+        SELECT * FROM bookmarks
+        WHERE category = 'prompts'
+        ORDER BY bookmarked_at DESC NULLS LAST, created_at DESC
+      `
   return rows.map(toBookmark)
 }
 
-export function countUnclassifiedPrompts(): number {
-  const db = getDb()
-  const row = db
-    .prepare(`SELECT COUNT(*) as n FROM bookmarks WHERE category = 'prompts' AND (prompt_category IS NULL OR extracted_prompt IS NULL)`)
-    .get() as { n: number }
-  return row.n
+export async function countUnclassifiedPrompts(): Promise<number> {
+  const [{ n }] = await sql<{ n: string }[]>`
+    SELECT COUNT(*) as n FROM bookmarks
+    WHERE category = 'prompts' AND (prompt_category IS NULL OR extracted_prompt IS NULL)
+  `
+  return Number(n)
 }
 
-export function getUnclassifiedPrompts(limit = 50): Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[] {
-  const db = getDb()
-  return db
-    .prepare(`
-      SELECT id, tweet_id, tweet_text FROM bookmarks
-      WHERE category = 'prompts' AND (prompt_category IS NULL OR extracted_prompt IS NULL)
-      ORDER BY created_at ASC LIMIT ?
-    `)
-    .all(limit) as Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[]
+export async function getUnclassifiedPrompts(limit = 50): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[]> {
+  return sql<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[]>`
+    SELECT id, tweet_id, tweet_text FROM bookmarks
+    WHERE category = 'prompts' AND (prompt_category IS NULL OR extracted_prompt IS NULL)
+    ORDER BY created_at ASC
+    LIMIT ${limit}
+  `
 }
 
-export function updatePromptExtraction(
+export async function updatePromptExtraction(
   id: string,
   data: { prompt_category: PromptCategory; extracted_prompt: string | null; detected_model: string | null }
-) {
-  getDb()
-    .prepare(`
-      UPDATE bookmarks
-      SET prompt_category = ?, extracted_prompt = ?, detected_model = ?, updated_at = datetime('now')
-      WHERE id = ?
-    `)
-    .run(data.prompt_category, data.extracted_prompt, data.detected_model, id)
+): Promise<void> {
+  await sql`
+    UPDATE bookmarks
+    SET prompt_category = ${data.prompt_category},
+        extracted_prompt = ${data.extracted_prompt},
+        detected_model = ${data.detected_model},
+        updated_at = NOW()::TEXT
+    WHERE id = ${id}
+  `
 }

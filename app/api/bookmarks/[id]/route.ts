@@ -22,7 +22,7 @@ export async function PATCH(
     }
   }
 
-  const updated = updateBookmark(id, updates)
+  const updated = await updateBookmark(id, updates)
   if (!updated) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   return NextResponse.json(updated)
 }

@@ -5,7 +5,7 @@ import { classifyBatch } from '@/lib/classifier'
 const BATCH_SIZE = 10
 
 export async function POST(_req: NextRequest) {
-  const bookmarks = getUnclassified(100)
+  const bookmarks = await getUnclassified(100)
 
   if (bookmarks.length === 0) {
     return NextResponse.json({ classified: 0, message: 'Nothing to classify' })
@@ -19,7 +19,7 @@ export async function POST(_req: NextRequest) {
     try {
       const results = await classifyBatch(batch)
       for (const r of results) {
-        updateBookmarkByTweetId(r.tweet_id, {
+        await updateBookmarkByTweetId(r.tweet_id, {
           category: r.category,
           confidence: r.confidence,
           rationale: r.rationale,
@@ -41,6 +41,6 @@ export async function POST(_req: NextRequest) {
 }
 
 export async function GET() {
-  const counts = getCounts()
+  const counts = await getCounts()
   return NextResponse.json({ unclassified: counts.uncategorized })
 }

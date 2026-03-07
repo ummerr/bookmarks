@@ -5,12 +5,12 @@ import { classifyPromptBatch } from '@/lib/classifier'
 const BATCH_SIZE = 10
 
 export async function GET() {
-  return NextResponse.json({ unclassified: countUnclassifiedPrompts() })
+  return NextResponse.json({ unclassified: await countUnclassifiedPrompts() })
 }
 
 export async function POST() {
   try {
-    const prompts = getUnclassifiedPrompts(200)
+    const prompts = await getUnclassifiedPrompts(200)
 
     if (prompts.length === 0) {
       return NextResponse.json({ classified: 0, total: 0, message: 'All prompts already classified' })
@@ -24,7 +24,7 @@ export async function POST() {
       try {
         const results = await classifyPromptBatch(batch)
         for (const r of results) {
-          updatePromptExtraction(r.id, {
+          await updatePromptExtraction(r.id, {
             prompt_category: r.prompt_category,
             extracted_prompt: r.extracted_prompt,
             detected_model: r.detected_model,

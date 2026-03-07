@@ -10,6 +10,6 @@ export async function GET(req: NextRequest) {
   const page = parseInt(searchParams.get('page') ?? '0', 10)
   const limit = parseInt(searchParams.get('limit') ?? '30', 10)
 
-  const result = queryBookmarks({ category, search, sort, page, limit })
+  const result = await queryBookmarks({ category, search, sort, page, limit })
   return NextResponse.json(result)
 }

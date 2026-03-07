@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
 
   let result: { inserted: number; skipped: number }
   try {
-    result = insertBookmarks(unique)
+    result = await insertBookmarks(unique)
   } catch (err) {
     console.error('[INGEST] insertBookmarks threw:', err)
     return NextResponse.json({ error: String(err) }, { status: 500, headers: CORS_HEADERS })
