@@ -2,7 +2,11 @@ import postgres from 'postgres'
 import { randomUUID } from 'crypto'
 import type { Bookmark, BookmarkInsert, Category, CategoryCounts, PromptCategory } from './types'
 
-const sql = postgres(process.env.DATABASE_URL!, { ssl: 'require' })
+// Lazy init — prevents build-time failure when Next.js collects page data
+let _sql: ReturnType<typeof postgres> | undefined
+function getSql() {
+  return (_sql ??= postgres(process.env.DATABASE_URL!, { ssl: 'require' }))
+}
 
 // ── Row → Bookmark ────────────────────────────────────────────────────────
 
@@ -10,7 +14,6 @@ const sql = postgres(process.env.DATABASE_URL!, { ssl: 'require' })
 function toBookmark(row: Record<string, any>): Bookmark {
   return {
     ...row,
-    // Postgres returns JSONB as objects already; handle TEXT fallback just in case
     media_urls: typeof row.media_urls === 'string' ? JSON.parse(row.media_urls) : (row.media_urls ?? []),
     thread_tweets: typeof row.thread_tweets === 'string' ? JSON.parse(row.thread_tweets) : (row.thread_tweets ?? []),
     is_thread: Boolean(row.is_thread),
@@ -69,15 +72,13 @@ export async function queryBookmarks(opts: QueryOptions = {}): Promise<{
     LIMIT $${params.length - 1} OFFSET $${params.length}
   `
 
-  // postgres.js doesn't support positional params with raw query strings easily;
-  // use the tagged template approach via unsafe for dynamic queries
-  const rows = await sql.unsafe(query, params) as Record<string, unknown>[]
+  const rows = await getSql().unsafe(query, params) as Record<string, unknown>[]
   const hasMore = rows.length > limit
   return { bookmarks: rows.slice(0, limit).map(toBookmark), hasMore }
 }
 
 export async function getCounts(): Promise<CategoryCounts> {
-  const rows = await sql<{ category: string; n: string }[]>`
+  const rows = await getSql()<{ category: string; n: string }[]>`
     SELECT category, COUNT(*) as n FROM bookmarks GROUP BY category
   `
   const c: CategoryCounts = { all: 0, tech_ai_product: 0, career_productivity: 0, prompts: 0, uncategorized: 0, pending: 0 }
@@ -85,7 +86,7 @@ export async function getCounts(): Promise<CategoryCounts> {
     c[row.category as Category] = Number(row.n)
     c.all += Number(row.n)
   }
-  const [{ pending }] = await sql<{ pending: string }[]>`
+  const [{ pending }] = await getSql()<{ pending: string }[]>`
     SELECT COUNT(*) as pending FROM bookmarks WHERE confidence = 0
   `
   c.pending = Number(pending)
@@ -96,7 +97,7 @@ export async function insertBookmarks(bookmarks: BookmarkInsert[]): Promise<{ in
   let inserted = 0
 
   for (const b of bookmarks) {
-    const result = await sql`
+    const result = await getSql()`
       INSERT INTO bookmarks
         (id, tweet_id, tweet_text, author_handle, author_name, tweet_url,
          media_urls, category, confidence, bookmarked_at)
@@ -121,11 +122,11 @@ export async function insertBookmarks(bookmarks: BookmarkInsert[]): Promise<{ in
 }
 
 export async function clearAll(): Promise<void> {
-  await sql`DELETE FROM bookmarks`
+  await getSql()`DELETE FROM bookmarks`
 }
 
 export async function getUnclassified(limit = 100): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[]> {
-  return sql<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[]>`
+  return getSql()<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[]>`
     SELECT id, tweet_id, tweet_text FROM bookmarks
     WHERE confidence = 0
     ORDER BY created_at ASC
@@ -146,10 +147,10 @@ export async function updateBookmark(
   if (updates.rationale !== undefined) { params.push(updates.rationale); sets.push(`rationale = $${params.length}`) }
   if (updates.user_notes !== undefined) { params.push(updates.user_notes); sets.push(`user_notes = $${params.length}`) }
 
-  if (params.length === 0) return getBookmarkById(id) // nothing to update
+  if (params.length === 0) return getBookmarkById(id)
 
   params.push(id)
-  await sql.unsafe(
+  await getSql().unsafe(
     `UPDATE bookmarks SET ${sets.join(', ')} WHERE id = $${params.length}`,
     params
   )
@@ -160,7 +161,7 @@ export async function updateBookmarkByTweetId(
   tweet_id: string,
   updates: { category: Category; confidence: number; rationale: string }
 ): Promise<void> {
-  await sql`
+  await getSql()`
     UPDATE bookmarks
     SET category = ${updates.category},
         confidence = ${updates.confidence},
@@ -171,18 +172,18 @@ export async function updateBookmarkByTweetId(
 }
 
 async function getBookmarkById(id: string): Promise<Bookmark | null> {
-  const rows = await sql<Record<string, unknown>[]>`SELECT * FROM bookmarks WHERE id = ${id}`
+  const rows = await getSql()<Record<string, unknown>[]>`SELECT * FROM bookmarks WHERE id = ${id}`
   return rows.length ? toBookmark(rows[0]) : null
 }
 
 export async function getPrompts(promptCategory?: PromptCategory | 'all'): Promise<Bookmark[]> {
   const rows = promptCategory && promptCategory !== 'all'
-    ? await sql<Record<string, unknown>[]>`
+    ? await getSql()<Record<string, unknown>[]>`
         SELECT * FROM bookmarks
         WHERE category = 'prompts' AND prompt_category = ${promptCategory}
         ORDER BY bookmarked_at DESC NULLS LAST, created_at DESC
       `
-    : await sql<Record<string, unknown>[]>`
+    : await getSql()<Record<string, unknown>[]>`
         SELECT * FROM bookmarks
         WHERE category = 'prompts'
         ORDER BY bookmarked_at DESC NULLS LAST, created_at DESC
@@ -191,7 +192,7 @@ export async function getPrompts(promptCategory?: PromptCategory | 'all'): Promi
 }
 
 export async function countUnclassifiedPrompts(): Promise<number> {
-  const [{ n }] = await sql<{ n: string }[]>`
+  const [{ n }] = await getSql()<{ n: string }[]>`
     SELECT COUNT(*) as n FROM bookmarks
     WHERE category = 'prompts' AND (prompt_category IS NULL OR extracted_prompt IS NULL)
   `
@@ -199,7 +200,7 @@ export async function countUnclassifiedPrompts(): Promise<number> {
 }
 
 export async function getUnclassifiedPrompts(limit = 50): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[]> {
-  return sql<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[]>`
+  return getSql()<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[]>`
     SELECT id, tweet_id, tweet_text FROM bookmarks
     WHERE category = 'prompts' AND (prompt_category IS NULL OR extracted_prompt IS NULL)
     ORDER BY created_at ASC
@@ -211,7 +212,7 @@ export async function updatePromptExtraction(
   id: string,
   data: { prompt_category: PromptCategory; extracted_prompt: string | null; detected_model: string | null }
 ): Promise<void> {
-  await sql`
+  await getSql()`
     UPDATE bookmarks
     SET prompt_category = ${data.prompt_category},
         extracted_prompt = ${data.extracted_prompt},
