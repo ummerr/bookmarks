@@ -130,7 +130,7 @@ export async function classifyPromptBatch(
   reference_type: ReferenceType | null
 }[]> {
   const client = getClient()
-  const input = prompts.map((p) => ({ id: p.id, text: p.tweet_text.slice(0, 1200) }))
+  const input = prompts.map((p) => ({ id: p.id, text: p.tweet_text.slice(0, 3000) }))
 
   const message = await withRetry(() =>
     client.messages.create({
