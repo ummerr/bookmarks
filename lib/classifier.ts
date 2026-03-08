@@ -74,7 +74,7 @@ export async function classifyPromptBatch(
 
   const message = await withRetry(() =>
     client.messages.create({
-      model: 'claude-haiku-4-5-20251001',
+      model: 'claude-sonnet-4-6',
       max_tokens: 4096,
       system: PROMPT_SYSTEM,
       messages: [{ role: 'user', content: `Classify and extract these prompts:\n${JSON.stringify(input, null, 2)}` }],
@@ -114,7 +114,7 @@ export async function classifyBatch(
 
   const message = await withRetry(() =>
     client.messages.create({
-      model: 'claude-haiku-4-5-20251001',
+      model: 'claude-sonnet-4-6',
       max_tokens: 4096,
       system: SYSTEM_PROMPT,
       messages: [
