@@ -6,8 +6,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export const metadata: Metadata = {
-  title: 'Bookmarks — @ummerrr',
-  description: 'Personal Twitter bookmarks dashboard',
+  title: 'ummerr',
+  description: 'AI prompts and bookmarks by ummerr',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -246,8 +246,6 @@ export default function PromptsPage() {
   const [activeModel, setActiveModel] = useState<string>('all')
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
-  const [classifying, setClassifying] = useState(false)
-  const [classifyResult, setClassifyResult] = useState<string | null>(null)
 
   async function fetchPrompts(cat: PromptCategory | 'all') {
     setLoading(true)
@@ -295,60 +293,18 @@ export default function PromptsPage() {
     return result
   }, [allPrompts, activeMediaType, activeTheme, activeModel, search])
 
-  async function classifyPrompts() {
-    setClassifying(true)
-    setClassifyResult(null)
-    try {
-      // Step 1: run the main classifier to promote any pending bookmarks into categories
-      await fetch('/api/classify', { method: 'POST' })
-      // Step 2: sub-classify anything now tagged as 'prompts'
-      const res = await fetch('/api/prompts/classify', { method: 'POST' })
-      const data = await res.json()
-      if (data.error) {
-        setClassifyResult(`Error: ${data.error}`)
-      } else {
-        const base = data.message ?? `Classified ${data.classified} of ${data.total}`
-        const errSuffix = data.errors?.length ? ` · ${data.errors.length} batch error(s): ${data.errors[0]}` : ''
-        setClassifyResult(base + errSuffix)
-      }
-      fetchPrompts(activeCategory)
-    } catch (err) {
-      setClassifyResult(`Failed: ${String(err)}`)
-    } finally {
-      setClassifying(false)
-    }
-  }
-
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <div className="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-8 flex flex-col gap-6">
 
         {/* Header */}
-        <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center justify-between">
           <h1 className="text-lg font-semibold text-white">
             Prompts
             <span className="ml-2 text-sm text-zinc-600 font-normal">
               {loading ? '…' : `${filtered.length}${filtered.length !== allPrompts.length ? ` of ${allPrompts.length}` : ''}`}
             </span>
           </h1>
-          <div className="flex items-center gap-3">
-            {classifyResult && <span className="text-xs text-zinc-500">{classifyResult}</span>}
-            <button
-              onClick={classifyPrompts}
-              disabled={classifying}
-              className="flex items-center gap-2 rounded-lg bg-[#1DA1F2]/90 px-3 py-1.5 text-xs font-medium text-white hover:bg-[#1DA1F2] disabled:opacity-50 transition-colors"
-            >
-              {classifying ? (
-                <>
-                  <svg className="h-3 w-3 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                  </svg>
-                  Classifying…
-                </>
-              ) : 'Classify with AI'}
-            </button>
-          </div>
         </div>
 
         {/* Search */}

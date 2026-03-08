@@ -6,7 +6,8 @@ import { usePathname } from 'next/navigation'
 const LINKS = [
   { href: '/',        label: 'Dashboard' },
   { href: '/prompts', label: 'Prompts' },
-  { href: '/import',  label: 'Import & Classify' },
+  { href: '/import',  label: 'Import' },
+  { href: '/tools',   label: 'Tools' },
 ]
 
 export default function Nav() {
@@ -16,7 +17,7 @@ export default function Nav() {
     <nav className="border-b border-white/8 bg-[#0a0a0a]/90 backdrop-blur sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center gap-3 md:gap-6 h-12">
         <span className="flex items-center gap-2 text-sm font-semibold text-white shrink-0">
-          <span className="text-[#1DA1F2]">✦</span> Bookmarks
+          <span className="text-[#1DA1F2]">✦</span> ummerr
         </span>
         <div className="flex items-center gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {LINKS.map((l) => (
