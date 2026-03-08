@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { countUnclassifiedPrompts, getUnclassifiedPrompts, updatePromptExtraction } from '@/lib/db'
 import { classifyPromptBatch } from '@/lib/classifier'
 
-const BATCH_SIZE = 10
+const BATCH_SIZE = 5
 
 export async function GET() {
   return NextResponse.json({ unclassified: await countUnclassifiedPrompts() })

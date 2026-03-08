@@ -307,7 +307,9 @@ export default function PromptsPage() {
       if (data.error) {
         setClassifyResult(`Error: ${data.error}`)
       } else {
-        setClassifyResult(data.message ?? `Classified ${data.classified} of ${data.total}`)
+        const base = data.message ?? `Classified ${data.classified} of ${data.total}`
+        const errSuffix = data.errors?.length ? ` · ${data.errors.length} batch error(s): ${data.errors[0]}` : ''
+        setClassifyResult(base + errSuffix)
       }
       fetchPrompts(activeCategory)
     } catch (err) {

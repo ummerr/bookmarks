@@ -93,7 +93,7 @@ export async function classifyPromptBatch(
   const message = await withRetry(() =>
     client.messages.create({
       model: 'claude-sonnet-4-6',
-      max_tokens: 4096,
+      max_tokens: 8192,
       system: PROMPT_SYSTEM,
       messages: [{ role: 'user', content: `Classify and extract these prompts:\n${JSON.stringify(input, null, 2)}` }],
     })
