@@ -337,88 +337,109 @@ export default function PromptsPage() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col gap-2">
-          {/* Media type toggle */}
-          <div className="flex gap-1 p-0.5 bg-white/5 rounded-lg w-fit">
-            {MEDIA_TYPES.map((mt) => (
-              <button
-                key={mt.value}
-                onClick={() => { setActiveMediaType(mt.value); setActiveCategory('all'); setActiveModel('all') }}
-                className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
-                  activeMediaType === mt.value
-                    ? 'bg-white/15 text-white'
-                    : 'text-zinc-500 hover:text-zinc-300'
-                }`}
-              >
-                {mt.label}
-              </button>
-            ))}
-          </div>
+        <div className="rounded-xl border border-white/8 bg-white/[0.02] divide-y divide-white/6">
 
-          {/* Sub-category chips — narrowed by media type */}
-          <div className="flex gap-1 flex-wrap">
-            {CATEGORIES.filter((cat) =>
-              cat.value === 'all' || MEDIA_TYPE_CATEGORIES[activeMediaType].includes(cat.value)
-            ).map((cat) => (
-              <button
-                key={cat.value}
-                onClick={() => { setActiveCategory(cat.value); setActiveModel('all') }}
-                className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors ${
-                  activeCategory === cat.value
-                    ? 'bg-white/15 text-white'
-                    : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'
-                }`}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Theme filter */}
-          <div className="flex gap-1 flex-wrap">
-            <button
-              onClick={() => setActiveTheme('all')}
-              className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors ${activeTheme === 'all' ? 'bg-white/15 text-white' : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'}`}
-            >
-              All themes
-            </button>
-            {THEMES.map((t) => (
-              <button
-                key={t.value}
-                onClick={() => setActiveTheme(t.value)}
-                className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors ${activeTheme === t.value ? 'bg-white/15 text-white' : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'}`}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Model filter — only shown when models are detected */}
-          {availableModels.length > 0 && (
-            <div className="flex gap-1 flex-wrap">
-              <button
-                onClick={() => setActiveModel('all')}
-                className={`rounded-lg px-3 py-1 text-xs transition-colors ${
-                  activeModel === 'all'
-                    ? 'bg-white/10 text-zinc-200'
-                    : 'text-zinc-600 hover:text-zinc-400 hover:bg-white/5'
-                }`}
-              >
-                All models
-              </button>
-              {availableModels.map((model) => (
+          {/* Row: Media type — primary control */}
+          <div className="flex items-center gap-4 px-4 py-3">
+            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider w-16 shrink-0">Media</span>
+            <div className="flex gap-1 p-0.5 bg-white/5 rounded-lg">
+              {MEDIA_TYPES.map((mt) => (
                 <button
-                  key={model}
-                  onClick={() => setActiveModel(model)}
-                  className={`rounded-lg px-3 py-1 text-xs transition-colors ${
-                    activeModel === model
-                      ? 'bg-white/10 text-zinc-200'
-                      : 'text-zinc-600 hover:text-zinc-400 hover:bg-white/5'
+                  key={mt.value}
+                  onClick={() => { setActiveMediaType(mt.value); setActiveCategory('all'); setActiveTheme('all'); setActiveModel('all') }}
+                  className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+                    activeMediaType === mt.value
+                      ? 'bg-white/20 text-white shadow-sm'
+                      : 'text-zinc-500 hover:text-zinc-300'
                   }`}
                 >
-                  {model}
+                  {mt.label}
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Row: Technique sub-category */}
+          <div className="flex items-start gap-4 px-4 py-3">
+            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider w-16 shrink-0 pt-1">Type</span>
+            <div className="flex gap-1 flex-wrap">
+              {CATEGORIES.filter((cat) =>
+                cat.value === 'all' || MEDIA_TYPE_CATEGORIES[activeMediaType].includes(cat.value)
+              ).map((cat) => (
+                <button
+                  key={cat.value}
+                  onClick={() => { setActiveCategory(cat.value); setActiveModel('all') }}
+                  className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border ${
+                    activeCategory === cat.value
+                      ? 'bg-white/15 text-white border-white/20'
+                      : 'text-zinc-500 border-transparent hover:text-zinc-300 hover:bg-white/5'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Row: Theme — colored badges matching card badges */}
+          <div className="flex items-start gap-4 px-4 py-3">
+            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider w-16 shrink-0 pt-1">Theme</span>
+            <div className="flex gap-1 flex-wrap">
+              <button
+                onClick={() => setActiveTheme('all')}
+                className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border ${
+                  activeTheme === 'all'
+                    ? 'bg-white/15 text-white border-white/20'
+                    : 'text-zinc-500 border-transparent hover:text-zinc-300 hover:bg-white/5'
+                }`}
+              >
+                All
+              </button>
+              {THEMES.map((t) => (
+                <button
+                  key={t.value}
+                  onClick={() => setActiveTheme(t.value)}
+                  className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-all border ${
+                    activeTheme === t.value
+                      ? `${THEME_COLORS[t.value]} opacity-100`
+                      : 'text-zinc-500 border-transparent hover:text-zinc-300 hover:bg-white/5'
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Row: Model — only when models are present */}
+          {availableModels.length > 0 && (
+            <div className="flex items-start gap-4 px-4 py-3">
+              <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider w-16 shrink-0 pt-1">Model</span>
+              <div className="flex gap-1 flex-wrap">
+                <button
+                  onClick={() => setActiveModel('all')}
+                  className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border ${
+                    activeModel === 'all'
+                      ? 'bg-white/15 text-white border-white/20'
+                      : 'text-zinc-500 border-transparent hover:text-zinc-300 hover:bg-white/5'
+                  }`}
+                >
+                  All
+                </button>
+                {availableModels.map((model) => (
+                  <button
+                    key={model}
+                    onClick={() => setActiveModel(model)}
+                    className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border ${
+                      activeModel === model
+                        ? 'bg-white/15 text-white border-white/20'
+                        : 'text-zinc-500 border-transparent hover:text-zinc-300 hover:bg-white/5'
+                    }`}
+                  >
+                    {model}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
         </div>
