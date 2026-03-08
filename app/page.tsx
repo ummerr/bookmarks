@@ -82,7 +82,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <div className="flex gap-8 max-w-7xl mx-auto px-6 py-8">
+      <div className="flex flex-col md:flex-row md:gap-8 max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-8">
         <Sidebar
           counts={counts}
           activeCategory={activeCategory}
@@ -92,7 +92,7 @@ export default function Dashboard() {
         />
 
         <main className="flex-1 min-w-0">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-4 md:mb-6">
             <h1 className="text-lg font-semibold text-white">
               {categoryLabel[activeCategory]}
               <span className="ml-2 text-sm text-zinc-600 font-normal">

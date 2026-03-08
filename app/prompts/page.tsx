@@ -321,10 +321,10 @@ export default function PromptsPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <div className="max-w-5xl mx-auto px-6 py-8 flex flex-col gap-6">
+      <div className="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-8 flex flex-col gap-6">
 
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <h1 className="text-lg font-semibold text-white">
             Prompts
             <span className="ml-2 text-sm text-zinc-600 font-normal">
@@ -379,8 +379,8 @@ export default function PromptsPage() {
         <div className="rounded-xl border border-white/8 bg-white/[0.02] divide-y divide-white/6">
 
           {/* Row: Media type — primary control */}
-          <div className="flex items-center gap-4 px-4 py-3">
-            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider w-16 shrink-0">Media</span>
+          <div className="flex items-center gap-3 md:gap-4 px-4 py-3">
+            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider w-12 md:w-16 shrink-0">Media</span>
             <div className="flex gap-1 p-0.5 bg-white/5 rounded-lg">
               {MEDIA_TYPES.map((mt) => (
                 <button
@@ -399,8 +399,8 @@ export default function PromptsPage() {
           </div>
 
           {/* Row: Technique sub-category */}
-          <div className="flex items-start gap-4 px-4 py-3">
-            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider w-16 shrink-0 pt-1">Type</span>
+          <div className="flex items-start gap-3 md:gap-4 px-4 py-3">
+            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider w-12 md:w-16 shrink-0 pt-1">Type</span>
             <div className="flex gap-1 flex-wrap">
               {CATEGORIES.filter((cat) =>
                 cat.value === 'all' || MEDIA_TYPE_CATEGORIES[activeMediaType].includes(cat.value)
@@ -421,8 +421,8 @@ export default function PromptsPage() {
           </div>
 
           {/* Row: Theme — colored badges matching card badges */}
-          <div className="flex items-start gap-4 px-4 py-3">
-            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider w-16 shrink-0 pt-1">Theme</span>
+          <div className="flex items-start gap-3 md:gap-4 px-4 py-3">
+            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider w-12 md:w-16 shrink-0 pt-1">Theme</span>
             <div className="flex gap-1 flex-wrap">
               <button
                 onClick={() => setActiveTheme('all')}
@@ -452,8 +452,8 @@ export default function PromptsPage() {
 
           {/* Row: Model — only when models are present */}
           {availableModels.length > 0 && (
-            <div className="flex items-start gap-4 px-4 py-3">
-              <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider w-16 shrink-0 pt-1">Model</span>
+            <div className="flex items-start gap-3 md:gap-4 px-4 py-3">
+              <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider w-12 md:w-16 shrink-0 pt-1">Model</span>
               <div className="flex gap-1 flex-wrap">
                 <button
                   onClick={() => setActiveModel('all')}

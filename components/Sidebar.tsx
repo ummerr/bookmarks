@@ -30,9 +30,9 @@ export default function Sidebar({
   const pathname = usePathname()
 
   return (
-    <aside className="flex flex-col gap-6 w-56 shrink-0">
-      {/* Logo / brand */}
-      <div className="flex items-center gap-2 px-1">
+    <aside className="flex flex-col gap-3 md:gap-6 md:w-56 md:shrink-0">
+      {/* Logo / brand — hidden on mobile (shown in Nav) */}
+      <div className="hidden md:flex items-center gap-2 px-1">
         <span className="text-[#1DA1F2] text-lg">✦</span>
         <span className="font-semibold text-white text-sm tracking-wide">Bookmarks</span>
       </div>
@@ -58,7 +58,7 @@ export default function Sidebar({
       </div>
 
       {/* Category filters */}
-      <nav className="flex flex-col gap-0.5">
+      <nav className="flex flex-row gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pb-0.5 md:flex-col md:overflow-x-visible md:gap-0.5 md:pb-0">
         {CATEGORIES.map((cat) => {
           const count = counts[cat.value as keyof CategoryCounts] ?? 0
           const active = activeCategory === cat.value
@@ -66,7 +66,7 @@ export default function Sidebar({
             <button
               key={cat.value}
               onClick={() => onCategoryChange(cat.value)}
-              className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
+              className={`shrink-0 flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors md:justify-between md:w-full ${
                 active
                   ? 'bg-white/10 text-white'
                   : 'text-zinc-400 hover:text-white hover:bg-white/5'
@@ -78,14 +78,14 @@ export default function Sidebar({
                 )}
                 {cat.label}
               </span>
-              <span className="text-xs text-zinc-600">{count}</span>
+              <span className="hidden md:inline text-xs text-zinc-600">{count}</span>
             </button>
           )
         })}
       </nav>
 
-      {/* Classified status */}
-      <div className="flex items-center justify-between text-xs px-1">
+      {/* Classified status — hidden on mobile */}
+      <div className="hidden md:flex items-center justify-between text-xs px-1">
         <span className="text-zinc-600">
           {counts.all - counts.pending} classified
         </span>
@@ -94,8 +94,8 @@ export default function Sidebar({
         )}
       </div>
 
-      {/* Nav links */}
-      <div className="mt-auto flex flex-col gap-0.5 border-t border-white/8 pt-4">
+      {/* Nav links — hidden on mobile (shown in Nav) */}
+      <div className="hidden md:flex mt-auto flex-col gap-0.5 border-t border-white/8 pt-4">
         <Link
           href="/prompts"
           className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors ${

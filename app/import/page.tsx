@@ -73,7 +73,7 @@ export default function ImportPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <div className="max-w-2xl mx-auto px-6 py-12">
+      <div className="max-w-2xl mx-auto px-4 md:px-6 py-8 md:py-12">
         {/* Back link */}
         <Link href="/" className="text-sm text-zinc-500 hover:text-white transition-colors mb-8 inline-flex items-center gap-1">
           ← Dashboard
@@ -90,7 +90,7 @@ export default function ImportPage() {
           onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
           onDragLeave={() => setDragOver(false)}
           onClick={() => fileRef.current?.click()}
-          className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-12 cursor-pointer transition-colors ${
+          className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-8 md:p-12 cursor-pointer transition-colors ${
             dragOver
               ? 'border-[#1DA1F2] bg-[#1DA1F2]/5'
               : 'border-white/10 hover:border-white/20 bg-white/2'
