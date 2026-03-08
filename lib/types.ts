@@ -66,6 +66,7 @@ export interface Bookmark {
   requires_reference: boolean | null
   reference_type: ReferenceType | null
   bookmarked_at: string | null
+  source: 'twitter' | 'manual'
   created_at: string
   updated_at: string
 }

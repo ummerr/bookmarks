@@ -199,14 +199,26 @@ function PromptCard({ bookmark }: { bookmark: Bookmark }) {
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {date && <span className="text-[11px] text-zinc-600">{date}</span>}
-          <a
-            href={bookmark.tweet_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[11px] text-zinc-600 hover:text-[#1DA1F2] transition-colors"
-          >
-            @{bookmark.author_handle} ↗
-          </a>
+          {bookmark.source === 'manual' ? (
+            <a
+              href={bookmark.tweet_url || undefined}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] text-zinc-600 hover:text-zinc-300 transition-colors flex items-center gap-1"
+            >
+              <span className="rounded-sm bg-zinc-800 px-1 py-0.5 text-[10px] text-zinc-400 font-medium">manual</span>
+              {bookmark.author_handle} {bookmark.tweet_url ? '↗' : ''}
+            </a>
+          ) : (
+            <a
+              href={bookmark.tweet_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] text-zinc-600 hover:text-[#1DA1F2] transition-colors"
+            >
+              @{bookmark.author_handle} ↗
+            </a>
+          )}
         </div>
       </div>
 

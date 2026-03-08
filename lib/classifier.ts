@@ -64,6 +64,7 @@ Pick 1-3 that apply from: person, cinematic, landscape, architecture, scifi, fan
 REFERENCE IMAGE:
 - requires_reference: true if the prompt explicitly needs the user to supply an input image to work (e.g. img2img, IP-Adapter, ControlNet, face swap, image-to-video). false if it's purely text-driven. null for non-image/video categories.
 - reference_type: if requires_reference is true, pick one: face_person, style_artwork, subject_object, pose_structure, scene_background. Otherwise null.
+- STRONG SIGNAL: if the tweet contains placeholder tokens like [SUBJECT], [REFERENCE], [YOUR SUBJECT], [YOUR REFERENCE], or similar bracketed placeholders, the prompt almost certainly requires a reference image — set requires_reference: true and pick the appropriate reference_type.
 
 For each item return:
 - id: the item id

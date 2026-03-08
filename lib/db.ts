@@ -24,6 +24,7 @@ function toBookmark(row: Record<string, any>): Bookmark {
     detected_model: row.detected_model ?? null,
     requires_reference: row.requires_reference ?? null,
     reference_type: row.reference_type ?? null,
+    source: (row.source as 'twitter' | 'manual') ?? 'twitter',
   } as Bookmark
 }
 
@@ -126,6 +127,33 @@ export async function insertBookmarks(bookmarks: BookmarkInsert[]): Promise<{ in
 
 export async function clearAll(): Promise<void> {
   await getSql()`DELETE FROM bookmarks`
+}
+
+export async function insertManualPrompt(data: {
+  text: string
+  url: string
+  source_name: string
+}): Promise<Bookmark> {
+  const id = randomUUID()
+  const tweet_id = randomUUID()
+  await getSql()`
+    INSERT INTO bookmarks
+      (id, tweet_id, tweet_text, author_handle, tweet_url,
+       media_urls, category, confidence, source)
+    VALUES (
+      ${id},
+      ${tweet_id},
+      ${data.text},
+      ${data.source_name},
+      ${data.url},
+      '[]'::jsonb,
+      'prompts',
+      1.0,
+      'manual'
+    )
+  `
+  const rows = await getSql()<Record<string, unknown>[]>`SELECT * FROM bookmarks WHERE id = ${id}`
+  return toBookmark(rows[0])
 }
 
 export async function getUnclassified(limit = 100): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[]> {

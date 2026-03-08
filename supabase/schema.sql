@@ -21,9 +21,13 @@ CREATE TABLE IF NOT EXISTS bookmarks (
   requires_reference BOOLEAN,
   reference_type    TEXT,
   bookmarked_at     TEXT,
+  source            TEXT NOT NULL DEFAULT 'twitter',
   created_at        TEXT NOT NULL DEFAULT (NOW()::TEXT),
   updated_at        TEXT NOT NULL DEFAULT (NOW()::TEXT)
 );
+
+-- Migration (run if table already exists):
+-- ALTER TABLE bookmarks ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'twitter';
 
 CREATE INDEX IF NOT EXISTS idx_bm_category      ON bookmarks(category);
 CREATE INDEX IF NOT EXISTS idx_bm_author        ON bookmarks(author_handle);
