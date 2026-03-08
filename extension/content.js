@@ -141,8 +141,14 @@
   // ── Send ──────────────────────────────────────────────────────────────────
   async function getDashboardUrl() {
     return new Promise((resolve) => {
-      chrome.storage.sync.get({ dashboardUrl: 'http://localhost:3000' }, (res) => {
-        resolve(res.dashboardUrl.replace(/\/$/, ''))
+      chrome.storage.sync.get({ dashboardUrl: 'https://bookmarks-seven-drab.vercel.app' }, (res) => {
+        let url = res.dashboardUrl.replace(/\/$/, '')
+        // Migrate any stored localhost URL to production
+        if (url.startsWith('http://localhost')) {
+          url = 'https://bookmarks-seven-drab.vercel.app'
+          chrome.storage.sync.set({ dashboardUrl: url })
+        }
+        resolve(url)
       })
     })
   }
