@@ -35,6 +35,7 @@ const MODEL_FAMILIES: { label: string; patterns: string[] }[] = [
   { label: 'Luma',             patterns: ['luma', 'dream machine'] },
   { label: 'Veo',              patterns: ['veo'] },
   { label: 'Wan',              patterns: ['wan'] },
+  { label: 'Seedance',         patterns: ['seedance'] },
   { label: 'ElevenLabs',       patterns: ['elevenlabs'] },
   { label: 'Suno',             patterns: ['suno'] },
   { label: 'Udio',             patterns: ['udio'] },
