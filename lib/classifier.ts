@@ -74,7 +74,49 @@ For each item return:
 - requires_reference: true | false | null
 - reference_type: one of the reference types or null
 
-Return ONLY a JSON array: [{"id": "...", "prompt_category": "...", "detected_model": "...", "extracted_prompt": "...", "prompt_themes": [...], "requires_reference": null, "reference_type": null}]`
+Classify all items provided.`
+
+const VALID_CATEGORIES = new Set<PromptCategory>([
+  'image_t2i', 'image_i2i', 'image_r2i', 'image_character_ref', 'image_inpainting',
+  'video_t2v', 'video_i2v', 'video_r2v', 'video_v2v',
+  'audio', 'threed',
+  'system_prompt', 'writing', 'coding', 'analysis', 'other',
+])
+const VALID_THEMES = new Set<PromptTheme>([
+  'person', 'cinematic', 'landscape', 'architecture', 'scifi',
+  'fantasy', 'abstract', 'fashion', 'product', 'horror',
+])
+const VALID_REF_TYPES = new Set<ReferenceType>([
+  'face_person', 'style_artwork', 'subject_object', 'pose_structure', 'scene_background',
+])
+
+// Tool use schema — guarantees valid structured output, no JSON parsing errors
+const CLASSIFY_TOOL: Anthropic.Tool = {
+  name: 'classify_prompts',
+  description: 'Return classifications for all provided prompts',
+  input_schema: {
+    type: 'object' as const,
+    properties: {
+      results: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            id:                 { type: 'string' },
+            prompt_category:    { type: 'string' },
+            detected_model:     { type: ['string', 'null'] },
+            extracted_prompt:   { type: ['string', 'null'] },
+            prompt_themes:      { type: 'array', items: { type: 'string' } },
+            requires_reference: { type: ['boolean', 'null'] },
+            reference_type:     { type: ['string', 'null'] },
+          },
+          required: ['id', 'prompt_category', 'detected_model', 'extracted_prompt', 'prompt_themes', 'requires_reference', 'reference_type'],
+        },
+      },
+    },
+    required: ['results'],
+  },
+}
 
 export async function classifyPromptBatch(
   prompts: Pick<Bookmark, 'id' | 'tweet_text'>[]
@@ -95,35 +137,19 @@ export async function classifyPromptBatch(
       model: 'claude-sonnet-4-6',
       max_tokens: 8192,
       system: PROMPT_SYSTEM,
+      tools: [CLASSIFY_TOOL],
+      tool_choice: { type: 'tool', name: 'classify_prompts' },
       messages: [{ role: 'user', content: `Classify and extract these prompts:\n${JSON.stringify(input, null, 2)}` }],
     })
   )
 
-  const raw = message.content[0].type === 'text' ? message.content[0].text : ''
-
-  const VALID_CATEGORIES = new Set<PromptCategory>([
-    'image_t2i', 'image_i2i', 'image_r2i', 'image_character_ref', 'image_inpainting',
-    'video_t2v', 'video_i2v', 'video_r2v', 'video_v2v',
-    'audio', 'threed',
-    'system_prompt', 'writing', 'coding', 'analysis', 'other',
-  ])
-  const VALID_THEMES = new Set<PromptTheme>([
-    'person', 'cinematic', 'landscape', 'architecture', 'scifi',
-    'fantasy', 'abstract', 'fashion', 'product', 'horror',
-  ])
-  const VALID_REF_TYPES = new Set<ReferenceType>([
-    'face_person', 'style_artwork', 'subject_object', 'pose_structure', 'scene_background',
-  ])
+  const toolUse = message.content.find((b) => b.type === 'tool_use')
+  if (!toolUse || toolUse.type !== 'tool_use') {
+    throw new Error(`No tool_use block in response. stop_reason=${message.stop_reason}`)
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let results: any[]
-  try {
-    results = JSON.parse(raw)
-  } catch {
-    const match = raw.match(/\[[\s\S]*\]/)
-    if (!match) throw new Error(`Failed to parse prompt classification response. stop_reason=${message.stop_reason} raw=${raw.slice(0, 200)}`)
-    results = JSON.parse(match[0])
-  }
+  const { results } = toolUse.input as { results: any[] }
 
   return results.map((r) => ({
     id: r.id,
