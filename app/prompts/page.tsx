@@ -18,6 +18,37 @@ const MEDIA_TYPE_CATEGORIES: Record<MediaType, (PromptCategory | 'all')[]> = {
   text:  ['system_prompt', 'writing', 'coding', 'analysis', 'audio', 'threed', 'other'],
 }
 
+// Model families — order matters (more specific first)
+const MODEL_FAMILIES: { label: string; patterns: string[] }[] = [
+  { label: 'Midjourney',       patterns: ['midjourney', 'mj'] },
+  { label: 'Flux',             patterns: ['flux'] },
+  { label: 'Stable Diffusion', patterns: ['stable diffusion', 'sdxl', 'sd3', 'sd '] },
+  { label: 'DALL-E',           patterns: ['dall-e', 'dalle'] },
+  { label: 'Firefly',          patterns: ['firefly'] },
+  { label: 'Ideogram',         patterns: ['ideogram'] },
+  { label: 'Leonardo',         patterns: ['leonardo'] },
+  { label: 'Kling',            patterns: ['kling'] },
+  { label: 'Runway',           patterns: ['runway', 'gen-2', 'gen-3', 'gen 2', 'gen 3'] },
+  { label: 'Sora',             patterns: ['sora'] },
+  { label: 'Pika',             patterns: ['pika'] },
+  { label: 'Hailuo',           patterns: ['hailuo', 'minimax'] },
+  { label: 'Luma',             patterns: ['luma', 'dream machine'] },
+  { label: 'Veo',              patterns: ['veo'] },
+  { label: 'Wan',              patterns: ['wan'] },
+  { label: 'ElevenLabs',       patterns: ['elevenlabs'] },
+  { label: 'Suno',             patterns: ['suno'] },
+  { label: 'Udio',             patterns: ['udio'] },
+  { label: 'ChatGPT',          patterns: ['chatgpt', 'gpt-4', 'gpt4'] },
+  { label: 'Claude',           patterns: ['claude'] },
+  { label: 'Gemini',           patterns: ['gemini'] },
+  { label: 'Meshy',            patterns: ['meshy'] },
+]
+
+function modelToFamily(model: string): string {
+  const lower = model.toLowerCase()
+  return MODEL_FAMILIES.find((f) => f.patterns.some((p) => lower.includes(p)))?.label ?? model
+}
+
 const CATEGORIES: { value: PromptCategory | 'all'; label: string }[] = [
   { value: 'all',                  label: 'All' },
   { value: 'image_t2i',           label: 'T2I' },
@@ -227,10 +258,15 @@ export default function PromptsPage() {
 
   useEffect(() => { fetchPrompts(activeCategory) }, [activeCategory])
 
-  // Compute distinct models from fetched data
+  // Compute distinct model families from fetched data
   const availableModels = useMemo(() => {
-    const models = Array.from(new Set(allPrompts.map((p) => p.detected_model).filter(Boolean))) as string[]
-    return models.sort()
+    const families = new Set(
+      allPrompts
+        .map((p) => p.detected_model)
+        .filter(Boolean)
+        .map((m) => modelToFamily(m!))
+    )
+    return Array.from(families).sort()
   }, [allPrompts])
 
   // Client-side filter by media type, theme, model, search
@@ -244,7 +280,7 @@ export default function PromptsPage() {
       result = result.filter((p) => p.prompt_themes?.includes(activeTheme))
     }
     if (activeModel !== 'all') {
-      result = result.filter((p) => p.detected_model === activeModel)
+      result = result.filter((p) => p.detected_model && modelToFamily(p.detected_model) === activeModel)
     }
     if (search.trim()) {
       const q = search.toLowerCase()
