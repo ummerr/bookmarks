@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import type { Bookmark, PromptCategory } from '@/lib/types'
+import type { Bookmark, PromptCategory, PromptTheme } from '@/lib/types'
 
 const MEDIA_TYPES = [
   { value: 'all',   label: 'All' },
@@ -37,6 +37,40 @@ const CATEGORIES: { value: PromptCategory | 'all'; label: string }[] = [
   { value: 'analysis',            label: 'Analysis' },
   { value: 'other',               label: 'Other' },
 ]
+
+const THEMES: { value: PromptTheme; label: string }[] = [
+  { value: 'person',       label: 'Person' },
+  { value: 'cinematic',    label: 'Cinematic' },
+  { value: 'landscape',    label: 'Landscape' },
+  { value: 'architecture', label: 'Architecture' },
+  { value: 'scifi',        label: 'Sci-fi' },
+  { value: 'fantasy',      label: 'Fantasy' },
+  { value: 'abstract',     label: 'Abstract' },
+  { value: 'fashion',      label: 'Fashion' },
+  { value: 'product',      label: 'Product' },
+  { value: 'horror',       label: 'Horror' },
+]
+
+const THEME_COLORS: Record<PromptTheme, string> = {
+  person:       'bg-blue-900/40 text-blue-300 border-blue-800/40',
+  cinematic:    'bg-yellow-900/40 text-yellow-300 border-yellow-800/40',
+  landscape:    'bg-green-900/40 text-green-300 border-green-800/40',
+  architecture: 'bg-stone-800/60 text-stone-300 border-stone-700/40',
+  scifi:        'bg-cyan-900/40 text-cyan-300 border-cyan-800/40',
+  fantasy:      'bg-purple-900/40 text-purple-300 border-purple-800/40',
+  abstract:     'bg-orange-900/40 text-orange-300 border-orange-800/40',
+  fashion:      'bg-pink-900/40 text-pink-300 border-pink-800/40',
+  product:      'bg-indigo-900/40 text-indigo-300 border-indigo-800/40',
+  horror:       'bg-red-900/40 text-red-300 border-red-800/40',
+}
+
+const REFERENCE_TYPE_LABELS: Record<string, string> = {
+  face_person:    'Face / Person',
+  style_artwork:  'Style / Artwork',
+  subject_object: 'Subject / Object',
+  pose_structure: 'Pose / Structure',
+  scene_background: 'Scene / Background',
+}
 
 const CATEGORY_COLORS: Record<string, string> = {
   image_t2i:           'bg-pink-900/50 text-pink-300 border-pink-800/50',
@@ -120,6 +154,16 @@ function PromptCard({ bookmark }: { bookmark: Bookmark }) {
               {bookmark.detected_model}
             </span>
           )}
+          {bookmark.prompt_themes?.map((theme) => (
+            <span key={theme} className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${THEME_COLORS[theme]}`}>
+              {THEMES.find((t) => t.value === theme)?.label ?? theme}
+            </span>
+          ))}
+          {bookmark.requires_reference && bookmark.reference_type && (
+            <span className="rounded-full border border-amber-800/40 bg-amber-900/30 px-2 py-0.5 text-[11px] text-amber-300">
+              ref · {REFERENCE_TYPE_LABELS[bookmark.reference_type] ?? bookmark.reference_type}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {date && <span className="text-[11px] text-zinc-600">{date}</span>}
@@ -166,6 +210,7 @@ export default function PromptsPage() {
   const [allPrompts, setAllPrompts] = useState<Bookmark[]>([])
   const [activeMediaType, setActiveMediaType] = useState<MediaType>('all')
   const [activeCategory, setActiveCategory] = useState<PromptCategory | 'all'>('all')
+  const [activeTheme, setActiveTheme] = useState<PromptTheme | 'all'>('all')
   const [activeModel, setActiveModel] = useState<string>('all')
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
@@ -188,12 +233,15 @@ export default function PromptsPage() {
     return models.sort()
   }, [allPrompts])
 
-  // Client-side filter by media type, search + model
+  // Client-side filter by media type, theme, model, search
   const filtered = useMemo(() => {
     let result = allPrompts
     if (activeMediaType !== 'all') {
       const allowed = new Set(MEDIA_TYPE_CATEGORIES[activeMediaType])
       result = result.filter((p) => p.prompt_category && allowed.has(p.prompt_category))
+    }
+    if (activeTheme !== 'all') {
+      result = result.filter((p) => p.prompt_themes?.includes(activeTheme))
     }
     if (activeModel !== 'all') {
       result = result.filter((p) => p.detected_model === activeModel)
@@ -208,7 +256,7 @@ export default function PromptsPage() {
       )
     }
     return result
-  }, [allPrompts, activeMediaType, activeModel, search])
+  }, [allPrompts, activeMediaType, activeTheme, activeModel, search])
 
   async function classifyPrompts() {
     setClassifying(true)
@@ -322,6 +370,25 @@ export default function PromptsPage() {
                 }`}
               >
                 {cat.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Theme filter */}
+          <div className="flex gap-1 flex-wrap">
+            <button
+              onClick={() => setActiveTheme('all')}
+              className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors ${activeTheme === 'all' ? 'bg-white/15 text-white' : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'}`}
+            >
+              All themes
+            </button>
+            {THEMES.map((t) => (
+              <button
+                key={t.value}
+                onClick={() => setActiveTheme(t.value)}
+                className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors ${activeTheme === t.value ? 'bg-white/15 text-white' : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'}`}
+              >
+                {t.label}
               </button>
             ))}
           </div>

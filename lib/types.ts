@@ -26,6 +26,25 @@ export type PromptCategory =
   | 'analysis'            // Analysis, research, summarisation
   | 'other'               // Anything else
 
+export type PromptTheme =
+  | 'person'
+  | 'cinematic'
+  | 'landscape'
+  | 'architecture'
+  | 'scifi'
+  | 'fantasy'
+  | 'abstract'
+  | 'fashion'
+  | 'product'
+  | 'horror'
+
+export type ReferenceType =
+  | 'face_person'
+  | 'style_artwork'
+  | 'subject_object'
+  | 'pose_structure'
+  | 'scene_background'
+
 export interface Bookmark {
   id: string
   tweet_id: string
@@ -43,6 +62,9 @@ export interface Bookmark {
   prompt_category: PromptCategory | null
   extracted_prompt: string | null
   detected_model: string | null
+  prompt_themes: PromptTheme[]
+  requires_reference: boolean | null
+  reference_type: ReferenceType | null
   bookmarked_at: string | null
   created_at: string
   updated_at: string

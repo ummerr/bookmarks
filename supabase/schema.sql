@@ -17,6 +17,9 @@ CREATE TABLE IF NOT EXISTS bookmarks (
   prompt_category   TEXT,
   extracted_prompt  TEXT,
   detected_model    TEXT,
+  prompt_themes     JSONB NOT NULL DEFAULT '[]',
+  requires_reference BOOLEAN,
+  reference_type    TEXT,
   bookmarked_at     TEXT,
   created_at        TEXT NOT NULL DEFAULT (NOW()::TEXT),
   updated_at        TEXT NOT NULL DEFAULT (NOW()::TEXT)

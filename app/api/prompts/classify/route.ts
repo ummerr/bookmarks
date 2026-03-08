@@ -28,6 +28,9 @@ export async function POST() {
             prompt_category: r.prompt_category,
             extracted_prompt: r.extracted_prompt,
             detected_model: r.detected_model,
+            prompt_themes: r.prompt_themes,
+            requires_reference: r.requires_reference,
+            reference_type: r.reference_type,
           })
           classified++
         }

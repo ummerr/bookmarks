@@ -1,6 +1,6 @@
 import postgres from 'postgres'
 import { randomUUID } from 'crypto'
-import type { Bookmark, BookmarkInsert, Category, CategoryCounts, PromptCategory } from './types'
+import type { Bookmark, BookmarkInsert, Category, CategoryCounts, PromptCategory, PromptTheme, ReferenceType } from './types'
 
 // Lazy init — prevents build-time failure when Next.js collects page data
 let _sql: ReturnType<typeof postgres> | undefined
@@ -16,11 +16,14 @@ function toBookmark(row: Record<string, any>): Bookmark {
     ...row,
     media_urls: typeof row.media_urls === 'string' ? JSON.parse(row.media_urls) : (row.media_urls ?? []),
     thread_tweets: typeof row.thread_tweets === 'string' ? JSON.parse(row.thread_tweets) : (row.thread_tweets ?? []),
+    prompt_themes: typeof row.prompt_themes === 'string' ? JSON.parse(row.prompt_themes) : (row.prompt_themes ?? []),
     is_thread: Boolean(row.is_thread),
     confidence: Number(row.confidence),
     prompt_category: row.prompt_category ?? null,
     extracted_prompt: row.extracted_prompt ?? null,
     detected_model: row.detected_model ?? null,
+    requires_reference: row.requires_reference ?? null,
+    reference_type: row.reference_type ?? null,
   } as Bookmark
 }
 
@@ -210,13 +213,23 @@ export async function getUnclassifiedPrompts(limit = 50): Promise<Pick<Bookmark,
 
 export async function updatePromptExtraction(
   id: string,
-  data: { prompt_category: PromptCategory; extracted_prompt: string | null; detected_model: string | null }
+  data: {
+    prompt_category: PromptCategory
+    extracted_prompt: string | null
+    detected_model: string | null
+    prompt_themes: PromptTheme[]
+    requires_reference: boolean | null
+    reference_type: ReferenceType | null
+  }
 ): Promise<void> {
   await getSql()`
     UPDATE bookmarks
     SET prompt_category = ${data.prompt_category},
         extracted_prompt = ${data.extracted_prompt},
         detected_model = ${data.detected_model},
+        prompt_themes = ${JSON.stringify(data.prompt_themes)}::jsonb,
+        requires_reference = ${data.requires_reference},
+        reference_type = ${data.reference_type},
         updated_at = NOW()::TEXT
     WHERE id = ${id}
   `
