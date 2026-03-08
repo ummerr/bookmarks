@@ -3,6 +3,21 @@
 import { useState, useEffect, useMemo } from 'react'
 import type { Bookmark, PromptCategory } from '@/lib/types'
 
+const MEDIA_TYPES = [
+  { value: 'all',   label: 'All' },
+  { value: 'image', label: 'Image' },
+  { value: 'video', label: 'Video' },
+  { value: 'text',  label: 'Text' },
+] as const
+type MediaType = typeof MEDIA_TYPES[number]['value']
+
+const MEDIA_TYPE_CATEGORIES: Record<MediaType, (PromptCategory | 'all')[]> = {
+  all:   ['all', 'image_t2i', 'image_i2i', 'image_r2i', 'image_character_ref', 'image_inpainting', 'video_t2v', 'video_i2v', 'video_r2v', 'video_v2v', 'audio', 'threed', 'system_prompt', 'writing', 'coding', 'analysis', 'other'],
+  image: ['image_t2i', 'image_i2i', 'image_r2i', 'image_character_ref', 'image_inpainting'],
+  video: ['video_t2v', 'video_i2v', 'video_r2v', 'video_v2v'],
+  text:  ['system_prompt', 'writing', 'coding', 'analysis', 'audio', 'threed', 'other'],
+}
+
 const CATEGORIES: { value: PromptCategory | 'all'; label: string }[] = [
   { value: 'all',                  label: 'All' },
   { value: 'image_t2i',           label: 'T2I' },
@@ -149,6 +164,7 @@ function PromptCard({ bookmark }: { bookmark: Bookmark }) {
 
 export default function PromptsPage() {
   const [allPrompts, setAllPrompts] = useState<Bookmark[]>([])
+  const [activeMediaType, setActiveMediaType] = useState<MediaType>('all')
   const [activeCategory, setActiveCategory] = useState<PromptCategory | 'all'>('all')
   const [activeModel, setActiveModel] = useState<string>('all')
   const [search, setSearch] = useState('')
@@ -172,9 +188,13 @@ export default function PromptsPage() {
     return models.sort()
   }, [allPrompts])
 
-  // Client-side filter by search + model
+  // Client-side filter by media type, search + model
   const filtered = useMemo(() => {
     let result = allPrompts
+    if (activeMediaType !== 'all') {
+      const allowed = new Set(MEDIA_TYPE_CATEGORIES[activeMediaType])
+      result = result.filter((p) => p.prompt_category && allowed.has(p.prompt_category))
+    }
     if (activeModel !== 'all') {
       result = result.filter((p) => p.detected_model === activeModel)
     }
@@ -188,7 +208,7 @@ export default function PromptsPage() {
       )
     }
     return result
-  }, [allPrompts, activeModel, search])
+  }, [allPrompts, activeMediaType, activeModel, search])
 
   async function classifyPrompts() {
     setClassifying(true)
@@ -270,9 +290,28 @@ export default function PromptsPage() {
 
         {/* Filters */}
         <div className="flex flex-col gap-2">
-          {/* Category */}
+          {/* Media type toggle */}
+          <div className="flex gap-1 p-0.5 bg-white/5 rounded-lg w-fit">
+            {MEDIA_TYPES.map((mt) => (
+              <button
+                key={mt.value}
+                onClick={() => { setActiveMediaType(mt.value); setActiveCategory('all'); setActiveModel('all') }}
+                className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+                  activeMediaType === mt.value
+                    ? 'bg-white/15 text-white'
+                    : 'text-zinc-500 hover:text-zinc-300'
+                }`}
+              >
+                {mt.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Sub-category chips — narrowed by media type */}
           <div className="flex gap-1 flex-wrap">
-            {CATEGORIES.map((cat) => (
+            {CATEGORIES.filter((cat) =>
+              cat.value === 'all' || MEDIA_TYPE_CATEGORIES[activeMediaType].includes(cat.value)
+            ).map((cat) => (
               <button
                 key={cat.value}
                 onClick={() => { setActiveCategory(cat.value); setActiveModel('all') }}
