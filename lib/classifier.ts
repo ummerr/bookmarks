@@ -150,7 +150,8 @@ export async function classifyPromptBatch(
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { results } = toolUse.input as { results: any[] }
+  const raw = (toolUse.input as { results: any }).results
+  const results: any[] = Array.isArray(raw) ? raw : raw ? [raw] : []
 
   return results.map((r) => ({
     id: r.id,
