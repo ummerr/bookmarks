@@ -299,12 +299,17 @@ interface StatsData {
 export default function StatsPage() {
   const [stats, setStats] = useState<StatsData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/stats')
-      .then((r) => r.json())
+      .then(async (r) => {
+        const d = await r.json()
+        if (!r.ok) throw new Error(d.error ?? `HTTP ${r.status}`)
+        return d
+      })
       .then((d) => { setStats(d); setLoading(false) })
-      .catch(() => setLoading(false))
+      .catch((e) => { setError(String(e)); setLoading(false) })
   }, [])
 
   // Derive media type breakdown from byCategory
@@ -351,8 +356,9 @@ export default function StatsPage() {
 
   if (!stats) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center gap-2">
         <p className="text-zinc-500 text-sm">Failed to load stats.</p>
+        {error && <p className="text-red-400 text-xs max-w-lg text-center">{error}</p>}
       </div>
     )
   }
