@@ -5,7 +5,7 @@ const SYSTEM_PROMPT = `You are a tweet classifier. Classify each tweet into exac
 
 - tech_ai_product: Technology, AI, ML, product management, startups, developer tools, shipping updates, tech industry news
 - career_productivity: Career growth, job searching, workplace advice, productivity systems, professional development, networking
-- prompts: AI prompts, prompt engineering, system prompts, LLM usage patterns, ChatGPT/Claude techniques, jailbreaks
+- prompts: ANY tweet that contains a prompt or prompt text for ANY AI tool — image generation (Midjourney, DALL-E, Flux, Stable Diffusion, Firefly, Ideogram, Leonardo, or ANY unfamiliar/unknown image gen tool), video generation (Sora, Runway, Kling, Pika, Luma, Hailuo, Wan, or any unfamiliar video tool), audio generation (Suno, Udio, ElevenLabs), 3D generation, LLM prompts (ChatGPT, Claude, Gemini), system prompts, prompt engineering. KEY RULE: if the tweet body contains descriptive visual text that reads like an image or video prompt — even if the tool name is unfamiliar or made-up — classify it as "prompts".
 
 For each tweet, return JSON:
 {"tweet_id": "...", "category": "...", "confidence": 0.0-1.0, "rationale": "one line explanation"}
