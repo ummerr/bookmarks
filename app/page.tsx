@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react'
 import type { Bookmark, Category, CategoryCounts } from '@/lib/types'
 import Sidebar from '@/components/Sidebar'
 import BookmarkCard from '@/components/BookmarkCard'
-import ClassifyButton from '@/components/ClassifyButton'
 
 type SortOption = 'newest' | 'oldest' | 'confidence' | 'author'
 const PAGE_SIZE = 30
@@ -101,7 +100,6 @@ export default function Dashboard() {
             </h1>
 
             <div className="flex items-center gap-3">
-              <ClassifyButton onDone={() => { fetchCounts(); fetchBookmarks(0, true) }} />
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as SortOption)}
