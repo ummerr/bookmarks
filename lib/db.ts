@@ -222,6 +222,16 @@ export async function getPrompts(promptCategory?: PromptCategory | 'all'): Promi
   return rows.map(toBookmark)
 }
 
+export async function getRandomPrompt(): Promise<Bookmark | null> {
+  const rows = await getSql()<Record<string, unknown>[]>`
+    SELECT * FROM bookmarks
+    WHERE category = 'prompts' AND prompt_category IS NOT NULL
+    ORDER BY RANDOM()
+    LIMIT 1
+  `
+  return rows.length ? toBookmark(rows[0]) : null
+}
+
 export async function countUnclassifiedPrompts(): Promise<number> {
   const [{ n }] = await getSql()<{ n: string }[]>`
     SELECT COUNT(*) as n FROM bookmarks
