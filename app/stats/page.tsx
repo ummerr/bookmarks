@@ -375,6 +375,43 @@ export default function StatsPage() {
           </p>
         </div>
 
+        {/* About the collection */}
+        <div className="rounded-2xl border border-white/8 bg-gradient-to-br from-[#111] to-[#0e0e0e] p-6 md:p-8 flex flex-col gap-6">
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-[#1DA1F2] text-lg">✦</span>
+              <h2 className="text-base font-semibold text-white tracking-tight">About this collection</h2>
+            </div>
+            <p className="text-sm text-zinc-400 leading-relaxed max-w-2xl">
+              A hand-curated library of AI prompts sourced from the people actually pushing these tools to their limits —
+              practitioners, artists, and researchers sharing their best work on X. Not scraped. Not synthetic.
+              Real prompts that produced real results, bookmarked because they were worth keeping.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              {
+                title: 'Full-spectrum taxonomy',
+                body: 'Spans every AI media type — text-to-image, image-to-video, reference workflows, audio, 3D, and LLM prompts — under a single unified taxonomy. Most libraries only cover one.',
+              },
+              {
+                title: 'Structurally rich',
+                body: 'Every prompt is tagged with technique type, visual themes, art style, detected model, and whether a reference image is required. Metadata that actually means something.',
+              },
+              {
+                title: 'Reference-aware',
+                body: 'One of the few collections that distinguishes reference-based workflows (IP-Adapter, face swap, img2img) from pure text prompts — critical for knowing what you can actually run.',
+              },
+            ].map((f) => (
+              <div key={f.title} className="rounded-xl border border-white/6 bg-white/[0.02] p-4 flex flex-col gap-1.5">
+                <p className="text-xs font-semibold text-zinc-200">{f.title}</p>
+                <p className="text-xs text-zinc-500 leading-relaxed">{f.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Chart 1: By Category */}
         <div className="rounded-2xl border border-white/8 bg-[#111] p-6 md:p-8">
           <DonutChart
