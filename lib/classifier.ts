@@ -153,17 +153,21 @@ export async function classifyPromptBatch(
   const raw = (toolUse.input as { results: any }).results
   const results: any[] = Array.isArray(raw) ? raw : raw ? [raw] : []
 
-  return results.map((r) => ({
-    id: r.id,
-    prompt_category: VALID_CATEGORIES.has(r.prompt_category) ? r.prompt_category : 'other',
-    extracted_prompt: r.extracted_prompt ?? null,
-    detected_model: r.detected_model ?? null,
-    prompt_themes: Array.isArray(r.prompt_themes)
-      ? r.prompt_themes.filter((t: string) => VALID_THEMES.has(t as PromptTheme))
-      : [],
-    requires_reference: typeof r.requires_reference === 'boolean' ? r.requires_reference : null,
-    reference_type: VALID_REF_TYPES.has(r.reference_type) ? r.reference_type : null,
-  }))
+  const validIds = new Set(prompts.map((p) => p.id))
+
+  return results
+    .filter((r) => r.id && validIds.has(r.id))
+    .map((r) => ({
+      id: r.id as string,
+      prompt_category: VALID_CATEGORIES.has(r.prompt_category) ? r.prompt_category : 'other',
+      extracted_prompt: r.extracted_prompt ?? null,
+      detected_model: r.detected_model ?? null,
+      prompt_themes: Array.isArray(r.prompt_themes)
+        ? r.prompt_themes.filter((t: string) => VALID_THEMES.has(t as PromptTheme))
+        : [],
+      requires_reference: typeof r.requires_reference === 'boolean' ? r.requires_reference : null,
+      reference_type: VALID_REF_TYPES.has(r.reference_type) ? r.reference_type : null,
+    }))
 }
 
 export async function classifyBatch(
