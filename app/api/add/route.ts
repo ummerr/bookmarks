@@ -21,6 +21,7 @@ export async function POST(req: Request) {
         extracted_prompt: result.extracted_prompt,
         detected_model: result.detected_model,
         prompt_themes: result.prompt_themes,
+        art_styles: result.art_styles,
         requires_reference: result.requires_reference,
         reference_type: result.reference_type,
       })

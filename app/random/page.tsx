@@ -122,6 +122,11 @@ export default function RandomPage() {
                   {theme}
                 </span>
               ))}
+              {prompt.art_styles?.map((style) => (
+                <span key={style} className="rounded-full border border-zinc-700/60 bg-zinc-800/60 px-2.5 py-1 text-xs text-zinc-400">
+                  {style.replace(/_/g, ' ')}
+                </span>
+              ))}
               {prompt.requires_reference && prompt.reference_type && (
                 <span className="rounded-full border border-amber-800/40 bg-amber-900/30 px-2.5 py-1 text-xs text-amber-300">
                   ref · {REFERENCE_TYPE_LABELS[prompt.reference_type] ?? prompt.reference_type}

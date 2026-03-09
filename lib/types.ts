@@ -38,6 +38,26 @@ export type PromptTheme =
   | 'product'
   | 'horror'
 
+export type ArtStyle =
+  | 'photorealistic'
+  | 'anime'
+  | 'illustration'
+  | 'oil_painting'
+  | 'watercolor'
+  | 'digital_art'
+  | 'sketch'
+  | 'pixel_art'
+  | '3d_render'
+  | 'concept_art'
+  | 'comic_book'
+  | 'minimalist'
+  | 'surrealist'
+  | 'impressionist'
+  | 'cinematic_photo'
+  | 'neon_noir'
+  | 'vintage'
+  | 'flat_design'
+
 export type ReferenceType =
   | 'face_person'
   | 'style_artwork'
@@ -65,6 +85,7 @@ export interface Bookmark {
   prompt_themes: PromptTheme[]
   requires_reference: boolean | null
   reference_type: ReferenceType | null
+  art_styles: ArtStyle[]
   bookmarked_at: string | null
   source: 'twitter' | 'manual'
   created_at: string

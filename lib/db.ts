@@ -1,6 +1,6 @@
 import postgres from 'postgres'
 import { randomUUID } from 'crypto'
-import type { Bookmark, BookmarkInsert, Category, CategoryCounts, PromptCategory, PromptTheme, ReferenceType } from './types'
+import type { ArtStyle, Bookmark, BookmarkInsert, Category, CategoryCounts, PromptCategory, PromptTheme, ReferenceType } from './types'
 
 // Lazy init — prevents build-time failure when Next.js collects page data
 let _sql: ReturnType<typeof postgres> | undefined
@@ -17,6 +17,7 @@ function toBookmark(row: Record<string, any>): Bookmark {
     media_urls: typeof row.media_urls === 'string' ? JSON.parse(row.media_urls) : (row.media_urls ?? []),
     thread_tweets: typeof row.thread_tweets === 'string' ? JSON.parse(row.thread_tweets) : (row.thread_tweets ?? []),
     prompt_themes: typeof row.prompt_themes === 'string' ? JSON.parse(row.prompt_themes) : (row.prompt_themes ?? []),
+    art_styles: typeof row.art_styles === 'string' ? JSON.parse(row.art_styles) : (row.art_styles ?? []),
     is_thread: Boolean(row.is_thread),
     confidence: Number(row.confidence),
     prompt_category: row.prompt_category ?? null,
@@ -258,6 +259,7 @@ export async function updatePromptExtraction(
     prompt_themes: PromptTheme[]
     requires_reference: boolean | null
     reference_type: ReferenceType | null
+    art_styles: ArtStyle[]
   }
 ): Promise<void> {
   await getSql()`
@@ -268,6 +270,7 @@ export async function updatePromptExtraction(
         prompt_themes = ${JSON.stringify(data.prompt_themes ?? [])}::jsonb,
         requires_reference = ${data.requires_reference ?? null},
         reference_type = ${data.reference_type ?? null},
+        art_styles = ${JSON.stringify(data.art_styles ?? [])}::jsonb,
         updated_at = NOW()::TEXT
     WHERE id = ${id}
   `

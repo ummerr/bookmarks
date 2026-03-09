@@ -20,14 +20,16 @@ CREATE TABLE IF NOT EXISTS bookmarks (
   prompt_themes     JSONB NOT NULL DEFAULT '[]',
   requires_reference BOOLEAN,
   reference_type    TEXT,
+  art_styles        JSONB NOT NULL DEFAULT '[]',
   bookmarked_at     TEXT,
   source            TEXT NOT NULL DEFAULT 'twitter',
   created_at        TEXT NOT NULL DEFAULT (NOW()::TEXT),
   updated_at        TEXT NOT NULL DEFAULT (NOW()::TEXT)
 );
 
--- Migration (run if table already exists):
+-- Migrations (run if table already exists):
 -- ALTER TABLE bookmarks ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'twitter';
+-- ALTER TABLE bookmarks ADD COLUMN IF NOT EXISTS art_styles JSONB NOT NULL DEFAULT '[]';
 
 CREATE INDEX IF NOT EXISTS idx_bm_category      ON bookmarks(category);
 CREATE INDEX IF NOT EXISTS idx_bm_author        ON bookmarks(author_handle);

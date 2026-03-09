@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import type { Bookmark, PromptCategory, PromptTheme } from '@/lib/types'
+import type { ArtStyle, Bookmark, PromptCategory, PromptTheme } from '@/lib/types'
 
 const MEDIA_TYPES = [
   { value: 'all',   label: 'All' },
@@ -189,6 +189,11 @@ function PromptCard({ bookmark }: { bookmark: Bookmark }) {
           {bookmark.prompt_themes?.map((theme) => (
             <span key={theme} className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${THEME_COLORS[theme]}`}>
               {THEMES.find((t) => t.value === theme)?.label ?? theme}
+            </span>
+          ))}
+          {bookmark.art_styles?.map((style) => (
+            <span key={style} className="rounded-full border border-zinc-700/60 bg-zinc-800/60 px-2 py-0.5 text-[11px] text-zinc-400">
+              {style.replace(/_/g, ' ')}
             </span>
           ))}
           {bookmark.requires_reference && bookmark.reference_type && (

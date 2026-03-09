@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
-import type { Bookmark, Category, ClassificationResult, PromptCategory, PromptTheme, ReferenceType } from './types'
+import type { ArtStyle, Bookmark, Category, ClassificationResult, PromptCategory, PromptTheme, ReferenceType } from './types'
 
 const SYSTEM_PROMPT = `You are a tweet classifier. Classify each tweet into exactly one category:
 
@@ -61,6 +61,10 @@ Text:
 THEMES (for image/video prompts only — return [] for text/audio/3D):
 Pick 1-3 that apply from: person, cinematic, landscape, architecture, scifi, fantasy, abstract, fashion, product, horror
 
+ART STYLES (for image/video prompts only — return [] for text/audio/3D):
+Pick 0-3 that apply from: photorealistic, anime, illustration, oil_painting, watercolor, digital_art, sketch, pixel_art, 3d_render, concept_art, comic_book, minimalist, surrealist, impressionist, cinematic_photo, neon_noir, vintage, flat_design
+Return [] if the prompt doesn't specify or imply a visual style.
+
 REFERENCE IMAGE:
 - requires_reference: true if the prompt explicitly needs the user to supply an input image to work (e.g. img2img, IP-Adapter, ControlNet, face swap, image-to-video). false if it's purely text-driven. null for non-image/video categories.
 - reference_type: if requires_reference is true, pick one: face_person, style_artwork, subject_object, pose_structure, scene_background. Otherwise null.
@@ -72,6 +76,7 @@ For each item return:
 - detected_model: the AI tool name if identifiable — use null if unclear
 - extracted_prompt: ONLY the clean prompt text — strip social framing, hashtags, engagement bait. Keep model syntax (--ar, --v, negative prompts, cfg, etc.). Return null only if no clear prompt text exists.
 - prompt_themes: array of 0-3 theme strings ([] for text/audio/3D prompts)
+- art_styles: array of 0-3 art style strings ([] for text/audio/3D prompts or if no style is implied)
 - requires_reference: true | false | null
 - reference_type: one of the reference types or null
 
@@ -86,6 +91,12 @@ const VALID_CATEGORIES = new Set<PromptCategory>([
 const VALID_THEMES = new Set<PromptTheme>([
   'person', 'cinematic', 'landscape', 'architecture', 'scifi',
   'fantasy', 'abstract', 'fashion', 'product', 'horror',
+])
+const VALID_ART_STYLES = new Set<ArtStyle>([
+  'photorealistic', 'anime', 'illustration', 'oil_painting', 'watercolor',
+  'digital_art', 'sketch', 'pixel_art', '3d_render', 'concept_art',
+  'comic_book', 'minimalist', 'surrealist', 'impressionist',
+  'cinematic_photo', 'neon_noir', 'vintage', 'flat_design',
 ])
 const VALID_REF_TYPES = new Set<ReferenceType>([
   'face_person', 'style_artwork', 'subject_object', 'pose_structure', 'scene_background',
@@ -108,10 +119,11 @@ const CLASSIFY_TOOL: Anthropic.Tool = {
             detected_model:     { type: ['string', 'null'] },
             extracted_prompt:   { type: ['string', 'null'] },
             prompt_themes:      { type: 'array', items: { type: 'string' } },
+            art_styles:         { type: 'array', items: { type: 'string' } },
             requires_reference: { type: ['boolean', 'null'] },
             reference_type:     { type: ['string', 'null'] },
           },
-          required: ['id', 'prompt_category', 'detected_model', 'extracted_prompt', 'prompt_themes', 'requires_reference', 'reference_type'],
+          required: ['id', 'prompt_category', 'detected_model', 'extracted_prompt', 'prompt_themes', 'art_styles', 'requires_reference', 'reference_type'],
         },
       },
     },
@@ -127,6 +139,7 @@ export async function classifyPromptBatch(
   extracted_prompt: string | null
   detected_model: string | null
   prompt_themes: PromptTheme[]
+  art_styles: ArtStyle[]
   requires_reference: boolean | null
   reference_type: ReferenceType | null
 }[]> {
@@ -164,6 +177,9 @@ export async function classifyPromptBatch(
       detected_model: r.detected_model ?? null,
       prompt_themes: Array.isArray(r.prompt_themes)
         ? r.prompt_themes.filter((t: string) => VALID_THEMES.has(t as PromptTheme))
+        : [],
+      art_styles: Array.isArray(r.art_styles)
+        ? r.art_styles.filter((s: string) => VALID_ART_STYLES.has(s as ArtStyle))
         : [],
       requires_reference: typeof r.requires_reference === 'boolean' ? r.requires_reference : null,
       reference_type: VALID_REF_TYPES.has(r.reference_type) ? r.reference_type : null,
