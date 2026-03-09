@@ -222,6 +222,17 @@ function PromptCard({ bookmark }: { bookmark: Bookmark }) {
         </div>
       </div>
 
+      {/* Media thumbnails */}
+      {bookmark.media_urls.length > 0 && (
+        <div className="flex gap-2 flex-wrap">
+          {bookmark.media_urls.slice(0, 4).map((url) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img key={url} src={url} alt="media"
+              className="h-24 w-24 rounded-lg object-cover border border-white/8" />
+          ))}
+        </div>
+      )}
+
       {/* Prompt text */}
       <pre className="whitespace-pre-wrap break-words text-sm text-zinc-100 font-mono leading-relaxed bg-white/[0.03] rounded-lg p-3 border border-white/5 overflow-auto max-h-64">
         {prompt}

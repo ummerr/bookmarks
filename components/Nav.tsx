@@ -9,7 +9,6 @@ const LINKS = [
   { href: '/stats',   label: 'Stats' },
   { href: '/',        label: 'Bookmarks' },
   { href: '/add',     label: 'Add' },
-  { href: '/import',  label: 'Import' },
   { href: '/tools',   label: 'Tools' },
 ]
 
