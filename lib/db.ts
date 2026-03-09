@@ -252,12 +252,12 @@ export async function updatePromptExtraction(
 ): Promise<void> {
   await getSql()`
     UPDATE bookmarks
-    SET prompt_category = ${data.prompt_category},
-        extracted_prompt = ${data.extracted_prompt},
-        detected_model = ${data.detected_model},
-        prompt_themes = ${JSON.stringify(data.prompt_themes)}::jsonb,
-        requires_reference = ${data.requires_reference},
-        reference_type = ${data.reference_type},
+    SET prompt_category = ${data.prompt_category ?? 'other'},
+        extracted_prompt = ${data.extracted_prompt ?? null},
+        detected_model = ${data.detected_model ?? null},
+        prompt_themes = ${JSON.stringify(data.prompt_themes ?? [])}::jsonb,
+        requires_reference = ${data.requires_reference ?? null},
+        reference_type = ${data.reference_type ?? null},
         updated_at = NOW()::TEXT
     WHERE id = ${id}
   `
