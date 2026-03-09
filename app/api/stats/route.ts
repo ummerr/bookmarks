@@ -28,8 +28,10 @@ export async function GET() {
       sql<{ theme: string; n: string }[]>`
         SELECT t.theme, COUNT(*) as n
         FROM bookmarks
-        CROSS JOIN LATERAL jsonb_array_elements_text(COALESCE(prompt_themes, '[]'::jsonb)) AS t(theme)
+        CROSS JOIN LATERAL jsonb_array_elements_text(prompt_themes) AS t(theme)
         WHERE category = 'prompts'
+          AND prompt_themes IS NOT NULL
+          AND jsonb_typeof(prompt_themes) = 'array'
         GROUP BY t.theme
         ORDER BY n DESC
       `,
