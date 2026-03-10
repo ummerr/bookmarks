@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { Bookmark, Category } from '@/lib/types'
 import CategoryBadge from './CategoryBadge'
+import MediaThumbnail from './MediaThumbnail'
 
 interface Props {
   bookmark: Bookmark
@@ -74,9 +75,7 @@ export default function BookmarkCard({ bookmark, onUpdate }: Props) {
       {bookmark.media_urls.length > 0 && (
         <div className="flex gap-2 flex-wrap">
           {bookmark.media_urls.slice(0, 4).map((url) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img key={url} src={url} alt="media"
-              className="h-20 w-20 rounded-lg object-cover border border-white/8" />
+            <MediaThumbnail key={url} url={url} size={20} />
           ))}
         </div>
       )}

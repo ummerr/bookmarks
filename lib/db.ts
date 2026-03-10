@@ -223,14 +223,45 @@ export async function getPrompts(promptCategory?: PromptCategory | 'all'): Promi
   return rows.map(toBookmark)
 }
 
-export async function getRandomPrompt(): Promise<Bookmark | null> {
-  const rows = await getSql()<Record<string, unknown>[]>`
-    SELECT * FROM bookmarks
-    WHERE category = 'prompts' AND prompt_category IS NOT NULL
-    ORDER BY RANDOM()
-    LIMIT 1
-  `
+export async function getRandomPrompt(opts: {
+  prompt_category?: PromptCategory | null
+  prompt_theme?: PromptTheme | null
+  detected_model?: string | null
+} = {}): Promise<Bookmark | null> {
+  const conditions = ["category = 'prompts'", "prompt_category IS NOT NULL"]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const params: any[] = []
+
+  if (opts.prompt_category) {
+    params.push(opts.prompt_category)
+    conditions.push(`prompt_category = $${params.length}`)
+  }
+  if (opts.prompt_theme) {
+    params.push(JSON.stringify([opts.prompt_theme]))
+    conditions.push(`prompt_themes @> $${params.length}::jsonb`)
+  }
+  if (opts.detected_model) {
+    params.push(opts.detected_model)
+    conditions.push(`detected_model = $${params.length}`)
+  }
+
+  const rows = await getSql().unsafe(
+    `SELECT * FROM bookmarks WHERE ${conditions.join(' AND ')} ORDER BY RANDOM() LIMIT 1`,
+    params
+  ) as Record<string, unknown>[]
   return rows.length ? toBookmark(rows[0]) : null
+}
+
+export async function getDistinctModels(): Promise<string[]> {
+  const rows = await getSql()<{ detected_model: string }[]>`
+    SELECT detected_model, COUNT(*) as n
+    FROM bookmarks
+    WHERE category = 'prompts' AND detected_model IS NOT NULL AND detected_model != ''
+    GROUP BY detected_model
+    ORDER BY n DESC
+    LIMIT 15
+  `
+  return rows.map(r => r.detected_model)
 }
 
 export async function countUnclassifiedPrompts(): Promise<number> {

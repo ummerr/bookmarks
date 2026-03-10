@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import type { ArtStyle, Bookmark, PromptCategory, PromptTheme } from '@/lib/types'
+import MediaThumbnail from '@/components/MediaThumbnail'
 
 const MEDIA_TYPES = [
   { value: 'all',   label: 'All' },
@@ -233,9 +234,7 @@ function PromptCard({ bookmark }: { bookmark: Bookmark }) {
       {bookmark.media_urls.length > 0 && (
         <div className="flex gap-2 flex-wrap">
           {bookmark.media_urls.slice(0, 4).map((url) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img key={url} src={url} alt="media"
-              className="h-24 w-24 rounded-lg object-cover border border-white/8" />
+            <MediaThumbnail key={url} url={url} size={24} />
           ))}
         </div>
       )}
