@@ -411,7 +411,7 @@ export default function PromptsPage() {
               {[
                 CATEGORIES.find((c) => c.value === 'all')!,
                 ...CATEGORIES
-                  .filter((cat) => cat.value !== 'all' && MEDIA_TYPE_CATEGORIES[activeMediaType].includes(cat.value))
+                  .filter((cat) => cat.value !== 'all' && MEDIA_TYPE_CATEGORIES[activeMediaType].includes(cat.value) && (categoryCounts[cat.value] ?? 0) > 0)
                   .sort((a, b) => (categoryCounts[b.value] ?? 0) - (categoryCounts[a.value] ?? 0)),
               ].map((cat) => (
                 <button
