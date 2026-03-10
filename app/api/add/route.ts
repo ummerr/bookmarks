@@ -15,7 +15,7 @@ export async function POST(req: Request) {
 
     // Auto-classify immediately
     try {
-      const [result] = await classifyPromptBatch([{ id: bookmark.id, tweet_text: bookmark.tweet_text }])
+      const [result] = await classifyPromptBatch([{ id: bookmark.id, tweet_text: bookmark.tweet_text, thread_tweets: [] }])
       await updatePromptExtraction(bookmark.id, {
         prompt_category: result.prompt_category,
         extracted_prompt: result.extracted_prompt,

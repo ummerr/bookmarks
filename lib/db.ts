@@ -272,13 +272,19 @@ export async function countUnclassifiedPrompts(): Promise<number> {
   return Number(n)
 }
 
-export async function getUnclassifiedPrompts(limit = 50): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[]> {
-  return getSql()<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[]>`
-    SELECT id, tweet_id, tweet_text FROM bookmarks
+export async function getUnclassifiedPrompts(limit = 50): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text' | 'thread_tweets'>[]> {
+  const rows = await getSql()<Record<string, unknown>[]>`
+    SELECT id, tweet_id, tweet_text, thread_tweets FROM bookmarks
     WHERE category = 'prompts' AND (prompt_category IS NULL OR extracted_prompt IS NULL)
     ORDER BY created_at ASC
     LIMIT ${limit}
   `
+  return rows.map((r) => ({
+    id: r.id as string,
+    tweet_id: r.tweet_id as string,
+    tweet_text: r.tweet_text as string,
+    thread_tweets: typeof r.thread_tweets === 'string' ? JSON.parse(r.thread_tweets) : (r.thread_tweets ?? []),
+  }))
 }
 
 export async function updatePromptExtraction(

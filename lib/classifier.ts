@@ -1,17 +1,98 @@
 import Anthropic from '@anthropic-ai/sdk'
 import type { ArtStyle, Bookmark, Category, ClassificationResult, PromptCategory, PromptTheme, ReferenceType } from './types'
 
-const SYSTEM_PROMPT = `You are a tweet classifier. Classify each tweet into exactly one category:
+// ── Model name normalisation map ──────────────────────────────────────────
+// Maps common variants/aliases → canonical slug used in the DB.
+const MODEL_ALIASES: Record<string, string> = {
+  // Midjourney
+  'midjourney':        'Midjourney',
+  'mj':                'Midjourney',
+  'mid journey':       'Midjourney',
+  // DALL-E
+  'dall-e':            'DALL-E',
+  'dalle':             'DALL-E',
+  'dall e':            'DALL-E',
+  'dall-e 3':          'DALL-E',
+  'dall-e3':           'DALL-E',
+  // Flux
+  'flux':              'Flux',
+  'flux.1':            'Flux',
+  'flux1':             'Flux',
+  // Stable Diffusion
+  'stable diffusion':  'Stable Diffusion',
+  'sd':                'Stable Diffusion',
+  'sdxl':              'Stable Diffusion',
+  'sd xl':             'Stable Diffusion',
+  'sd 1.5':            'Stable Diffusion',
+  // Firefly
+  'adobe firefly':     'Firefly',
+  'firefly':           'Firefly',
+  // Ideogram
+  'ideogram':          'Ideogram',
+  // Leonardo
+  'leonardo':          'Leonardo',
+  'leonardo.ai':       'Leonardo',
+  // Runway
+  'runway':            'Runway',
+  'runway gen3':       'Runway',
+  'runway gen-3':      'Runway',
+  'runwayml':          'Runway',
+  // Kling
+  'kling':             'Kling',
+  // Pika
+  'pika':              'Pika',
+  'pika labs':         'Pika',
+  // Luma
+  'luma':              'Luma',
+  'luma dream machine': 'Luma',
+  'luma ai':           'Luma',
+  // Hailuo
+  'hailuo':            'Hailuo',
+  // Sora
+  'sora':              'Sora',
+  // Wan
+  'wan':               'Wan',
+  // Suno
+  'suno':              'Suno',
+  // Udio
+  'udio':              'Udio',
+  // ElevenLabs
+  'elevenlabs':        'ElevenLabs',
+  'eleven labs':       'ElevenLabs',
+  // ChatGPT / OpenAI
+  'chatgpt':           'ChatGPT',
+  'gpt-4':             'ChatGPT',
+  'gpt4':              'ChatGPT',
+  'openai':            'ChatGPT',
+  // Claude
+  'claude':            'Claude',
+  // Gemini
+  'gemini':            'Gemini',
+  'google gemini':     'Gemini',
+  // Meshy / 3D
+  'meshy':             'Meshy',
+  'tripo3d':           'Tripo3D',
+  'tripo':             'Tripo3D',
+}
 
-- tech_ai_product: Technology, AI, ML, product management, startups, developer tools, shipping updates, tech industry news
-- career_productivity: Career growth, job searching, workplace advice, productivity systems, professional development, networking
-- prompts: ANY tweet that contains a prompt or prompt text for ANY AI tool — image generation (Midjourney, DALL-E, Flux, Stable Diffusion, Firefly, Ideogram, Leonardo, or ANY unfamiliar/unknown image gen tool), video generation (Sora, Runway, Kling, Pika, Luma, Hailuo, Wan, or any unfamiliar video tool), audio generation (Suno, Udio, ElevenLabs), 3D generation, LLM prompts (ChatGPT, Claude, Gemini), system prompts, prompt engineering. KEY RULE: if the tweet body contains descriptive visual text that reads like an image or video prompt — even if the tool name is unfamiliar or made-up — classify it as "prompts".
+function normaliseModel(raw: string | null): string | null {
+  if (!raw) return null
+  const key = raw.toLowerCase().trim()
+  return MODEL_ALIASES[key] ?? raw.trim()
+}
 
-For each tweet, return JSON:
-{"tweet_id": "...", "category": "...", "confidence": 0.0-1.0, "rationale": "one line explanation"}
+// ── Pre-processing ─────────────────────────────────────────────────────────
+// Strip t.co URLs, trailing hashtag clusters, and excessive whitespace before
+// sending to the API. Keeps prompt content, removes tweet boilerplate.
+function preprocessTweet(text: string): string {
+  return text
+    .replace(/https?:\/\/t\.co\/\S+/g, '')     // strip t.co shortlinks
+    .replace(/(^|\s)(#\w+)/g, ' ')             // strip hashtags
+    .replace(/\s{2,}/g, ' ')                   // collapse whitespace
+    .trim()
+}
 
-If confidence < 0.7, set category to "uncategorized".
-Return a JSON array of all classifications. Return ONLY the JSON array, no markdown, no extra text.`
+// ── Shared helpers ─────────────────────────────────────────────────────────
 
 function getClient() {
   if (!process.env.ANTHROPIC_API_KEY) {
@@ -29,6 +110,87 @@ async function withRetry<T>(fn: () => Promise<T>, retries = 1, delayMs = 2000): 
     return withRetry(fn, retries - 1, delayMs)
   }
 }
+
+// ── Bookmark classification (step 1) ──────────────────────────────────────
+
+const CLASSIFY_SYSTEM = `You are a tweet classifier. Classify each tweet into exactly one category:
+
+- tech_ai_product: Technology, AI, ML, product management, startups, developer tools, shipping updates, tech industry news
+- career_productivity: Career growth, job searching, workplace advice, productivity systems, professional development, networking
+- prompts: ANY tweet that contains a prompt or prompt text for ANY AI tool — image generation (Midjourney, DALL-E, Flux, Stable Diffusion, Firefly, Ideogram, Leonardo, or ANY unfamiliar/unknown image gen tool), video generation (Sora, Runway, Kling, Pika, Luma, Hailuo, Wan, or any unfamiliar video tool), audio generation (Suno, Udio, ElevenLabs), 3D generation, LLM prompts (ChatGPT, Claude, Gemini), system prompts, prompt engineering. KEY RULE: if the tweet body contains descriptive visual text that reads like an image or video prompt — even if the tool name is unfamiliar or made-up — classify it as "prompts".
+- uncategorized: Does not clearly fit any category above, or you are not confident.
+
+Set confidence to 0.0-1.0. If confidence < 0.7, use category "uncategorized".
+Classify all tweets provided.`
+
+const CLASSIFY_TOOL: Anthropic.Tool = {
+  name: 'classify_tweets',
+  description: 'Return category classifications for all provided tweets',
+  input_schema: {
+    type: 'object' as const,
+    properties: {
+      results: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            tweet_id:   { type: 'string' },
+            category:   { type: 'string' },
+            confidence: { type: 'number' },
+            rationale:  { type: 'string' },
+          },
+          required: ['tweet_id', 'category', 'confidence', 'rationale'],
+        },
+      },
+    },
+    required: ['results'],
+  },
+}
+
+const VALID_CATEGORIES = new Set<Category>(['tech_ai_product', 'career_productivity', 'prompts', 'uncategorized'])
+
+export async function classifyBatch(
+  bookmarks: Pick<Bookmark, 'tweet_id' | 'tweet_text'>[]
+): Promise<ClassificationResult[]> {
+  const client = getClient()
+  const input = bookmarks.map((b) => ({
+    tweet_id: b.tweet_id,
+    text: preprocessTweet(b.tweet_text).slice(0, 800),
+  }))
+
+  const message = await withRetry(() =>
+    client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 4096,
+      system: CLASSIFY_SYSTEM,
+      tools: [CLASSIFY_TOOL],
+      tool_choice: { type: 'tool', name: 'classify_tweets' },
+      messages: [{ role: 'user', content: `Classify these tweets:\n${JSON.stringify(input, null, 2)}` }],
+    })
+  )
+
+  const toolUse = message.content.find((b) => b.type === 'tool_use')
+  if (!toolUse || toolUse.type !== 'tool_use') {
+    throw new Error(`No tool_use block in response. stop_reason=${message.stop_reason}`)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const raw = (toolUse.input as { results: any }).results
+  const results: ClassificationResult[] = Array.isArray(raw) ? raw : raw ? [raw] : []
+
+  const validIds = new Set(bookmarks.map((b) => b.tweet_id))
+
+  return results
+    .filter((r) => r.tweet_id && validIds.has(r.tweet_id))
+    .map((r) => ({
+      tweet_id:   r.tweet_id as string,
+      category:   (VALID_CATEGORIES.has(r.category) && r.confidence >= 0.7 ? r.category : 'uncategorized') as Category,
+      confidence: Number(r.confidence) || 0,
+      rationale:  r.rationale ?? '',
+    }))
+}
+
+// ── Prompt extraction (step 2) ─────────────────────────────────────────────
 
 const PROMPT_SYSTEM = `You are an AI prompt classifier and extractor. For each tweet that contains an AI prompt, classify it, detect the tool used, extract the clean prompt text, tag its visual themes, and identify if a reference image is required.
 
@@ -70,6 +232,10 @@ REFERENCE IMAGE:
 - reference_type: if requires_reference is true, pick one: face_person, style_artwork, subject_object, pose_structure, scene_background. Otherwise null.
 - STRONG SIGNAL: if the tweet contains placeholder tokens like [SUBJECT], [REFERENCE], [YOUR SUBJECT], [YOUR REFERENCE], or similar bracketed placeholders, the prompt almost certainly requires a reference image — set requires_reference: true and pick the appropriate reference_type.
 
+DETECTED MODEL:
+- Return the canonical tool name if identifiable (e.g. "Midjourney", "Flux", "Runway"). Use null if unclear.
+- Do not include version numbers or extra words — just the tool name.
+
 For each item return:
 - id: the item id
 - prompt_category: one category from above
@@ -82,7 +248,7 @@ For each item return:
 
 Classify all items provided.`
 
-const VALID_CATEGORIES = new Set<PromptCategory>([
+const VALID_PROMPT_CATEGORIES = new Set<PromptCategory>([
   'image_t2i', 'image_i2i', 'image_r2i', 'image_character_ref', 'image_inpainting',
   'video_t2v', 'video_i2v', 'video_r2v', 'video_v2v',
   'audio', 'threed',
@@ -103,7 +269,7 @@ const VALID_REF_TYPES = new Set<ReferenceType>([
 ])
 
 // Tool use schema — guarantees valid structured output, no JSON parsing errors
-const CLASSIFY_TOOL: Anthropic.Tool = {
+const EXTRACT_TOOL: Anthropic.Tool = {
   name: 'classify_prompts',
   description: 'Return classifications for all provided prompts',
   input_schema: {
@@ -132,7 +298,7 @@ const CLASSIFY_TOOL: Anthropic.Tool = {
 }
 
 export async function classifyPromptBatch(
-  prompts: Pick<Bookmark, 'id' | 'tweet_text'>[]
+  prompts: Pick<Bookmark, 'id' | 'tweet_text' | 'thread_tweets'>[]
 ): Promise<{
   id: string
   prompt_category: PromptCategory
@@ -144,14 +310,22 @@ export async function classifyPromptBatch(
   reference_type: ReferenceType | null
 }[]> {
   const client = getClient()
-  const input = prompts.map((p) => ({ id: p.id, text: p.tweet_text.slice(0, 3000) }))
+
+  // Include thread context so the extractor sees the full conversation
+  const input = prompts.map((p) => {
+    const threadContext = p.thread_tweets?.length
+      ? '\n\nThread context:\n' + p.thread_tweets.map((t) => t.tweet_text).join('\n---\n')
+      : ''
+    const fullText = preprocessTweet(p.tweet_text + threadContext).slice(0, 3000)
+    return { id: p.id, text: fullText }
+  })
 
   const message = await withRetry(() =>
     client.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 8192,
       system: PROMPT_SYSTEM,
-      tools: [CLASSIFY_TOOL],
+      tools: [EXTRACT_TOOL],
       tool_choice: { type: 'tool', name: 'classify_prompts' },
       messages: [{ role: 'user', content: `Classify and extract these prompts:\n${JSON.stringify(input, null, 2)}` }],
     })
@@ -172,9 +346,9 @@ export async function classifyPromptBatch(
     .filter((r) => r.id && validIds.has(r.id))
     .map((r) => ({
       id: r.id as string,
-      prompt_category: VALID_CATEGORIES.has(r.prompt_category) ? r.prompt_category : 'other',
+      prompt_category: VALID_PROMPT_CATEGORIES.has(r.prompt_category) ? r.prompt_category : 'other',
       extracted_prompt: r.extracted_prompt ?? null,
-      detected_model: r.detected_model ?? null,
+      detected_model: normaliseModel(r.detected_model),
       prompt_themes: Array.isArray(r.prompt_themes)
         ? r.prompt_themes.filter((t: string) => VALID_THEMES.has(t as PromptTheme))
         : [],
@@ -184,41 +358,4 @@ export async function classifyPromptBatch(
       requires_reference: typeof r.requires_reference === 'boolean' ? r.requires_reference : null,
       reference_type: VALID_REF_TYPES.has(r.reference_type) ? r.reference_type : null,
     }))
-}
-
-export async function classifyBatch(
-  bookmarks: Pick<Bookmark, 'tweet_id' | 'tweet_text'>[]
-): Promise<ClassificationResult[]> {
-  const client = getClient()
-  const input = bookmarks.map((b) => ({ tweet_id: b.tweet_id, text: b.tweet_text.slice(0, 800) }))
-
-  const message = await withRetry(() =>
-    client.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 4096,
-      system: SYSTEM_PROMPT,
-      messages: [
-        {
-          role: 'user',
-          content: `Classify these tweets:\n${JSON.stringify(input, null, 2)}`,
-        },
-      ],
-    })
-  )
-
-  const raw = message.content[0].type === 'text' ? message.content[0].text : ''
-
-  let results: ClassificationResult[]
-  try {
-    results = JSON.parse(raw)
-  } catch {
-    const match = raw.match(/\[[\s\S]*\]/)
-    if (!match) throw new Error(`Failed to parse classification response. stop_reason=${message.stop_reason} raw=${raw.slice(0, 200)}`)
-    results = JSON.parse(match[0])
-  }
-
-  return results.map((r) => ({
-    ...r,
-    category: (r.confidence >= 0.7 ? r.category : 'uncategorized') as Category,
-  }))
 }
