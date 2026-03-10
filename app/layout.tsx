@@ -5,25 +5,20 @@ import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
-const DESCRIPTION =
-  'A hand-curated library of AI prompts sourced from the people actually pushing these tools to their limits — practitioners, artists, and researchers sharing their best work on X. Not scraped. Not synthetic. Real prompts that produced real results.'
-
 export const metadata: Metadata = {
   title: 'Prompts by ummerr',
-  description: DESCRIPTION,
+  description: 'A curated collection of AI image, video, and text prompts — filterable by model, technique, and theme.',
   openGraph: {
     title: 'Prompts by ummerr',
-    description: DESCRIPTION,
+    description: 'A curated collection of AI image, video, and text prompts — filterable by model, technique, and theme.',
     url: 'https://prompts.ummerr.com',
     siteName: 'prompts.ummerr.com',
     type: 'website',
-    images: [{ url: 'https://prompts.ummerr.com/opengraph-image', width: 1200, height: 630 }],
   },
   twitter: {
-    card: 'summary_large_image',
+    card: 'summary',
     title: 'Prompts by ummerr',
-    description: DESCRIPTION,
-    images: ['https://prompts.ummerr.com/opengraph-image'],
+    description: 'A curated collection of AI image, video, and text prompts — filterable by model, technique, and theme.',
   },
 }
 
