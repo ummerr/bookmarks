@@ -1,7 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async rewrites() {
+    return [
+      {
+        source: '/',
+        destination: '/prompts',
+        has: [{ type: 'host', value: 'prompts.ummerr.com' }],
+      },
+    ]
+  },
 };
 
 export default nextConfig;
