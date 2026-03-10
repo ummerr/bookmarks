@@ -9,7 +9,7 @@ const LINKS = [
   { href: '/stats',   label: 'Stats' },
   { href: '/bookmarks', label: 'Bookmarks' },
   { href: '/add',     label: 'Add' },
-  { href: '/tools',   label: 'Tools' },
+  { href: '/tools',   label: 'Tools', secret: true },
 ]
 
 export default function Nav() {
@@ -27,7 +27,9 @@ export default function Nav() {
               key={l.href}
               href={l.href}
               className={`shrink-0 rounded-lg px-3 py-1.5 text-sm transition-colors ${
-                pathname === l.href
+                l.secret
+                  ? 'text-[#0a0a0a] hover:text-[#0a0a0a] cursor-default'
+                  : pathname === l.href
                   ? 'bg-white/10 text-white'
                   : 'text-zinc-400 hover:text-white hover:bg-white/5'
               }`}
