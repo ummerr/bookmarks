@@ -54,7 +54,7 @@ export default function AddPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <div className="max-w-2xl mx-auto px-4 md:px-6 py-8 md:py-12">
-        <Link href="/prompts" className="text-sm text-zinc-500 hover:text-white transition-colors mb-8 inline-flex items-center gap-1">
+        <Link href="/" className="text-sm text-zinc-500 hover:text-white transition-colors mb-8 inline-flex items-center gap-1">
           ← Prompts
         </Link>
 
@@ -138,7 +138,7 @@ export default function AddPage() {
                 </span>
               )}
             </div>
-            <Link href="/prompts" className="text-xs text-zinc-500 hover:text-white transition-colors">
+            <Link href="/" className="text-xs text-zinc-500 hover:text-white transition-colors">
               View in Prompts →
             </Link>
           </div>

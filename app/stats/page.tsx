@@ -117,6 +117,62 @@ const THEME_LABELS: Record<string, string> = {
   horror:       'Horror',
 }
 
+// ── Horizontal bar chart ───────────────────────────────────────────────────
+
+function BarChart({
+  data,
+  colorMap,
+  fallbackPalette = MODEL_PALETTE,
+  title,
+  labelFn,
+}: {
+  data: ChartItem[]
+  colorMap?: Record<string, string>
+  fallbackPalette?: string[]
+  title: string
+  labelFn?: (key: string) => string
+}) {
+  if (data.length === 0) {
+    return (
+      <div className="flex flex-col gap-4">
+        <h2 className="text-base font-semibold text-white tracking-tight">{title}</h2>
+        <p className="text-sm text-zinc-600 py-8 text-center">No data yet</p>
+      </div>
+    )
+  }
+  const total = data.reduce((s, d) => s + d.value, 0)
+  const max = data[0].value // already sorted desc
+
+  return (
+    <div className="flex flex-col gap-5">
+      <h2 className="text-base font-semibold text-white tracking-tight">{title}</h2>
+      <div className="flex flex-col gap-1.5">
+        {data.map((item, i) => {
+          const color = colorMap?.[item.label] ?? fallbackPalette[i % fallbackPalette.length]
+          const pct = ((item.value / total) * 100).toFixed(1)
+          const barW = ((item.value / max) * 100).toFixed(1)
+          const label = labelFn ? labelFn(item.label) : item.label
+          return (
+            <div key={item.label} className="flex items-center gap-3 group">
+              <span className="w-32 text-xs text-zinc-400 text-right truncate shrink-0 group-hover:text-zinc-200 transition-colors">
+                {label}
+              </span>
+              <div className="flex-1 h-5 bg-white/5 rounded-md overflow-hidden">
+                <div
+                  className="h-full rounded-md transition-all"
+                  style={{ width: `${barW}%`, background: color }}
+                />
+              </div>
+              <span className="text-xs font-semibold text-white tabular-nums w-8 text-right shrink-0">{item.value}</span>
+              <span className="text-xs text-zinc-600 tabular-nums w-10 text-right shrink-0">{pct}%</span>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 // ── SVG donut chart ────────────────────────────────────────────────────────
 
 function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
@@ -416,12 +472,10 @@ export default function StatsPage() {
 
         {/* Chart 1: By Category */}
         <div className="rounded-2xl border border-white/8 bg-[#111] p-6 md:p-8">
-          <DonutChart
+          <BarChart
             data={stats.byCategory}
             colorMap={CATEGORY_COLORS}
             title="By Category"
-            centerLabel="prompts"
-            size={300}
             labelFn={(k) => CATEGORY_LABELS[k] ?? k}
           />
         </div>
@@ -439,7 +493,7 @@ export default function StatsPage() {
           </div>
           <div className="rounded-2xl border border-white/8 bg-[#111] p-6">
             <DonutChart
-              data={stats.byTheme}
+              data={stats.byTheme ?? []}
               colorMap={THEME_COLORS}
               title="By Theme"
               centerLabel="tagged"

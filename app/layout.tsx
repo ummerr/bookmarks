@@ -6,8 +6,20 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export const metadata: Metadata = {
-  title: 'ummerr',
-  description: 'AI prompts and bookmarks by ummerr',
+  title: 'Prompts by ummerr',
+  description: 'A curated collection of AI image, video, and text prompts — filterable by model, technique, and theme.',
+  openGraph: {
+    title: 'Prompts by ummerr',
+    description: 'A curated collection of AI image, video, and text prompts — filterable by model, technique, and theme.',
+    url: 'https://prompts.ummerr.com',
+    siteName: 'prompts.ummerr.com',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Prompts by ummerr',
+    description: 'A curated collection of AI image, video, and text prompts — filterable by model, technique, and theme.',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
