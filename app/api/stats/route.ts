@@ -32,7 +32,6 @@ export async function GET() {
           WHERE category = 'prompts'
             AND prompt_themes IS NOT NULL
             AND jsonb_typeof(prompt_themes) = 'array'
-            AND jsonb_array_length(prompt_themes) > 0
         ) sub
         CROSS JOIN LATERAL jsonb_array_elements_text(sub.prompt_themes) AS t(theme)
         WHERE t.theme IS NOT NULL AND t.theme != ''
