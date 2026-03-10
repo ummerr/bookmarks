@@ -7,7 +7,7 @@ const LINKS = [
   { href: '/prompts', label: 'Prompts' },
   { href: '/random',  label: 'Random' },
   { href: '/stats',   label: 'Stats' },
-  { href: '/',        label: 'Bookmarks' },
+  { href: '/bookmarks', label: 'Bookmarks' },
   { href: '/add',     label: 'Add' },
   { href: '/tools',   label: 'Tools' },
 ]
