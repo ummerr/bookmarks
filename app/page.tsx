@@ -350,6 +350,13 @@ export default function PromptsPage() {
           p.author_handle.toLowerCase().includes(q)
       )
     }
+    // Items with no theme tags sink to the bottom
+    result = [...result].sort((a, b) => {
+      const aHas = (a.prompt_themes?.length ?? 0) > 0
+      const bHas = (b.prompt_themes?.length ?? 0) > 0
+      if (aHas === bHas) return 0
+      return aHas ? -1 : 1
+    })
     return result
   }, [allPrompts, activeMediaType, activeTheme, activeModel, search])
 
