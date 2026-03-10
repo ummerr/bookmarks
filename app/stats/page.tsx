@@ -483,12 +483,10 @@ export default function StatsPage() {
         {/* Chart 2 + 3 side by side */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="rounded-2xl border border-white/8 bg-[#111] p-6">
-            <DonutChart
+            <BarChart
               data={byMediaType}
               colorMap={MEDIA_TYPE_COLORS}
               title="By Media Type"
-              centerLabel="prompts"
-              size={260}
             />
           </div>
           <div className="rounded-2xl border border-white/8 bg-[#111] p-6">

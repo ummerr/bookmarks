@@ -25,32 +25,32 @@ export async function GET() {
         GROUP BY detected_model
         ORDER BY n DESC
       `,
-      sql<{ theme: string; n: string }[]>`
-        SELECT theme, COUNT(*) as n
-        FROM bookmarks,
-          jsonb_array_elements_text(
-            CASE
-              WHEN prompt_themes IS NOT NULL AND jsonb_typeof(prompt_themes) = 'array'
-              THEN prompt_themes
-              ELSE '[]'::jsonb
-            END
-          ) AS theme
-        WHERE category = 'prompts'
-          AND theme IS NOT NULL
-          AND theme != ''
-        GROUP BY theme
-        ORDER BY n DESC
+      sql<{ prompt_themes: unknown }[]>`
+        SELECT prompt_themes FROM bookmarks
+        WHERE category = 'prompts' AND prompt_themes IS NOT NULL
       `,
       sql<{ total: string }[]>`
         SELECT COUNT(*) as total FROM bookmarks WHERE category = 'prompts'
       `,
     ])
 
+    // Aggregate themes in JS to avoid JSONB unnesting issues
+    const themeCounts: Record<string, number> = {}
+    for (const row of themeRows) {
+      const themes = Array.isArray(row.prompt_themes) ? row.prompt_themes : []
+      for (const t of themes) {
+        if (t && typeof t === 'string') themeCounts[t] = (themeCounts[t] ?? 0) + 1
+      }
+    }
+    const byTheme = Object.entries(themeCounts)
+      .sort(([, a], [, b]) => b - a)
+      .map(([label, value]) => ({ label, value }))
+
     return NextResponse.json({
       total: Number(totalRow[0].total),
       byCategory: categoryRows.map((r) => ({ label: r.prompt_category, value: Number(r.n) })),
       byModel: modelRows.map((r) => ({ label: r.detected_model, value: Number(r.n) })),
-      byTheme: themeRows.map((r) => ({ label: r.theme, value: Number(r.n) })),
+      byTheme,
     })
   } catch (err) {
     console.error('[/api/stats]', err)
