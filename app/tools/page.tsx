@@ -43,6 +43,10 @@ export default function ToolsPage() {
   const [promptsResult, setPromptsResult] = useState<string | null>(null)
   const [promptsErrors, setPromptsErrors] = useState<string[]>([])
 
+  const [reclassifying, setReclassifying] = useState(false)
+  const [reclassifyResult, setReclassifyResult] = useState<string | null>(null)
+  const [reclassifyErrors, setReclassifyErrors] = useState<string[]>([])
+
   async function fetchCounts() {
     const [countsRes, promptsRes] = await Promise.all([
       fetch('/api/bookmarks/counts'),
@@ -89,6 +93,23 @@ export default function ToolsPage() {
       setPromptsResult(`Failed: ${String(err)}`)
     } finally {
       setClassifyingPrompts(false)
+    }
+  }
+
+  async function runReclassify() {
+    setReclassifying(true)
+    setReclassifyResult(null)
+    setReclassifyErrors([])
+    try {
+      const res = await fetch('/api/prompts/reclassify', { method: 'POST' })
+      const data: ClassifyResult = await res.json()
+      setReclassifyResult(data.message ?? `Re-classified ${data.classified} of ${data.total} prompts`)
+      setReclassifyErrors(data.errors ?? [])
+      fetchCounts()
+    } catch (err) {
+      setReclassifyResult(`Failed: ${String(err)}`)
+    } finally {
+      setReclassifying(false)
     }
   }
 
@@ -161,6 +182,29 @@ export default function ToolsPage() {
             ) : 'Run Prompt Classifier'}
           </button>
           {promptsResult && <ResultLine result={promptsResult} errors={promptsErrors} />}
+        </Section>
+
+        {/* Re-classify all */}
+        <Section
+          title="Re-classify All Prompts"
+          description="Force re-run classification on every prompt — useful to backfill themes, art styles, or model data added since the last run."
+        >
+          <button
+            onClick={runReclassify}
+            disabled={reclassifying}
+            className="flex items-center gap-2 rounded-lg bg-white/8 border border-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-white/12 disabled:opacity-50 transition-colors"
+          >
+            {reclassifying ? (
+              <>
+                <svg className="h-3.5 w-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                </svg>
+                Re-classifying…
+              </>
+            ) : 'Re-classify All'}
+          </button>
+          {reclassifyResult && <ResultLine result={reclassifyResult} errors={reclassifyErrors} />}
         </Section>
 
       </div>

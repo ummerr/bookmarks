@@ -281,10 +281,20 @@ function toPromptRow(r: Record<string, unknown>) {
   }
 }
 
+export async function getAllPromptsForReclassify(limit = 500): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text' | 'thread_tweets'>[]> {
+  const rows = await getSql()<Record<string, unknown>[]>`
+    SELECT id, tweet_id, tweet_text, thread_tweets FROM bookmarks
+    WHERE category = 'prompts'
+    ORDER BY created_at ASC
+    LIMIT ${limit}
+  `
+  return rows.map(toPromptRow)
+}
+
 export async function getUnclassifiedPrompts(limit = 50): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text' | 'thread_tweets'>[]> {
   const rows = await getSql()<Record<string, unknown>[]>`
     SELECT id, tweet_id, tweet_text, thread_tweets FROM bookmarks
-    WHERE category = 'prompts' AND (prompt_category IS NULL OR extracted_prompt IS NULL)
+    WHERE category = 'prompts' AND prompt_category IS NULL
     ORDER BY created_at ASC
     LIMIT ${limit}
   `
