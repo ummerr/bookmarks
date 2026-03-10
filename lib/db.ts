@@ -267,9 +267,18 @@ export async function getDistinctModels(): Promise<string[]> {
 export async function countUnclassifiedPrompts(): Promise<number> {
   const [{ n }] = await getSql()<{ n: string }[]>`
     SELECT COUNT(*) as n FROM bookmarks
-    WHERE category = 'prompts' AND (prompt_category IS NULL OR extracted_prompt IS NULL)
+    WHERE category = 'prompts' AND prompt_category IS NULL
   `
   return Number(n)
+}
+
+function toPromptRow(r: Record<string, unknown>) {
+  return {
+    id: r.id as string,
+    tweet_id: r.tweet_id as string,
+    tweet_text: r.tweet_text as string,
+    thread_tweets: typeof r.thread_tweets === 'string' ? JSON.parse(r.thread_tweets) : (r.thread_tweets ?? []),
+  }
 }
 
 export async function getUnclassifiedPrompts(limit = 50): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text' | 'thread_tweets'>[]> {
@@ -279,12 +288,17 @@ export async function getUnclassifiedPrompts(limit = 50): Promise<Pick<Bookmark,
     ORDER BY created_at ASC
     LIMIT ${limit}
   `
-  return rows.map((r) => ({
-    id: r.id as string,
-    tweet_id: r.tweet_id as string,
-    tweet_text: r.tweet_text as string,
-    thread_tweets: typeof r.thread_tweets === 'string' ? JSON.parse(r.thread_tweets) : (r.thread_tweets ?? []),
-  }))
+  return rows.map(toPromptRow)
+}
+
+export async function getAllPrompts(limit = 500): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text' | 'thread_tweets'>[]> {
+  const rows = await getSql()<Record<string, unknown>[]>`
+    SELECT id, tweet_id, tweet_text, thread_tweets FROM bookmarks
+    WHERE category = 'prompts'
+    ORDER BY created_at ASC
+    LIMIT ${limit}
+  `
+  return rows.map(toPromptRow)
 }
 
 export async function updatePromptExtraction(
