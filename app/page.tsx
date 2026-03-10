@@ -4,18 +4,19 @@ import { useState, useEffect, useMemo } from 'react'
 import type { ArtStyle, Bookmark, PromptCategory, PromptTheme } from '@/lib/types'
 
 const MEDIA_TYPES = [
-  { value: 'all',   label: 'All' },
-  { value: 'image', label: 'Image' },
-  { value: 'video', label: 'Video' },
-  { value: 'text',  label: 'Text' },
+  { value: 'all',          label: 'All' },
+  { value: 'image',        label: 'Image' },
+  { value: 'video',        label: 'Video' },
+  { value: 'llm',          label: 'LLM' },
+  { value: 'uncategorized', label: 'Uncategorized - Claude Fail' },
 ] as const
 type MediaType = typeof MEDIA_TYPES[number]['value']
 
-const MEDIA_TYPE_CATEGORIES: Record<MediaType, (PromptCategory | 'all')[]> = {
+const MEDIA_TYPE_CATEGORIES: Record<Exclude<MediaType, 'uncategorized'>, (PromptCategory | 'all')[]> = {
   all:   ['all', 'image_t2i', 'image_i2i', 'image_r2i', 'image_character_ref', 'image_inpainting', 'video_t2v', 'video_i2v', 'video_r2v', 'video_v2v', 'audio', 'threed', 'system_prompt', 'writing', 'coding', 'analysis', 'other'],
   image: ['image_t2i', 'image_i2i', 'image_r2i', 'image_character_ref', 'image_inpainting'],
   video: ['video_t2v', 'video_i2v', 'video_r2v', 'video_v2v'],
-  text:  ['system_prompt', 'writing', 'coding', 'analysis', 'audio', 'threed', 'other'],
+  llm:   ['system_prompt', 'writing', 'coding', 'analysis', 'audio', 'threed', 'other'],
 }
 
 // Model families — order matters (more specific first)
@@ -318,11 +319,17 @@ export default function PromptsPage() {
       .map(([label, count]) => ({ label, count }))
   }, [allPrompts])
 
+  const uncategorizedCount = useMemo(() =>
+    allPrompts.filter((p) => !p.prompt_category).length
+  , [allPrompts])
+
   // Client-side filter by media type, theme, model, search
   const filtered = useMemo(() => {
     let result = allPrompts
-    if (activeMediaType !== 'all') {
-      const allowed = new Set(MEDIA_TYPE_CATEGORIES[activeMediaType])
+    if (activeMediaType === 'uncategorized') {
+      result = result.filter((p) => !p.prompt_category)
+    } else if (activeMediaType !== 'all') {
+      const allowed = new Set(MEDIA_TYPE_CATEGORIES[activeMediaType as Exclude<MediaType, 'uncategorized'>])
       result = result.filter((p) => p.prompt_category && allowed.has(p.prompt_category))
     }
     if (activeTheme !== 'all') {
@@ -398,20 +405,21 @@ export default function PromptsPage() {
                       : 'text-zinc-500 hover:text-zinc-300'
                   }`}
                 >
-                  {mt.label}
+                  {mt.label}{mt.value === 'uncategorized' && uncategorizedCount > 0 ? <span className="ml-1 opacity-50">({uncategorizedCount})</span> : null}
                 </button>
               ))}
             </div>
           </div>
 
           {/* Row: Technique sub-category */}
+          {activeMediaType !== 'uncategorized' && (
           <div className="flex items-start gap-3 md:gap-4 px-4 py-3">
             <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider w-12 md:w-16 shrink-0 pt-1">Type</span>
             <div className="flex gap-1 flex-wrap">
               {[
                 CATEGORIES.find((c) => c.value === 'all')!,
                 ...CATEGORIES
-                  .filter((cat) => cat.value !== 'all' && MEDIA_TYPE_CATEGORIES[activeMediaType].includes(cat.value) && (categoryCounts[cat.value] ?? 0) > 0)
+                  .filter((cat) => cat.value !== 'all' && MEDIA_TYPE_CATEGORIES[activeMediaType as Exclude<MediaType, 'uncategorized'>]?.includes(cat.value) && (categoryCounts[cat.value] ?? 0) > 0)
                   .sort((a, b) => (categoryCounts[b.value] ?? 0) - (categoryCounts[a.value] ?? 0)),
               ].map((cat) => (
                 <button
@@ -428,6 +436,7 @@ export default function PromptsPage() {
               ))}
             </div>
           </div>
+          )}
 
           {/* Row: Theme — colored badges matching card badges */}
           <div className="flex items-start gap-3 md:gap-4 px-4 py-3">
