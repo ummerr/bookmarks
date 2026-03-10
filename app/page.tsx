@@ -409,7 +409,7 @@ export default function PromptsPage() {
                       : 'text-zinc-500 hover:text-zinc-300'
                   }`}
                 >
-                  {mt.label}{mt.value === 'uncategorized' && uncategorizedCount > 0 ? <span className="ml-1 opacity-50">({uncategorizedCount})</span> : null}
+                  {mt.label}
                 </button>
               ))}
             </div>
