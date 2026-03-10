@@ -35,7 +35,9 @@ const MODEL_FAMILIES: { label: string; patterns: string[] }[] = [
   { label: 'Luma',             patterns: ['luma', 'dream machine'] },
   { label: 'Veo',              patterns: ['veo'] },
   { label: 'Wan',              patterns: ['wan'] },
-  { label: 'Seedance',         patterns: ['seedance'] },
+  { label: 'Seedance',        patterns: ['seedance'] },
+  { label: 'Nano Banana',     patterns: ['nano banana'] },
+  { label: 'Higgsfield',      patterns: ['higgsfield'] },
   { label: 'ElevenLabs',       patterns: ['elevenlabs'] },
   { label: 'Suno',             patterns: ['suno'] },
   { label: 'Udio',             patterns: ['udio'] },
@@ -285,15 +287,17 @@ export default function PromptsPage() {
 
   useEffect(() => { fetchPrompts(activeCategory) }, [activeCategory])
 
-  // Compute distinct model families from fetched data
+  // Compute distinct model families with counts from fetched data
   const availableModels = useMemo(() => {
-    const families = new Set(
-      allPrompts
-        .map((p) => p.detected_model)
-        .filter(Boolean)
-        .map((m) => modelToFamily(m!))
-    )
-    return Array.from(families).sort()
+    const counts: Record<string, number> = {}
+    for (const p of allPrompts) {
+      if (!p.detected_model) continue
+      const family = modelToFamily(p.detected_model)
+      counts[family] = (counts[family] ?? 0) + 1
+    }
+    return Object.entries(counts)
+      .sort(([, a], [, b]) => b - a)
+      .map(([label, count]) => ({ label, count }))
   }, [allPrompts])
 
   // Client-side filter by media type, theme, model, search
@@ -449,17 +453,17 @@ export default function PromptsPage() {
                 >
                   All
                 </button>
-                {availableModels.map((model) => (
+                {availableModels.map(({ label, count }) => (
                   <button
-                    key={model}
-                    onClick={() => setActiveModel(model)}
+                    key={label}
+                    onClick={() => setActiveModel(label)}
                     className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border ${
-                      activeModel === model
+                      activeModel === label
                         ? 'bg-white/15 text-white border-white/20'
                         : 'text-zinc-500 border-transparent hover:text-zinc-300 hover:bg-white/5'
                     }`}
                   >
-                    {model}
+                    {label} <span className="opacity-50">({count})</span>
                   </button>
                 ))}
               </div>
