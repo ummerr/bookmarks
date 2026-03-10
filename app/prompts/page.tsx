@@ -287,6 +287,24 @@ export default function PromptsPage() {
 
   useEffect(() => { fetchPrompts(activeCategory) }, [activeCategory])
 
+  // Counts by prompt category
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    for (const p of allPrompts) {
+      if (p.prompt_category) counts[p.prompt_category] = (counts[p.prompt_category] ?? 0) + 1
+    }
+    return counts
+  }, [allPrompts])
+
+  // Counts by theme
+  const themeCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    for (const p of allPrompts) {
+      for (const t of p.prompt_themes ?? []) counts[t] = (counts[t] ?? 0) + 1
+    }
+    return counts
+  }, [allPrompts])
+
   // Compute distinct model families with counts from fetched data
   const availableModels = useMemo(() => {
     const counts: Record<string, number> = {}
@@ -390,9 +408,12 @@ export default function PromptsPage() {
           <div className="flex items-start gap-3 md:gap-4 px-4 py-3">
             <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider w-12 md:w-16 shrink-0 pt-1">Type</span>
             <div className="flex gap-1 flex-wrap">
-              {CATEGORIES.filter((cat) =>
-                cat.value === 'all' || MEDIA_TYPE_CATEGORIES[activeMediaType].includes(cat.value)
-              ).map((cat) => (
+              {[
+                CATEGORIES.find((c) => c.value === 'all')!,
+                ...CATEGORIES
+                  .filter((cat) => cat.value !== 'all' && MEDIA_TYPE_CATEGORIES[activeMediaType].includes(cat.value))
+                  .sort((a, b) => (categoryCounts[b.value] ?? 0) - (categoryCounts[a.value] ?? 0)),
+              ].map((cat) => (
                 <button
                   key={cat.value}
                   onClick={() => { setActiveCategory(cat.value); setActiveModel('all') }}
@@ -402,7 +423,7 @@ export default function PromptsPage() {
                       : 'text-zinc-500 border-transparent hover:text-zinc-300 hover:bg-white/5'
                   }`}
                 >
-                  {cat.label}
+                  {cat.label}{cat.value !== 'all' && categoryCounts[cat.value] ? <span className="opacity-50"> ({categoryCounts[cat.value]})</span> : null}
                 </button>
               ))}
             </div>
@@ -422,7 +443,10 @@ export default function PromptsPage() {
               >
                 All
               </button>
-              {THEMES.map((t) => (
+              {[...THEMES]
+                .filter((t) => themeCounts[t.value] > 0)
+                .sort((a, b) => (themeCounts[b.value] ?? 0) - (themeCounts[a.value] ?? 0))
+                .map((t) => (
                 <button
                   key={t.value}
                   onClick={() => setActiveTheme(t.value)}
@@ -432,7 +456,7 @@ export default function PromptsPage() {
                       : 'text-zinc-500 border-transparent hover:text-zinc-300 hover:bg-white/5'
                   }`}
                 >
-                  {t.label}
+                  {t.label} <span className="opacity-50">({themeCounts[t.value]})</span>
                 </button>
               ))}
             </div>
