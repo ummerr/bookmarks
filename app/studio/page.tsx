@@ -1,301 +1,366 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
-import PromptEditor, {
-  type StudioRef,
-  type SerializedPrompt,
-  type PromptEditorHandle,
-} from './PromptEditor'
-import ReferenceLibrary from './ReferenceLibrary'
+import { useState, useRef, useEffect } from 'react'
 
-// ── Workflow templates ────────────────────────────────────────────────────────
+// ── Types ─────────────────────────────────────────────────────────────────────
 
-const WORKFLOWS = [
-  {
-    id: 'r2v',
-    label: 'R2V',
-    description: 'Reference → Video',
-    template: '[character] [action], [setting], [camera movement], cinematic lighting, [duration]',
-    hint: 'Drag a face or subject reference into the prompt for the character slot',
-  },
-  {
-    id: 'v2v',
-    label: 'V2V',
-    description: 'Video → Video',
-    template: 'Restyle [source clip] as [art style], preserve motion and structure, [effect], [color palette]',
-    hint: 'Add a style reference to define the output aesthetic',
-  },
-  {
-    id: 'i2v',
-    label: 'I2V',
-    description: 'Image → Video',
-    template: '[image subject] coming to life, [motion description], [camera movement], cinematic',
-    hint: 'Use an image reference as the source for animation',
-  },
-  {
-    id: 'r2i',
-    label: 'R2I',
-    description: 'Reference → Image',
-    template: '[subject] in [setting], [art style], [lighting], [composition], [model params]',
-    hint: 'Drop a face, style, or subject reference to anchor the output',
-  },
-  {
-    id: 'char',
-    label: 'Char Ref',
-    description: 'Character Reference',
-    template: '[character] as [role/scene], [expression], [outfit], [setting], [art style]',
-    hint: 'Use a face_person reference to ground the character identity',
-  },
-  {
-    id: 't2i',
-    label: 'T2I',
-    description: 'Text → Image',
-    template: '[subject], [setting], [art style], [lighting], [camera angle], [model params]',
-    hint: 'Pure text-to-image — add style references for consistency',
-  },
+type Segment =
+  | { type: 'text'; value: string }
+  | { type: 'var'; key: string; label: string; value: string }
+
+// ── Variable chip colors ───────────────────────────────────────────────────────
+
+const KEY_COLORS: Record<string, string> = {
+  character: 'bg-violet-500/15 border-violet-400/40 text-violet-700 dark:text-violet-300',
+  subject:   'bg-violet-500/15 border-violet-400/40 text-violet-700 dark:text-violet-300',
+  person:    'bg-violet-500/15 border-violet-400/40 text-violet-700 dark:text-violet-300',
+  action:    'bg-blue-500/15   border-blue-400/40   text-blue-700   dark:text-blue-300',
+  movement:  'bg-blue-500/15   border-blue-400/40   text-blue-700   dark:text-blue-300',
+  pose:      'bg-blue-500/15   border-blue-400/40   text-blue-700   dark:text-blue-300',
+  setting:   'bg-emerald-500/15 border-emerald-400/40 text-emerald-700 dark:text-emerald-300',
+  location:  'bg-emerald-500/15 border-emerald-400/40 text-emerald-700 dark:text-emerald-300',
+  scene:     'bg-emerald-500/15 border-emerald-400/40 text-emerald-700 dark:text-emerald-300',
+  environment: 'bg-emerald-500/15 border-emerald-400/40 text-emerald-700 dark:text-emerald-300',
+  style:     'bg-amber-500/15  border-amber-400/40  text-amber-700   dark:text-amber-300',
+  aesthetic: 'bg-amber-500/15  border-amber-400/40  text-amber-700   dark:text-amber-300',
+  lighting:  'bg-orange-500/15 border-orange-400/40 text-orange-700  dark:text-orange-300',
+  mood:      'bg-orange-500/15 border-orange-400/40 text-orange-700  dark:text-orange-300',
+  atmosphere:'bg-orange-500/15 border-orange-400/40 text-orange-700  dark:text-orange-300',
+  time:      'bg-rose-500/15   border-rose-400/40   text-rose-700    dark:text-rose-300',
+  period:    'bg-rose-500/15   border-rose-400/40   text-rose-700    dark:text-rose-300',
+  camera:    'bg-sky-500/15    border-sky-400/40    text-sky-700     dark:text-sky-300',
+  shot:      'bg-sky-500/15    border-sky-400/40    text-sky-700     dark:text-sky-300',
+  color:     'bg-pink-500/15   border-pink-400/40   text-pink-700    dark:text-pink-300',
+  effect:    'bg-purple-500/15 border-purple-400/40 text-purple-700  dark:text-purple-300',
+}
+
+const FALLBACK_COLORS = [
+  'bg-zinc-500/15 border-zinc-400/40 text-zinc-700 dark:text-zinc-300',
+  'bg-teal-500/15 border-teal-400/40 text-teal-700 dark:text-teal-300',
+  'bg-indigo-500/15 border-indigo-400/40 text-indigo-700 dark:text-indigo-300',
 ]
 
-// ── Output panel ─────────────────────────────────────────────────────────────
+function chipColor(key: string, index: number): string {
+  return KEY_COLORS[key] ?? FALLBACK_COLORS[index % FALLBACK_COLORS.length]
+}
 
-function OutputPanel({
-  serialized,
-  onClear,
+// ── VarChip ───────────────────────────────────────────────────────────────────
+
+function VarChip({
+  varKey,
+  label,
+  value,
+  colorClass,
+  onEdit,
 }: {
-  serialized: SerializedPrompt
-  onClear: () => void
+  varKey: string
+  label: string
+  value: string
+  colorClass: string
+  onEdit: (key: string, value: string) => void
 }) {
-  const [copied, setCopied] = useState(false)
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState(value)
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  function copyOutput() {
-    const { promptText, refs } = serialized
-    if (!promptText) return
-    let output = promptText
-    if (refs.length > 0) {
-      output += '\n\n— References —\n'
-      refs.forEach(r => {
-        output += `[REF${r.num}] @${r.handle}${r.refType ? ` (${r.refType.replace(/_/g, ' ')})` : ''}\n`
-      })
-    }
-    navigator.clipboard.writeText(output).then(() => {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    })
+  useEffect(() => { if (editing) inputRef.current?.select() }, [editing])
+  // Keep draft in sync if parent value changes (e.g. another chip of same key was edited)
+  useEffect(() => { if (!editing) setDraft(value) }, [value, editing])
+
+  function commit() {
+    const trimmed = draft.trim()
+    onEdit(varKey, trimmed || value)
+    setEditing(false)
   }
 
-  const hasContent = !!serialized.promptText
+  if (editing) {
+    return (
+      <input
+        ref={inputRef}
+        value={draft}
+        onChange={e => setDraft(e.target.value)}
+        onBlur={commit}
+        onKeyDown={e => {
+          if (e.key === 'Enter') { e.preventDefault(); commit() }
+          if (e.key === 'Escape') { setDraft(value); setEditing(false) }
+        }}
+        style={{ width: Math.max(draft.length, label.length, 4) * 8 + 24 }}
+        className={`inline rounded-md px-2 py-0.5 text-sm border outline-none font-medium ${colorClass}`}
+      />
+    )
+  }
 
   return (
-    <aside className="w-72 shrink-0 flex flex-col border-l border-black/[0.08] dark:border-white/8 bg-[#f7f6f3] dark:bg-[#0a0a0a]">
-      <div className="p-3 border-b border-black/[0.08] dark:border-white/8 flex items-center justify-between">
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-600">
-          Output
-        </span>
-        <div className="flex items-center gap-1.5">
-          {hasContent && (
-            <button
-              onClick={onClear}
-              className="text-[10px] text-gray-400 dark:text-zinc-600 hover:text-gray-600 dark:hover:text-zinc-400 transition-colors px-1"
-            >
-              Clear
-            </button>
-          )}
-          <button
-            onClick={copyOutput}
-            disabled={!hasContent}
-            className="rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-30 px-3 py-1 text-[11px] font-medium text-white transition-colors"
-          >
-            {copied ? '✓ Copied' : 'Copy'}
-          </button>
-        </div>
-      </div>
-
-      <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-4">
-        {/* Prompt text with REF tokens */}
-        {hasContent ? (
-          <div>
-            <div className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-600 mb-1.5">
-              Prompt
-            </div>
-            <div className="font-mono text-xs text-gray-700 dark:text-zinc-300 leading-5 whitespace-pre-wrap break-words bg-black/[0.03] dark:bg-white/[0.02] rounded-lg p-2.5 border border-black/[0.06] dark:border-white/6">
-              {serialized.promptText}
-            </div>
-          </div>
-        ) : (
-          <div className="flex-1 flex items-center justify-center">
-            <p className="text-xs text-center text-gray-400 dark:text-zinc-600 max-w-[160px] leading-relaxed">
-              Your assembled prompt will appear here as you compose
-            </p>
-          </div>
-        )}
-
-        {/* Reference legend */}
-        {serialized.refs.length > 0 && (
-          <div>
-            <div className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-600 mb-1.5">
-              Reference Legend
-            </div>
-            <div className="flex flex-col gap-1.5">
-              {serialized.refs.map(r => (
-                <div
-                  key={r.num}
-                  className="flex items-center gap-2 rounded-lg border border-black/[0.08] dark:border-white/8 bg-white dark:bg-zinc-950 px-2.5 py-2"
-                >
-                  <span className="font-mono text-[10px] text-gray-400 dark:text-zinc-600 shrink-0 w-10">
-                    REF{r.num}
-                  </span>
-                  <img src={r.thumbnail} alt="" className="w-7 h-7 rounded-md object-cover shrink-0" />
-                  <div className="min-w-0">
-                    <div className="text-xs font-medium text-gray-800 dark:text-zinc-200 truncate">
-                      @{r.handle}
-                    </div>
-                    {r.refType && (
-                      <div className="text-[10px] text-gray-400 dark:text-zinc-600 truncate">
-                        {r.refType.replace(/_/g, ' ')}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Multiple images from same ref */}
-        {serialized.refs.length > 0 && (
-          <div className="text-[10px] text-gray-400 dark:text-zinc-600 bg-violet-500/5 border border-violet-500/15 rounded-lg p-2.5 leading-relaxed">
-            Upload images to your tool in the order shown above when prompted for reference inputs.
-          </div>
-        )}
-      </div>
-    </aside>
+    <span
+      onClick={() => { setDraft(value); setEditing(true) }}
+      title={`${label} — click to edit`}
+      className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-sm border font-medium cursor-text hover:brightness-95 dark:hover:brightness-110 transition-all select-none ${colorClass}`}
+    >
+      {value}
+      <svg className="w-2.5 h-2.5 opacity-40 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536M9 11l6.536-6.536a2.5 2.5 0 013.536 3.536L12 15H9v-3z" />
+      </svg>
+    </span>
   )
 }
 
-// ── Studio page ───────────────────────────────────────────────────────────────
+// ── Template display ──────────────────────────────────────────────────────────
 
-export default function StudioPage() {
-  const [references, setReferences] = useState<StudioRef[]>([])
-  const [loading, setLoading] = useState(true)
-  const [serialized, setSerialized] = useState<SerializedPrompt>({ promptText: '', refs: [] })
-  const [workflow, setWorkflow] = useState('r2v')
-  const editorRef = useRef<PromptEditorHandle>(null)
-
-  useEffect(() => {
-    fetch('/api/studio/references')
-      .then(r => r.json())
-      .then(data => {
-        setReferences(data.references ?? [])
-        setLoading(false)
-      })
-  }, [])
-
-  function loadTemplate() {
-    const wf = WORKFLOWS.find(w => w.id === workflow)
-    if (wf) editorRef.current?.loadTemplate(wf.template)
-  }
-
-  const handleInsertFromLibrary = useCallback((ref: StudioRef) => {
-    // Insert at cursor — delegate to editor if focused, else append
-    const editor = document.querySelector<HTMLDivElement>('[contenteditable=true]')
-    if (!editor) return
-    editor.focus()
-    // Simulate a drop at center of editor
-    const rect = editor.getBoundingClientRect()
-    const sel = window.getSelection()
-    // If editor is focused and has a selection, insertChipAtPoint handles it.
-    // Fallback: move caret to end and then insert via synthetic drag data
-    if (!sel || sel.rangeCount === 0 || !editor.contains(sel.anchorNode)) {
-      const range = document.createRange()
-      range.selectNodeContents(editor)
-      range.collapse(false)
-      sel?.removeAllRanges()
-      sel?.addRange(range)
-    }
-    // Dispatch a synthetic drop on the editor at the current caret position
-    const caretRange = sel?.getRangeAt(0)
-    const caretRect = caretRange?.getBoundingClientRect()
-    const dropX = caretRect && caretRect.width > 0 ? caretRect.left : rect.left + rect.width / 2
-    const dropY = caretRect && caretRect.height > 0 ? caretRect.top : rect.top + rect.height / 2
-
-    const dt = new DataTransfer()
-    dt.setData('text/ref-id', ref.id)
-    editor.dispatchEvent(new DragEvent('drop', {
-      bubbles: true,
-      clientX: dropX,
-      clientY: dropY,
-      dataTransfer: dt,
-    }))
-  }, [])
-
-  const currentWf = WORKFLOWS.find(w => w.id === workflow)
+function TemplateView({
+  segments,
+  onEditVar,
+}: {
+  segments: Segment[]
+  onEditVar: (key: string, value: string) => void
+}) {
+  // Assign a stable color index per unique key
+  const keyOrder: string[] = []
+  segments.forEach(s => {
+    if (s.type === 'var' && !keyOrder.includes(s.key)) keyOrder.push(s.key)
+  })
 
   return (
-    <div className="h-[calc(100vh-48px)] flex flex-col bg-[#f7f6f3] dark:bg-[#0a0a0a] overflow-hidden">
-      {/* Toolbar */}
-      <div className="shrink-0 border-b border-black/[0.08] dark:border-white/8 px-4 py-2 flex items-center gap-3 bg-[#f7f6f3]/90 dark:bg-[#0a0a0a]/90">
-        <h1 className="text-sm font-semibold text-gray-900 dark:text-white shrink-0">Studio</h1>
-        <div className="w-px h-4 bg-black/10 dark:bg-white/10" />
-
-        {/* Workflow pills */}
-        <div className="flex items-center gap-1">
-          {WORKFLOWS.map(w => (
-            <button
-              key={w.id}
-              onClick={() => setWorkflow(w.id)}
-              title={w.description}
-              className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${
-                workflow === w.id
-                  ? 'bg-violet-500/15 border border-violet-500/30 text-violet-700 dark:text-violet-300'
-                  : 'text-gray-500 dark:text-zinc-500 hover:text-gray-900 dark:hover:text-white border border-transparent hover:bg-black/5 dark:hover:bg-white/5'
-              }`}
-            >
-              {w.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Template button */}
-        <button
-          onClick={loadTemplate}
-          className="rounded-lg px-2.5 py-1 text-xs font-medium text-gray-500 dark:text-zinc-500 border border-black/[0.08] dark:border-white/8 hover:text-gray-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-          title={`Load ${currentWf?.description} template`}
-        >
-          Load template
-        </button>
-
-        {/* Hint */}
-        {currentWf && (
-          <span className="text-[11px] text-gray-400 dark:text-zinc-600 truncate hidden md:block">
-            {currentWf.hint}
-          </span>
-        )}
-      </div>
-
-      {/* 3-panel layout */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left: reference library */}
-        {loading ? (
-          <div className="w-60 shrink-0 border-r border-black/[0.08] dark:border-white/8 flex items-center justify-center">
-            <span className="text-xs text-gray-400 dark:text-zinc-600">Loading…</span>
-          </div>
-        ) : (
-          <ReferenceLibrary references={references} onInsert={handleInsertFromLibrary} />
-        )}
-
-        {/* Center: compose */}
-        <div className="flex-1 overflow-y-auto p-4 flex">
-          <PromptEditor
-            ref={editorRef}
-            references={references}
-            onSerialize={setSerialized}
+    <p className="text-base leading-9 text-gray-900 dark:text-white">
+      {segments.map((seg, i) => {
+        if (seg.type === 'text') return <span key={i}>{seg.value}</span>
+        const colorClass = chipColor(seg.key, keyOrder.indexOf(seg.key))
+        return (
+          <VarChip
+            key={i}
+            varKey={seg.key}
+            label={seg.label}
+            value={seg.value}
+            colorClass={colorClass}
+            onEdit={onEditVar}
           />
+        )
+      })}
+    </p>
+  )
+}
+
+// ── Variation card ────────────────────────────────────────────────────────────
+
+function VariationCard({ prompt, index }: { prompt: string; index: number }) {
+  const [copied, setCopied] = useState(false)
+
+  function copy() {
+    navigator.clipboard.writeText(prompt).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1800)
+    })
+  }
+
+  return (
+    <div className="group rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-zinc-950 p-4 flex gap-3 hover:border-black/[0.14] dark:hover:border-white/14 transition-colors">
+      <span className="text-xs font-mono text-gray-400 dark:text-zinc-600 mt-0.5 shrink-0 w-4">{index}</span>
+      <p className="flex-1 text-sm text-gray-800 dark:text-zinc-200 leading-relaxed">{prompt}</p>
+      <button
+        onClick={copy}
+        className={`shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium transition-colors self-start ${
+          copied
+            ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+            : 'bg-black/[0.04] dark:bg-white/6 text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white opacity-0 group-hover:opacity-100'
+        }`}
+      >
+        {copied ? '✓' : 'Copy'}
+      </button>
+    </div>
+  )
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
+
+export default function StudioPage() {
+  const [input, setInput] = useState('')
+  const [segments, setSegments] = useState<Segment[]>([])
+  const [variations, setVariations] = useState<string[]>([])
+  const [parsing, setParsing] = useState(false)
+  const [generating, setGenerating] = useState(false)
+  const [parseError, setParseError] = useState<string | null>(null)
+
+  const hasTemplate = segments.length > 0
+  const hasVars = segments.some(s => s.type === 'var')
+
+  async function parse() {
+    if (!input.trim()) return
+    setParsing(true)
+    setParseError(null)
+    setSegments([])
+    setVariations([])
+    try {
+      const res = await fetch('/api/studio/parse', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: input.trim() }),
+      })
+      const data = await res.json()
+      if (data.error) throw new Error(data.error)
+      setSegments(data.segments)
+    } catch (err) {
+      setParseError(String(err))
+    } finally {
+      setParsing(false)
+    }
+  }
+
+  function editVar(key: string, value: string) {
+    setSegments(segs =>
+      segs.map(s => s.type === 'var' && s.key === key ? { ...s, value } : s)
+    )
+    // Clear stale variations when template changes
+    setVariations([])
+  }
+
+  function buildTemplateStr(): string {
+    return segments.map(s => s.type === 'text' ? s.value : `{${s.key}}`).join('')
+  }
+
+  function buildVariables(): Record<string, string> {
+    const vars: Record<string, string> = {}
+    segments.forEach(s => { if (s.type === 'var') vars[s.key] = s.value })
+    return vars
+  }
+
+  async function generateVariations() {
+    setGenerating(true)
+    setVariations([])
+    try {
+      const res = await fetch('/api/studio/variations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          templateStr: buildTemplateStr(),
+          variables: buildVariables(),
+          count: 5,
+        }),
+      })
+      const data = await res.json()
+      if (data.error) throw new Error(data.error)
+      setVariations(data.prompts)
+    } catch (err) {
+      setParseError(String(err))
+    } finally {
+      setGenerating(false)
+    }
+  }
+
+  // Detect variable keys for the legend
+  const uniqueVarKeys: string[] = []
+  const keyOrder: string[] = []
+  segments.forEach(s => {
+    if (s.type === 'var' && !keyOrder.includes(s.key)) keyOrder.push(s.key)
+  })
+
+  return (
+    <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a]">
+      <div className="max-w-2xl mx-auto px-4 md:px-6 py-8 flex flex-col gap-8">
+
+        {/* Header */}
+        <div>
+          <h1 className="text-lg font-semibold text-gray-900 dark:text-white">Prompt Rewriter</h1>
+          <p className="text-sm text-gray-400 dark:text-zinc-500 mt-1">
+            Paste any prompt to extract its variables, then generate variations with the same structure.
+          </p>
         </div>
 
-        {/* Right: output */}
-        <OutputPanel
-          serialized={serialized}
-          onClear={() => editorRef.current?.clear()}
-        />
+        {/* Input */}
+        <div className="flex flex-col gap-2">
+          <textarea
+            value={input}
+            onChange={e => { setInput(e.target.value); setSegments([]); setVariations([]) }}
+            onKeyDown={e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) parse() }}
+            placeholder="Paste a prompt here…"
+            rows={4}
+            className="w-full rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-zinc-950 px-4 py-3 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-zinc-600 outline-none focus:border-violet-400/60 dark:focus:border-violet-500/40 resize-none transition-colors leading-relaxed"
+          />
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] text-gray-400 dark:text-zinc-600">
+              {input.trim() ? `${input.trim().length} chars` : 'Tip: ⌘↵ to parse'}
+            </span>
+            <button
+              onClick={parse}
+              disabled={!input.trim() || parsing}
+              className="flex items-center gap-2 rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-40 px-4 py-2 text-sm font-medium text-white transition-colors"
+            >
+              {parsing ? (
+                <>
+                  <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                  </svg>
+                  Parsing…
+                </>
+              ) : 'Parse →'}
+            </button>
+          </div>
+        </div>
+
+        {parseError && (
+          <p className="text-sm text-red-500">{parseError}</p>
+        )}
+
+        {/* Template */}
+        {hasTemplate && (
+          <div className="flex flex-col gap-4">
+            <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-zinc-950 p-4">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-600 mb-3">
+                Template — click any chip to edit
+              </div>
+              <TemplateView segments={segments} onEditVar={editVar} />
+
+              {/* Variable legend */}
+              {hasVars && (
+                <div className="mt-4 pt-4 border-t border-black/[0.06] dark:border-white/6 flex flex-wrap gap-1.5">
+                  {keyOrder.map((key, i) => {
+                    const seg = segments.find(s => s.type === 'var' && s.key === key)
+                    if (!seg || seg.type !== 'var') return null
+                    return (
+                      <span key={key} className={`rounded-full px-2 py-0.5 text-[11px] border ${chipColor(key, i)}`}>
+                        {seg.label}
+                      </span>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Generate */}
+            <button
+              onClick={generateVariations}
+              disabled={generating}
+              className="flex items-center justify-center gap-2 rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-zinc-950 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] px-4 py-3 text-sm font-medium text-gray-700 dark:text-zinc-300 transition-colors disabled:opacity-50"
+            >
+              {generating ? (
+                <>
+                  <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                  </svg>
+                  Generating variations…
+                </>
+              ) : (
+                <>
+                  <span>✦</span>
+                  Generate 5 variations
+                </>
+              )}
+            </button>
+          </div>
+        )}
+
+        {/* Variations */}
+        {variations.length > 0 && (
+          <div className="flex flex-col gap-2">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-600">
+              Variations
+            </div>
+            {variations.map((p, i) => (
+              <VariationCard key={i} prompt={p} index={i + 1} />
+            ))}
+          </div>
+        )}
+
       </div>
     </div>
   )
