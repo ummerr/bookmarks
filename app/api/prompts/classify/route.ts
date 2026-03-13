@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { countUnclassifiedPrompts, getAllPrompts, getUnclassifiedPrompts, updatePromptExtraction } from '@/lib/db'
 import { classifyPromptBatch } from '@/lib/classifier'
 
+export const maxDuration = 300 // Vercel Pro: allow up to 5 min for long classification runs
+
 const BATCH_SIZE = 5
-const CONCURRENCY = 3
+const CONCURRENCY = 1
 
 async function runBatches(
   prompts: Awaited<ReturnType<typeof getUnclassifiedPrompts>>

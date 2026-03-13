@@ -87,7 +87,7 @@ export interface Bookmark {
   reference_type: ReferenceType | null
   art_styles: ArtStyle[]
   bookmarked_at: string | null
-  source: 'twitter' | 'manual'
+  source: 'twitter' | 'manual' | 'reddit'
   created_at: string
   updated_at: string
 }
@@ -111,6 +111,7 @@ export interface BookmarkInsert {
   thread_tweets?: TweetInThread[]
   user_notes?: string | null
   bookmarked_at?: string | null
+  source?: 'twitter' | 'manual' | 'reddit'
 }
 
 export interface ClassificationResult {

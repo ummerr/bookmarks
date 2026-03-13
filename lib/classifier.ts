@@ -101,13 +101,16 @@ function getClient() {
   return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 }
 
-async function withRetry<T>(fn: () => Promise<T>, retries = 1, delayMs = 2000): Promise<T> {
+async function withRetry<T>(fn: () => Promise<T>, retries = 3, delayMs = 5000): Promise<T> {
   try {
     return await fn()
-  } catch (err) {
+  } catch (err: unknown) {
     if (retries <= 0) throw err
-    await new Promise((r) => setTimeout(r, delayMs))
-    return withRetry(fn, retries - 1, delayMs)
+    // Back off longer for rate limit errors
+    const isRateLimit = err instanceof Error && (err.message.includes('rate_limit') || err.message.includes('429') || (err as { status?: number }).status === 429)
+    const wait = isRateLimit ? 60000 : delayMs
+    await new Promise((r) => setTimeout(r, wait))
+    return withRetry(fn, retries - 1, delayMs * 2)
   }
 }
 

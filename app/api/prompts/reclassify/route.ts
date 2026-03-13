@@ -1,15 +1,30 @@
 import { NextResponse } from 'next/server'
-import { getAllPromptsForReclassify, updatePromptExtraction } from '@/lib/db'
+import { getAllPromptsForReclassify, updatePromptExtraction, countAllPrompts } from '@/lib/db'
 import { classifyPromptBatch } from '@/lib/classifier'
+
+export const maxDuration = 60
 
 const BATCH_SIZE = 5
 
-export async function POST() {
+export async function GET() {
   try {
-    const prompts = await getAllPromptsForReclassify(500)
+    const total = await countAllPrompts()
+    return NextResponse.json({ total })
+  } catch (err) {
+    return NextResponse.json({ error: String(err) }, { status: 500 })
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json().catch(() => ({}))
+    const limit: number = body.limit ?? 50
+    const offset: number = body.offset ?? 0
+
+    const prompts = await getAllPromptsForReclassify(limit, offset)
 
     if (prompts.length === 0) {
-      return NextResponse.json({ classified: 0, total: 0, message: 'No prompts found' })
+      return NextResponse.json({ classified: 0, batchTotal: 0, errors: [] })
     }
 
     let classified = 0
@@ -38,7 +53,7 @@ export async function POST() {
       }
     }
 
-    return NextResponse.json({ classified, total: prompts.length, errors: errors.length > 0 ? errors : undefined })
+    return NextResponse.json({ classified, batchTotal: prompts.length, errors })
   } catch (err) {
     console.error('[PROMPTS/RECLASSIFY]', err)
     return NextResponse.json({ error: String(err) }, { status: 500 })

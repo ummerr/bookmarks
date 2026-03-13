@@ -25,7 +25,7 @@ function toBookmark(row: Record<string, any>): Bookmark {
     detected_model: row.detected_model ?? null,
     requires_reference: row.requires_reference ?? null,
     reference_type: row.reference_type ?? null,
-    source: (row.source as 'twitter' | 'manual') ?? 'twitter',
+    source: (row.source as 'twitter' | 'manual' | 'reddit') ?? 'twitter',
   } as Bookmark
 }
 
@@ -105,7 +105,7 @@ export async function insertBookmarks(bookmarks: BookmarkInsert[]): Promise<{ in
     const result = await getSql()`
       INSERT INTO bookmarks
         (id, tweet_id, tweet_text, author_handle, author_name, tweet_url,
-         media_urls, category, confidence, bookmarked_at)
+         media_urls, category, confidence, bookmarked_at, source)
       VALUES (
         ${randomUUID()},
         ${b.tweet_id ?? null},
@@ -116,7 +116,8 @@ export async function insertBookmarks(bookmarks: BookmarkInsert[]): Promise<{ in
         ${JSON.stringify(b.media_urls ?? [])}::jsonb,
         ${b.category ?? 'uncategorized'},
         ${b.confidence ?? 0},
-        ${b.bookmarked_at ?? null}
+        ${b.bookmarked_at ?? null},
+        ${b.source ?? 'twitter'}
       )
       ON CONFLICT (tweet_id) DO NOTHING
     `
@@ -281,12 +282,19 @@ function toPromptRow(r: Record<string, unknown>) {
   }
 }
 
-export async function getAllPromptsForReclassify(limit = 500): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text' | 'thread_tweets'>[]> {
+export async function countAllPrompts(): Promise<number> {
+  const rows = await getSql()<{ n: string }[]>`
+    SELECT COUNT(*) as n FROM bookmarks WHERE category = 'prompts'
+  `
+  return Number(rows[0].n)
+}
+
+export async function getAllPromptsForReclassify(limit = 500, offset = 0): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text' | 'thread_tweets'>[]> {
   const rows = await getSql()<Record<string, unknown>[]>`
     SELECT id, tweet_id, tweet_text, thread_tweets FROM bookmarks
     WHERE category = 'prompts'
     ORDER BY created_at ASC
-    LIMIT ${limit}
+    LIMIT ${limit} OFFSET ${offset}
   `
   return rows.map(toPromptRow)
 }
