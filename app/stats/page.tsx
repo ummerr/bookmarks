@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useMemo } from 'react'
 
-// ── Model family grouping (mirrors prompts page) ───────────────────────────
-
 const MODEL_FAMILIES: { label: string; patterns: string[] }[] = [
   { label: 'Midjourney',       patterns: ['midjourney', 'mj'] },
   { label: 'Flux',             patterns: ['flux'] },
@@ -36,8 +34,6 @@ function modelToFamily(model: string): string {
   const lower = model.toLowerCase()
   return MODEL_FAMILIES.find((f) => f.patterns.some((p) => lower.includes(p)))?.label ?? model
 }
-
-// ── Colour palettes ────────────────────────────────────────────────────────
 
 const CATEGORY_COLORS: Record<string, string> = {
   image_t2i:           '#ec4899',
@@ -117,8 +113,6 @@ const THEME_LABELS: Record<string, string> = {
   horror:       'Horror',
 }
 
-// ── Horizontal bar chart ───────────────────────────────────────────────────
-
 function BarChart({
   data,
   colorMap,
@@ -135,17 +129,17 @@ function BarChart({
   if (data.length === 0) {
     return (
       <div className="flex flex-col gap-4">
-        <h2 className="text-base font-semibold text-white tracking-tight">{title}</h2>
-        <p className="text-sm text-zinc-600 py-8 text-center">No data yet</p>
+        <h2 className="text-base font-semibold text-gray-900 dark:text-white tracking-tight">{title}</h2>
+        <p className="text-sm text-gray-400 dark:text-zinc-600 py-8 text-center">No data yet</p>
       </div>
     )
   }
   const total = data.reduce((s, d) => s + d.value, 0)
-  const max = data[0].value // already sorted desc
+  const max = data[0].value
 
   return (
     <div className="flex flex-col gap-5">
-      <h2 className="text-base font-semibold text-white tracking-tight">{title}</h2>
+      <h2 className="text-base font-semibold text-gray-900 dark:text-white tracking-tight">{title}</h2>
       <div className="flex flex-col gap-1.5">
         {data.map((item, i) => {
           const color = colorMap?.[item.label] ?? fallbackPalette[i % fallbackPalette.length]
@@ -154,17 +148,17 @@ function BarChart({
           const label = labelFn ? labelFn(item.label) : item.label
           return (
             <div key={item.label} className="flex items-center gap-3 group">
-              <span className="w-32 text-xs text-zinc-400 text-right truncate shrink-0 group-hover:text-zinc-200 transition-colors">
+              <span className="w-32 text-xs text-gray-400 dark:text-zinc-400 text-right truncate shrink-0 group-hover:text-gray-700 dark:group-hover:text-zinc-200 transition-colors">
                 {label}
               </span>
-              <div className="flex-1 h-5 bg-white/5 rounded-md overflow-hidden">
+              <div className="flex-1 h-5 bg-black/5 dark:bg-white/5 rounded-md overflow-hidden">
                 <div
                   className="h-full rounded-md transition-all"
                   style={{ width: `${barW}%`, background: color }}
                 />
               </div>
-              <span className="text-xs font-semibold text-white tabular-nums w-8 text-right shrink-0">{item.value}</span>
-              <span className="text-xs text-zinc-600 tabular-nums w-10 text-right shrink-0">{pct}%</span>
+              <span className="text-xs font-semibold text-gray-900 dark:text-white tabular-nums w-8 text-right shrink-0">{item.value}</span>
+              <span className="text-xs text-gray-400 dark:text-zinc-600 tabular-nums w-10 text-right shrink-0">{pct}%</span>
             </div>
           )
         })}
@@ -172,8 +166,6 @@ function BarChart({
     </div>
   )
 }
-
-// ── SVG donut chart ────────────────────────────────────────────────────────
 
 function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
   const rad = ((angleDeg - 90) * Math.PI) / 180
@@ -185,10 +177,8 @@ function donutSegmentPath(
   outerR: number, innerR: number,
   startAngle: number, endAngle: number,
 ): string {
-  // guard against full circle (single segment)
   const sweep = endAngle - startAngle
   if (sweep >= 359.99) {
-    // draw as two arcs
     const mid = startAngle + 180
     const p1o = polarToCartesian(cx, cy, outerR, startAngle)
     const p2o = polarToCartesian(cx, cy, outerR, mid)
@@ -261,8 +251,8 @@ function DonutChart({
   if (total === 0) {
     return (
       <div className="flex flex-col gap-4">
-        <h2 className="text-base font-semibold text-white">{title}</h2>
-        <p className="text-sm text-zinc-600 py-8 text-center">No data yet</p>
+        <h2 className="text-base font-semibold text-gray-900 dark:text-white">{title}</h2>
+        <p className="text-sm text-gray-400 dark:text-zinc-600 py-8 text-center">No data yet</p>
       </div>
     )
   }
@@ -271,9 +261,8 @@ function DonutChart({
 
   return (
     <div className="flex flex-col gap-5">
-      <h2 className="text-base font-semibold text-white tracking-tight">{title}</h2>
+      <h2 className="text-base font-semibold text-gray-900 dark:text-white tracking-tight">{title}</h2>
       <div className="flex flex-col lg:flex-row items-center gap-8">
-        {/* Chart */}
         <div className="relative shrink-0" style={{ width: size, height: size }}>
           <svg width={size} height={size}>
             {segments.map((seg) => (
@@ -281,7 +270,7 @@ function DonutChart({
                 key={seg.index}
                 d={donutSegmentPath(cx, cy, outerR, innerR, seg.startAngle, seg.endAngle)}
                 fill={seg.color}
-                stroke="#0a0a0a"
+                stroke="var(--background)"
                 strokeWidth="2"
                 opacity={hovered === null || hovered === seg.index ? 1 : 0.35}
                 style={{ transition: 'opacity 0.15s' }}
@@ -290,10 +279,9 @@ function DonutChart({
                 className="cursor-pointer"
               />
             ))}
-            {/* Center */}
             {hoveredItem ? (
               <>
-                <text x={cx} y={cy - 10} textAnchor="middle" fill="#fff" fontSize={26} fontWeight={700} fontFamily="inherit">
+                <text x={cx} y={cy - 10} textAnchor="middle" fill="currentColor" fontSize={26} fontWeight={700} fontFamily="inherit">
                   {hoveredItem.value}
                 </text>
                 <text x={cx} y={cy + 12} textAnchor="middle" fill="#a1a1aa" fontSize={11} fontFamily="inherit">
@@ -302,7 +290,7 @@ function DonutChart({
               </>
             ) : (
               <>
-                <text x={cx} y={cy - 10} textAnchor="middle" fill="#fff" fontSize={30} fontWeight={700} fontFamily="inherit">
+                <text x={cx} y={cy - 10} textAnchor="middle" fill="currentColor" fontSize={30} fontWeight={700} fontFamily="inherit">
                   {total}
                 </text>
                 <text x={cx} y={cy + 12} textAnchor="middle" fill="#71717a" fontSize={11} fontFamily="inherit">
@@ -313,7 +301,6 @@ function DonutChart({
           </svg>
         </div>
 
-        {/* Legend */}
         <div className="flex flex-col gap-2 flex-1 w-full min-w-0">
           {segments.map((seg) => {
             const pct = ((seg.value / total) * 100).toFixed(1)
@@ -327,11 +314,10 @@ function DonutChart({
                 onMouseLeave={() => setHovered(null)}
               >
                 <div className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: seg.color }} />
-                <span className="text-sm text-zinc-300 flex-1 truncate">{displayLabel}</span>
-                <span className="text-sm font-semibold text-white tabular-nums">{seg.value}</span>
-                <span className="text-xs text-zinc-600 w-12 text-right tabular-nums">{pct}%</span>
-                {/* mini bar */}
-                <div className="w-16 h-1.5 rounded-full bg-white/8 overflow-hidden shrink-0">
+                <span className="text-sm text-gray-600 dark:text-zinc-300 flex-1 truncate">{displayLabel}</span>
+                <span className="text-sm font-semibold text-gray-900 dark:text-white tabular-nums">{seg.value}</span>
+                <span className="text-xs text-gray-400 dark:text-zinc-600 w-12 text-right tabular-nums">{pct}%</span>
+                <div className="w-16 h-1.5 rounded-full bg-black/8 dark:bg-white/8 overflow-hidden shrink-0">
                   <div className="h-full rounded-full" style={{ width: `${pct}%`, background: seg.color }} />
                 </div>
               </div>
@@ -343,16 +329,12 @@ function DonutChart({
   )
 }
 
-// ── Stats types ────────────────────────────────────────────────────────────
-
 interface StatsData {
   total: number
   byCategory: ChartItem[]
   byModel: ChartItem[]
   byTheme: ChartItem[]
 }
-
-// ── Page ───────────────────────────────────────────────────────────────────
 
 export default function StatsPage() {
   const [stats, setStats] = useState<StatsData | null>(null)
@@ -370,7 +352,6 @@ export default function StatsPage() {
       .catch((e) => { setError(String(e)); setLoading(false) })
   }, [])
 
-  // Derive media type breakdown from byCategory
   const byMediaType: ChartItem[] = useMemo(() => {
     if (!stats) return []
     const IMAGE_CATS = new Set(['image_t2i', 'image_i2i', 'image_r2i', 'image_character_ref', 'image_inpainting'])
@@ -388,7 +369,6 @@ export default function StatsPage() {
       .map(([label, value]) => ({ label, value }))
   }, [stats])
 
-  // Derive model families from byModel
   const byModelFamily: ChartItem[] = useMemo(() => {
     if (!stats) return []
     const families: Record<string, number> = {}
@@ -403,8 +383,8 @@ export default function StatsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <svg className="h-6 w-6 animate-spin text-zinc-600" fill="none" viewBox="0 0 24 24">
+      <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] flex items-center justify-center">
+        <svg className="h-6 w-6 animate-spin text-gray-300 dark:text-zinc-600" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
         </svg>
@@ -414,33 +394,32 @@ export default function StatsPage() {
 
   if (!stats) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center gap-2">
-        <p className="text-zinc-500 text-sm">Failed to load stats.</p>
+      <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] flex flex-col items-center justify-center gap-2">
+        <p className="text-gray-400 dark:text-zinc-500 text-sm">Failed to load stats.</p>
         {error && <p className="text-red-400 text-xs max-w-lg text-center">{error}</p>}
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
       <div className="max-w-5xl mx-auto px-4 md:px-6 py-8 flex flex-col gap-12">
 
-        {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Stats</h1>
-          <p className="mt-1 text-sm text-zinc-500">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Stats</h1>
+          <p className="mt-1 text-sm text-gray-400 dark:text-zinc-500">
             {stats.total.toLocaleString()} prompt{stats.total !== 1 ? 's' : ''} classified
           </p>
         </div>
 
         {/* About the collection */}
-        <div className="rounded-2xl border border-white/8 bg-gradient-to-br from-[#111] to-[#0e0e0e] p-6 md:p-8 flex flex-col gap-6">
+        <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-gradient-to-br from-gray-50 to-white dark:from-[#111] dark:to-[#0e0e0e] p-6 md:p-8 flex flex-col gap-6">
           <div>
             <div className="flex items-center gap-2 mb-3">
               <span className="text-[#1DA1F2] text-lg">✦</span>
-              <h2 className="text-base font-semibold text-white tracking-tight">About this collection</h2>
+              <h2 className="text-base font-semibold text-gray-900 dark:text-white tracking-tight">About this collection</h2>
             </div>
-            <p className="text-sm text-zinc-400 leading-relaxed max-w-2xl">
+            <p className="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed max-w-2xl">
               A hand-curated library of AI prompts sourced from the people actually pushing these tools to their limits —
               practitioners, artists, and researchers sharing their best work on X. Not scraped. Not synthetic.
               Real prompts that produced real results, bookmarked because they were worth keeping.
@@ -462,16 +441,16 @@ export default function StatsPage() {
                 body: 'One of the few collections that distinguishes reference-based workflows (IP-Adapter, face swap, img2img) from pure text prompts — critical for knowing what you can actually run.',
               },
             ].map((f) => (
-              <div key={f.title} className="rounded-xl border border-white/6 bg-white/[0.02] p-4 flex flex-col gap-1.5">
-                <p className="text-xs font-semibold text-zinc-200">{f.title}</p>
-                <p className="text-xs text-zinc-500 leading-relaxed">{f.body}</p>
+              <div key={f.title} className="rounded-xl border border-black/[0.06] dark:border-white/6 bg-black/[0.02] dark:bg-white/[0.02] p-4 flex flex-col gap-1.5">
+                <p className="text-xs font-semibold text-gray-700 dark:text-zinc-200">{f.title}</p>
+                <p className="text-xs text-gray-400 dark:text-zinc-500 leading-relaxed">{f.body}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Chart 1: By Category */}
-        <div className="rounded-2xl border border-white/8 bg-[#111] p-6 md:p-8">
+        <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-6 md:p-8">
           <BarChart
             data={stats.byCategory}
             colorMap={CATEGORY_COLORS}
@@ -482,14 +461,14 @@ export default function StatsPage() {
 
         {/* Chart 2 + 3 side by side */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="rounded-2xl border border-white/8 bg-[#111] p-6">
+          <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-6">
             <BarChart
               data={byMediaType}
               colorMap={MEDIA_TYPE_COLORS}
               title="By Media Type"
             />
           </div>
-          <div className="rounded-2xl border border-white/8 bg-[#111] p-6">
+          <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-6">
             <DonutChart
               data={stats.byTheme ?? []}
               colorMap={THEME_COLORS}
@@ -503,7 +482,7 @@ export default function StatsPage() {
 
         {/* Chart 4: By Model */}
         {byModelFamily.length > 0 && (
-          <div className="rounded-2xl border border-white/8 bg-[#111] p-6 md:p-8">
+          <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-6 md:p-8">
             <DonutChart
               data={byModelFamily}
               fallbackPalette={MODEL_PALETTE}

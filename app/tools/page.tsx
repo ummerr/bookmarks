@@ -12,9 +12,9 @@ interface ClassifyResult {
 
 function Section({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-white/8 bg-white/[0.02] p-5">
-      <h2 className="text-sm font-semibold text-white mb-1">{title}</h2>
-      <p className="text-xs text-zinc-500 mb-4">{description}</p>
+    <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-black/[0.02] dark:bg-white/[0.02] p-5">
+      <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">{title}</h2>
+      <p className="text-xs text-gray-400 dark:text-zinc-500 mb-4">{description}</p>
       {children}
     </div>
   )
@@ -22,7 +22,7 @@ function Section({ title, description, children }: { title: string; description:
 
 function ResultLine({ result, errors }: { result: string; errors?: string[] }) {
   return (
-    <div className="mt-3 text-xs text-zinc-400 flex flex-col gap-1">
+    <div className="mt-3 text-xs text-gray-500 dark:text-zinc-400 flex flex-col gap-1">
       <span>{result}</span>
       {errors?.map((e, i) => (
         <span key={i} className="text-red-400/80 font-mono">{e}</span>
@@ -114,12 +114,12 @@ export default function ToolsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
       <div className="max-w-2xl mx-auto px-4 md:px-6 py-8 flex flex-col gap-6">
 
         <div>
-          <h1 className="text-lg font-semibold text-white">Tools</h1>
-          <p className="text-sm text-zinc-500 mt-1">AI classification and data management</p>
+          <h1 className="text-lg font-semibold text-gray-900 dark:text-white">Tools</h1>
+          <p className="text-sm text-gray-400 dark:text-zinc-500 mt-1">AI classification and data management</p>
         </div>
 
         {/* Counts summary */}
@@ -130,9 +130,9 @@ export default function ToolsPage() {
               { label: 'Pending AI',   value: counts.pending },
               { label: 'Prompts',      value: counts.prompts },
             ].map((s) => (
-              <div key={s.label} className="rounded-xl border border-white/8 bg-white/[0.02] p-4 text-center">
-                <div className="text-2xl font-semibold text-white">{s.value}</div>
-                <div className="text-xs text-zinc-500 mt-1">{s.label}</div>
+              <div key={s.label} className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-black/[0.02] dark:bg-white/[0.02] p-4 text-center">
+                <div className="text-2xl font-semibold text-gray-900 dark:text-white">{s.value}</div>
+                <div className="text-xs text-gray-400 dark:text-zinc-500 mt-1">{s.label}</div>
               </div>
             ))}
           </div>
@@ -192,7 +192,7 @@ export default function ToolsPage() {
           <button
             onClick={runReclassify}
             disabled={reclassifying}
-            className="flex items-center gap-2 rounded-lg bg-white/8 border border-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-white/12 disabled:opacity-50 transition-colors"
+            className="flex items-center gap-2 rounded-lg bg-black/[0.06] dark:bg-white/8 border border-black/[0.1] dark:border-white/10 px-4 py-2 text-sm font-medium text-gray-700 dark:text-white hover:bg-black/[0.1] dark:hover:bg-white/12 disabled:opacity-50 transition-colors"
           >
             {reclassifying ? (
               <>
