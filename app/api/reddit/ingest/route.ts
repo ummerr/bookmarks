@@ -4,8 +4,35 @@ import type { BookmarkInsert } from '@/lib/types'
 
 export const maxDuration = 120
 
-const REDDIT_HEADERS = {
-  'User-Agent': 'bookmarks-app/1.0 (prompt collection tool)',
+const USER_AGENT = 'bookmarks-app/1.0 (prompt collection tool)'
+
+// ── Reddit OAuth (app-only) ───────────────────────────────────────────────
+
+let _token: { value: string; expiresAt: number } | null = null
+
+async function getAccessToken(): Promise<string> {
+  if (_token && Date.now() < _token.expiresAt - 60_000) return _token.value
+
+  const clientId = process.env.REDDIT_CLIENT_ID
+  const clientSecret = process.env.REDDIT_CLIENT_SECRET
+  if (!clientId || !clientSecret) {
+    throw new Error('REDDIT_CLIENT_ID and REDDIT_CLIENT_SECRET env vars are required')
+  }
+
+  const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64')
+  const res = await fetch('https://www.reddit.com/api/v1/access_token', {
+    method: 'POST',
+    headers: {
+      Authorization: `Basic ${credentials}`,
+      'User-Agent': USER_AGENT,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: 'grant_type=client_credentials',
+  })
+  if (!res.ok) throw new Error(`Reddit OAuth failed: ${res.status} ${await res.text()}`)
+  const data = await res.json()
+  _token = { value: data.access_token, expiresAt: Date.now() + data.expires_in * 1000 }
+  return _token.value
 }
 
 // Public subreddits rich in AI prompts
@@ -98,8 +125,9 @@ function extractPromptFromText(text: string): string | null {
 
 async function fetchPromptFromComments(subreddit: string, postId: string): Promise<string | null> {
   try {
-    const url = `https://www.reddit.com/r/${subreddit}/comments/${postId}.json?limit=10&depth=1&sort=top`
-    const res = await fetch(url, { headers: REDDIT_HEADERS, next: { revalidate: 0 } })
+    const token = await getAccessToken()
+    const url = `https://oauth.reddit.com/r/${subreddit}/comments/${postId}?limit=10&depth=1&sort=top`
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${token}`, 'User-Agent': USER_AGENT }, next: { revalidate: 0 } })
     if (!res.ok) return null
 
     const json = await res.json()
@@ -195,8 +223,9 @@ async function buildBookmark(
 // ── Subreddit fetch ───────────────────────────────────────────────────────
 
 async function fetchSubreddit(subreddit: string, timeFilter: TimeFilter, limit: number): Promise<RedditPost[]> {
-  const url = `https://www.reddit.com/r/${subreddit}/top.json?limit=${limit}&t=${timeFilter}`
-  const res = await fetch(url, { headers: REDDIT_HEADERS, next: { revalidate: 0 } })
+  const token = await getAccessToken()
+  const url = `https://oauth.reddit.com/r/${subreddit}/top?limit=${limit}&t=${timeFilter}`
+  const res = await fetch(url, { headers: { Authorization: `Bearer ${token}`, 'User-Agent': USER_AGENT }, next: { revalidate: 0 } })
   if (!res.ok) throw new Error(`Reddit API ${res.status} for r/${subreddit}`)
   const json = await res.json()
   return (json?.data?.children ?? []).map((c: { data: RedditPost }) => c.data)
