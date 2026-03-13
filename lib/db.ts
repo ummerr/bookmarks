@@ -319,6 +319,42 @@ export async function getAllPrompts(limit = 500): Promise<Pick<Bookmark, 'id' | 
   return rows.map(toPromptRow)
 }
 
+// ── Studio ────────────────────────────────────────────────────────────────
+
+export interface StudioReference {
+  id: string
+  author_handle: string
+  author_name: string | null
+  tweet_url: string
+  media_urls: string[]
+  reference_type: ReferenceType | null
+  prompt_category: PromptCategory | null
+  art_styles: ArtStyle[]
+  extracted_prompt: string | null
+}
+
+export async function getReferences(): Promise<StudioReference[]> {
+  const rows = await getSql()<Record<string, unknown>[]>`
+    SELECT id, author_handle, author_name, tweet_url, media_urls,
+           reference_type, prompt_category, art_styles, extracted_prompt
+    FROM bookmarks
+    WHERE category = 'prompts'
+      AND jsonb_array_length(media_urls) > 0
+    ORDER BY bookmarked_at DESC NULLS LAST, created_at DESC
+  `
+  return rows.map(r => ({
+    id: r.id as string,
+    author_handle: r.author_handle as string,
+    author_name: (r.author_name as string | null) ?? null,
+    tweet_url: r.tweet_url as string,
+    media_urls: typeof r.media_urls === 'string' ? JSON.parse(r.media_urls) : (r.media_urls ?? []),
+    reference_type: (r.reference_type as ReferenceType | null) ?? null,
+    prompt_category: (r.prompt_category as PromptCategory | null) ?? null,
+    art_styles: typeof r.art_styles === 'string' ? JSON.parse(r.art_styles) : (r.art_styles ?? []),
+    extracted_prompt: (r.extracted_prompt as string | null) ?? null,
+  }))
+}
+
 export async function updatePromptExtraction(
   id: string,
   data: {

@@ -423,20 +423,20 @@ function PromptsPageInner() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2 border border-black/[0.06] dark:border-white/6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] px-4 py-3">
 
-          {/* Row: Media type — primary control */}
-          <div className="flex items-center gap-3">
-            <span className="text-[11px] font-medium text-gray-400 dark:text-zinc-500 uppercase tracking-wider w-12 shrink-0">Media</span>
-            <div className="flex gap-1 p-0.5 bg-black/[0.04] dark:bg-white/5 rounded-lg">
+          {/* Row: Media type */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-12">Media</span>
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
               {MEDIA_TYPES.map((mt) => (
                 <button
                   key={mt.value}
                   onClick={() => { setActiveMediaType(mt.value); setActiveCategory('all'); setActiveTheme('all'); setActiveModel('all') }}
-                  className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+                  className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
                     activeMediaType === mt.value
-                      ? 'bg-black/[0.12] text-gray-900 dark:bg-white/20 dark:text-white shadow-sm'
-                      : 'text-gray-400 hover:text-gray-700 dark:text-zinc-500 dark:hover:text-zinc-300'
+                      ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
+                      : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
                   }`}
                 >
                   {mt.label}
@@ -445,53 +445,61 @@ function PromptsPageInner() {
             </div>
           </div>
 
-          {/* Row: Technique sub-category */}
-          <div className="flex items-start gap-3">
-            <span className="text-[11px] font-medium text-gray-400 dark:text-zinc-500 uppercase tracking-wider w-12 shrink-0 pt-1">Type</span>
-            <div className="flex gap-1 flex-wrap">
-              {[
-                CATEGORIES.find((c) => c.value === 'all')!,
-                ...CATEGORIES
-                  .filter((cat) => cat.value !== 'all' && MEDIA_TYPE_CATEGORIES[activeMediaType]?.includes(cat.value) && (categoryCounts[cat.value] ?? 0) > 0)
-                  .sort((a, b) => (categoryCounts[b.value] ?? 0) - (categoryCounts[a.value] ?? 0)),
-              ].map((cat) => (
-                <button
-                  key={cat.value}
-                  onClick={() => { setActiveCategory(cat.value); setActiveModel('all') }}
-                  className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border ${
-                    activeCategory === cat.value
-                      ? 'bg-black/[0.08] text-gray-900 border-black/[0.15] dark:bg-white/15 dark:text-white dark:border-white/20'
-                      : 'text-gray-400 border-transparent hover:text-gray-700 hover:bg-black/[0.05] dark:text-zinc-500 dark:border-transparent dark:hover:text-zinc-300 dark:hover:bg-white/5'
-                  }`}
-                >
-                  {cat.label}{cat.value !== 'all' && categoryCounts[cat.value] ? <span className="opacity-50"> ({categoryCounts[cat.value]})</span> : null}
-                </button>
-              ))}
+          {/* Row: Type */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-12">Type</span>
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
+              <button
+                onClick={() => { setActiveCategory('all'); setActiveModel('all') }}
+                className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                  activeCategory === 'all'
+                    ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
+                    : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                }`}
+              >
+                All
+              </button>
+              {CATEGORIES
+                .filter((cat) => cat.value !== 'all' && MEDIA_TYPE_CATEGORIES[activeMediaType]?.includes(cat.value) && (categoryCounts[cat.value] ?? 0) > 0)
+                .sort((a, b) => (categoryCounts[b.value] ?? 0) - (categoryCounts[a.value] ?? 0))
+                .map((cat) => (
+                  <button
+                    key={cat.value}
+                    onClick={() => { setActiveCategory(cat.value); setActiveModel('all') }}
+                    className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                      activeCategory === cat.value
+                        ? `${CATEGORY_COLORS[cat.value]} font-medium`
+                        : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                    }`}
+                  >
+                    {cat.label}<span className="opacity-50"> {categoryCounts[cat.value]}</span>
+                  </button>
+                ))}
               {uncategorizedCount > 0 && (
                 <button
                   onClick={() => { setActiveCategory('uncategorized'); setActiveModel('all') }}
-                  className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border ${
+                  className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
                     activeCategory === 'uncategorized'
-                      ? 'bg-black/[0.08] text-gray-900 border-black/[0.15] dark:bg-white/15 dark:text-white dark:border-white/20'
-                      : 'text-gray-400 border-transparent hover:text-gray-700 hover:bg-black/[0.05] dark:text-zinc-500 dark:border-transparent dark:hover:text-zinc-300 dark:hover:bg-white/5'
+                      ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
+                      : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
                   }`}
                 >
-                  Uncategorized <span className="opacity-50">({uncategorizedCount})</span>
+                  Untagged<span className="opacity-50"> {uncategorizedCount}</span>
                 </button>
               )}
             </div>
           </div>
 
           {/* Row: Theme */}
-          <div className="flex items-start gap-3">
-            <span className="text-[11px] font-medium text-gray-400 dark:text-zinc-500 uppercase tracking-wider w-12 shrink-0 pt-1">Theme</span>
-            <div className="flex gap-1 flex-wrap">
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-12">Theme</span>
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
               <button
                 onClick={() => setActiveTheme('all')}
-                className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border ${
+                className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
                   activeTheme === 'all'
-                    ? 'bg-black/[0.08] text-gray-900 border-black/[0.15] dark:bg-white/15 dark:text-white dark:border-white/20'
-                    : 'text-gray-400 border-transparent hover:text-gray-700 hover:bg-black/[0.05] dark:text-zinc-500 dark:border-transparent dark:hover:text-zinc-300 dark:hover:bg-white/5'
+                    ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
+                    : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
                 }`}
               >
                 All
@@ -500,32 +508,32 @@ function PromptsPageInner() {
                 .filter((t) => themeCounts[t.value] > 0)
                 .sort((a, b) => (themeCounts[b.value] ?? 0) - (themeCounts[a.value] ?? 0))
                 .map((t) => (
-                <button
-                  key={t.value}
-                  onClick={() => setActiveTheme(t.value)}
-                  className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-all border ${
-                    activeTheme === t.value
-                      ? `${THEME_COLORS[t.value]} opacity-100`
-                      : 'text-gray-400 border-transparent hover:text-gray-700 hover:bg-black/[0.05] dark:text-zinc-500 dark:border-transparent dark:hover:text-zinc-300 dark:hover:bg-white/5'
-                  }`}
-                >
-                  {t.label} <span className="opacity-50">({themeCounts[t.value]})</span>
-                </button>
-              ))}
+                  <button
+                    key={t.value}
+                    onClick={() => setActiveTheme(t.value)}
+                    className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                      activeTheme === t.value
+                        ? `${THEME_COLORS[t.value]} font-medium`
+                        : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                    }`}
+                  >
+                    {t.label}<span className="opacity-50"> {themeCounts[t.value]}</span>
+                  </button>
+                ))}
             </div>
           </div>
 
-          {/* Row: Model — capped at 8, expandable */}
+          {/* Row: Model */}
           {availableModels.length > 0 && (
-            <div className="flex items-start gap-3">
-              <span className="text-[11px] font-medium text-gray-400 dark:text-zinc-500 uppercase tracking-wider w-12 shrink-0 pt-1">Model</span>
-              <div className="flex gap-1 flex-wrap">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-12">Model</span>
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
                 <button
                   onClick={() => setActiveModel('all')}
-                  className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border ${
+                  className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
                     activeModel === 'all'
-                      ? 'bg-black/[0.08] text-gray-900 border-black/[0.15] dark:bg-white/15 dark:text-white dark:border-white/20'
-                      : 'text-gray-400 border-transparent hover:text-gray-700 hover:bg-black/[0.05] dark:text-zinc-500 dark:border-transparent dark:hover:text-zinc-300 dark:hover:bg-white/5'
+                      ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
+                      : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
                   }`}
                 >
                   All
@@ -534,19 +542,19 @@ function PromptsPageInner() {
                   <button
                     key={label}
                     onClick={() => setActiveModel(label)}
-                    className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border ${
+                    className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
                       activeModel === label
-                        ? 'bg-black/[0.08] text-gray-900 border-black/[0.15] dark:bg-white/15 dark:text-white dark:border-white/20'
-                        : 'text-gray-400 border-transparent hover:text-gray-700 hover:bg-black/[0.05] dark:text-zinc-500 dark:border-transparent dark:hover:text-zinc-300 dark:hover:bg-white/5'
+                        ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
+                        : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
                     }`}
                   >
-                    {label} <span className="opacity-50">({count})</span>
+                    {label}<span className="opacity-50"> {count}</span>
                   </button>
                 ))}
                 {availableModels.length > 8 && (
                   <button
                     onClick={() => setShowAllModels((v) => !v)}
-                    className="rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border border-transparent text-gray-400 hover:text-gray-700 dark:text-zinc-500 dark:hover:text-zinc-300"
+                    className="shrink-0 rounded-full border border-black/[0.08] dark:border-white/8 px-2.5 py-1 text-xs text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15 transition-all"
                   >
                     {showAllModels ? 'less ↑' : `+${availableModels.length - 8} more`}
                   </button>
