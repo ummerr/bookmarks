@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useMemo } from 'react'
 
+// ── Model family grouping ──────────────────────────────────────────────────
+
 const MODEL_FAMILIES: { label: string; patterns: string[] }[] = [
   { label: 'Midjourney',       patterns: ['midjourney', 'mj'] },
   { label: 'Flux',             patterns: ['flux'] },
@@ -18,9 +20,9 @@ const MODEL_FAMILIES: { label: string; patterns: string[] }[] = [
   { label: 'Luma',             patterns: ['luma', 'dream machine'] },
   { label: 'Veo',              patterns: ['veo'] },
   { label: 'Wan',              patterns: ['wan'] },
-  { label: 'Seedance',        patterns: ['seedance'] },
-  { label: 'Nano Banana',     patterns: ['nano banana'] },
-  { label: 'Higgsfield',      patterns: ['higgsfield'] },
+  { label: 'Seedance',         patterns: ['seedance'] },
+  { label: 'Nano Banana',      patterns: ['nano banana'] },
+  { label: 'Higgsfield',       patterns: ['higgsfield'] },
   { label: 'ElevenLabs',       patterns: ['elevenlabs'] },
   { label: 'Suno',             patterns: ['suno'] },
   { label: 'Udio',             patterns: ['udio'] },
@@ -34,6 +36,8 @@ function modelToFamily(model: string): string {
   const lower = model.toLowerCase()
   return MODEL_FAMILIES.find((f) => f.patterns.some((p) => lower.includes(p)))?.label ?? model
 }
+
+// ── Colour palettes ────────────────────────────────────────────────────────
 
 const CATEGORY_COLORS: Record<string, string> = {
   image_t2i:           '#ec4899',
@@ -113,48 +117,98 @@ const THEME_LABELS: Record<string, string> = {
   horror:       'Horror',
 }
 
+interface ChartItem { label: string; value: number }
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+function topInsight(data: ChartItem[], labels: Record<string, string> = {}): string | null {
+  if (data.length === 0) return null
+  const total = data.reduce((s, d) => s + d.value, 0)
+  const top = data[0]
+  const pct = Math.round((top.value / total) * 100)
+  return `${labels[top.label] ?? top.label} leads at ${pct}%`
+}
+
+// ── Stat card ──────────────────────────────────────────────────────────────
+
+function StatCard({ value, label, sub, color }: {
+  value: string | number
+  label: string
+  sub?: string
+  color?: string
+}) {
+  return (
+    <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-white/[0.03] p-5 flex flex-col gap-1.5">
+      <div
+        className="text-3xl md:text-4xl font-bold tabular-nums tracking-tight"
+        style={{ color: color ?? undefined }}
+      >
+        {typeof value === 'number' ? value.toLocaleString() : value}
+      </div>
+      <div className="text-sm text-gray-500 dark:text-zinc-400">{label}</div>
+      {sub && <div className="text-xs text-gray-400 dark:text-zinc-600">{sub}</div>}
+    </div>
+  )
+}
+
+// ── Animated bar chart ─────────────────────────────────────────────────────
+
 function BarChart({
   data,
   colorMap,
   fallbackPalette = MODEL_PALETTE,
   title,
+  insight,
   labelFn,
+  limit,
 }: {
   data: ChartItem[]
   colorMap?: Record<string, string>
   fallbackPalette?: string[]
   title: string
+  insight?: string | null
   labelFn?: (key: string) => string
+  limit?: number
 }) {
-  if (data.length === 0) {
-    return (
-      <div className="flex flex-col gap-4">
-        <h2 className="text-base font-semibold text-gray-900 dark:text-white tracking-tight">{title}</h2>
-        <p className="text-sm text-gray-400 dark:text-zinc-600 py-8 text-center">No data yet</p>
-      </div>
-    )
-  }
+  const [animated, setAnimated] = useState(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => setAnimated(true), 80)
+    return () => clearTimeout(t)
+  }, [])
+
+  const items = limit ? data.slice(0, limit) : data
+
+  if (items.length === 0) return null
+
   const total = data.reduce((s, d) => s + d.value, 0)
-  const max = data[0].value
+  const max = items[0].value
 
   return (
-    <div className="flex flex-col gap-5">
-      <h2 className="text-base font-semibold text-gray-900 dark:text-white tracking-tight">{title}</h2>
-      <div className="flex flex-col gap-1.5">
-        {data.map((item, i) => {
+    <div className="flex flex-col gap-4">
+      <div>
+        <h2 className="text-base font-semibold text-gray-900 dark:text-white tracking-tight">{title}</h2>
+        {insight && <p className="text-xs text-gray-400 dark:text-zinc-500 mt-0.5">{insight}</p>}
+      </div>
+      <div className="flex flex-col gap-2">
+        {items.map((item, i) => {
           const color = colorMap?.[item.label] ?? fallbackPalette[i % fallbackPalette.length]
           const pct = ((item.value / total) * 100).toFixed(1)
           const barW = ((item.value / max) * 100).toFixed(1)
           const label = labelFn ? labelFn(item.label) : item.label
           return (
             <div key={item.label} className="flex items-center gap-3 group">
-              <span className="w-32 text-xs text-gray-400 dark:text-zinc-400 text-right truncate shrink-0 group-hover:text-gray-700 dark:group-hover:text-zinc-200 transition-colors">
+              <span className="w-36 text-xs text-gray-400 dark:text-zinc-400 text-right truncate shrink-0 group-hover:text-gray-700 dark:group-hover:text-zinc-200 transition-colors">
                 {label}
               </span>
-              <div className="flex-1 h-5 bg-black/5 dark:bg-white/5 rounded-md overflow-hidden">
+              <div className="flex-1 h-6 bg-black/5 dark:bg-white/5 rounded-md overflow-hidden">
                 <div
-                  className="h-full rounded-md transition-all"
-                  style={{ width: `${barW}%`, background: color }}
+                  className="h-full rounded-md"
+                  style={{
+                    width: animated ? `${barW}%` : '0%',
+                    background: color,
+                    transition: animated ? `width 0.5s cubic-bezier(0.4,0,0.2,1) ${i * 30}ms` : 'none',
+                  }}
                 />
               </div>
               <span className="text-xs font-semibold text-gray-900 dark:text-white tabular-nums w-8 text-right shrink-0">{item.value}</span>
@@ -166,6 +220,53 @@ function BarChart({
     </div>
   )
 }
+
+// ── Media type split ───────────────────────────────────────────────────────
+
+function MediaSplit({ data }: { data: ChartItem[] }) {
+  const [animated, setAnimated] = useState(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => setAnimated(true), 80)
+    return () => clearTimeout(t)
+  }, [])
+
+  if (data.length === 0) return null
+  const total = data.reduce((s, d) => s + d.value, 0)
+
+  return (
+    <div className="flex flex-col gap-4">
+      <h2 className="text-base font-semibold text-gray-900 dark:text-white tracking-tight">By Media Type</h2>
+      <div className="grid grid-cols-2 gap-3">
+        {data.map((item) => {
+          const pct = (item.value / total) * 100
+          const color = MEDIA_TYPE_COLORS[item.label] ?? '#71717a'
+          return (
+            <div key={item.label} className="rounded-xl border border-black/[0.06] dark:border-white/6 bg-black/[0.02] dark:bg-white/[0.02] p-4 flex flex-col gap-1 overflow-hidden relative">
+              {/* Background fill */}
+              <div
+                className="absolute inset-0 opacity-[0.06] dark:opacity-[0.12] rounded-xl"
+                style={{
+                  background: color,
+                  transform: `scaleX(${animated ? 1 : 0})`,
+                  transformOrigin: 'left',
+                  transition: animated ? 'transform 0.6s cubic-bezier(0.4,0,0.2,1)' : 'none',
+                }}
+              />
+              <div className="relative text-2xl font-bold tabular-nums" style={{ color }}>
+                {Math.round(pct)}%
+              </div>
+              <div className="relative text-sm text-gray-600 dark:text-zinc-300">{item.label}</div>
+              <div className="relative text-xs text-gray-400 dark:text-zinc-600">{item.value.toLocaleString()} prompts</div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// ── Donut chart ────────────────────────────────────────────────────────────
 
 function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
   const rad = ((angleDeg - 90) * Math.PI) / 180
@@ -208,15 +309,14 @@ function donutSegmentPath(
   ].join(' ')
 }
 
-interface ChartItem { label: string; value: number }
-
 function DonutChart({
   data,
   colorMap,
   fallbackPalette = MODEL_PALETTE,
   title,
+  insight,
   centerLabel,
-  size = 300,
+  size = 220,
   innerRatio = 0.55,
   labelFn,
 }: {
@@ -224,6 +324,7 @@ function DonutChart({
   colorMap?: Record<string, string>
   fallbackPalette?: string[]
   title: string
+  insight?: string | null
   centerLabel?: string
   size?: number
   innerRatio?: number
@@ -248,21 +349,17 @@ function DonutChart({
     })
   }, [data, total, colorMap, fallbackPalette])
 
-  if (total === 0) {
-    return (
-      <div className="flex flex-col gap-4">
-        <h2 className="text-base font-semibold text-gray-900 dark:text-white">{title}</h2>
-        <p className="text-sm text-gray-400 dark:text-zinc-600 py-8 text-center">No data yet</p>
-      </div>
-    )
-  }
+  if (total === 0) return null
 
   const hoveredItem = hovered !== null ? segments[hovered] : null
 
   return (
-    <div className="flex flex-col gap-5">
-      <h2 className="text-base font-semibold text-gray-900 dark:text-white tracking-tight">{title}</h2>
-      <div className="flex flex-col lg:flex-row items-center gap-8">
+    <div className="flex flex-col gap-4">
+      <div>
+        <h2 className="text-base font-semibold text-gray-900 dark:text-white tracking-tight">{title}</h2>
+        {insight && <p className="text-xs text-gray-400 dark:text-zinc-500 mt-0.5">{insight}</p>}
+      </div>
+      <div className="flex flex-col lg:flex-row items-center gap-6">
         <div className="relative shrink-0" style={{ width: size, height: size }}>
           <svg width={size} height={size}>
             {segments.map((seg) => (
@@ -272,7 +369,7 @@ function DonutChart({
                 fill={seg.color}
                 stroke="var(--background)"
                 strokeWidth="2"
-                opacity={hovered === null || hovered === seg.index ? 1 : 0.35}
+                opacity={hovered === null || hovered === seg.index ? 1 : 0.3}
                 style={{ transition: 'opacity 0.15s' }}
                 onMouseEnter={() => setHovered(seg.index)}
                 onMouseLeave={() => setHovered(null)}
@@ -281,7 +378,7 @@ function DonutChart({
             ))}
             {hoveredItem ? (
               <>
-                <text x={cx} y={cy - 10} textAnchor="middle" fill="currentColor" fontSize={26} fontWeight={700} fontFamily="inherit">
+                <text x={cx} y={cy - 8} textAnchor="middle" fill="currentColor" fontSize={22} fontWeight={700} fontFamily="inherit">
                   {hoveredItem.value}
                 </text>
                 <text x={cx} y={cy + 12} textAnchor="middle" fill="#a1a1aa" fontSize={11} fontFamily="inherit">
@@ -290,7 +387,7 @@ function DonutChart({
               </>
             ) : (
               <>
-                <text x={cx} y={cy - 10} textAnchor="middle" fill="currentColor" fontSize={30} fontWeight={700} fontFamily="inherit">
+                <text x={cx} y={cy - 8} textAnchor="middle" fill="currentColor" fontSize={26} fontWeight={700} fontFamily="inherit">
                   {total}
                 </text>
                 <text x={cx} y={cy + 12} textAnchor="middle" fill="#71717a" fontSize={11} fontFamily="inherit">
@@ -301,25 +398,22 @@ function DonutChart({
           </svg>
         </div>
 
-        <div className="flex flex-col gap-2 flex-1 w-full min-w-0">
+        <div className="flex flex-col gap-1.5 flex-1 w-full min-w-0">
           {segments.map((seg) => {
             const pct = ((seg.value / total) * 100).toFixed(1)
             const displayLabel = labelFn ? labelFn(seg.label) : seg.label
             return (
               <div
                 key={seg.index}
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 transition-colors cursor-default"
-                style={{ background: hovered === seg.index ? `${seg.color}18` : undefined }}
+                className="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors cursor-default"
+                style={{ background: hovered === seg.index ? `${seg.color}15` : undefined }}
                 onMouseEnter={() => setHovered(seg.index)}
                 onMouseLeave={() => setHovered(null)}
               >
-                <div className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: seg.color }} />
+                <div className="w-2 h-2 rounded-sm shrink-0" style={{ background: seg.color }} />
                 <span className="text-sm text-gray-600 dark:text-zinc-300 flex-1 truncate">{displayLabel}</span>
                 <span className="text-sm font-semibold text-gray-900 dark:text-white tabular-nums">{seg.value}</span>
-                <span className="text-xs text-gray-400 dark:text-zinc-600 w-12 text-right tabular-nums">{pct}%</span>
-                <div className="w-16 h-1.5 rounded-full bg-black/8 dark:bg-white/8 overflow-hidden shrink-0">
-                  <div className="h-full rounded-full" style={{ width: `${pct}%`, background: seg.color }} />
-                </div>
+                <span className="text-xs text-gray-400 dark:text-zinc-600 w-10 text-right tabular-nums">{pct}%</span>
               </div>
             )
           })}
@@ -329,8 +423,11 @@ function DonutChart({
   )
 }
 
+// ── Page ───────────────────────────────────────────────────────────────────
+
 interface StatsData {
   total: number
+  withReference: number
   byCategory: ChartItem[]
   byModel: ChartItem[]
   byTheme: ChartItem[]
@@ -366,6 +463,7 @@ export default function StatsPage() {
     }
     return Object.entries(groups)
       .filter(([, v]) => v > 0)
+      .sort(([, a], [, b]) => b - a)
       .map(([label, value]) => ({ label, value }))
   }, [stats])
 
@@ -401,97 +499,85 @@ export default function StatsPage() {
     )
   }
 
+  const refPct = stats.total > 0 ? Math.round((stats.withReference / stats.total) * 100) : 0
+
   return (
     <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
-      <div className="max-w-5xl mx-auto px-4 md:px-6 py-8 flex flex-col gap-12">
+      <div className="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-12 flex flex-col gap-10">
 
+        {/* Header */}
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Stats</h1>
-          <p className="mt-1 text-sm text-gray-400 dark:text-zinc-500">
-            {stats.total.toLocaleString()} prompt{stats.total !== 1 ? 's' : ''} classified
-          </p>
+          <p className="mt-1 text-sm text-gray-400 dark:text-zinc-500">A hand-curated library of AI prompts from practitioners sharing their real work.</p>
         </div>
 
-        {/* About the collection */}
-        <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-gradient-to-br from-gray-50 to-white dark:from-[#111] dark:to-[#0e0e0e] p-6 md:p-8 flex flex-col gap-6">
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-[#1DA1F2] text-lg">✦</span>
-              <h2 className="text-base font-semibold text-gray-900 dark:text-white tracking-tight">About this collection</h2>
-            </div>
-            <p className="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed max-w-2xl">
-              A hand-curated library of AI prompts sourced from the people actually pushing these tools to their limits —
-              practitioners, artists, and researchers sharing their best work on X. Not scraped. Not synthetic.
-              Real prompts that produced real results, bookmarked because they were worth keeping.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {[
-              {
-                title: 'Full-spectrum taxonomy',
-                body: 'Spans every AI media type — text-to-image, image-to-video, reference workflows, audio, 3D, and LLM prompts — under a single unified taxonomy. Most libraries only cover one.',
-              },
-              {
-                title: 'Structurally rich',
-                body: 'Every prompt is tagged with technique type, visual themes, art style, detected model, and whether a reference image is required. Metadata that actually means something.',
-              },
-              {
-                title: 'Reference-aware',
-                body: 'One of the few collections that distinguishes reference-based workflows (IP-Adapter, face swap, img2img) from pure text prompts — critical for knowing what you can actually run.',
-              },
-            ].map((f) => (
-              <div key={f.title} className="rounded-xl border border-black/[0.06] dark:border-white/6 bg-black/[0.02] dark:bg-white/[0.02] p-4 flex flex-col gap-1.5">
-                <p className="text-xs font-semibold text-gray-700 dark:text-zinc-200">{f.title}</p>
-                <p className="text-xs text-gray-400 dark:text-zinc-500 leading-relaxed">{f.body}</p>
-              </div>
-            ))}
-          </div>
+        {/* Hero numbers */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+          <StatCard
+            value={stats.total}
+            label="prompts collected"
+            color="#1DA1F2"
+          />
+          <StatCard
+            value={byModelFamily.length}
+            label="models tracked"
+            color="#a855f7"
+          />
+          <StatCard
+            value={stats.byTheme.length}
+            label="visual themes"
+            color="#22c55e"
+          />
+          <StatCard
+            value={`${refPct}%`}
+            label="need a reference image"
+            sub={`${stats.withReference.toLocaleString()} prompts`}
+            color="#f97316"
+          />
         </div>
 
-        {/* Chart 1: By Category */}
+        {/* Category breakdown */}
         <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-6 md:p-8">
           <BarChart
             data={stats.byCategory}
             colorMap={CATEGORY_COLORS}
-            title="By Category"
+            title="By Technique"
+            insight={topInsight(stats.byCategory, CATEGORY_LABELS)}
             labelFn={(k) => CATEGORY_LABELS[k] ?? k}
           />
         </div>
 
-        {/* Chart 2 + 3 side by side */}
+        {/* Model breakdown */}
+        {byModelFamily.length > 0 && (
+          <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-6 md:p-8">
+            <BarChart
+              data={byModelFamily}
+              fallbackPalette={MODEL_PALETTE}
+              title="By Model / Tool"
+              insight={topInsight(byModelFamily)}
+              limit={12}
+            />
+          </div>
+        )}
+
+        {/* Media type + Theme side by side */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-6">
-            <BarChart
-              data={byMediaType}
-              colorMap={MEDIA_TYPE_COLORS}
-              title="By Media Type"
-            />
+            <MediaSplit data={byMediaType} />
           </div>
           <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-6">
             <DonutChart
               data={stats.byTheme ?? []}
               colorMap={THEME_COLORS}
               title="By Theme"
+              insight={topInsight(stats.byTheme, THEME_LABELS)}
               centerLabel="tagged"
-              size={260}
+              size={220}
               labelFn={(k) => THEME_LABELS[k] ?? k}
             />
           </div>
         </div>
 
-        {/* Chart 4: By Model */}
-        {byModelFamily.length > 0 && (
-          <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-6 md:p-8">
-            <DonutChart
-              data={byModelFamily}
-              fallbackPalette={MODEL_PALETTE}
-              title="By Model / Tool"
-              centerLabel="prompts"
-              size={300}
-            />
-          </div>
-        )}
       </div>
     </div>
   )

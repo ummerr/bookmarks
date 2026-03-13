@@ -10,7 +10,7 @@ export async function GET() {
   try {
     const sql = getSql()
 
-    const [categoryRows, modelRows, themeRows, totalRow] = await Promise.all([
+    const [categoryRows, modelRows, themeRows, totalRow, refRow] = await Promise.all([
       sql<{ prompt_category: string; n: string }[]>`
         SELECT prompt_category, COUNT(*) as n
         FROM bookmarks
@@ -32,6 +32,10 @@ export async function GET() {
       sql<{ total: string }[]>`
         SELECT COUNT(*) as total FROM bookmarks WHERE category = 'prompts'
       `,
+      sql<{ ref_count: string }[]>`
+        SELECT COUNT(*) as ref_count FROM bookmarks
+        WHERE category = 'prompts' AND requires_reference = true
+      `,
     ])
 
     // Aggregate themes in JS to avoid JSONB unnesting issues
@@ -48,6 +52,7 @@ export async function GET() {
 
     return NextResponse.json({
       total: Number(totalRow[0].total),
+      withReference: Number(refRow[0].ref_count),
       byCategory: categoryRows.map((r) => ({ label: r.prompt_category, value: Number(r.n) })),
       byModel: modelRows.map((r) => ({ label: r.detected_model, value: Number(r.n) })),
       byTheme,
