@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import type { Bookmark, Category, CategoryCounts } from '@/lib/types'
 import Sidebar from '@/components/Sidebar'
 import BookmarkCard from '@/components/BookmarkCard'
@@ -12,15 +13,33 @@ const EMPTY_COUNTS: CategoryCounts = {
   all: 0, tech_ai_product: 0, career_productivity: 0, prompts: 0, uncategorized: 0, pending: 0,
 }
 
-export default function Dashboard() {
+function DashboardInner() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([])
   const [counts, setCounts] = useState<CategoryCounts>(EMPTY_COUNTS)
-  const [activeCategory, setActiveCategory] = useState<Category | 'all'>('all')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [sort, setSort] = useState<SortOption>('newest')
+  const [activeCategory, setActiveCategory] = useState<Category | 'all'>(
+    (searchParams.get('category') as Category | 'all') || 'all'
+  )
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '')
+  const [sort, setSort] = useState<SortOption>(
+    (searchParams.get('sort') as SortOption) || 'newest'
+  )
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(0)
   const [hasMore, setHasMore] = useState(false)
+
+  // Sync filters to URL
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (activeCategory !== 'all') params.set('category', activeCategory)
+    if (searchQuery) params.set('q', searchQuery)
+    if (sort !== 'newest') params.set('sort', sort)
+    const qs = params.toString()
+    router.replace(`${pathname}${qs ? `?${qs}` : ''}`, { scroll: false })
+  }, [activeCategory, searchQuery, sort]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function fetchCounts() {
     const res = await fetch('/api/bookmarks/counts')
@@ -151,5 +170,13 @@ export default function Dashboard() {
         </main>
       </div>
     </div>
+  )
+}
+
+export default function Dashboard() {
+  return (
+    <Suspense>
+      <DashboardInner />
+    </Suspense>
   )
 }

@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, Suspense } from 'react'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import type { ArtStyle, Bookmark, PromptCategory, PromptTheme } from '@/lib/types'
 import MediaThumbnail from '@/components/MediaThumbnail'
 
@@ -267,15 +268,37 @@ function PromptCard({ bookmark }: { bookmark: Bookmark }) {
   )
 }
 
-export default function PromptsPage() {
+function PromptsPageInner() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
   const [allPrompts, setAllPrompts] = useState<Bookmark[]>([])
-  const [activeMediaType, setActiveMediaType] = useState<MediaType>('all')
-  const [activeCategory, setActiveCategory] = useState<PromptCategory | 'all' | 'uncategorized'>('all')
-  const [activeTheme, setActiveTheme] = useState<PromptTheme | 'all'>('all')
-  const [activeModel, setActiveModel] = useState<string>('all')
-  const [search, setSearch] = useState('')
+  const [activeMediaType, setActiveMediaType] = useState<MediaType>(
+    (searchParams.get('media') as MediaType) || 'all'
+  )
+  const [activeCategory, setActiveCategory] = useState<PromptCategory | 'all' | 'uncategorized'>(
+    (searchParams.get('type') as PromptCategory | 'all' | 'uncategorized') || 'all'
+  )
+  const [activeTheme, setActiveTheme] = useState<PromptTheme | 'all'>(
+    (searchParams.get('theme') as PromptTheme | 'all') || 'all'
+  )
+  const [activeModel, setActiveModel] = useState<string>(searchParams.get('model') || 'all')
+  const [search, setSearch] = useState(searchParams.get('q') || '')
   const [loading, setLoading] = useState(true)
   const [showAllModels, setShowAllModels] = useState(false)
+
+  // Sync filters to URL
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (search) params.set('q', search)
+    if (activeMediaType !== 'all') params.set('media', activeMediaType)
+    if (activeCategory !== 'all') params.set('type', activeCategory)
+    if (activeTheme !== 'all') params.set('theme', activeTheme)
+    if (activeModel !== 'all') params.set('model', activeModel)
+    const qs = params.toString()
+    router.replace(`${pathname}${qs ? `?${qs}` : ''}`, { scroll: false })
+  }, [search, activeMediaType, activeCategory, activeTheme, activeModel]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function fetchPrompts(cat: PromptCategory | 'all' | 'uncategorized') {
     setLoading(true)
@@ -561,5 +584,13 @@ export default function PromptsPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function PromptsPage() {
+  return (
+    <Suspense>
+      <PromptsPageInner />
+    </Suspense>
   )
 }
