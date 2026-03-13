@@ -87,16 +87,16 @@ const THEMES: { value: PromptTheme; label: string }[] = [
 ]
 
 const THEME_COLORS: Record<PromptTheme, string> = {
-  person:       'bg-blue-900/40 text-blue-300 border-blue-800/40',
-  cinematic:    'bg-yellow-900/40 text-yellow-300 border-yellow-800/40',
-  landscape:    'bg-green-900/40 text-green-300 border-green-800/40',
-  architecture: 'bg-stone-800/60 text-stone-300 border-stone-700/40',
-  scifi:        'bg-cyan-900/40 text-cyan-300 border-cyan-800/40',
-  fantasy:      'bg-purple-900/40 text-purple-300 border-purple-800/40',
-  abstract:     'bg-orange-900/40 text-orange-300 border-orange-800/40',
-  fashion:      'bg-pink-900/40 text-pink-300 border-pink-800/40',
-  product:      'bg-indigo-900/40 text-indigo-300 border-indigo-800/40',
-  horror:       'bg-red-900/40 text-red-300 border-red-800/40',
+  person:       'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-800/40',
+  cinematic:    'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/40 dark:text-yellow-300 dark:border-yellow-800/40',
+  landscape:    'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-800/40',
+  architecture: 'bg-stone-100 text-stone-600 border-stone-200 dark:bg-stone-800/60 dark:text-stone-300 dark:border-stone-700/40',
+  scifi:        'bg-cyan-100 text-cyan-700 border-cyan-200 dark:bg-cyan-900/40 dark:text-cyan-300 dark:border-cyan-800/40',
+  fantasy:      'bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/40 dark:text-purple-300 dark:border-purple-800/40',
+  abstract:     'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-800/40',
+  fashion:      'bg-pink-100 text-pink-700 border-pink-200 dark:bg-pink-900/40 dark:text-pink-300 dark:border-pink-800/40',
+  product:      'bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-900/40 dark:text-indigo-300 dark:border-indigo-800/40',
+  horror:       'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/40 dark:text-red-300 dark:border-red-800/40',
 }
 
 const REFERENCE_TYPE_LABELS: Record<string, string> = {
@@ -108,22 +108,22 @@ const REFERENCE_TYPE_LABELS: Record<string, string> = {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  image_t2i:           'bg-pink-900/50 text-pink-300 border-pink-800/50',
-  image_i2i:           'bg-fuchsia-900/50 text-fuchsia-300 border-fuchsia-800/50',
-  image_r2i:           'bg-orange-900/50 text-orange-300 border-orange-800/50',
-  image_character_ref: 'bg-rose-900/50 text-rose-300 border-rose-800/50',
-  image_inpainting:    'bg-red-900/50 text-red-300 border-red-800/50',
-  video_t2v:           'bg-violet-900/50 text-violet-300 border-violet-800/50',
-  video_i2v:           'bg-indigo-900/50 text-indigo-300 border-indigo-800/50',
-  video_r2v:           'bg-purple-900/50 text-purple-300 border-purple-800/50',
-  video_v2v:           'bg-blue-900/50 text-blue-300 border-blue-800/50',
-  audio:               'bg-cyan-900/50 text-cyan-300 border-cyan-800/50',
-  threed:              'bg-teal-900/50 text-teal-300 border-teal-800/50',
-  system_prompt:       'bg-sky-900/50 text-sky-300 border-sky-800/50',
-  writing:             'bg-green-900/50 text-green-300 border-green-800/50',
-  coding:              'bg-yellow-900/50 text-yellow-300 border-yellow-800/50',
-  analysis:            'bg-amber-900/50 text-amber-300 border-amber-800/50',
-  other:               'bg-zinc-800 text-zinc-400 border-zinc-700',
+  image_t2i:           'bg-pink-100 text-pink-700 border-pink-200 dark:bg-pink-900/50 dark:text-pink-300 dark:border-pink-800/50',
+  image_i2i:           'bg-fuchsia-100 text-fuchsia-700 border-fuchsia-200 dark:bg-fuchsia-900/50 dark:text-fuchsia-300 dark:border-fuchsia-800/50',
+  image_r2i:           'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/50 dark:text-orange-300 dark:border-orange-800/50',
+  image_character_ref: 'bg-rose-100 text-rose-700 border-rose-200 dark:bg-rose-900/50 dark:text-rose-300 dark:border-rose-800/50',
+  image_inpainting:    'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/50 dark:text-red-300 dark:border-red-800/50',
+  video_t2v:           'bg-violet-100 text-violet-700 border-violet-200 dark:bg-violet-900/50 dark:text-violet-300 dark:border-violet-800/50',
+  video_i2v:           'bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-900/50 dark:text-indigo-300 dark:border-indigo-800/50',
+  video_r2v:           'bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/50 dark:text-purple-300 dark:border-purple-800/50',
+  video_v2v:           'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:border-blue-800/50',
+  audio:               'bg-cyan-100 text-cyan-700 border-cyan-200 dark:bg-cyan-900/50 dark:text-cyan-300 dark:border-cyan-800/50',
+  threed:              'bg-teal-100 text-teal-700 border-teal-200 dark:bg-teal-900/50 dark:text-teal-300 dark:border-teal-800/50',
+  system_prompt:       'bg-sky-100 text-sky-700 border-sky-200 dark:bg-sky-900/50 dark:text-sky-300 dark:border-sky-800/50',
+  writing:             'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/50 dark:text-green-300 dark:border-green-800/50',
+  coding:              'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-800/50',
+  analysis:            'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/50 dark:text-amber-300 dark:border-amber-800/50',
+  other:               'bg-gray-100 text-gray-500 border-gray-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700',
 }
 
 function categoryLabel(val: string | null) {
@@ -143,7 +143,7 @@ function CopyButton({ text }: { text: string }) {
       className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
         copied
           ? 'bg-green-500/15 text-green-400 border border-green-500/30'
-          : 'bg-white/6 text-zinc-400 border border-white/8 hover:bg-white/12 hover:text-white hover:border-white/15'
+          : 'bg-black/[0.04] text-gray-500 border border-black/[0.08] hover:bg-black/[0.08] hover:text-gray-900 hover:border-black/[0.15] dark:bg-white/6 dark:text-zinc-400 dark:border-white/8 dark:hover:bg-white/12 dark:hover:text-white dark:hover:border-white/15'
       }`}
     >
       {copied ? (
@@ -175,7 +175,7 @@ function PromptCard({ bookmark }: { bookmark: Bookmark }) {
     : null
 
   return (
-    <article className="flex flex-col gap-3 rounded-xl border border-white/8 bg-[#111] p-4 hover:border-white/14 transition-colors">
+    <article className="flex flex-col gap-3 rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4 hover:border-black/[0.14] dark:hover:border-white/14 transition-colors">
       {/* Top row */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex flex-wrap items-center gap-1.5">
@@ -185,7 +185,7 @@ function PromptCard({ bookmark }: { bookmark: Bookmark }) {
             </span>
           )}
           {bookmark.detected_model && (
-            <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-zinc-300">
+            <span className="rounded-full border border-black/[0.1] dark:border-white/10 bg-black/[0.04] dark:bg-white/5 px-2 py-0.5 text-[11px] text-gray-600 dark:text-zinc-300">
               {bookmark.detected_model}
             </span>
           )}
@@ -195,26 +195,26 @@ function PromptCard({ bookmark }: { bookmark: Bookmark }) {
             </span>
           ))}
           {bookmark.art_styles?.map((style) => (
-            <span key={style} className="rounded-full border border-zinc-700/60 bg-zinc-800/60 px-2 py-0.5 text-[11px] text-zinc-400">
+            <span key={style} className="rounded-full border border-gray-200 dark:border-zinc-700/60 bg-gray-100 dark:bg-zinc-800/60 px-2 py-0.5 text-[11px] text-gray-500 dark:text-zinc-400">
               {style.replace(/_/g, ' ')}
             </span>
           ))}
           {bookmark.requires_reference && bookmark.reference_type && (
-            <span className="rounded-full border border-amber-800/40 bg-amber-900/30 px-2 py-0.5 text-[11px] text-amber-300">
+            <span className="rounded-full border border-amber-200 dark:border-amber-800/40 bg-amber-50 dark:bg-amber-900/30 px-2 py-0.5 text-[11px] text-amber-700 dark:text-amber-300">
               ref · {REFERENCE_TYPE_LABELS[bookmark.reference_type] ?? bookmark.reference_type}
             </span>
           )}
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          {date && <span className="text-[11px] text-zinc-600">{date}</span>}
+          {date && <span className="text-[11px] text-gray-400 dark:text-zinc-600">{date}</span>}
           {bookmark.source === 'manual' ? (
             <a
               href={bookmark.tweet_url || undefined}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[11px] text-zinc-600 hover:text-zinc-300 transition-colors flex items-center gap-1"
+              className="text-[11px] text-gray-400 dark:text-zinc-600 hover:text-gray-700 dark:hover:text-zinc-300 transition-colors flex items-center gap-1"
             >
-              <span className="rounded-sm bg-zinc-800 px-1 py-0.5 text-[10px] text-zinc-400 font-medium">manual</span>
+              <span className="rounded-sm bg-gray-100 dark:bg-zinc-800 px-1 py-0.5 text-[10px] text-gray-500 dark:text-zinc-400 font-medium">manual</span>
               {bookmark.author_handle} {bookmark.tweet_url ? '↗' : ''}
             </a>
           ) : (
@@ -222,7 +222,7 @@ function PromptCard({ bookmark }: { bookmark: Bookmark }) {
               href={bookmark.tweet_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[11px] text-zinc-600 hover:text-[#1DA1F2] transition-colors"
+              className="text-[11px] text-gray-400 dark:text-zinc-600 hover:text-[#1DA1F2] transition-colors"
             >
               @{bookmark.author_handle} ↗
             </a>
@@ -240,7 +240,7 @@ function PromptCard({ bookmark }: { bookmark: Bookmark }) {
       )}
 
       {/* Prompt text */}
-      <pre className="whitespace-pre-wrap break-words text-sm text-zinc-100 font-mono leading-relaxed bg-white/[0.03] rounded-lg p-3 border border-white/5 overflow-auto max-h-64">
+      <pre className="whitespace-pre-wrap break-words text-sm text-gray-700 dark:text-zinc-100 font-mono leading-relaxed bg-black/[0.03] dark:bg-white/[0.03] rounded-lg p-3 border border-black/[0.05] dark:border-white/5 overflow-auto max-h-64">
         {prompt}
       </pre>
 
@@ -250,7 +250,7 @@ function PromptCard({ bookmark }: { bookmark: Bookmark }) {
         {hasRawTweet && (
           <button
             onClick={() => setExpanded((v) => !v)}
-            className="text-[11px] text-zinc-600 hover:text-zinc-400 transition-colors"
+            className="text-[11px] text-gray-400 dark:text-zinc-600 hover:text-gray-600 dark:hover:text-zinc-400 transition-colors"
           >
             {expanded ? 'Hide tweet ↑' : 'Show full tweet ↓'}
           </button>
@@ -259,7 +259,7 @@ function PromptCard({ bookmark }: { bookmark: Bookmark }) {
 
       {/* Expanded raw tweet */}
       {expanded && hasRawTweet && (
-        <pre className="whitespace-pre-wrap break-words text-xs text-zinc-500 font-mono leading-relaxed bg-white/[0.02] rounded-lg p-3 border border-white/5 overflow-auto max-h-48">
+        <pre className="whitespace-pre-wrap break-words text-xs text-gray-500 dark:text-zinc-500 font-mono leading-relaxed bg-black/[0.02] dark:bg-white/[0.02] rounded-lg p-3 border border-black/[0.05] dark:border-white/5 overflow-auto max-h-48">
           {bookmark.tweet_text}
         </pre>
       )}
@@ -361,14 +361,14 @@ export default function PromptsPage() {
   }, [allPrompts, activeMediaType, activeTheme, activeModel, search])
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
       <div className="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-8 flex flex-col gap-6">
 
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h1 className="text-lg font-semibold text-white">
+          <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
             Prompts
-            <span className="ml-2 text-sm text-zinc-600 font-normal">
+            <span className="ml-2 text-sm text-gray-400 dark:text-zinc-600 font-normal">
               {loading ? '…' : `${filtered.length}${filtered.length !== allPrompts.length ? ` of ${allPrompts.length}` : ''}`}
             </span>
           </h1>
@@ -376,7 +376,7 @@ export default function PromptsPage() {
 
         {/* Search */}
         <div className="relative">
-          <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-600 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-zinc-600 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
           </svg>
           <input
@@ -384,12 +384,12 @@ export default function PromptsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search prompts…"
-            className="w-full rounded-xl border border-white/8 bg-white/3 pl-9 pr-4 py-2.5 text-sm text-white placeholder-zinc-600 outline-none focus:border-white/20 focus:bg-white/5 transition-colors"
+            className="w-full rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-white/[0.03] pl-9 pr-4 py-2.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 outline-none focus:border-black/[0.15] dark:focus:border-white/20 focus:bg-gray-50 dark:focus:bg-white/5 transition-colors"
           />
           {search && (
             <button
               onClick={() => setSearch('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-400 transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-600 hover:text-gray-600 dark:hover:text-zinc-400 transition-colors"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -399,20 +399,20 @@ export default function PromptsPage() {
         </div>
 
         {/* Filters */}
-        <div className="rounded-xl border border-white/8 bg-white/[0.02] divide-y divide-white/6">
+        <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-black/[0.02] dark:bg-white/[0.02] divide-y divide-black/[0.06] dark:divide-white/6">
 
           {/* Row: Media type — primary control */}
           <div className="flex items-center gap-3 md:gap-4 px-4 py-3">
-            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider w-12 md:w-16 shrink-0">Media</span>
-            <div className="flex gap-1 p-0.5 bg-white/5 rounded-lg">
+            <span className="text-[11px] font-medium text-gray-400 dark:text-zinc-500 uppercase tracking-wider w-12 md:w-16 shrink-0">Media</span>
+            <div className="flex gap-1 p-0.5 bg-black/[0.04] dark:bg-white/5 rounded-lg">
               {MEDIA_TYPES.map((mt) => (
                 <button
                   key={mt.value}
                   onClick={() => { setActiveMediaType(mt.value); setActiveCategory('all'); setActiveTheme('all'); setActiveModel('all') }}
                   className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
                     activeMediaType === mt.value
-                      ? 'bg-white/20 text-white shadow-sm'
-                      : 'text-zinc-500 hover:text-zinc-300'
+                      ? 'bg-black/[0.12] text-gray-900 dark:bg-white/20 dark:text-white shadow-sm'
+                      : 'text-gray-400 hover:text-gray-700 dark:text-zinc-500 dark:hover:text-zinc-300'
                   }`}
                 >
                   {mt.label}
@@ -423,7 +423,7 @@ export default function PromptsPage() {
 
           {/* Row: Technique sub-category */}
           <div className="flex items-start gap-3 md:gap-4 px-4 py-3">
-            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider w-12 md:w-16 shrink-0 pt-1">Type</span>
+            <span className="text-[11px] font-medium text-gray-400 dark:text-zinc-500 uppercase tracking-wider w-12 md:w-16 shrink-0 pt-1">Type</span>
             <div className="flex gap-1 flex-wrap">
               {[
                 CATEGORIES.find((c) => c.value === 'all')!,
@@ -436,8 +436,8 @@ export default function PromptsPage() {
                   onClick={() => { setActiveCategory(cat.value); setActiveModel('all') }}
                   className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border ${
                     activeCategory === cat.value
-                      ? 'bg-white/15 text-white border-white/20'
-                      : 'text-zinc-500 border-transparent hover:text-zinc-300 hover:bg-white/5'
+                      ? 'bg-black/[0.08] text-gray-900 border-black/[0.15] dark:bg-white/15 dark:text-white dark:border-white/20'
+                      : 'text-gray-400 border-transparent hover:text-gray-700 hover:bg-black/[0.05] dark:text-zinc-500 dark:border-transparent dark:hover:text-zinc-300 dark:hover:bg-white/5'
                   }`}
                 >
                   {cat.label}{cat.value !== 'all' && categoryCounts[cat.value] ? <span className="opacity-50"> ({categoryCounts[cat.value]})</span> : null}
@@ -448,8 +448,8 @@ export default function PromptsPage() {
                   onClick={() => { setActiveCategory('uncategorized'); setActiveModel('all') }}
                   className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border ${
                     activeCategory === 'uncategorized'
-                      ? 'bg-white/15 text-white border-white/20'
-                      : 'text-zinc-500 border-transparent hover:text-zinc-300 hover:bg-white/5'
+                      ? 'bg-black/[0.08] text-gray-900 border-black/[0.15] dark:bg-white/15 dark:text-white dark:border-white/20'
+                      : 'text-gray-400 border-transparent hover:text-gray-700 hover:bg-black/[0.05] dark:text-zinc-500 dark:border-transparent dark:hover:text-zinc-300 dark:hover:bg-white/5'
                   }`}
                 >
                   Uncategorized <span className="opacity-50">({uncategorizedCount})</span>
@@ -460,14 +460,14 @@ export default function PromptsPage() {
 
           {/* Row: Theme — colored badges matching card badges */}
           <div className="flex items-start gap-3 md:gap-4 px-4 py-3">
-            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider w-12 md:w-16 shrink-0 pt-1">Theme</span>
+            <span className="text-[11px] font-medium text-gray-400 dark:text-zinc-500 uppercase tracking-wider w-12 md:w-16 shrink-0 pt-1">Theme</span>
             <div className="flex gap-1 flex-wrap">
               <button
                 onClick={() => setActiveTheme('all')}
                 className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border ${
                   activeTheme === 'all'
-                    ? 'bg-white/15 text-white border-white/20'
-                    : 'text-zinc-500 border-transparent hover:text-zinc-300 hover:bg-white/5'
+                    ? 'bg-black/[0.08] text-gray-900 border-black/[0.15] dark:bg-white/15 dark:text-white dark:border-white/20'
+                    : 'text-gray-400 border-transparent hover:text-gray-700 hover:bg-black/[0.05] dark:text-zinc-500 dark:border-transparent dark:hover:text-zinc-300 dark:hover:bg-white/5'
                 }`}
               >
                 All
@@ -482,7 +482,7 @@ export default function PromptsPage() {
                   className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-all border ${
                     activeTheme === t.value
                       ? `${THEME_COLORS[t.value]} opacity-100`
-                      : 'text-zinc-500 border-transparent hover:text-zinc-300 hover:bg-white/5'
+                      : 'text-gray-400 border-transparent hover:text-gray-700 hover:bg-black/[0.05] dark:text-zinc-500 dark:border-transparent dark:hover:text-zinc-300 dark:hover:bg-white/5'
                   }`}
                 >
                   {t.label} <span className="opacity-50">({themeCounts[t.value]})</span>
@@ -494,14 +494,14 @@ export default function PromptsPage() {
           {/* Row: Model — only when models are present */}
           {availableModels.length > 0 && (
             <div className="flex items-start gap-3 md:gap-4 px-4 py-3">
-              <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider w-12 md:w-16 shrink-0 pt-1">Model</span>
+              <span className="text-[11px] font-medium text-gray-400 dark:text-zinc-500 uppercase tracking-wider w-12 md:w-16 shrink-0 pt-1">Model</span>
               <div className="flex gap-1 flex-wrap">
                 <button
                   onClick={() => setActiveModel('all')}
                   className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border ${
                     activeModel === 'all'
-                      ? 'bg-white/15 text-white border-white/20'
-                      : 'text-zinc-500 border-transparent hover:text-zinc-300 hover:bg-white/5'
+                      ? 'bg-black/[0.08] text-gray-900 border-black/[0.15] dark:bg-white/15 dark:text-white dark:border-white/20'
+                      : 'text-gray-400 border-transparent hover:text-gray-700 hover:bg-black/[0.05] dark:text-zinc-500 dark:border-transparent dark:hover:text-zinc-300 dark:hover:bg-white/5'
                   }`}
                 >
                   All
@@ -512,8 +512,8 @@ export default function PromptsPage() {
                     onClick={() => setActiveModel(label)}
                     className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border ${
                       activeModel === label
-                        ? 'bg-white/15 text-white border-white/20'
-                        : 'text-zinc-500 border-transparent hover:text-zinc-300 hover:bg-white/5'
+                        ? 'bg-black/[0.08] text-gray-900 border-black/[0.15] dark:bg-white/15 dark:text-white dark:border-white/20'
+                        : 'text-gray-400 border-transparent hover:text-gray-700 hover:bg-black/[0.05] dark:text-zinc-500 dark:border-transparent dark:hover:text-zinc-300 dark:hover:bg-white/5'
                     }`}
                   >
                     {label} <span className="opacity-50">({count})</span>
@@ -527,18 +527,18 @@ export default function PromptsPage() {
         {/* Results */}
         {loading ? (
           <div className="flex justify-center py-24">
-            <svg className="h-5 w-5 animate-spin text-zinc-600" fill="none" viewBox="0 0 24 24">
+            <svg className="h-5 w-5 animate-spin text-gray-300 dark:text-zinc-600" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
             </svg>
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <p className="text-zinc-500 text-sm">
+            <p className="text-gray-400 dark:text-zinc-500 text-sm">
               {allPrompts.length === 0 ? 'No prompts found.' : 'No matches for your search.'}
             </p>
             {allPrompts.length === 0 && (
-              <p className="text-zinc-600 text-xs mt-2">
+              <p className="text-gray-300 dark:text-zinc-600 text-xs mt-2">
                 Run "Classify with AI" to extract and categorize your prompts.
               </p>
             )}

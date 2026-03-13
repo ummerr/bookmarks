@@ -30,8 +30,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.variable} font-sans antialiased bg-[#0a0a0a] text-white`}>
+    <html lang="en">
+      <body className={`${inter.variable} font-sans antialiased`}>
+        {/* Prevent FOUC: read localStorage and apply dark class before paint */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.classList.add('dark')}catch(e){}`,
+          }}
+        />
         <Nav />
         {children}
       </body>

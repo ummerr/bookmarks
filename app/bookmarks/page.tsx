@@ -80,7 +80,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
       <div className="flex flex-col md:flex-row md:gap-8 max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-8">
         <Sidebar
           counts={counts}
@@ -92,9 +92,9 @@ export default function Dashboard() {
 
         <main className="flex-1 min-w-0">
           <div className="flex flex-wrap items-center justify-between gap-2 mb-4 md:mb-6">
-            <h1 className="text-lg font-semibold text-white">
+            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
               {categoryLabel[activeCategory]}
-              <span className="ml-2 text-sm text-zinc-600 font-normal">
+              <span className="ml-2 text-sm text-gray-400 dark:text-zinc-600 font-normal">
                 {counts[activeCategory === 'all' ? 'all' : activeCategory]}
               </span>
             </h1>
@@ -103,7 +103,7 @@ export default function Dashboard() {
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as SortOption)}
-                className="bg-white/5 border border-white/8 rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-[#1DA1F2]/50"
+                className="bg-white dark:bg-white/5 border border-black/[0.08] dark:border-white/8 rounded-lg px-3 py-1.5 text-sm text-gray-600 dark:text-zinc-300 focus:outline-none focus:border-[#1DA1F2]/50"
               >
                 <option value="newest">Newest first</option>
                 <option value="oldest">Oldest first</option>
@@ -115,16 +115,16 @@ export default function Dashboard() {
 
           {loading && bookmarks.length === 0 ? (
             <div className="flex items-center justify-center py-24">
-              <svg className="h-5 w-5 animate-spin text-zinc-600" fill="none" viewBox="0 0 24 24">
+              <svg className="h-5 w-5 animate-spin text-gray-300 dark:text-zinc-600" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
               </svg>
             </div>
           ) : bookmarks.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
-              <p className="text-zinc-500 text-sm">No bookmarks yet.</p>
+              <p className="text-gray-400 dark:text-zinc-500 text-sm">No bookmarks yet.</p>
               {activeCategory === 'all' && !searchQuery && (
-                <p className="text-zinc-600 text-xs mt-2">
+                <p className="text-gray-300 dark:text-zinc-600 text-xs mt-2">
                   <a href="/import" className="text-[#1DA1F2] hover:underline">Import bookmarks</a> to get started.
                 </p>
               )}
@@ -142,7 +142,7 @@ export default function Dashboard() {
               <button
                 onClick={loadMore}
                 disabled={loading}
-                className="rounded-lg border border-white/10 px-6 py-2 text-sm text-zinc-400 hover:text-white hover:border-white/20 transition-colors disabled:opacity-50"
+                className="rounded-lg border border-black/[0.1] dark:border-white/10 px-6 py-2 text-sm text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white hover:border-black/[0.2] dark:hover:border-white/20 transition-colors disabled:opacity-50"
               >
                 {loading ? 'Loading…' : 'Load more'}
               </button>

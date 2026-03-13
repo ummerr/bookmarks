@@ -43,23 +43,23 @@ export default function BookmarkCard({ bookmark, onUpdate }: Props) {
     : null
 
   return (
-    <article className="group flex flex-col gap-3 rounded-xl border border-white/8 bg-white/3 p-4 transition-colors hover:border-white/15 hover:bg-white/5">
+    <article className="group flex flex-col gap-3 rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-white/[0.03] p-4 transition-colors hover:border-black/[0.15] dark:hover:border-white/15 hover:bg-gray-50 dark:hover:bg-white/5">
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
-          <span className="font-medium text-white truncate">@{bookmark.author_handle}</span>
+          <span className="font-medium text-gray-900 dark:text-white truncate">@{bookmark.author_handle}</span>
           {bookmark.author_name && (
-            <span className="text-zinc-500 text-sm truncate">{bookmark.author_name}</span>
+            <span className="text-gray-400 dark:text-zinc-500 text-sm truncate">{bookmark.author_name}</span>
           )}
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          {date && <span className="text-xs text-zinc-600">{date}</span>}
+          {date && <span className="text-xs text-gray-400 dark:text-zinc-600">{date}</span>}
           <CategoryBadge category={bookmark.category} />
         </div>
       </div>
 
       {/* Tweet text */}
-      <p className="text-sm text-zinc-300 leading-relaxed whitespace-pre-wrap break-words">
+      <p className="text-sm text-gray-600 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap break-words">
         {displayText}
         {isLong && (
           <button
@@ -87,24 +87,24 @@ export default function BookmarkCard({ bookmark, onUpdate }: Props) {
             disabled={updating}
             value={bookmark.category}
             onChange={(e) => recategorize(e.target.value as Category)}
-            className="appearance-none bg-transparent text-xs text-zinc-500 hover:text-zinc-300 cursor-pointer focus:outline-none disabled:opacity-50"
+            className="appearance-none bg-transparent text-xs text-gray-400 dark:text-zinc-500 hover:text-gray-700 dark:hover:text-zinc-300 cursor-pointer focus:outline-none disabled:opacity-50"
           >
             {CATEGORIES.map((c) => (
-              <option key={c.value} value={c.value} className="bg-zinc-900 text-white">
+              <option key={c.value} value={c.value} className="bg-white dark:bg-zinc-900 text-gray-900 dark:text-white">
                 {c.label}
               </option>
             ))}
           </select>
 
           {bookmark.confidence > 0 && (
-            <span className="text-xs text-zinc-600" title={bookmark.rationale ?? undefined}>
+            <span className="text-xs text-gray-400 dark:text-zinc-600" title={bookmark.rationale ?? undefined}>
               {Math.round(bookmark.confidence * 100)}% confidence
             </span>
           )}
         </div>
 
         <a href={bookmark.tweet_url} target="_blank" rel="noopener noreferrer"
-          className="text-xs text-zinc-600 hover:text-[#1DA1F2] transition-colors">
+          className="text-xs text-gray-400 dark:text-zinc-600 hover:text-[#1DA1F2] transition-colors">
           View on X ↗
         </a>
       </div>

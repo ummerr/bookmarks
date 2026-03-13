@@ -52,51 +52,51 @@ export default function AddPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
       <div className="max-w-2xl mx-auto px-4 md:px-6 py-8 md:py-12">
-        <Link href="/" className="text-sm text-zinc-500 hover:text-white transition-colors mb-8 inline-flex items-center gap-1">
+        <Link href="/" className="text-sm text-gray-400 dark:text-zinc-500 hover:text-gray-900 dark:hover:text-white transition-colors mb-8 inline-flex items-center gap-1">
           ← Prompts
         </Link>
 
-        <h1 className="text-2xl font-semibold mt-4 mb-1">Add Prompt</h1>
-        <p className="text-sm text-zinc-500 mb-8">
+        <h1 className="text-2xl font-semibold mt-4 mb-1 text-gray-900 dark:text-white">Add Prompt</h1>
+        <p className="text-sm text-gray-400 dark:text-zinc-500 mb-8">
           Paste a prompt from anywhere — Reddit, Discord, blogs, your own notes. It will be classified and added to your library.
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Prompt text */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-zinc-400">Prompt text *</label>
+            <label className="text-xs font-medium text-gray-500 dark:text-zinc-400">Prompt text *</label>
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Paste the prompt here…"
               rows={8}
-              className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white placeholder-zinc-600 font-mono leading-relaxed outline-none focus:border-white/20 focus:bg-white/5 transition-colors resize-y"
+              className="w-full rounded-xl border border-black/[0.1] dark:border-white/10 bg-white dark:bg-white/[0.03] px-4 py-3 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 font-mono leading-relaxed outline-none focus:border-black/[0.15] dark:focus:border-white/20 focus:bg-gray-50 dark:focus:bg-white/5 transition-colors resize-y"
             />
           </div>
 
           {/* URL */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-zinc-400">Source URL</label>
+            <label className="text-xs font-medium text-gray-500 dark:text-zinc-400">Source URL</label>
             <input
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://…"
-              className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white placeholder-zinc-600 outline-none focus:border-white/20 focus:bg-white/5 transition-colors"
+              className="w-full rounded-xl border border-black/[0.1] dark:border-white/10 bg-white dark:bg-white/[0.03] px-4 py-2.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 outline-none focus:border-black/[0.15] dark:focus:border-white/20 focus:bg-gray-50 dark:focus:bg-white/5 transition-colors"
             />
           </div>
 
           {/* Source name */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-zinc-400">Source name <span className="text-zinc-600">(optional — defaults to URL domain)</span></label>
+            <label className="text-xs font-medium text-gray-500 dark:text-zinc-400">Source name <span className="text-gray-400 dark:text-zinc-600">(optional — defaults to URL domain)</span></label>
             <input
               type="text"
               value={sourceName}
               onChange={(e) => setSourceName(e.target.value)}
               placeholder="e.g. reddit, discord, personal"
-              className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white placeholder-zinc-600 outline-none focus:border-white/20 focus:bg-white/5 transition-colors"
+              className="w-full rounded-xl border border-black/[0.1] dark:border-white/10 bg-white dark:bg-white/[0.03] px-4 py-2.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 outline-none focus:border-black/[0.15] dark:focus:border-white/20 focus:bg-gray-50 dark:focus:bg-white/5 transition-colors"
             />
           </div>
 
@@ -123,22 +123,22 @@ export default function AddPage() {
             <p className="text-sm font-medium text-green-400">Added to library</p>
             <div className="flex flex-wrap gap-1.5">
               {result.prompt_category && (
-                <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-zinc-300">
+                <span className="rounded-full border border-black/[0.1] dark:border-white/10 bg-black/[0.04] dark:bg-white/5 px-2 py-0.5 text-[11px] text-gray-600 dark:text-zinc-300">
                   {CATEGORY_LABELS[result.prompt_category] ?? result.prompt_category}
                 </span>
               )}
               {result.detected_model && (
-                <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-zinc-300">
+                <span className="rounded-full border border-black/[0.1] dark:border-white/10 bg-black/[0.04] dark:bg-white/5 px-2 py-0.5 text-[11px] text-gray-600 dark:text-zinc-300">
                   {result.detected_model}
                 </span>
               )}
               {result.requires_reference && (
-                <span className="rounded-full border border-amber-800/40 bg-amber-900/30 px-2 py-0.5 text-[11px] text-amber-300">
+                <span className="rounded-full border border-amber-200 dark:border-amber-800/40 bg-amber-50 dark:bg-amber-900/30 px-2 py-0.5 text-[11px] text-amber-700 dark:text-amber-300">
                   ref · {result.reference_type}
                 </span>
               )}
             </div>
-            <Link href="/" className="text-xs text-zinc-500 hover:text-white transition-colors">
+            <Link href="/" className="text-xs text-gray-400 dark:text-zinc-500 hover:text-gray-900 dark:hover:text-white transition-colors">
               View in Prompts →
             </Link>
           </div>
@@ -148,7 +148,7 @@ export default function AddPage() {
         {status === 'error' && (
           <div className="mt-6 rounded-xl border border-red-500/20 bg-red-500/5 p-4">
             <p className="text-sm font-medium text-red-400">Failed</p>
-            <p className="text-sm text-zinc-400 mt-1">{error}</p>
+            <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">{error}</p>
           </div>
         )}
       </div>

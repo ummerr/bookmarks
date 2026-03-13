@@ -1,9 +1,17 @@
 @import "tailwindcss";
 
+/* Class-based dark mode for Tailwind v4 */
+@variant dark (&:is(.dark, .dark *));
+
 :root {
+  --background: #f7f6f3;
+  --foreground: #111827;
+  --font-sans: var(--font-inter);
+}
+
+.dark {
   --background: #0a0a0a;
   --foreground: #ffffff;
-  --font-sans: var(--font-inter);
 }
 
 @theme inline {
@@ -17,9 +25,12 @@ body {
   color: var(--foreground);
 }
 
-/* Smooth scrollbar for dark bg */
+/* Scrollbar */
 * {
   scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+}
+.dark * {
   scrollbar-color: #333 transparent;
 }
 
@@ -32,6 +43,10 @@ body {
 }
 
 *::-webkit-scrollbar-thumb {
-  background: #333;
+  background: #ccc;
   border-radius: 3px;
+}
+
+.dark *::-webkit-scrollbar-thumb {
+  background: #333;
 }

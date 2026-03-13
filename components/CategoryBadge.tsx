@@ -3,19 +3,19 @@ import type { Category } from '@/lib/types'
 const CONFIG: Record<Category, { label: string; className: string }> = {
   tech_ai_product: {
     label: 'Tech / AI',
-    className: 'bg-blue-500/15 text-blue-400 ring-blue-500/20',
+    className: 'bg-blue-500/15 text-blue-600 ring-blue-500/20 dark:text-blue-400',
   },
   career_productivity: {
     label: 'Career',
-    className: 'bg-green-500/15 text-green-400 ring-green-500/20',
+    className: 'bg-green-500/15 text-green-600 ring-green-500/20 dark:text-green-400',
   },
   prompts: {
     label: 'Prompts',
-    className: 'bg-purple-500/15 text-purple-400 ring-purple-500/20',
+    className: 'bg-purple-500/15 text-purple-600 ring-purple-500/20 dark:text-purple-400',
   },
   uncategorized: {
     label: 'Uncategorized',
-    className: 'bg-zinc-500/15 text-zinc-400 ring-zinc-500/20',
+    className: 'bg-zinc-500/15 text-zinc-600 ring-zinc-500/20 dark:text-zinc-400',
   },
 }
 
