@@ -275,6 +275,7 @@ export default function PromptsPage() {
   const [activeModel, setActiveModel] = useState<string>('all')
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
+  const [showAllModels, setShowAllModels] = useState(false)
 
   async function fetchPrompts(cat: PromptCategory | 'all' | 'uncategorized') {
     setLoading(true)
@@ -399,11 +400,11 @@ export default function PromptsPage() {
         </div>
 
         {/* Filters */}
-        <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-black/[0.02] dark:bg-white/[0.02] divide-y divide-black/[0.06] dark:divide-white/6">
+        <div className="flex flex-col gap-3">
 
           {/* Row: Media type — primary control */}
-          <div className="flex items-center gap-3 md:gap-4 px-4 py-3">
-            <span className="text-[11px] font-medium text-gray-400 dark:text-zinc-500 uppercase tracking-wider w-12 md:w-16 shrink-0">Media</span>
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] font-medium text-gray-400 dark:text-zinc-500 uppercase tracking-wider w-12 shrink-0">Media</span>
             <div className="flex gap-1 p-0.5 bg-black/[0.04] dark:bg-white/5 rounded-lg">
               {MEDIA_TYPES.map((mt) => (
                 <button
@@ -422,8 +423,8 @@ export default function PromptsPage() {
           </div>
 
           {/* Row: Technique sub-category */}
-          <div className="flex items-start gap-3 md:gap-4 px-4 py-3">
-            <span className="text-[11px] font-medium text-gray-400 dark:text-zinc-500 uppercase tracking-wider w-12 md:w-16 shrink-0 pt-1">Type</span>
+          <div className="flex items-start gap-3">
+            <span className="text-[11px] font-medium text-gray-400 dark:text-zinc-500 uppercase tracking-wider w-12 shrink-0 pt-1">Type</span>
             <div className="flex gap-1 flex-wrap">
               {[
                 CATEGORIES.find((c) => c.value === 'all')!,
@@ -458,9 +459,9 @@ export default function PromptsPage() {
             </div>
           </div>
 
-          {/* Row: Theme — colored badges matching card badges */}
-          <div className="flex items-start gap-3 md:gap-4 px-4 py-3">
-            <span className="text-[11px] font-medium text-gray-400 dark:text-zinc-500 uppercase tracking-wider w-12 md:w-16 shrink-0 pt-1">Theme</span>
+          {/* Row: Theme */}
+          <div className="flex items-start gap-3">
+            <span className="text-[11px] font-medium text-gray-400 dark:text-zinc-500 uppercase tracking-wider w-12 shrink-0 pt-1">Theme</span>
             <div className="flex gap-1 flex-wrap">
               <button
                 onClick={() => setActiveTheme('all')}
@@ -491,10 +492,10 @@ export default function PromptsPage() {
             </div>
           </div>
 
-          {/* Row: Model — only when models are present */}
+          {/* Row: Model — capped at 8, expandable */}
           {availableModels.length > 0 && (
-            <div className="flex items-start gap-3 md:gap-4 px-4 py-3">
-              <span className="text-[11px] font-medium text-gray-400 dark:text-zinc-500 uppercase tracking-wider w-12 md:w-16 shrink-0 pt-1">Model</span>
+            <div className="flex items-start gap-3">
+              <span className="text-[11px] font-medium text-gray-400 dark:text-zinc-500 uppercase tracking-wider w-12 shrink-0 pt-1">Model</span>
               <div className="flex gap-1 flex-wrap">
                 <button
                   onClick={() => setActiveModel('all')}
@@ -506,7 +507,7 @@ export default function PromptsPage() {
                 >
                   All
                 </button>
-                {availableModels.map(({ label, count }) => (
+                {(showAllModels ? availableModels : availableModels.slice(0, 8)).map(({ label, count }) => (
                   <button
                     key={label}
                     onClick={() => setActiveModel(label)}
@@ -519,6 +520,14 @@ export default function PromptsPage() {
                     {label} <span className="opacity-50">({count})</span>
                   </button>
                 ))}
+                {availableModels.length > 8 && (
+                  <button
+                    onClick={() => setShowAllModels((v) => !v)}
+                    className="rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border border-transparent text-gray-400 hover:text-gray-700 dark:text-zinc-500 dark:hover:text-zinc-300"
+                  >
+                    {showAllModels ? 'less ↑' : `+${availableModels.length - 8} more`}
+                  </button>
+                )}
               </div>
             </div>
           )}
