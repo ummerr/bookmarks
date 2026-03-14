@@ -386,70 +386,74 @@ function PromptsPageInner() {
 
   return (
     <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
-      <div className="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-8 flex flex-col gap-6">
+      <div className="max-w-6xl mx-auto px-4 md:px-6 py-4 md:py-8 flex gap-6 items-start">
 
-        {/* Dataset Hero */}
-        <div className="rounded-2xl overflow-hidden bg-[#0c0c0c] border border-white/[0.06]">
-          {/* Top bar */}
-          <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.06]">
-            <div className="flex items-center gap-2.5">
-              <span className="font-mono text-[10px] tracking-[0.2em] text-white/25 uppercase">Dataset</span>
-              <span className="text-white/10">·</span>
-              <span className="font-mono text-[11px] text-white/60 font-medium tracking-wide">ummerr/prompts</span>
+        {/* Sidebar — dataset card, sticky */}
+        <aside className="hidden lg:block w-64 xl:w-72 shrink-0">
+          <div className="sticky top-14 rounded-2xl overflow-hidden bg-[#0c0c0c] border border-white/[0.06]">
+            {/* Top bar */}
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/[0.06]">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[9px] tracking-[0.2em] text-white/25 uppercase">Dataset</span>
+                <span className="text-white/10">·</span>
+                <span className="font-mono text-[10px] text-white/60 font-medium">ummerr/prompts</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[9px] text-white/25">v1.0</span>
+                <span className="rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 text-[9px] font-mono font-medium tracking-wide">OPEN</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2.5">
-              <span className="font-mono text-[10px] text-white/25">v1.0</span>
-              <span className="rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-mono font-medium tracking-wide">OPEN</span>
+
+            {/* Body */}
+            <div className="px-4 pt-4 pb-5 flex flex-col gap-4">
+              {/* Title + description */}
+              <div className="flex flex-col gap-2">
+                <h1 className="text-base font-semibold text-white leading-tight tracking-tight">
+                  The Real Prompts Dataset
+                </h1>
+                <p className="text-[11px] text-white/40 leading-relaxed">
+                  Hand-curated from practitioners, artists, and researchers sharing work that actually shipped.
+                  Not generated. Not scraped from SEO farms. Every entry is a real prompt that produced a real result.
+                </p>
+              </div>
+
+              {/* Stats grid */}
+              <div className="grid grid-cols-2 gap-1.5">
+                {[
+                  { value: loading ? '—' : allPrompts.length.toLocaleString(), label: 'Prompts', sub: 'and growing' },
+                  { value: '16', label: 'Task types', sub: 'image · video · llm' },
+                  { value: '20+', label: 'AI models', sub: 'tracked & labeled' },
+                  { value: '100%', label: 'Human-sourced', sub: 'zero synthetic' },
+                ].map((s) => (
+                  <div key={s.label} className="flex flex-col gap-0.5 rounded-lg bg-white/[0.04] border border-white/[0.06] px-3 py-2.5">
+                    <span className="font-mono text-lg font-semibold text-white leading-none">{s.value}</span>
+                    <span className="text-[10px] text-white/50 font-medium mt-0.5">{s.label}</span>
+                    <span className="text-[9px] text-white/20">{s.sub}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Feature flags */}
+              <div className="flex flex-col gap-1.5">
+                {[
+                  'Multi-modal — image, video, audio, 3D, and LLM',
+                  'Rich metadata — category, model, themes, styles',
+                  'Sourced live from Twitter/X and AI subreddits',
+                ].map((f) => (
+                  <span key={f} className="flex items-start gap-1.5 text-[10px] text-white/30 leading-relaxed">
+                    <svg className="h-2.5 w-2.5 text-emerald-400/70 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    {f}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
+        </aside>
 
-          {/* Body */}
-          <div className="px-5 pt-6 pb-7 flex flex-col gap-6">
-            {/* Title + description */}
-            <div className="flex flex-col gap-2.5 max-w-2xl">
-              <h1 className="text-[22px] md:text-[26px] font-semibold text-white leading-tight tracking-tight">
-                The Real Prompts Dataset
-              </h1>
-              <p className="text-sm text-white/45 leading-relaxed">
-                Hand-curated from practitioners, artists, and researchers sharing work that actually shipped.
-                Not generated. Not scraped from SEO farms. Every entry is a real prompt that produced a real result —
-                tagged with technique, model, visual theme, art style, and reference requirements.
-              </p>
-            </div>
-
-            {/* Stats grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              {[
-                { value: loading ? '—' : allPrompts.length.toLocaleString(), label: 'Prompts', sub: 'and growing' },
-                { value: '16', label: 'Task types', sub: 'image · video · llm' },
-                { value: '20+', label: 'AI models', sub: 'tracked & labeled' },
-                { value: '100%', label: 'Human-sourced', sub: 'zero synthetic entries' },
-              ].map((s) => (
-                <div key={s.label} className="flex flex-col gap-1 rounded-xl bg-white/[0.04] border border-white/[0.06] px-4 py-3.5">
-                  <span className="font-mono text-[22px] font-semibold text-white leading-none">{s.value}</span>
-                  <span className="text-[11px] text-white/50 font-medium mt-1">{s.label}</span>
-                  <span className="text-[10px] text-white/20">{s.sub}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Feature flags */}
-            <div className="flex flex-wrap gap-x-5 gap-y-1.5">
-              {[
-                'Multi-modal — image, video, audio, 3D, and LLM prompts in one place',
-                'Rich structured metadata on every entry — category, model, themes, styles, references',
-                'Sourced live from Twitter/X practitioners and AI subreddits',
-              ].map((f) => (
-                <span key={f} className="flex items-start gap-1.5 text-[11px] text-white/35 leading-relaxed">
-                  <svg className="h-3 w-3 text-emerald-400/80 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                  {f}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
+        {/* Main content */}
+        <div className="flex-1 min-w-0 flex flex-col gap-6">
 
         {/* Search */}
         <div className="relative">
@@ -646,12 +650,13 @@ function PromptsPageInner() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
             {filtered.map((p) => (
               <PromptCard key={p.id} bookmark={p} />
             ))}
           </div>
         )}
+        </div>{/* end main content */}
       </div>
     </div>
   )

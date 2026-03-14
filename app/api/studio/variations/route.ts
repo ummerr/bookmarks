@@ -5,26 +5,33 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
 const VARIATIONS_TOOL: Anthropic.Tool = {
   name: 'generate_variations',
-  description: 'Generate prompt variations using the same template structure',
+  description: 'Generate prompt variations and describe what changed significantly in each',
   input_schema: {
     type: 'object' as const,
     properties: {
-      prompts: {
+      variations: {
         type: 'array',
-        items: { type: 'string' },
+        items: {
+          type: 'object',
+          properties: {
+            prompt: { type: 'string' },
+            changes: {
+              type: 'array',
+              items: { type: 'string' },
+              description: '2–4 short phrases naming the biggest changes from the original (e.g. "neon-lit city", "melancholic mood", "close-up shot")',
+            },
+          },
+          required: ['prompt', 'changes'],
+        },
       },
     },
-    required: ['prompts'],
+    required: ['variations'],
   },
 }
 
 export async function POST(req: Request) {
-  const { templateStr, variables, count = 5 } = await req.json()
-  if (!templateStr) return NextResponse.json({ error: 'No template' }, { status: 400 })
-
-  const varList = Object.entries(variables as Record<string, string>)
-    .map(([k, v]) => `  ${k}: "${v}"`)
-    .join('\n')
+  const { prompt, count = 5 } = await req.json()
+  if (!prompt?.trim()) return NextResponse.json({ error: 'No prompt' }, { status: 400 })
 
   const message = await client.messages.create({
     model: 'claude-haiku-4-5-20251001',
@@ -33,20 +40,15 @@ export async function POST(req: Request) {
     tool_choice: { type: 'tool', name: 'generate_variations' },
     messages: [{
       role: 'user',
-      content: `Generate ${count} variations of this prompt. Keep the same grammatical structure and connecting words, but vary the semantic content to create fresh, distinct scenes.
+      content: `Generate ${count} creative variations of this AI image/video prompt. Each should feel meaningfully different — vary character, setting, mood, style, or action significantly. Preserve any technical suffixes (e.g. "--ar 16:9") exactly. Also list 2–4 short phrases naming the biggest changes from the original.
 
-Template structure (variables in {braces}):
-${templateStr}
-
-Current values:
-${varList}
+Original prompt:
+${prompt}
 
 Rules:
-- Each variation should feel meaningfully different — different character, world, mood
-- Vary MULTIPLE variables at once, not just one
-- Stay coherent — character, action, setting, and style should feel like they belong together
-- Preserve technical suffixes like "--ar 16:9" exactly as-is
-- Make each variation compelling on its own`,
+- Vary MULTIPLE elements at once, not just one word
+- Each variation should be coherent and compelling on its own
+- Change list entries should be brief (2–5 words each) and describe what actually shifted`,
     }],
   })
 
@@ -55,6 +57,6 @@ Rules:
     return NextResponse.json({ error: 'Generation failed' }, { status: 500 })
   }
 
-  const { prompts } = toolUse.input as { prompts: string[] }
-  return NextResponse.json({ prompts })
+  const { variations } = toolUse.input as { variations: Array<{ prompt: string; changes: string[] }> }
+  return NextResponse.json({ variations })
 }
