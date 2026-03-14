@@ -205,6 +205,11 @@ function PromptCard({ bookmark }: { bookmark: Bookmark }) {
               ref · {REFERENCE_TYPE_LABELS[bookmark.reference_type] ?? bookmark.reference_type}
             </span>
           )}
+          {bookmark.is_multi_shot && bookmark.prompt_category?.startsWith('video_') && (
+            <span className="rounded-full border border-emerald-200 dark:border-emerald-800/40 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-300">
+              Multi-shot
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {date && <span className="text-[11px] text-gray-400 dark:text-zinc-600">{date}</span>}
@@ -284,6 +289,7 @@ function PromptsPageInner() {
     (searchParams.get('theme') as PromptTheme | 'all') || 'all'
   )
   const [activeModel, setActiveModel] = useState<string>(searchParams.get('model') || 'all')
+  const [activeMultiShot, setActiveMultiShot] = useState(searchParams.get('multi_shot') === 'true')
   const [search, setSearch] = useState(searchParams.get('q') || '')
   const [loading, setLoading] = useState(true)
   const [showAllModels, setShowAllModels] = useState(false)
@@ -296,9 +302,10 @@ function PromptsPageInner() {
     if (activeCategory !== 'all') params.set('type', activeCategory)
     if (activeTheme !== 'all') params.set('theme', activeTheme)
     if (activeModel !== 'all') params.set('model', activeModel)
+    if (activeMultiShot) params.set('multi_shot', 'true')
     const qs = params.toString()
     router.replace(`${pathname}${qs ? `?${qs}` : ''}`, { scroll: false })
-  }, [search, activeMediaType, activeCategory, activeTheme, activeModel]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [search, activeMediaType, activeCategory, activeTheme, activeModel, activeMultiShot]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function fetchPrompts(cat: PromptCategory | 'all' | 'uncategorized') {
     setLoading(true)
@@ -365,6 +372,9 @@ function PromptsPageInner() {
     if (activeModel !== 'all') {
       result = result.filter((p) => p.detected_model && modelToFamily(p.detected_model) === activeModel)
     }
+    if (activeMultiShot) {
+      result = result.filter((p) => p.is_multi_shot)
+    }
     if (search.trim()) {
       const q = search.toLowerCase()
       result = result.filter(
@@ -382,7 +392,7 @@ function PromptsPageInner() {
       return aHas ? -1 : 1
     })
     return result
-  }, [allPrompts, activeMediaType, activeTheme, activeModel, search])
+  }, [allPrompts, activeMediaType, activeTheme, activeModel, activeMultiShot, search])
 
   return (
     <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
@@ -489,7 +499,7 @@ function PromptsPageInner() {
               {MEDIA_TYPES.map((mt) => (
                 <button
                   key={mt.value}
-                  onClick={() => { setActiveMediaType(mt.value); setActiveCategory('all'); setActiveTheme('all'); setActiveModel('all') }}
+                  onClick={() => { setActiveMediaType(mt.value); setActiveCategory('all'); setActiveTheme('all'); setActiveModel('all'); if (mt.value !== 'video') setActiveMultiShot(false) }}
                   className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
                     activeMediaType === mt.value
                       ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
@@ -579,6 +589,35 @@ function PromptsPageInner() {
                 ))}
             </div>
           </div>
+
+          {/* Row: Format (video only) */}
+          {activeMediaType === 'video' && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-12">Format</span>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => setActiveMultiShot(false)}
+                  className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                    !activeMultiShot
+                      ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
+                      : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                  }`}
+                >
+                  All
+                </button>
+                <button
+                  onClick={() => setActiveMultiShot(true)}
+                  className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                    activeMultiShot
+                      ? 'bg-emerald-100 text-emerald-700 border-emerald-200 font-medium dark:bg-emerald-900/50 dark:text-emerald-300 dark:border-emerald-800/50'
+                      : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                  }`}
+                >
+                  Multi-shot
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Row: Model */}
           {availableModels.length > 0 && (
