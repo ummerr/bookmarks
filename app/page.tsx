@@ -388,14 +388,67 @@ function PromptsPageInner() {
     <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
       <div className="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-8 flex flex-col gap-6">
 
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Prompts
-            <span className="ml-2 text-sm text-gray-400 dark:text-zinc-600 font-normal">
-              {loading ? '…' : `${filtered.length}${filtered.length !== allPrompts.length ? ` of ${allPrompts.length}` : ''}`}
-            </span>
-          </h1>
+        {/* Dataset Hero */}
+        <div className="rounded-2xl overflow-hidden bg-[#0c0c0c] border border-white/[0.06]">
+          {/* Top bar */}
+          <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.06]">
+            <div className="flex items-center gap-2.5">
+              <span className="font-mono text-[10px] tracking-[0.2em] text-white/25 uppercase">Dataset</span>
+              <span className="text-white/10">·</span>
+              <span className="font-mono text-[11px] text-white/60 font-medium tracking-wide">ummerr/prompts</span>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <span className="font-mono text-[10px] text-white/25">v1.0</span>
+              <span className="rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-mono font-medium tracking-wide">OPEN</span>
+            </div>
+          </div>
+
+          {/* Body */}
+          <div className="px-5 pt-6 pb-7 flex flex-col gap-6">
+            {/* Title + description */}
+            <div className="flex flex-col gap-2.5 max-w-2xl">
+              <h1 className="text-[22px] md:text-[26px] font-semibold text-white leading-tight tracking-tight">
+                The Real Prompts Dataset
+              </h1>
+              <p className="text-sm text-white/45 leading-relaxed">
+                Hand-curated from practitioners, artists, and researchers sharing work that actually shipped.
+                Not generated. Not scraped from SEO farms. Every entry is a real prompt that produced a real result —
+                tagged with technique, model, visual theme, art style, and reference requirements.
+              </p>
+            </div>
+
+            {/* Stats grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              {[
+                { value: loading ? '—' : allPrompts.length.toLocaleString(), label: 'Prompts', sub: 'and growing' },
+                { value: '16', label: 'Task types', sub: 'image · video · llm' },
+                { value: '20+', label: 'AI models', sub: 'tracked & labeled' },
+                { value: '100%', label: 'Human-sourced', sub: 'zero synthetic entries' },
+              ].map((s) => (
+                <div key={s.label} className="flex flex-col gap-1 rounded-xl bg-white/[0.04] border border-white/[0.06] px-4 py-3.5">
+                  <span className="font-mono text-[22px] font-semibold text-white leading-none">{s.value}</span>
+                  <span className="text-[11px] text-white/50 font-medium mt-1">{s.label}</span>
+                  <span className="text-[10px] text-white/20">{s.sub}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Feature flags */}
+            <div className="flex flex-wrap gap-x-5 gap-y-1.5">
+              {[
+                'Multi-modal — image, video, audio, 3D, and LLM prompts in one place',
+                'Rich structured metadata on every entry — category, model, themes, styles, references',
+                'Sourced live from Twitter/X practitioners and AI subreddits',
+              ].map((f) => (
+                <span key={f} className="flex items-start gap-1.5 text-[11px] text-white/35 leading-relaxed">
+                  <svg className="h-3 w-3 text-emerald-400/80 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  {f}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Search */}
@@ -563,6 +616,15 @@ function PromptsPageInner() {
             </div>
           )}
         </div>
+
+        {/* Results count */}
+        {!loading && (
+          <div className="flex items-center justify-between -mb-2">
+            <span className="text-xs text-gray-400 dark:text-zinc-600 font-mono">
+              {filtered.length.toLocaleString()}{filtered.length !== allPrompts.length ? ` of ${allPrompts.length.toLocaleString()}` : ''} prompts
+            </span>
+          </div>
+        )}
 
         {/* Results */}
         {loading ? (
