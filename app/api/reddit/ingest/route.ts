@@ -4,10 +4,9 @@ import type { BookmarkInsert } from '@/lib/types'
 
 export const maxDuration = 120
 
-const BROWSER_HEADERS = {
-  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-  'Accept': 'application/json, text/plain, */*',
-  'Accept-Language': 'en-US,en;q=0.9',
+const HEADERS = {
+  'User-Agent': 'web:bookmarks-app:1.0 (by /u/bookmarks_bot)',
+  'Accept': 'application/json',
 }
 
 // Public subreddits rich in AI prompts
@@ -100,8 +99,8 @@ function extractPromptFromText(text: string): string | null {
 
 async function fetchPromptFromComments(subreddit: string, postId: string): Promise<string | null> {
   try {
-    const url = `https://old.reddit.com/r/${subreddit}/comments/${postId}.json?limit=10&depth=1&sort=top`
-    const res = await fetch(url, { headers: BROWSER_HEADERS, next: { revalidate: 0 } })
+    const url = `https://www.reddit.com/r/${subreddit}/comments/${postId}.json?limit=10&depth=1&sort=top`
+    const res = await fetch(url, { headers: HEADERS, next: { revalidate: 0 } })
     if (!res.ok) return null
 
     const json = await res.json()
@@ -197,8 +196,8 @@ async function buildBookmark(
 // ── Subreddit fetch ───────────────────────────────────────────────────────
 
 async function fetchSubreddit(subreddit: string, timeFilter: TimeFilter, limit: number): Promise<RedditPost[]> {
-  const url = `https://old.reddit.com/r/${subreddit}/top.json?limit=${limit}&t=${timeFilter}`
-  const res = await fetch(url, { headers: BROWSER_HEADERS, next: { revalidate: 0 } })
+  const url = `https://www.reddit.com/r/${subreddit}/top.json?limit=${limit}&t=${timeFilter}`
+  const res = await fetch(url, { headers: HEADERS, next: { revalidate: 0 } })
   if (!res.ok) throw new Error(`Reddit API ${res.status} for r/${subreddit}`)
   const json = await res.json()
   return (json?.data?.children ?? []).map((c: { data: RedditPost }) => c.data)

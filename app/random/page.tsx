@@ -52,31 +52,37 @@ const REFERENCE_TYPE_LABELS: Record<string, string> = {
   scene_background: 'Scene / Background',
 }
 
+type Group = 'image' | 'video' | null
+
 export default function RandomPage() {
   const [prompt, setPrompt] = useState<Bookmark | null>(null)
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
+  const [group, setGroup] = useState<Group>(null)
 
-  const shuffle = useCallback(async () => {
+  const fetchPrompt = useCallback(async (g: Group) => {
     setLoading(true)
     setCopied(false)
-    const res = await fetch('/api/prompts/random')
+    const params = g ? `?group=${g}` : ''
+    const res = await fetch(`/api/prompts/random${params}`)
     setPrompt(res.ok ? await res.json() : null)
     setLoading(false)
   }, [])
 
-  useEffect(() => { shuffle() }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  const shuffle = useCallback(() => fetchPrompt(group), [fetchPrompt, group])
+
+  useEffect(() => { fetchPrompt(null) }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.code === 'Space' && !['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) {
         e.preventDefault()
-        shuffle()
+        fetchPrompt(group)
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [shuffle])
+  }, [fetchPrompt, group])
 
   async function copy() {
     if (!prompt) return
@@ -94,28 +100,45 @@ export default function RandomPage() {
       <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full px-4 md:px-8 py-8 gap-5">
 
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <div>
             <h1 className="text-lg font-semibold text-gray-900 dark:text-white">Random</h1>
             <p className="text-xs text-gray-400 dark:text-zinc-600 mt-0.5">
               Press <kbd className="rounded bg-black/[0.04] dark:bg-white/5 border border-black/[0.08] dark:border-white/8 px-1 py-0.5">space</kbd> to shuffle
             </p>
           </div>
-          <button
-            onClick={shuffle}
-            disabled={loading}
-            className="flex items-center gap-2 rounded-xl bg-[#1DA1F2]/90 hover:bg-[#1DA1F2] disabled:opacity-50 px-4 py-2 text-sm font-semibold text-white transition-all shadow-lg shadow-[#1DA1F2]/10 hover:shadow-[#1DA1F2]/20"
-          >
-            <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-              <rect x="1.5" y="1.5" width="17" height="17" rx="3.5" stroke="currentColor" strokeWidth="1.5"/>
-              <circle cx="6.5" cy="6.5" r="1.25" fill="currentColor"/>
-              <circle cx="13.5" cy="6.5" r="1.25" fill="currentColor"/>
-              <circle cx="10" cy="10" r="1.25" fill="currentColor"/>
-              <circle cx="6.5" cy="13.5" r="1.25" fill="currentColor"/>
-              <circle cx="13.5" cy="13.5" r="1.25" fill="currentColor"/>
-            </svg>
-            Shuffle
-          </button>
+          <div className="flex items-center gap-2">
+            {(['image', 'video'] as const).map((g) => (
+              <button
+                key={g}
+                onClick={() => { setGroup(group === g ? null : g); fetchPrompt(group === g ? null : g) }}
+                className={`rounded-full border px-3 py-1.5 text-xs font-medium capitalize transition-all ${
+                  group === g
+                    ? g === 'image'
+                      ? 'bg-pink-100 text-pink-700 border-pink-200 dark:bg-pink-900/50 dark:text-pink-300 dark:border-pink-800/50'
+                      : 'bg-violet-100 text-violet-700 border-violet-200 dark:bg-violet-900/50 dark:text-violet-300 dark:border-violet-800/50'
+                    : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                }`}
+              >
+                {g}
+              </button>
+            ))}
+            <button
+              onClick={shuffle}
+              disabled={loading}
+              className="flex items-center gap-2 rounded-xl bg-[#1DA1F2]/90 hover:bg-[#1DA1F2] disabled:opacity-50 px-4 py-2 text-sm font-semibold text-white transition-all shadow-lg shadow-[#1DA1F2]/10 hover:shadow-[#1DA1F2]/20"
+            >
+              <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <rect x="1.5" y="1.5" width="17" height="17" rx="3.5" stroke="currentColor" strokeWidth="1.5"/>
+                <circle cx="6.5" cy="6.5" r="1.25" fill="currentColor"/>
+                <circle cx="13.5" cy="6.5" r="1.25" fill="currentColor"/>
+                <circle cx="10" cy="10" r="1.25" fill="currentColor"/>
+                <circle cx="6.5" cy="13.5" r="1.25" fill="currentColor"/>
+                <circle cx="13.5" cy="13.5" r="1.25" fill="currentColor"/>
+              </svg>
+              Shuffle
+            </button>
+          </div>
         </div>
 
         {/* Content */}
