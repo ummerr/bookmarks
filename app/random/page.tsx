@@ -166,16 +166,25 @@ export default function RandomPage() {
 
             {/* Images */}
             {images.length > 0 && (
-              <div className={`grid gap-3 ${images.length === 1 ? 'grid-cols-1' : images.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
-                {images.map((url, i) => (
-                  <a key={i} href={url} target="_blank" rel="noopener noreferrer"
-                    className="block overflow-hidden rounded-xl border border-black/[0.08] dark:border-white/8 hover:border-black/[0.2] dark:hover:border-white/20 transition-colors"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={url} alt="" className="w-full object-cover max-h-96" loading="lazy" />
-                  </a>
-                ))}
-              </div>
+              images.length === 1 ? (
+                <a href={images[0]} target="_blank" rel="noopener noreferrer"
+                  className="block self-start overflow-hidden rounded-2xl border border-black/[0.08] dark:border-white/8 hover:border-black/[0.2] dark:hover:border-white/20 transition-colors"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={images[0]} alt="" className="w-full h-auto block" loading="lazy" />
+                </a>
+              ) : (
+                <div className={`grid gap-2 ${images.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+                  {images.map((url, i) => (
+                    <a key={i} href={url} target="_blank" rel="noopener noreferrer"
+                      className="block overflow-hidden rounded-xl border border-black/[0.08] dark:border-white/8 hover:border-black/[0.2] dark:hover:border-white/20 transition-colors"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={url} alt="" className="w-full h-auto block" loading="lazy" />
+                    </a>
+                  ))}
+                </div>
+              )
             )}
 
             {/* Copy + source */}
