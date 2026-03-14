@@ -228,12 +228,16 @@ export async function getRandomPrompt(opts: {
   prompt_category?: PromptCategory | null
   prompt_theme?: PromptTheme | null
   detected_model?: string | null
+  category_group?: 'image' | 'video' | null
 } = {}): Promise<Bookmark | null> {
   const conditions = ["category = 'prompts'", "prompt_category IS NOT NULL"]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const params: any[] = []
 
-  if (opts.prompt_category) {
+  if (opts.category_group) {
+    params.push(`${opts.category_group}_%`)
+    conditions.push(`prompt_category LIKE $${params.length}`)
+  } else if (opts.prompt_category) {
     params.push(opts.prompt_category)
     conditions.push(`prompt_category = $${params.length}`)
   }
