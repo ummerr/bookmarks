@@ -215,7 +215,7 @@ export async function updateBookmarkByTweetId(
   `
 }
 
-async function getBookmarkById(id: string): Promise<Bookmark | null> {
+export async function getBookmarkById(id: string): Promise<Bookmark | null> {
   const rows = await getSql()<Record<string, unknown>[]>`SELECT * FROM bookmarks WHERE id = ${id}`
   return rows.length ? toBookmark(rows[0]) : null
 }

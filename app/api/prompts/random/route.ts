@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getRandomPrompt } from '@/lib/db'
+import { getRandomPrompt, getBookmarkById } from '@/lib/db'
 import type { PromptCategory, PromptTheme } from '@/lib/types'
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl
+
+  // Permalink: fetch a specific prompt by id
+  const id = searchParams.get('id')
+  if (id) {
+    const prompt = await getBookmarkById(id)
+    if (!prompt) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    return NextResponse.json(prompt)
+  }
+
   const group = searchParams.get('group') as 'image' | 'video' | null
   const prompt = await getRandomPrompt({
     prompt_category: (searchParams.get('category') as PromptCategory) || null,
