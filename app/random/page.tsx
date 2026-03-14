@@ -59,30 +59,34 @@ export default function RandomPage() {
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
   const [group, setGroup] = useState<Group>(null)
+  const [multiShot, setMultiShot] = useState(false)
 
-  const fetchPrompt = useCallback(async (g: Group) => {
+  const fetchPrompt = useCallback(async (g: Group, ms: boolean) => {
     setLoading(true)
     setCopied(false)
-    const params = g ? `?group=${g}` : ''
-    const res = await fetch(`/api/prompts/random${params}`)
+    const p = new URLSearchParams()
+    if (g) p.set('group', g)
+    if (ms) p.set('multi_shot', 'true')
+    const qs = p.toString()
+    const res = await fetch(`/api/prompts/random${qs ? `?${qs}` : ''}`)
     setPrompt(res.ok ? await res.json() : null)
     setLoading(false)
   }, [])
 
-  const shuffle = useCallback(() => fetchPrompt(group), [fetchPrompt, group])
+  const shuffle = useCallback(() => fetchPrompt(group, multiShot), [fetchPrompt, group, multiShot])
 
-  useEffect(() => { fetchPrompt(null) }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchPrompt(null, false) }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.code === 'Space' && !['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) {
         e.preventDefault()
-        fetchPrompt(group)
+        fetchPrompt(group, multiShot)
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [fetchPrompt, group])
+  }, [fetchPrompt, group, multiShot])
 
   async function copy() {
     if (!prompt) return
@@ -111,7 +115,7 @@ export default function RandomPage() {
             {(['image', 'video'] as const).map((g) => (
               <button
                 key={g}
-                onClick={() => { setGroup(group === g ? null : g); fetchPrompt(group === g ? null : g) }}
+                onClick={() => { const next = group === g ? null : g; setGroup(next); fetchPrompt(next, multiShot) }}
                 className={`rounded-full border px-3 py-1.5 text-xs font-medium capitalize transition-all ${
                   group === g
                     ? g === 'image'
@@ -123,6 +127,16 @@ export default function RandomPage() {
                 {g}
               </button>
             ))}
+            <button
+              onClick={() => { const next = !multiShot; setMultiShot(next); fetchPrompt(group, next) }}
+              className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
+                multiShot
+                  ? 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/50 dark:text-emerald-300 dark:border-emerald-800/50'
+                  : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+              }`}
+            >
+              Multi-shot
+            </button>
             <button
               onClick={shuffle}
               disabled={loading}
@@ -180,6 +194,11 @@ export default function RandomPage() {
               {prompt.requires_reference && prompt.reference_type && (
                 <span className="rounded-full border border-amber-200 dark:border-amber-800/40 bg-amber-50 dark:bg-amber-900/30 px-2.5 py-1 text-xs text-amber-700 dark:text-amber-300">
                   ref · {REFERENCE_TYPE_LABELS[prompt.reference_type] ?? prompt.reference_type}
+                </span>
+              )}
+              {prompt.is_multi_shot && (
+                <span className="rounded-full border border-emerald-200 dark:border-emerald-800/40 bg-emerald-50 dark:bg-emerald-900/30 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                  Multi-shot
                 </span>
               )}
               <span className="ml-auto text-xs text-gray-400 dark:text-zinc-600">

@@ -10,6 +10,7 @@ export async function GET(req: NextRequest) {
     prompt_theme: (searchParams.get('theme') as PromptTheme) || null,
     detected_model: searchParams.get('model') || null,
     category_group: group || null,
+    multi_shot: searchParams.get('multi_shot') === 'true' || null,
   })
   if (!prompt) return NextResponse.json({ error: 'No prompts found' }, { status: 404 })
   return NextResponse.json(prompt)

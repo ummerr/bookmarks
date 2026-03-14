@@ -10,8 +10,16 @@ function getSql() {
 
 // ── Row → Bookmark ────────────────────────────────────────────────────────
 
+function detectMultiShot(text: string): boolean {
+  const shotCount = (text.match(/\bshot\s*\d+/gi) ?? []).length
+  const cutCount = (text.match(/\bcut\s*\d+/gi) ?? []).length
+  return shotCount >= 2 || cutCount >= 2
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toBookmark(row: Record<string, any>): Bookmark {
+  const extracted_prompt = row.extracted_prompt ?? null
+  const tweet_text = row.tweet_text ?? ''
   return {
     ...row,
     media_urls: typeof row.media_urls === 'string' ? JSON.parse(row.media_urls) : (row.media_urls ?? []),
@@ -22,10 +30,11 @@ function toBookmark(row: Record<string, any>): Bookmark {
     is_thread: Boolean(row.is_thread),
     confidence: Number(row.confidence),
     prompt_category: row.prompt_category ?? null,
-    extracted_prompt: row.extracted_prompt ?? null,
+    extracted_prompt,
     detected_model: row.detected_model ?? null,
     requires_reference: row.requires_reference ?? null,
     reference_type: row.reference_type ?? null,
+    is_multi_shot: detectMultiShot(extracted_prompt ?? tweet_text),
     source: (row.source as 'twitter' | 'manual' | 'reddit') ?? 'twitter',
   } as Bookmark
 }
@@ -231,6 +240,7 @@ export async function getRandomPrompt(opts: {
   prompt_theme?: PromptTheme | null
   detected_model?: string | null
   category_group?: 'image' | 'video' | null
+  multi_shot?: boolean | null
 } = {}): Promise<Bookmark | null> {
   const conditions = ["category = 'prompts'", "prompt_category IS NOT NULL"]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -250,6 +260,9 @@ export async function getRandomPrompt(opts: {
   if (opts.detected_model) {
     params.push(opts.detected_model)
     conditions.push(`detected_model = $${params.length}`)
+  }
+  if (opts.multi_shot) {
+    conditions.push(`COALESCE(extracted_prompt, tweet_text) ~* 'shot\\s*\\d+.*shot\\s*\\d+|cut\\s*\\d+.*cut\\s*\\d+'`)
   }
 
   const rows = await getSql().unsafe(
