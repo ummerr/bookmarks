@@ -390,17 +390,17 @@ function PromptsPageInner() {
 
         {/* Sidebar — dataset card, sticky */}
         <aside className="hidden lg:block w-64 xl:w-72 shrink-0">
-          <div className="sticky top-14 rounded-2xl overflow-hidden bg-[#0c0c0c] border border-white/[0.06]">
+          <div className="sticky top-14 rounded-2xl overflow-hidden bg-white dark:bg-[#0c0c0c] border border-black/[0.08] dark:border-white/[0.06]">
             {/* Top bar */}
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/[0.06]">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-black/[0.06] dark:border-white/[0.06]">
               <div className="flex items-center gap-2">
-                <span className="font-mono text-[9px] tracking-[0.2em] text-white/25 uppercase">Dataset</span>
-                <span className="text-white/10">·</span>
-                <span className="font-mono text-[10px] text-white/60 font-medium">ummerr/prompts</span>
+                <span className="font-mono text-[9px] tracking-[0.2em] text-gray-400 dark:text-white/25 uppercase">Dataset</span>
+                <span className="text-black/10 dark:text-white/10">·</span>
+                <span className="font-mono text-[10px] text-gray-600 dark:text-white/60 font-medium">ummerr/prompts</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="font-mono text-[9px] text-white/25">v1.0</span>
-                <span className="rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 text-[9px] font-mono font-medium tracking-wide">OPEN</span>
+                <span className="font-mono text-[9px] text-gray-400 dark:text-white/25">v1.0</span>
+                <span className="rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 text-[9px] font-mono font-medium tracking-wide">OPEN</span>
               </div>
             </div>
 
@@ -408,10 +408,10 @@ function PromptsPageInner() {
             <div className="px-4 pt-4 pb-5 flex flex-col gap-4">
               {/* Title + description */}
               <div className="flex flex-col gap-2">
-                <h1 className="text-base font-semibold text-white leading-tight tracking-tight">
+                <h1 className="text-base font-semibold text-gray-900 dark:text-white leading-tight tracking-tight">
                   The Real Prompts Dataset
                 </h1>
-                <p className="text-[11px] text-white/40 leading-relaxed">
+                <p className="text-[11px] text-gray-500 dark:text-white/40 leading-relaxed">
                   Hand-curated from practitioners, artists, and researchers sharing work that actually shipped.
                   Not generated. Not scraped from SEO farms. Every entry is a real prompt that produced a real result.
                 </p>
@@ -425,10 +425,10 @@ function PromptsPageInner() {
                   { value: '20+', label: 'AI models', sub: 'tracked & labeled' },
                   { value: '100%', label: 'Human-sourced', sub: 'zero synthetic' },
                 ].map((s) => (
-                  <div key={s.label} className="flex flex-col gap-0.5 rounded-lg bg-white/[0.04] border border-white/[0.06] px-3 py-2.5">
-                    <span className="font-mono text-lg font-semibold text-white leading-none">{s.value}</span>
-                    <span className="text-[10px] text-white/50 font-medium mt-0.5">{s.label}</span>
-                    <span className="text-[9px] text-white/20">{s.sub}</span>
+                  <div key={s.label} className="flex flex-col gap-0.5 rounded-lg bg-black/[0.03] dark:bg-white/[0.04] border border-black/[0.06] dark:border-white/[0.06] px-3 py-2.5">
+                    <span className="font-mono text-lg font-semibold text-gray-900 dark:text-white leading-none">{s.value}</span>
+                    <span className="text-[10px] text-gray-600 dark:text-white/50 font-medium mt-0.5">{s.label}</span>
+                    <span className="text-[9px] text-gray-400 dark:text-white/20">{s.sub}</span>
                   </div>
                 ))}
               </div>
@@ -440,8 +440,8 @@ function PromptsPageInner() {
                   'Rich metadata — category, model, themes, styles',
                   'Sourced live from Twitter/X and AI subreddits',
                 ].map((f) => (
-                  <span key={f} className="flex items-start gap-1.5 text-[10px] text-white/30 leading-relaxed">
-                    <svg className="h-2.5 w-2.5 text-emerald-400/70 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <span key={f} className="flex items-start gap-1.5 text-[10px] text-gray-400 dark:text-white/30 leading-relaxed">
+                    <svg className="h-2.5 w-2.5 text-emerald-500 dark:text-emerald-400/70 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                     {f}
