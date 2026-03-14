@@ -77,7 +77,7 @@ function VarChip({
     setEditing(false)
   }
 
-  const inputWidth = Math.max(draft.length, value.length, label.length, 6) * 8 + 20
+  const inputWidth = Math.max((draft ?? '').length, (value ?? '').length, (label ?? '').length, 6) * 8 + 20
 
   return (
     <span ref={wrapperRef} className="relative inline-block align-baseline">
@@ -150,7 +150,7 @@ function TemplateView({
   return (
     <p className="text-[15px] leading-10 text-gray-900 dark:text-white">
       {segments.map((seg, i) => {
-        if (seg.type === 'text') return <span key={i} className="text-gray-700 dark:text-zinc-300">{seg.value}</span>
+        if (seg.type === 'text' || !seg.key || !seg.label) return <span key={i} className="text-gray-700 dark:text-zinc-300">{seg.value}</span>
         const colorClass = chipColor(seg.key, keyOrder.indexOf(seg.key))
         return (
           <VarChip

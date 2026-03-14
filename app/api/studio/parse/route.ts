@@ -19,7 +19,7 @@ const PARSE_TOOL: Anthropic.Tool = {
             key:   { type: 'string' },
             label: { type: 'string' },
           },
-          required: ['type', 'value'],
+          required: ['type', 'value', 'key', 'label'],
         },
       },
       suggestions: {
