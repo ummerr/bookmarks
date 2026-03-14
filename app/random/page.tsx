@@ -191,10 +191,10 @@ export default function RandomPage() {
             {images.length > 0 && (
               images.length === 1 ? (
                 <a href={images[0]} target="_blank" rel="noopener noreferrer"
-                  className="block self-start overflow-hidden rounded-2xl border border-black/[0.08] dark:border-white/8 hover:border-black/[0.2] dark:hover:border-white/20 transition-colors"
+                  className="block overflow-hidden rounded-2xl border border-black/[0.08] dark:border-white/8 hover:border-black/[0.2] dark:hover:border-white/20 transition-colors"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={images[0]} alt="" className="w-full h-auto block" loading="lazy" />
+                  <img src={images[0]} alt="" className="max-h-[520px] w-auto max-w-full mx-auto block" loading="lazy" />
                 </a>
               ) : (
                 <div className={`grid gap-2 ${images.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
@@ -203,7 +203,7 @@ export default function RandomPage() {
                       className="block overflow-hidden rounded-xl border border-black/[0.08] dark:border-white/8 hover:border-black/[0.2] dark:hover:border-white/20 transition-colors"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={url} alt="" className="w-full h-auto block" loading="lazy" />
+                      <img src={url} alt="" className="max-h-72 w-auto max-w-full mx-auto block" loading="lazy" />
                     </a>
                   ))}
                 </div>
