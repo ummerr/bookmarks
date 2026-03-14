@@ -5,13 +5,12 @@ import { usePathname } from 'next/navigation'
 import ThemeToggle from './ThemeToggle'
 
 const LINKS = [
-  { href: '/prompts', label: 'Prompts' },
-  { href: '/studio',  label: 'Studio' },
-  { href: '/random',  label: 'Random' },
-  { href: '/stats',   label: 'Stats' },
+  { href: '/prompts',   label: 'Prompts' },
+  { href: '/random',    label: 'Random' },
+  { href: '/stats',     label: 'Stats' },
+  { href: '/studio',    label: 'Studio' },
   { href: '/bookmarks', label: 'Bookmarks' },
-  { href: '/add',     label: 'Add' },
-  { href: '/tools',   label: 'Tools', secret: true },
+  { href: '/tools',     label: 'Tools', secret: true },
 ]
 
 export default function Nav() {
