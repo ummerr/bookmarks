@@ -56,8 +56,13 @@
 
         const mediaItems = legacy.extended_entities?.media ?? legacy.entities?.media ?? []
         const media_urls = mediaItems.map((m) => m.media_url_https).filter(Boolean)
+        // Only keep alt text when it looks like a real description/prompt (>15 chars)
+        const media_alt_texts = mediaItems.map((m) => {
+          const alt = m.ext_alt_text
+          return (typeof alt === 'string' && alt.trim().length > 15) ? alt.trim() : null
+        })
 
-        tweets.push({ tweet_id, tweet_text, author_handle, author_name, tweet_url, media_urls, bookmarked_at })
+        tweets.push({ tweet_id, tweet_text, author_handle, author_name, tweet_url, media_urls, media_alt_texts, bookmarked_at })
       }
     } catch (e) {
       console.log('[BM] extractTweets error:', e)

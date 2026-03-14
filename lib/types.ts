@@ -73,6 +73,7 @@ export interface Bookmark {
   author_name: string | null
   tweet_url: string
   media_urls: string[]
+  media_alt_texts: (string | null)[]
   category: Category
   confidence: number
   rationale: string | null
@@ -104,6 +105,7 @@ export interface BookmarkInsert {
   author_name?: string | null
   tweet_url: string
   media_urls?: string[]
+  media_alt_texts?: (string | null)[]
   category?: Category
   confidence?: number
   rationale?: string | null

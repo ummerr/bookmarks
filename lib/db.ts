@@ -15,6 +15,7 @@ function toBookmark(row: Record<string, any>): Bookmark {
   return {
     ...row,
     media_urls: typeof row.media_urls === 'string' ? JSON.parse(row.media_urls) : (row.media_urls ?? []),
+    media_alt_texts: typeof row.media_alt_texts === 'string' ? JSON.parse(row.media_alt_texts) : (row.media_alt_texts ?? []),
     thread_tweets: typeof row.thread_tweets === 'string' ? JSON.parse(row.thread_tweets) : (row.thread_tweets ?? []),
     prompt_themes: typeof row.prompt_themes === 'string' ? JSON.parse(row.prompt_themes) : (row.prompt_themes ?? []),
     art_styles: typeof row.art_styles === 'string' ? JSON.parse(row.art_styles) : (row.art_styles ?? []),
@@ -105,7 +106,7 @@ export async function insertBookmarks(bookmarks: BookmarkInsert[]): Promise<{ in
     const result = await getSql()`
       INSERT INTO bookmarks
         (id, tweet_id, tweet_text, author_handle, author_name, tweet_url,
-         media_urls, category, confidence, bookmarked_at, source)
+         media_urls, media_alt_texts, category, confidence, bookmarked_at, source)
       VALUES (
         ${randomUUID()},
         ${b.tweet_id ?? null},
@@ -114,6 +115,7 @@ export async function insertBookmarks(bookmarks: BookmarkInsert[]): Promise<{ in
         ${b.author_name ?? null},
         ${b.tweet_url ?? ''},
         ${JSON.stringify(b.media_urls ?? [])}::jsonb,
+        ${JSON.stringify(b.media_alt_texts ?? [])}::jsonb,
         ${b.category ?? 'uncategorized'},
         ${b.confidence ?? 0},
         ${b.bookmarked_at ?? null},

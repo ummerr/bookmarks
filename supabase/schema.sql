@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS bookmarks (
   author_name       TEXT,
   tweet_url         TEXT NOT NULL,
   media_urls        JSONB NOT NULL DEFAULT '[]',
+  media_alt_texts   JSONB NOT NULL DEFAULT '[]',
   category          TEXT NOT NULL DEFAULT 'uncategorized',
   confidence        REAL NOT NULL DEFAULT 0,
   rationale         TEXT,
@@ -30,6 +31,7 @@ CREATE TABLE IF NOT EXISTS bookmarks (
 -- Migrations (run if table already exists):
 -- ALTER TABLE bookmarks ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'twitter';
 -- ALTER TABLE bookmarks ADD COLUMN IF NOT EXISTS art_styles JSONB NOT NULL DEFAULT '[]';
+-- ALTER TABLE bookmarks ADD COLUMN IF NOT EXISTS media_alt_texts JSONB NOT NULL DEFAULT '[]';
 
 CREATE INDEX IF NOT EXISTS idx_bm_category      ON bookmarks(category);
 CREATE INDEX IF NOT EXISTS idx_bm_author        ON bookmarks(author_handle);
