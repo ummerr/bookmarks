@@ -293,6 +293,7 @@ function PromptsPageInner() {
   const [search, setSearch] = useState(searchParams.get('q') || '')
   const [loading, setLoading] = useState(true)
   const [showAllModels, setShowAllModels] = useState(false)
+  const [showAdvanced, setShowAdvanced] = useState(false)
 
   // Sync filters to URL
   useEffect(() => {
@@ -492,121 +493,93 @@ function PromptsPageInner() {
         {/* Filters */}
         <div className="flex flex-col gap-2 border border-black/[0.06] dark:border-white/6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] px-4 py-3">
 
-          {/* Row: Media type */}
+          {/* Row: Modality — Image / Video */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-12">Media</span>
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
-              {MEDIA_TYPES.map((mt) => (
+            <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">Modality</span>
+            <div className="flex items-center gap-1.5">
+              {(['image', 'video'] as const).map((mt) => (
                 <button
-                  key={mt.value}
-                  onClick={() => { setActiveMediaType(mt.value); setActiveCategory('all'); setActiveTheme('all'); setActiveModel('all'); if (mt.value !== 'video') setActiveMultiShot(false) }}
+                  key={mt}
+                  onClick={() => {
+                    const next = activeMediaType === mt ? 'all' : mt
+                    setActiveMediaType(next)
+                    setActiveCategory('all')
+                    setActiveMultiShot(false)
+                  }}
                   className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                    activeMediaType === mt.value
+                    activeMediaType === mt
                       ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
                       : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
                   }`}
                 >
-                  {mt.label}
+                  {mt === 'image' ? 'Image' : 'Video'}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Row: Type */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-12">Type</span>
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
-              <button
-                onClick={() => { setActiveCategory('all'); setActiveModel('all') }}
-                className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                  activeCategory === 'all'
-                    ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
-                    : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                }`}
-              >
-                All
-              </button>
-              {CATEGORIES
-                .filter((cat) => cat.value !== 'all' && MEDIA_TYPE_CATEGORIES[activeMediaType]?.includes(cat.value) && (categoryCounts[cat.value] ?? 0) > 0)
-                .sort((a, b) => (categoryCounts[b.value] ?? 0) - (categoryCounts[a.value] ?? 0))
-                .map((cat) => (
-                  <button
-                    key={cat.value}
-                    onClick={() => { setActiveCategory(cat.value); setActiveModel('all') }}
-                    className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                      activeCategory === cat.value
-                        ? `${CATEGORY_COLORS[cat.value]} font-medium`
-                        : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                    }`}
-                  >
-                    {cat.label}<span className="opacity-50"> {categoryCounts[cat.value]}</span>
-                  </button>
-                ))}
-              {uncategorizedCount > 0 && (
-                <button
-                  onClick={() => { setActiveCategory('uncategorized'); setActiveModel('all') }}
-                  className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                    activeCategory === 'uncategorized'
-                      ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
-                      : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                  }`}
-                >
-                  Untagged<span className="opacity-50"> {uncategorizedCount}</span>
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Row: Theme */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-12">Theme</span>
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
-              <button
-                onClick={() => setActiveTheme('all')}
-                className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                  activeTheme === 'all'
-                    ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
-                    : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                }`}
-              >
-                All
-              </button>
-              {[...THEMES]
-                .filter((t) => themeCounts[t.value] > 0)
-                .sort((a, b) => (themeCounts[b.value] ?? 0) - (themeCounts[a.value] ?? 0))
-                .map((t) => (
-                  <button
-                    key={t.value}
-                    onClick={() => setActiveTheme(t.value)}
-                    className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                      activeTheme === t.value
-                        ? `${THEME_COLORS[t.value]} font-medium`
-                        : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                    }`}
-                  >
-                    {t.label}<span className="opacity-50"> {themeCounts[t.value]}</span>
-                  </button>
-                ))}
-            </div>
-          </div>
-
-          {/* Row: Format (video only) */}
-          {activeMediaType === 'video' && (
+          {/* Row: Image subcategories */}
+          {activeMediaType === 'image' && (
             <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-12">Format</span>
+              <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">Type</span>
               <div className="flex items-center gap-1.5">
                 <button
-                  onClick={() => setActiveMultiShot(false)}
+                  onClick={() => setActiveCategory('all')}
                   className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                    !activeMultiShot
+                    activeCategory === 'all'
                       ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
                       : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
                   }`}
                 >
                   All
                 </button>
+                {(['image_t2i', 'image_r2i'] as const).filter((c) => (categoryCounts[c] ?? 0) > 0).map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                      activeCategory === cat
+                        ? `${CATEGORY_COLORS[cat]} font-medium`
+                        : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                    }`}
+                  >
+                    {categoryLabel(cat)}<span className="opacity-50"> {categoryCounts[cat]}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Row: Video subcategories */}
+          {activeMediaType === 'video' && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">Type</span>
+              <div className="flex items-center gap-1.5">
                 <button
-                  onClick={() => setActiveMultiShot(true)}
+                  onClick={() => { setActiveCategory('all'); setActiveMultiShot(false) }}
+                  className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                    activeCategory === 'all' && !activeMultiShot
+                      ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
+                      : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                  }`}
+                >
+                  All
+                </button>
+                {(['video_t2v', 'video_r2v'] as const).filter((c) => (categoryCounts[c] ?? 0) > 0).map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => { setActiveCategory(cat); setActiveMultiShot(false) }}
+                    className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                      activeCategory === cat && !activeMultiShot
+                        ? `${CATEGORY_COLORS[cat]} font-medium`
+                        : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                    }`}
+                  >
+                    {categoryLabel(cat)}<span className="opacity-50"> {categoryCounts[cat]}</span>
+                  </button>
+                ))}
+                <button
+                  onClick={() => { setActiveCategory('all'); setActiveMultiShot(true) }}
                   className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
                     activeMultiShot
                       ? 'bg-emerald-100 text-emerald-700 border-emerald-200 font-medium dark:bg-emerald-900/50 dark:text-emerald-300 dark:border-emerald-800/50'
@@ -619,43 +592,197 @@ function PromptsPageInner() {
             </div>
           )}
 
-          {/* Row: Model */}
-          {availableModels.length > 0 && (
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-12">Model</span>
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
-                <button
-                  onClick={() => setActiveModel('all')}
-                  className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                    activeModel === 'all'
-                      ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
-                      : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                  }`}
-                >
-                  All
-                </button>
-                {(showAllModels ? availableModels : availableModels.slice(0, 8)).map(({ label, count }) => (
+          {/* Advanced toggle */}
+          <button
+            onClick={() => setShowAdvanced((v) => !v)}
+            className="self-start text-[11px] text-gray-400 dark:text-zinc-600 hover:text-gray-600 dark:hover:text-zinc-400 transition-colors"
+          >
+            Advanced {showAdvanced ? '↑' : '↓'}
+          </button>
+
+          {/* Advanced section */}
+          {showAdvanced && (
+            <div className="flex flex-col gap-2 pt-2 border-t border-black/[0.06] dark:border-white/6">
+
+              {/* Extra image types */}
+              {activeMediaType === 'image' && (['image_i2i', 'image_character_ref', 'image_inpainting'] as const).some((c) => (categoryCounts[c] ?? 0) > 0) && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">More</span>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {(['image_i2i', 'image_character_ref', 'image_inpainting'] as const).filter((c) => (categoryCounts[c] ?? 0) > 0).map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => setActiveCategory(cat)}
+                        className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                          activeCategory === cat
+                            ? `${CATEGORY_COLORS[cat]} font-medium`
+                            : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                        }`}
+                      >
+                        {categoryLabel(cat)}<span className="opacity-50"> {categoryCounts[cat]}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Extra video types */}
+              {activeMediaType === 'video' && (['video_i2v', 'video_v2v'] as const).some((c) => (categoryCounts[c] ?? 0) > 0) && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">More</span>
+                  <div className="flex items-center gap-1.5">
+                    {(['video_i2v', 'video_v2v'] as const).filter((c) => (categoryCounts[c] ?? 0) > 0).map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => { setActiveCategory(cat); setActiveMultiShot(false) }}
+                        className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                          activeCategory === cat && !activeMultiShot
+                            ? `${CATEGORY_COLORS[cat]} font-medium`
+                            : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                        }`}
+                      >
+                        {categoryLabel(cat)}<span className="opacity-50"> {categoryCounts[cat]}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* LLM + other modalities */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">Other</span>
+                <div className="flex items-center gap-1.5 flex-wrap">
                   <button
-                    key={label}
-                    onClick={() => setActiveModel(label)}
+                    onClick={() => { setActiveMediaType('llm'); setActiveCategory('all'); setActiveMultiShot(false) }}
                     className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                      activeModel === label
+                      activeMediaType === 'llm'
                         ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
                         : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
                     }`}
                   >
-                    {label}<span className="opacity-50"> {count}</span>
+                    LLM
                   </button>
-                ))}
-                {availableModels.length > 8 && (
-                  <button
-                    onClick={() => setShowAllModels((v) => !v)}
-                    className="shrink-0 rounded-full border border-black/[0.08] dark:border-white/8 px-2.5 py-1 text-xs text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15 transition-all"
-                  >
-                    {showAllModels ? 'less ↑' : `+${availableModels.length - 8} more`}
-                  </button>
-                )}
+                  {uncategorizedCount > 0 && (
+                    <button
+                      onClick={() => { setActiveCategory('uncategorized'); setActiveModel('all') }}
+                      className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                        activeCategory === 'uncategorized'
+                          ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
+                          : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                      }`}
+                    >
+                      Untagged<span className="opacity-50"> {uncategorizedCount}</span>
+                    </button>
+                  )}
+                </div>
               </div>
+
+              {/* LLM subcategories */}
+              {activeMediaType === 'llm' && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">Type</span>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <button
+                      onClick={() => setActiveCategory('all')}
+                      className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                        activeCategory === 'all'
+                          ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
+                          : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                      }`}
+                    >
+                      All
+                    </button>
+                    {CATEGORIES
+                      .filter((cat) => cat.value !== 'all' && MEDIA_TYPE_CATEGORIES['llm'].includes(cat.value) && (categoryCounts[cat.value] ?? 0) > 0)
+                      .map((cat) => (
+                        <button
+                          key={cat.value}
+                          onClick={() => setActiveCategory(cat.value)}
+                          className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                            activeCategory === cat.value
+                              ? `${CATEGORY_COLORS[cat.value]} font-medium`
+                              : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                          }`}
+                        >
+                          {cat.label}<span className="opacity-50"> {categoryCounts[cat.value]}</span>
+                        </button>
+                      ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Theme */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">Theme</span>
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
+                  <button
+                    onClick={() => setActiveTheme('all')}
+                    className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                      activeTheme === 'all'
+                        ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
+                        : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                    }`}
+                  >
+                    All
+                  </button>
+                  {[...THEMES]
+                    .filter((t) => themeCounts[t.value] > 0)
+                    .sort((a, b) => (themeCounts[b.value] ?? 0) - (themeCounts[a.value] ?? 0))
+                    .map((t) => (
+                      <button
+                        key={t.value}
+                        onClick={() => setActiveTheme(t.value)}
+                        className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                          activeTheme === t.value
+                            ? `${THEME_COLORS[t.value]} font-medium`
+                            : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                        }`}
+                      >
+                        {t.label}<span className="opacity-50"> {themeCounts[t.value]}</span>
+                      </button>
+                    ))}
+                </div>
+              </div>
+
+              {/* Model */}
+              {availableModels.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">Model</span>
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
+                    <button
+                      onClick={() => setActiveModel('all')}
+                      className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                        activeModel === 'all'
+                          ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
+                          : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                      }`}
+                    >
+                      All
+                    </button>
+                    {(showAllModels ? availableModels : availableModels.slice(0, 8)).map(({ label, count }) => (
+                      <button
+                        key={label}
+                        onClick={() => setActiveModel(label)}
+                        className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                          activeModel === label
+                            ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
+                            : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                        }`}
+                      >
+                        {label}<span className="opacity-50"> {count}</span>
+                      </button>
+                    ))}
+                    {availableModels.length > 8 && (
+                      <button
+                        onClick={() => setShowAllModels((v) => !v)}
+                        className="shrink-0 rounded-full border border-black/[0.08] dark:border-white/8 px-2.5 py-1 text-xs text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15 transition-all"
+                      >
+                        {showAllModels ? 'less ↑' : `+${availableModels.length - 8} more`}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -664,7 +791,7 @@ function PromptsPageInner() {
         {!loading && (
           <div className="flex items-center justify-between -mb-2">
             <span className="text-xs text-gray-400 dark:text-zinc-600 font-mono">
-              {filtered.length.toLocaleString()}{filtered.length !== allPrompts.length ? ` of ${allPrompts.length.toLocaleString()}` : ''} prompts
+              {allPrompts.length.toLocaleString()} prompts
             </span>
           </div>
         )}
