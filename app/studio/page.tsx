@@ -8,36 +8,38 @@ type Segment =
   | { type: 'text'; value: string }
   | { type: 'var'; key: string; label: string; value: string }
 
-// ── Variable chip colors ───────────────────────────────────────────────────────
+// ── Chip colors ───────────────────────────────────────────────────────────────
+// Light mode: solid 100-series bg, 300-series border, 700 text
+// Dark mode: opacity-based bg, lighter text
 
 const KEY_COLORS: Record<string, string> = {
-  character: 'bg-violet-500/15 border-violet-400/40 text-violet-700 dark:text-violet-300',
-  subject:   'bg-violet-500/15 border-violet-400/40 text-violet-700 dark:text-violet-300',
-  person:    'bg-violet-500/15 border-violet-400/40 text-violet-700 dark:text-violet-300',
-  action:    'bg-blue-500/15   border-blue-400/40   text-blue-700   dark:text-blue-300',
-  movement:  'bg-blue-500/15   border-blue-400/40   text-blue-700   dark:text-blue-300',
-  pose:      'bg-blue-500/15   border-blue-400/40   text-blue-700   dark:text-blue-300',
-  setting:   'bg-emerald-500/15 border-emerald-400/40 text-emerald-700 dark:text-emerald-300',
-  location:  'bg-emerald-500/15 border-emerald-400/40 text-emerald-700 dark:text-emerald-300',
-  scene:     'bg-emerald-500/15 border-emerald-400/40 text-emerald-700 dark:text-emerald-300',
-  environment: 'bg-emerald-500/15 border-emerald-400/40 text-emerald-700 dark:text-emerald-300',
-  style:     'bg-amber-500/15  border-amber-400/40  text-amber-700   dark:text-amber-300',
-  aesthetic: 'bg-amber-500/15  border-amber-400/40  text-amber-700   dark:text-amber-300',
-  lighting:  'bg-orange-500/15 border-orange-400/40 text-orange-700  dark:text-orange-300',
-  mood:      'bg-orange-500/15 border-orange-400/40 text-orange-700  dark:text-orange-300',
-  atmosphere:'bg-orange-500/15 border-orange-400/40 text-orange-700  dark:text-orange-300',
-  time:      'bg-rose-500/15   border-rose-400/40   text-rose-700    dark:text-rose-300',
-  period:    'bg-rose-500/15   border-rose-400/40   text-rose-700    dark:text-rose-300',
-  camera:    'bg-sky-500/15    border-sky-400/40    text-sky-700     dark:text-sky-300',
-  shot:      'bg-sky-500/15    border-sky-400/40    text-sky-700     dark:text-sky-300',
-  color:     'bg-pink-500/15   border-pink-400/40   text-pink-700    dark:text-pink-300',
-  effect:    'bg-purple-500/15 border-purple-400/40 text-purple-700  dark:text-purple-300',
+  character:   'bg-violet-100 border-violet-300 text-violet-800 dark:bg-violet-500/20 dark:border-violet-500/35 dark:text-violet-300',
+  subject:     'bg-violet-100 border-violet-300 text-violet-800 dark:bg-violet-500/20 dark:border-violet-500/35 dark:text-violet-300',
+  person:      'bg-violet-100 border-violet-300 text-violet-800 dark:bg-violet-500/20 dark:border-violet-500/35 dark:text-violet-300',
+  action:      'bg-blue-100   border-blue-300   text-blue-800   dark:bg-blue-500/20   dark:border-blue-500/35   dark:text-blue-300',
+  movement:    'bg-blue-100   border-blue-300   text-blue-800   dark:bg-blue-500/20   dark:border-blue-500/35   dark:text-blue-300',
+  pose:        'bg-blue-100   border-blue-300   text-blue-800   dark:bg-blue-500/20   dark:border-blue-500/35   dark:text-blue-300',
+  setting:     'bg-emerald-100 border-emerald-300 text-emerald-800 dark:bg-emerald-500/20 dark:border-emerald-500/35 dark:text-emerald-300',
+  location:    'bg-emerald-100 border-emerald-300 text-emerald-800 dark:bg-emerald-500/20 dark:border-emerald-500/35 dark:text-emerald-300',
+  scene:       'bg-emerald-100 border-emerald-300 text-emerald-800 dark:bg-emerald-500/20 dark:border-emerald-500/35 dark:text-emerald-300',
+  environment: 'bg-emerald-100 border-emerald-300 text-emerald-800 dark:bg-emerald-500/20 dark:border-emerald-500/35 dark:text-emerald-300',
+  style:       'bg-amber-100  border-amber-300  text-amber-800   dark:bg-amber-500/20  dark:border-amber-500/35  dark:text-amber-300',
+  aesthetic:   'bg-amber-100  border-amber-300  text-amber-800   dark:bg-amber-500/20  dark:border-amber-500/35  dark:text-amber-300',
+  lighting:    'bg-orange-100 border-orange-300 text-orange-800  dark:bg-orange-500/20 dark:border-orange-500/35 dark:text-orange-300',
+  mood:        'bg-orange-100 border-orange-300 text-orange-800  dark:bg-orange-500/20 dark:border-orange-500/35 dark:text-orange-300',
+  atmosphere:  'bg-orange-100 border-orange-300 text-orange-800  dark:bg-orange-500/20 dark:border-orange-500/35 dark:text-orange-300',
+  time:        'bg-rose-100   border-rose-300   text-rose-800    dark:bg-rose-500/20   dark:border-rose-500/35   dark:text-rose-300',
+  period:      'bg-rose-100   border-rose-300   text-rose-800    dark:bg-rose-500/20   dark:border-rose-500/35   dark:text-rose-300',
+  camera:      'bg-sky-100    border-sky-300    text-sky-800     dark:bg-sky-500/20    dark:border-sky-500/35    dark:text-sky-300',
+  shot:        'bg-sky-100    border-sky-300    text-sky-800     dark:bg-sky-500/20    dark:border-sky-500/35    dark:text-sky-300',
+  color:       'bg-pink-100   border-pink-300   text-pink-800    dark:bg-pink-500/20   dark:border-pink-500/35   dark:text-pink-300',
+  effect:      'bg-purple-100 border-purple-300 text-purple-800  dark:bg-purple-500/20 dark:border-purple-500/35 dark:text-purple-300',
 }
 
 const FALLBACK_COLORS = [
-  'bg-zinc-500/15 border-zinc-400/40 text-zinc-700 dark:text-zinc-300',
-  'bg-teal-500/15 border-teal-400/40 text-teal-700 dark:text-teal-300',
-  'bg-indigo-500/15 border-indigo-400/40 text-indigo-700 dark:text-indigo-300',
+  'bg-zinc-100   border-zinc-300   text-zinc-800   dark:bg-zinc-500/20   dark:border-zinc-500/35   dark:text-zinc-300',
+  'bg-teal-100   border-teal-300   text-teal-800   dark:bg-teal-500/20   dark:border-teal-500/35   dark:text-teal-300',
+  'bg-indigo-100 border-indigo-300 text-indigo-800 dark:bg-indigo-500/20 dark:border-indigo-500/35 dark:text-indigo-300',
 ]
 
 function chipColor(key: string, index: number): string {
@@ -51,55 +53,80 @@ function VarChip({
   label,
   value,
   colorClass,
+  suggestions,
   onEdit,
 }: {
   varKey: string
   label: string
   value: string
   colorClass: string
+  suggestions: string[]
   onEdit: (key: string, value: string) => void
 }) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(value)
   const inputRef = useRef<HTMLInputElement>(null)
+  const wrapperRef = useRef<HTMLSpanElement>(null)
 
   useEffect(() => { if (editing) inputRef.current?.select() }, [editing])
-  // Keep draft in sync if parent value changes (e.g. another chip of same key was edited)
   useEffect(() => { if (!editing) setDraft(value) }, [value, editing])
 
-  function commit() {
-    const trimmed = draft.trim()
-    onEdit(varKey, trimmed || value)
+  function commit(newVal?: string) {
+    const val = (newVal ?? draft).trim()
+    onEdit(varKey, val || value)
     setEditing(false)
   }
 
-  if (editing) {
-    return (
-      <input
-        ref={inputRef}
-        value={draft}
-        onChange={e => setDraft(e.target.value)}
-        onBlur={commit}
-        onKeyDown={e => {
-          if (e.key === 'Enter') { e.preventDefault(); commit() }
-          if (e.key === 'Escape') { setDraft(value); setEditing(false) }
-        }}
-        style={{ width: Math.max(draft.length, label.length, 4) * 8 + 24 }}
-        className={`inline rounded-md px-2 py-0.5 text-sm border outline-none font-medium ${colorClass}`}
-      />
-    )
-  }
+  const inputWidth = Math.max(draft.length, value.length, label.length, 6) * 8 + 20
 
   return (
-    <span
-      onClick={() => { setDraft(value); setEditing(true) }}
-      title={`${label} — click to edit`}
-      className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-sm border font-medium cursor-text hover:brightness-95 dark:hover:brightness-110 transition-all select-none ${colorClass}`}
-    >
-      {value}
-      <svg className="w-2.5 h-2.5 opacity-40 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536M9 11l6.536-6.536a2.5 2.5 0 013.536 3.536L12 15H9v-3z" />
-      </svg>
+    <span ref={wrapperRef} className="relative inline-block align-baseline">
+      {editing ? (
+        <>
+          <input
+            ref={inputRef}
+            value={draft}
+            onChange={e => setDraft(e.target.value)}
+            onBlur={() => commit()}
+            onKeyDown={e => {
+              if (e.key === 'Enter') { e.preventDefault(); commit() }
+              if (e.key === 'Escape') { setDraft(value); setEditing(false) }
+            }}
+            style={{ width: inputWidth }}
+            className={`rounded-md px-2 py-0.5 text-sm font-medium border-2 outline-none ${colorClass}`}
+          />
+          {/* Suggestions dropdown */}
+          {suggestions.length > 0 && (
+            <span className="absolute top-full left-0 mt-1.5 z-50 flex flex-col bg-white dark:bg-zinc-900 rounded-xl border border-black/10 dark:border-white/10 shadow-xl overflow-hidden min-w-max">
+              <span className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-600 border-b border-black/[0.06] dark:border-white/6">
+                Alternatives
+              </span>
+              {suggestions.map((s, i) => (
+                <button
+                  key={i}
+                  onMouseDown={e => { e.preventDefault(); commit(s) }}
+                  className="px-3 py-2 text-left text-sm text-gray-700 dark:text-zinc-300 hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors whitespace-nowrap"
+                >
+                  {s}
+                </button>
+              ))}
+            </span>
+          )}
+        </>
+      ) : (
+        <span
+          onClick={() => { setDraft(value); setEditing(true) }}
+          title={`${label} — click to edit`}
+          className={`
+            inline-block rounded-md px-2 py-0.5 text-sm font-medium border
+            cursor-pointer select-none transition-all duration-100
+            hover:shadow-sm hover:scale-[1.02]
+            ${colorClass}
+          `}
+        >
+          {value}
+        </span>
+      )}
     </span>
   )
 }
@@ -108,21 +135,22 @@ function VarChip({
 
 function TemplateView({
   segments,
+  suggestions,
   onEditVar,
 }: {
   segments: Segment[]
+  suggestions: Record<string, string[]>
   onEditVar: (key: string, value: string) => void
 }) {
-  // Assign a stable color index per unique key
   const keyOrder: string[] = []
   segments.forEach(s => {
     if (s.type === 'var' && !keyOrder.includes(s.key)) keyOrder.push(s.key)
   })
 
   return (
-    <p className="text-base leading-9 text-gray-900 dark:text-white">
+    <p className="text-[15px] leading-10 text-gray-900 dark:text-white">
       {segments.map((seg, i) => {
-        if (seg.type === 'text') return <span key={i}>{seg.value}</span>
+        if (seg.type === 'text') return <span key={i} className="text-gray-700 dark:text-zinc-300">{seg.value}</span>
         const colorClass = chipColor(seg.key, keyOrder.indexOf(seg.key))
         return (
           <VarChip
@@ -131,6 +159,7 @@ function TemplateView({
             label={seg.label}
             value={seg.value}
             colorClass={colorClass}
+            suggestions={suggestions[seg.key] ?? []}
             onEdit={onEditVar}
           />
         )
@@ -153,17 +182,17 @@ function VariationCard({ prompt, index }: { prompt: string; index: number }) {
 
   return (
     <div className="group rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-zinc-950 p-4 flex gap-3 hover:border-black/[0.14] dark:hover:border-white/14 transition-colors">
-      <span className="text-xs font-mono text-gray-400 dark:text-zinc-600 mt-0.5 shrink-0 w-4">{index}</span>
+      <span className="text-xs font-mono text-gray-300 dark:text-zinc-700 mt-0.5 shrink-0 select-none">{index}.</span>
       <p className="flex-1 text-sm text-gray-800 dark:text-zinc-200 leading-relaxed">{prompt}</p>
       <button
         onClick={copy}
-        className={`shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium transition-colors self-start ${
+        className={`shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium transition-all self-start ${
           copied
-            ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
-            : 'bg-black/[0.04] dark:bg-white/6 text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white opacity-0 group-hover:opacity-100'
+            ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300'
+            : 'opacity-0 group-hover:opacity-100 bg-black/[0.04] dark:bg-white/6 text-gray-500 dark:text-zinc-400 hover:bg-black/[0.08] dark:hover:bg-white/10 hover:text-gray-800 dark:hover:text-white'
         }`}
       >
-        {copied ? '✓' : 'Copy'}
+        {copied ? '✓ Copied' : 'Copy'}
       </button>
     </div>
   )
@@ -174,10 +203,11 @@ function VariationCard({ prompt, index }: { prompt: string; index: number }) {
 export default function StudioPage() {
   const [input, setInput] = useState('')
   const [segments, setSegments] = useState<Segment[]>([])
+  const [suggestions, setSuggestions] = useState<Record<string, string[]>>({})
   const [variations, setVariations] = useState<string[]>([])
   const [parsing, setParsing] = useState(false)
   const [generating, setGenerating] = useState(false)
-  const [parseError, setParseError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const hasTemplate = segments.length > 0
   const hasVars = segments.some(s => s.type === 'var')
@@ -185,8 +215,9 @@ export default function StudioPage() {
   async function parse() {
     if (!input.trim()) return
     setParsing(true)
-    setParseError(null)
+    setError(null)
     setSegments([])
+    setSuggestions({})
     setVariations([])
     try {
       const res = await fetch('/api/studio/parse', {
@@ -197,26 +228,24 @@ export default function StudioPage() {
       const data = await res.json()
       if (data.error) throw new Error(data.error)
       setSegments(data.segments)
+      setSuggestions(data.suggestions ?? {})
     } catch (err) {
-      setParseError(String(err))
+      setError(String(err))
     } finally {
       setParsing(false)
     }
   }
 
   function editVar(key: string, value: string) {
-    setSegments(segs =>
-      segs.map(s => s.type === 'var' && s.key === key ? { ...s, value } : s)
-    )
-    // Clear stale variations when template changes
+    setSegments(segs => segs.map(s => s.type === 'var' && s.key === key ? { ...s, value } : s))
     setVariations([])
   }
 
-  function buildTemplateStr(): string {
+  function buildTemplateStr() {
     return segments.map(s => s.type === 'text' ? s.value : `{${s.key}}`).join('')
   }
 
-  function buildVariables(): Record<string, string> {
+  function buildVariables() {
     const vars: Record<string, string> = {}
     segments.forEach(s => { if (s.type === 'var') vars[s.key] = s.value })
     return vars
@@ -225,42 +254,35 @@ export default function StudioPage() {
   async function generateVariations() {
     setGenerating(true)
     setVariations([])
+    setError(null)
     try {
       const res = await fetch('/api/studio/variations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          templateStr: buildTemplateStr(),
-          variables: buildVariables(),
-          count: 5,
-        }),
+        body: JSON.stringify({ templateStr: buildTemplateStr(), variables: buildVariables(), count: 5 }),
       })
       const data = await res.json()
       if (data.error) throw new Error(data.error)
       setVariations(data.prompts)
     } catch (err) {
-      setParseError(String(err))
+      setError(String(err))
     } finally {
       setGenerating(false)
     }
   }
 
-  // Detect variable keys for the legend
-  const uniqueVarKeys: string[] = []
+  // Unique var keys in order of appearance
   const keyOrder: string[] = []
-  segments.forEach(s => {
-    if (s.type === 'var' && !keyOrder.includes(s.key)) keyOrder.push(s.key)
-  })
+  segments.forEach(s => { if (s.type === 'var' && !keyOrder.includes(s.key)) keyOrder.push(s.key) })
 
   return (
     <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a]">
-      <div className="max-w-2xl mx-auto px-4 md:px-6 py-8 flex flex-col gap-8">
+      <div className="max-w-2xl mx-auto px-4 md:px-6 py-8 flex flex-col gap-6">
 
-        {/* Header */}
         <div>
           <h1 className="text-lg font-semibold text-gray-900 dark:text-white">Prompt Rewriter</h1>
           <p className="text-sm text-gray-400 dark:text-zinc-500 mt-1">
-            Paste any prompt to extract its variables, then generate variations with the same structure.
+            Paste a prompt to extract its variables as editable chips, then generate fresh variations.
           </p>
         </div>
 
@@ -268,15 +290,15 @@ export default function StudioPage() {
         <div className="flex flex-col gap-2">
           <textarea
             value={input}
-            onChange={e => { setInput(e.target.value); setSegments([]); setVariations([]) }}
+            onChange={e => { setInput(e.target.value); if (segments.length) { setSegments([]); setVariations([]) } }}
             onKeyDown={e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) parse() }}
-            placeholder="Paste a prompt here…"
+            placeholder="Paste any AI prompt here…"
             rows={4}
-            className="w-full rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-zinc-950 px-4 py-3 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-zinc-600 outline-none focus:border-violet-400/60 dark:focus:border-violet-500/40 resize-none transition-colors leading-relaxed"
+            className="w-full rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-zinc-950 px-4 py-3 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-zinc-600 outline-none focus:border-violet-400/50 dark:focus:border-violet-500/40 resize-none transition-colors leading-relaxed"
           />
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-gray-400 dark:text-zinc-600">
-              {input.trim() ? `${input.trim().length} chars` : 'Tip: ⌘↵ to parse'}
+              {input.trim() ? `${input.trim().length} chars` : '⌘↵ to parse'}
             </span>
             <button
               onClick={parse}
@@ -286,8 +308,8 @@ export default function StudioPage() {
               {parsing ? (
                 <>
                   <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
                   </svg>
                   Parsing…
                 </>
@@ -296,52 +318,51 @@ export default function StudioPage() {
           </div>
         </div>
 
-        {parseError && (
-          <p className="text-sm text-red-500">{parseError}</p>
-        )}
+        {error && <p className="text-sm text-red-500 dark:text-red-400">{error}</p>}
 
         {/* Template */}
         {hasTemplate && (
-          <div className="flex flex-col gap-4">
-            <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-zinc-950 p-4">
-              <div className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-600 mb-3">
-                Template — click any chip to edit
-              </div>
-              <TemplateView segments={segments} onEditVar={editVar} />
+          <div className="flex flex-col gap-3">
+            <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-zinc-950 px-5 py-4">
 
-              {/* Variable legend */}
+              {/* Variable type legend */}
               {hasVars && (
-                <div className="mt-4 pt-4 border-t border-black/[0.06] dark:border-white/6 flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-1.5 mb-4">
                   {keyOrder.map((key, i) => {
                     const seg = segments.find(s => s.type === 'var' && s.key === key)
                     if (!seg || seg.type !== 'var') return null
                     return (
-                      <span key={key} className={`rounded-full px-2 py-0.5 text-[11px] border ${chipColor(key, i)}`}>
+                      <span key={key} className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium border ${chipColor(key, i)}`}>
                         {seg.label}
                       </span>
                     )
                   })}
+                  <span className="ml-auto text-[11px] text-gray-400 dark:text-zinc-600 self-center">
+                    click chips to edit
+                  </span>
                 </div>
               )}
+
+              <TemplateView segments={segments} suggestions={suggestions} onEditVar={editVar} />
             </div>
 
-            {/* Generate */}
+            {/* Generate button */}
             <button
               onClick={generateVariations}
               disabled={generating}
-              className="flex items-center justify-center gap-2 rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-zinc-950 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] px-4 py-3 text-sm font-medium text-gray-700 dark:text-zinc-300 transition-colors disabled:opacity-50"
+              className="flex items-center justify-center gap-2 rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-zinc-950 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] px-4 py-3 text-sm font-medium text-gray-700 dark:text-zinc-300 transition-colors disabled:opacity-50 group"
             >
               {generating ? (
                 <>
                   <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
                   </svg>
-                  Generating variations…
+                  Generating…
                 </>
               ) : (
                 <>
-                  <span>✦</span>
+                  <span className="text-violet-500 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">✦</span>
                   Generate 5 variations
                 </>
               )}
@@ -352,9 +373,9 @@ export default function StudioPage() {
         {/* Variations */}
         {variations.length > 0 && (
           <div className="flex flex-col gap-2">
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-600">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-600">
               Variations
-            </div>
+            </p>
             {variations.map((p, i) => (
               <VariationCard key={i} prompt={p} index={i + 1} />
             ))}

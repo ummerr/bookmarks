@@ -1,15 +1,11 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { NextResponse } from 'next/server'
 
-type Segment =
-  | { type: 'text'; value: string }
-  | { type: 'var'; key: string; label: string; value: string }
-
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
 const PARSE_TOOL: Anthropic.Tool = {
   name: 'parse_prompt',
-  description: 'Break a prompt into text segments and named variable slots',
+  description: 'Break a prompt into text segments and named variable slots, and generate alternatives for each variable',
   input_schema: {
     type: 'object' as const,
     properties: {
@@ -26,8 +22,16 @@ const PARSE_TOOL: Anthropic.Tool = {
           required: ['type', 'value'],
         },
       },
+      suggestions: {
+        type: 'object',
+        description: 'For each variable key, 4 creative alternative values that fit the same slot',
+        additionalProperties: {
+          type: 'array',
+          items: { type: 'string' },
+        },
+      },
     },
-    required: ['segments'],
+    required: ['segments', 'suggestions'],
   },
 }
 
@@ -36,33 +40,27 @@ export async function POST(req: Request) {
   if (!prompt?.trim()) return NextResponse.json({ error: 'No prompt' }, { status: 400 })
 
   const message = await client.messages.create({
-    model: 'claude-sonnet-4-6',
+    model: 'claude-haiku-4-5-20251001',
     max_tokens: 1024,
     tools: [PARSE_TOOL],
     tool_choice: { type: 'tool', name: 'parse_prompt' },
     messages: [{
       role: 'user',
-      content: `Parse this AI image/video prompt into semantic variable segments.
+      content: `Parse this AI image/video prompt into semantic variable segments, then generate 4 creative alternatives for each variable.
 
-Identify these variable types when present:
-- character / subject / person
-- action / movement / pose
-- setting / location / environment
-- style / aesthetic
-- lighting / mood / atmosphere
-- time (time of day, era, period)
-- camera (shot type, angle, lens)
-- color / palette
-- effect / vfx
-- any other distinct semantic element
+Variable types to identify: character/subject/person, action/movement/pose, setting/location/environment, style/aesthetic, lighting/mood/atmosphere, time (era, time of day), camera/shot, color/palette, effect/vfx.
 
-Rules:
-- Split the prompt into alternating text and var segments
-- Variable "key" should be a short snake_case word (character, action, setting, style, etc.)
-- Variable "label" is a human-readable title (Character, Action, Setting, Style, etc.)
-- Keep small connectors ("in", "at", "with", commas) as text segments
-- Technical params like "--ar 16:9 --v 6" stay as a text segment at the end
-- If the same concept appears twice, use the same key both times
+Rules for segments:
+- Alternate between text and var segments
+- Variable key: short snake_case (character, action, setting, style…)
+- Variable label: human-readable (Character, Action, Setting, Style…)
+- Keep small connectors ("in", "at", ",") as text segments
+- Technical suffixes like "--ar 16:9" stay as text
+
+Rules for suggestions:
+- 4 alternatives per variable, each meaningfully different from the original
+- Same grammatical form as the original value (noun phrase for character, verb phrase for action, etc.)
+- Creative range: vary mood, genre, specificity
 
 Prompt: ${prompt}`,
     }],
@@ -73,6 +71,9 @@ Prompt: ${prompt}`,
     return NextResponse.json({ error: 'Parse failed' }, { status: 500 })
   }
 
-  const { segments } = toolUse.input as { segments: Segment[] }
-  return NextResponse.json({ segments })
+  const { segments, suggestions } = toolUse.input as {
+    segments: unknown[]
+    suggestions: Record<string, string[]>
+  }
+  return NextResponse.json({ segments, suggestions })
 }
