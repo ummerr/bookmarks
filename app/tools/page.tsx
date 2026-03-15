@@ -121,6 +121,34 @@ export default function ToolsPage() {
   const [redditResult, setRedditResult] = useState<string | null>(null)
   const [redditErrors, setRedditErrors] = useState<string[]>([])
 
+  // Thread header detection
+  const [headerCandidates, setHeaderCandidates] = useState<null | {
+    id: string; tweet_id: string; tweet_text: string; extracted_prompt: string | null
+    author_handle: string; tweet_url: string; thread_tweet_count: number
+    thread_tweets: { tweet_id: string; tweet_text: string }[]
+  }[]>(null)
+  const [headerLoading, setHeaderLoading] = useState(false)
+  const [expandedHeaders, setExpandedHeaders] = useState<Set<string>>(new Set())
+
+  async function scanThreadHeaders() {
+    setHeaderLoading(true)
+    setHeaderCandidates(null)
+    const res = await fetch('/api/tools/thread-headers')
+    if (res.ok) {
+      const data = await res.json()
+      setHeaderCandidates(data.candidates)
+    }
+    setHeaderLoading(false)
+  }
+
+  function toggleHeaderExpand(id: string) {
+    setExpandedHeaders(prev => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  }
+
   // Re-classify
   const [reclassifying, setReclassifying] = useState(false)
   const [reclassifyTotal, setReclassifyTotal] = useState<number | null>(null)
@@ -476,6 +504,83 @@ export default function ToolsPage() {
               {reclassifying && reclassifyTotal === null && <ProgressBar indeterminate />}
 
               {reclassifyResult && <ResultLine result={reclassifyResult} errors={reclassifyErrors} />}
+            </div>
+          </Section>
+
+          {/* Thread Header Detection */}
+          <Section
+            title="Thread Header Detection"
+            description="Find prompts that look like announcement tweets ('Prompts below 👇') rather than actual prompts. Review before taking action."
+          >
+            <div className="flex flex-col gap-4">
+              <button
+                onClick={scanThreadHeaders}
+                disabled={headerLoading}
+                className="flex items-center gap-2 self-start rounded-lg bg-black/[0.06] dark:bg-white/8 border border-black/[0.1] dark:border-white/10 px-4 py-2 text-sm font-medium text-gray-700 dark:text-white hover:bg-black/[0.1] dark:hover:bg-white/12 disabled:opacity-50 transition-colors"
+              >
+                {headerLoading && <Spinner />}
+                {headerLoading ? 'Scanning…' : 'Scan for headers'}
+              </button>
+
+              {headerLoading && <ProgressBar indeterminate color="bg-amber-400" />}
+
+              {headerCandidates !== null && (
+                <div className="flex flex-col gap-2">
+                  <p className="text-xs text-gray-500 dark:text-zinc-400">
+                    Found <span className="font-semibold text-gray-900 dark:text-white">{headerCandidates.length}</span> candidate{headerCandidates.length !== 1 ? 's' : ''}.
+                    {headerCandidates.length === 0 && ' Nothing to clean up.'}
+                  </p>
+                  {headerCandidates.map((c) => (
+                    <div key={c.id} className="rounded-lg border border-amber-200/60 dark:border-amber-800/40 bg-amber-50/50 dark:bg-amber-900/10 p-3 flex flex-col gap-2">
+                      {/* Header row */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-mono text-gray-700 dark:text-zinc-200 whitespace-pre-wrap break-words leading-relaxed">
+                            {c.tweet_text}
+                          </p>
+                          {c.extracted_prompt && c.extracted_prompt !== c.tweet_text && (
+                            <p className="text-[11px] text-gray-400 dark:text-zinc-600 mt-1 italic">
+                              extracted: {c.extracted_prompt}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="text-[11px] text-gray-400 dark:text-zinc-600">@{c.author_handle}</span>
+                          {c.tweet_url && (
+                            <a href={c.tweet_url} target="_blank" rel="noopener noreferrer"
+                              className="text-[11px] text-gray-400 dark:text-zinc-600 hover:text-gray-600 dark:hover:text-zinc-400 transition-colors"
+                            >↗</a>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Thread tweets toggle */}
+                      <button
+                        onClick={() => toggleHeaderExpand(c.id)}
+                        className="self-start text-[11px] text-amber-700 dark:text-amber-400 hover:underline"
+                      >
+                        {c.thread_tweet_count} thread tweet{c.thread_tweet_count !== 1 ? 's' : ''}
+                        {' '}{expandedHeaders.has(c.id) ? '↑' : '↓'}
+                      </button>
+
+                      {expandedHeaders.has(c.id) && (
+                        <div className="flex flex-col gap-1.5 pl-3 border-l-2 border-amber-200 dark:border-amber-800/50">
+                          {c.thread_tweets.length === 0 ? (
+                            <p className="text-[11px] text-gray-400 dark:text-zinc-600 italic">No thread tweets captured.</p>
+                          ) : (
+                            c.thread_tweets.map((t, i) => (
+                              <p key={t.tweet_id} className="text-[11px] font-mono text-gray-600 dark:text-zinc-400 whitespace-pre-wrap break-words leading-relaxed">
+                                <span className="text-gray-300 dark:text-zinc-700 select-none mr-1">{i + 1}.</span>
+                                {t.tweet_text}
+                              </p>
+                            ))
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </Section>
 

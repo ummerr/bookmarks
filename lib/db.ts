@@ -338,6 +338,67 @@ export async function getAllPrompts(limit = 500): Promise<Pick<Bookmark, 'id' | 
   return rows.map(toPromptRow)
 }
 
+// ── Thread header detection ───────────────────────────────────────────────
+
+export interface ThreadHeaderCandidate {
+  id: string
+  tweet_id: string
+  tweet_text: string
+  extracted_prompt: string | null
+  author_handle: string
+  tweet_url: string
+  thread_tweet_count: number
+  thread_tweets: { tweet_id: string; tweet_text: string }[]
+}
+
+export async function getThreadHeaderCandidates(): Promise<ThreadHeaderCandidate[]> {
+  const SHORT_THRESHOLD = 200
+  const rows = await getSql()<Record<string, unknown>[]>`
+    SELECT
+      id, tweet_id, tweet_text, extracted_prompt, author_handle, tweet_url, thread_tweets,
+      jsonb_array_length(thread_tweets) AS thread_tweet_count
+    FROM bookmarks
+    WHERE category = 'prompts'
+      AND (
+        (
+          char_length(tweet_text) < ${SHORT_THRESHOLD}
+          AND (
+            lower(tweet_text) LIKE '%prompt%'
+            OR lower(tweet_text) LIKE '%below%'
+            OR lower(tweet_text) LIKE '%here are%'
+            OR lower(tweet_text) LIKE ${'%here\'s%'}
+            OR lower(tweet_text) LIKE '%thread%'
+            OR tweet_text LIKE '%👇%'
+            OR tweet_text LIKE '%⬇%'
+          )
+        )
+        OR (
+          extracted_prompt IS NOT NULL
+          AND char_length(extracted_prompt) < 60
+          AND (
+            lower(extracted_prompt) LIKE '%prompt%'
+            OR lower(extracted_prompt) LIKE '%below%'
+            OR lower(extracted_prompt) LIKE '%see thread%'
+            OR extracted_prompt LIKE '%👇%'
+          )
+        )
+      )
+    ORDER BY thread_tweet_count DESC, created_at DESC
+  `
+  return rows.map((r) => ({
+    id: r.id as string,
+    tweet_id: r.tweet_id as string,
+    tweet_text: r.tweet_text as string,
+    extracted_prompt: r.extracted_prompt as string | null,
+    author_handle: r.author_handle as string,
+    tweet_url: r.tweet_url as string,
+    thread_tweet_count: Number(r.thread_tweet_count ?? 0),
+    thread_tweets: typeof r.thread_tweets === 'string'
+      ? JSON.parse(r.thread_tweets)
+      : (r.thread_tweets as { tweet_id: string; tweet_text: string }[]) ?? [],
+  }))
+}
+
 // ── Studio ────────────────────────────────────────────────────────────────
 
 export interface StudioReference {
