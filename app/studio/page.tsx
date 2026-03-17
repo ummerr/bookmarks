@@ -228,7 +228,7 @@ export default function StudioPage() {
       <div className="max-w-5xl mx-auto px-4 md:px-6 py-8 flex flex-col gap-6">
 
         <div>
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-white">Prompt Rewriter</h1>
+          <h1 className="text-lg font-semibold text-gray-900 dark:text-white">Prompt Varietals</h1>
           <p className="text-sm text-gray-400 dark:text-zinc-500 mt-1">
             Paste a prompt to generate 5 variations. Each highlights what changed significantly.
           </p>
