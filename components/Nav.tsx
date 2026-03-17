@@ -6,8 +6,8 @@ import ThemeToggle from './ThemeToggle'
 
 const LINKS = [
   { href: '/prompts',   label: 'Prompts' },
-  { href: '/random',    label: 'Random' },
   { href: '/datacard',  label: 'Datacard' },
+  { href: '/random',    label: 'Random' },
   { href: '/studio',    label: 'Studio' },
   { href: '/bookmarks', label: 'Bookmarks' },
   { href: '/tools',     label: 'Tools', secret: true },
