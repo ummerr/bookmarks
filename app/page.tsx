@@ -814,7 +814,7 @@ function PromptsPageInner() {
         {!loading && (
           <div className="flex items-center justify-between -mb-2">
             <span className="text-xs text-gray-400 dark:text-zinc-600 font-mono">
-              {allPrompts.length.toLocaleString()} prompts
+              {filtered.length.toLocaleString()} prompts
             </span>
             <CopyLinkButton />
           </div>
