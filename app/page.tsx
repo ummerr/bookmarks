@@ -516,7 +516,7 @@ function PromptsPageInner() {
         {/* Filters */}
         <div className="flex flex-col gap-2 border border-black/[0.06] dark:border-white/6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] px-4 py-3">
 
-          {/* Row: Modality — Image / Video */}
+          {/* Row: Modality — Image / Video / Multi-Shot */}
           <div className="flex items-center gap-2">
             <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">Modality</span>
             <div className="flex items-center gap-1.5">
@@ -538,6 +538,16 @@ function PromptsPageInner() {
                   {mt === 'image' ? 'Image' : 'Video'}
                 </button>
               ))}
+              <button
+                onClick={() => setActiveMultiShot((v) => !v)}
+                className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                  activeMultiShot
+                    ? 'bg-emerald-100 text-emerald-700 border-emerald-200 font-medium dark:bg-emerald-900/50 dark:text-emerald-300 dark:border-emerald-800/50'
+                    : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                }`}
+              >
+                Multi-Shot
+              </button>
             </div>
           </div>
 
@@ -601,16 +611,6 @@ function PromptsPageInner() {
                     {categoryLabel(cat)}<span className="opacity-50"> {categoryCounts[cat]}</span>
                   </button>
                 ))}
-                <button
-                  onClick={() => { setActiveCategory('all'); setActiveMultiShot(true) }}
-                  className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                    activeMultiShot
-                      ? 'bg-emerald-100 text-emerald-700 border-emerald-200 font-medium dark:bg-emerald-900/50 dark:text-emerald-300 dark:border-emerald-800/50'
-                      : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                  }`}
-                >
-                  Multi-shot
-                </button>
               </div>
             </div>
           )}
