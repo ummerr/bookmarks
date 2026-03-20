@@ -7,6 +7,7 @@ import { useState, useEffect, useMemo } from 'react'
 interface StatsData {
   total: number
   withReference: number
+  withTheme: number
   byCategory: { label: string; value: number }[]
   byModel: { label: string; value: number }[]
   byTheme: { label: string; value: number }[]
@@ -182,7 +183,7 @@ export default function DatacardPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <StatPill value={stats.total} label="total prompts" color="#1DA1F2" />
               <StatPill value={modelCount} label="AI models tracked" color="#a855f7" />
-              <StatPill value={stats.byTheme.length} label="visual themes" color="#22c55e" />
+              <StatPill value={stats.withTheme} label="theme-tagged prompts" color="#22c55e" />
               <StatPill value={stats.withReference} label="need reference image" color="#f97316" />
             </div>
           ) : (

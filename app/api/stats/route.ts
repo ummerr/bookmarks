@@ -40,8 +40,10 @@ export async function GET() {
 
     // Aggregate themes in JS to avoid JSONB unnesting issues
     const themeCounts: Record<string, number> = {}
+    let withTheme = 0
     for (const row of themeRows) {
       const themes = Array.isArray(row.prompt_themes) ? row.prompt_themes : []
+      if (themes.length > 0) withTheme++
       for (const t of themes) {
         if (t && typeof t === 'string') themeCounts[t] = (themeCounts[t] ?? 0) + 1
       }
@@ -53,6 +55,7 @@ export async function GET() {
     return NextResponse.json({
       total: Number(totalRow[0].total),
       withReference: Number(refRow[0].ref_count),
+      withTheme,
       byCategory: categoryRows.map((r) => ({ label: r.prompt_category, value: Number(r.n) })),
       byModel: modelRows.map((r) => ({ label: r.detected_model, value: Number(r.n) })),
       byTheme,
