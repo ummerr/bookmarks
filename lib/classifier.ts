@@ -326,7 +326,7 @@ export async function classifyPromptBatch(
   const message = await withRetry(() =>
     client.messages.create({
       model: 'claude-sonnet-4-6',
-      max_tokens: 8192,
+      max_tokens: 16384,
       system: PROMPT_SYSTEM,
       tools: [EXTRACT_TOOL],
       tool_choice: { type: 'tool', name: 'classify_prompts' },

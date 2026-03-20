@@ -213,6 +213,66 @@ export default function DatacardPage() {
           </div>
         </Section>
 
+        {/* Limitations */}
+        <Section title="Limitations">
+          <div className="flex flex-col gap-3">
+            {[
+              {
+                title: 'Selection and survivorship bias',
+                body: 'Prompts are drawn exclusively from posts that practitioners chose to share publicly. This systematically over-represents prompts that produced visually impressive or socially shareable results, and under-represents failed attempts, iterative drafts, and everyday utility prompts.',
+                mitigation: 'Sourcing across both Twitter/X and Reddit partially offsets this — Reddit communities reward technical depth and reproducibility alongside aesthetics, introducing prompts that were shared for instructional value rather than purely visual impact.',
+                color: '#f97316',
+              },
+              {
+                title: 'Platform and demographic skew',
+                body: 'Source content is dominated by English-language posts from Twitter/X and a small set of Reddit communities. Non-English prompts, closed communities, Discord servers, and professional workflows are not represented. The dataset likely reflects the aesthetics and interests of a specific online subculture rather than the broader global practitioner population.',
+                mitigation: 'Ingestion spans multiple subreddits with different community cultures (r/midjourney, r/StableDiffusion, r/PromptEngineering, r/AIArt), broadening the range of styles, use cases, and practitioner skill levels captured.',
+                color: '#f97316',
+              },
+              {
+                title: 'LLM-assisted classification errors',
+                body: 'Category labels (prompt_category), theme tags, art style tags, model attribution, and extracted prompt text are assigned by Claude Sonnet 4.6 — not human annotators. Classification accuracy is high but not perfect. Errors cluster around: ambiguous multi-technique prompts, unfamiliar or emerging tools, non-English content, and prompts where the model name is absent from the post text.',
+                mitigation: 'The classifier uses structured tool-use output with strict enum validation, reducing free-form hallucination. Confidence scores are stored alongside labels, allowing downstream users to filter to high-confidence subsets. The raw source text is always preserved, so reclassification is non-destructive.',
+                color: '#eab308',
+              },
+              {
+                title: 'No output quality validation',
+                body: 'The dataset records what practitioners shared, not whether the prompt reliably produces good results. A prompt with many upvotes or retweets is not equivalent to a prompt that has been reproducibly validated across seeds, model versions, or hardware configurations.',
+                mitigation: 'Source post URLs are retained for every entry, allowing researchers to inspect the original post context, view attached media outputs, and assess community reception. The media_urls field links directly to the output images or videos shared alongside the prompt.',
+                color: '#eab308',
+              },
+              {
+                title: 'Temporal and model coverage skew',
+                body: 'Ingestion began in 2024 and runs on a rolling basis. Older models (pre-2023) are under-represented; newly released models may be under-represented until ingestion catches up. Coverage of any given model reflects its social media footprint, not its market share or quality.',
+                mitigation: 'The bookmarked_at and created_at timestamps are preserved for every entry, making temporal filtering straightforward. Model attribution is stored as free-text alongside a normalised canonical slug, so analyses can distinguish between model generations.',
+                color: '#eab308',
+              },
+              {
+                title: 'Near-duplicate prompts',
+                body: 'Deduplication is exact-match only on the source post ID. Reposts, quote-tweets, and community re-shares of the same underlying prompt may appear as distinct entries. Downstream users performing similarity search or fine-tuning should apply their own deduplication.',
+                mitigation: 'Each entry retains its author_handle and tweet_url, making provenance traceable. Semantic deduplication can be applied against the extracted_prompt field, which strips social framing and hashtags to surface the underlying prompt text.',
+                color: '#71717a',
+              },
+            ].map((l) => (
+              <div
+                key={l.title}
+                className="rounded-xl border bg-white dark:bg-[#111] p-4 flex flex-col gap-3"
+                style={{ borderColor: `${l.color}30` }}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: l.color }}>Limitation</span>
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white">{l.title}</span>
+                </div>
+                <p className="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">{l.body}</p>
+                <div className="flex gap-2 pt-1 border-t border-black/[0.05] dark:border-white/5">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-500 shrink-0 mt-0.5">Mitigation</span>
+                  <p className="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">{l.mitigation}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+
         {/* Sources */}
         <Section title="Data Sources">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
