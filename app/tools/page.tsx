@@ -107,6 +107,8 @@ export default function ToolsPage() {
 
   // Classify prompts
   const [classifyingPrompts, setClassifyingPrompts] = useState(false)
+  const [promptsTotal, setPromptsTotal] = useState<number | null>(null)
+  const [promptsDone, setPromptsDone] = useState(0)
   const [promptsResult, setPromptsResult] = useState<string | null>(null)
   const [promptsErrors, setPromptsErrors] = useState<string[]>([])
 
@@ -189,11 +191,42 @@ export default function ToolsPage() {
     setClassifyingPrompts(true)
     setPromptsResult(null)
     setPromptsErrors([])
+    setPromptsDone(0)
+    setPromptsTotal(null)
+
     try {
-      const res = await fetch('/api/prompts/classify', { method: 'POST' })
-      const data: ClassifyResult = await res.json()
-      setPromptsResult(data.message ?? `Classified ${data.classified} of ${data.total} prompts`)
-      setPromptsErrors(data.errors ?? [])
+      const countRes = await fetch('/api/prompts/classify')
+      const { unclassified } = await countRes.json()
+      setPromptsTotal(unclassified)
+
+      const BATCH = 20
+      let offset = 0
+      let totalClassified = 0
+      const allErrors: string[] = []
+
+      while (offset <= unclassified) {
+        const res = await fetch('/api/prompts/classify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ limit: BATCH, offset }),
+        })
+        const text = await res.text()
+        let data: { classified: number; batchTotal: number; errors: string[]; error?: string }
+        try { data = JSON.parse(text) } catch {
+          allErrors.push(`Offset ${offset}: server error ${res.status}`)
+          setPromptsErrors([...allErrors])
+          break
+        }
+        if (data.error) { allErrors.push(`Offset ${offset}: ${data.error}`); break }
+        totalClassified += data.classified
+        allErrors.push(...(data.errors ?? []))
+        offset += BATCH
+        setPromptsDone(Math.min(offset, unclassified))
+        setPromptsErrors([...allErrors])
+        if (data.batchTotal === 0) break
+      }
+
+      setPromptsResult(`Classified ${totalClassified} of ${unclassified} prompts`)
       fetchCounts()
     } catch (err) {
       setPromptsResult(`Failed: ${String(err)}`)
@@ -369,7 +402,11 @@ export default function ToolsPage() {
                 </button>
                 <ElapsedTimer running={classifyingPrompts} />
               </div>
-              {classifyingPrompts && <ProgressBar indeterminate />}
+              {classifyingPrompts && (
+                promptsTotal
+                  ? <ProgressBar pct={(promptsDone / promptsTotal) * 100} />
+                  : <ProgressBar indeterminate />
+              )}
               {promptsResult && <ResultLine result={promptsResult} errors={promptsErrors} />}
             </div>
           </Section>

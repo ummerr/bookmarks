@@ -318,12 +318,12 @@ export async function getAllPromptsForReclassify(limit = 500, offset = 0): Promi
   return rows.map(toPromptRow)
 }
 
-export async function getUnclassifiedPrompts(limit = 50): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text' | 'thread_tweets'>[]> {
+export async function getUnclassifiedPrompts(limit = 50, offset = 0): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text' | 'thread_tweets'>[]> {
   const rows = await getSql()<Record<string, unknown>[]>`
     SELECT id, tweet_id, tweet_text, thread_tweets FROM bookmarks
     WHERE category = 'prompts' AND prompt_category IS NULL
     ORDER BY created_at ASC
-    LIMIT ${limit}
+    LIMIT ${limit} OFFSET ${offset}
   `
   return rows.map(toPromptRow)
 }

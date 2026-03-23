@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { countUnclassifiedPrompts, getAllPrompts, getUnclassifiedPrompts, updatePromptExtraction } from '@/lib/db'
 import { classifyPromptBatch } from '@/lib/classifier'
 
-export const maxDuration = 300 // Vercel Pro: allow up to 5 min for long classification runs
+export const maxDuration = 60
 
 const BATCH_SIZE = 5
 const CONCURRENCY = 1
@@ -57,23 +57,20 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url)
-    const force = searchParams.get('force') === 'true'
+    const body = await req.json().catch(() => ({}))
+    const limit: number = body.limit ?? 20
+    const offset: number = body.offset ?? 0
+    const force: boolean = body.force ?? false
 
-    const prompts = force ? await getAllPrompts(500) : await getUnclassifiedPrompts(200)
+    const prompts = force ? await getAllPrompts(limit) : await getUnclassifiedPrompts(limit, offset)
 
     if (prompts.length === 0) {
-      return NextResponse.json({ classified: 0, total: 0, message: 'All prompts already classified' })
+      return NextResponse.json({ classified: 0, batchTotal: 0, errors: [] })
     }
 
     const { classified, errors } = await runBatches(prompts)
 
-    return NextResponse.json({
-      classified,
-      total: prompts.length,
-      force,
-      errors: errors.length > 0 ? errors : undefined,
-    })
+    return NextResponse.json({ classified, batchTotal: prompts.length, errors })
   } catch (err) {
     console.error('[PROMPTS/CLASSIFY]', err)
     return NextResponse.json({ error: String(err) }, { status: 500 })
