@@ -199,7 +199,7 @@ export default function ToolsPage() {
       const { unclassified } = await countRes.json()
       setPromptsTotal(unclassified)
 
-      const BATCH = 20
+      const BATCH = 5
       let offset = 0
       let totalClassified = 0
       const allErrors: string[] = []
