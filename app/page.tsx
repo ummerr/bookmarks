@@ -62,8 +62,8 @@ const CATEGORIES: { value: PromptCategory | 'all'; label: string }[] = [
   { value: 'image_character_ref', label: 'Char Ref' },
   { value: 'image_inpainting',    label: 'Inpainting' },
   { value: 'video_t2v',           label: 'T2V' },
-  { value: 'video_i2v',           label: 'I2V' },
-  { value: 'video_r2v',           label: 'R2V' },
+  { value: 'video_i2v',           label: 'Frames to Video' },
+  { value: 'video_r2v',           label: 'Ref to Video' },
   { value: 'video_v2v',           label: 'V2V' },
   { value: 'audio',               label: 'Audio' },
   { value: 'threed',              label: '3D' },
@@ -316,7 +316,10 @@ function PromptsPageInner() {
   const [search, setSearch] = useState(searchParams.get('q') || '')
   const [loading, setLoading] = useState(true)
   const [showAllModels, setShowAllModels] = useState(false)
-  const [showAdvanced, setShowAdvanced] = useState(false)
+  const [showAdvanced, setShowAdvanced] = useState(
+    (!!searchParams.get('theme') && searchParams.get('theme') !== 'all') ||
+    (!!searchParams.get('model') && searchParams.get('model') !== 'all')
+  )
 
   // Sync filters to URL
   useEffect(() => {
@@ -368,12 +371,17 @@ function PromptsPageInner() {
       counts[family] = (counts[family] ?? 0) + 1
     }
     return Object.entries(counts)
+      .filter(([, count]) => count >= 10)
       .sort(([, a], [, b]) => b - a)
       .map(([label, count]) => ({ label, count }))
   }, [allPrompts])
 
   const uncategorizedCount = useMemo(() =>
     allPrompts.filter((p) => !p.prompt_category).length
+  , [allPrompts])
+
+  const multiShotVideoCount = useMemo(() =>
+    allPrompts.filter((p) => p.is_multi_shot && p.prompt_category?.startsWith('video_')).length
   , [allPrompts])
 
   // Client-side filter by media type, theme, model, search
@@ -418,6 +426,25 @@ function PromptsPageInner() {
     return result
   }, [allPrompts, activeMediaType, activeTheme, activeModel, activeMultiShot, search])
 
+  function clearAllFilters() {
+    setActiveMediaType('all')
+    setActiveCategory('all')
+    setActiveTheme('all')
+    setActiveModel('all')
+    setActiveMultiShot(false)
+    setSearch('')
+  }
+
+  const activeChips = [
+    ...(search.trim() ? [{ label: `"${search}"`, onRemove: () => setSearch('') }] : []),
+    ...(activeMediaType !== 'all' ? [{ label: activeMediaType === 'llm' ? 'LLM' : activeMediaType.charAt(0).toUpperCase() + activeMediaType.slice(1), onRemove: () => { setActiveMediaType('all'); setActiveCategory('all') } }] : []),
+    ...(activeCategory !== 'all' && activeCategory !== 'uncategorized' ? [{ label: categoryLabel(activeCategory), onRemove: () => setActiveCategory('all') }] : []),
+    ...(activeCategory === 'uncategorized' ? [{ label: 'Untagged', onRemove: () => setActiveCategory('all') }] : []),
+    ...(activeTheme !== 'all' ? [{ label: THEMES.find((t) => t.value === activeTheme)?.label ?? activeTheme, onRemove: () => setActiveTheme('all') }] : []),
+    ...(activeModel !== 'all' ? [{ label: activeModel, onRemove: () => setActiveModel('all') }] : []),
+    ...(activeMultiShot ? [{ label: 'Multishot', onRemove: () => setActiveMultiShot(false) }] : []),
+  ]
+
   return (
     <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
       <div className="max-w-6xl mx-auto px-4 md:px-6 py-4 md:py-8 flex gap-6 items-start">
@@ -446,18 +473,45 @@ function PromptsPageInner() {
                   The Real Prompts Dataset
                 </h1>
                 <p className="text-[11px] text-gray-500 dark:text-white/40 leading-relaxed">
-                  Hand-curated from practitioners, artists, and researchers sharing work that actually shipped.
-                  Not generated. Not scraped from SEO farms. Every entry is a real prompt that produced a real result.
+                  Most prompt libraries are generated filler or SEO bait. These aren't —
+                  every entry is a real prompt from someone who posted the result publicly.
+                  Filter by model, technique, or style to skip the trial-and-error.
                 </p>
+              </div>
+
+              {/* Task categories */}
+              <div className="flex flex-col gap-2">
+                {(
+                  [
+                    { label: 'Image', cats: ['image_t2i', 'image_r2i', 'image_i2i', 'image_character_ref', 'image_inpainting'] },
+                    { label: 'Video', cats: ['video_t2v', 'video_r2v', 'video_i2v', 'video_v2v'] },
+                    { label: 'LLM',   cats: ['system_prompt', 'writing', 'coding', 'analysis', 'audio', 'threed', 'other'] },
+                  ] as { label: string; cats: (keyof typeof CATEGORY_COLORS)[] }[]
+                ).map(({ label, cats }) => (
+                  <div key={label} className="flex flex-col gap-1">
+                    <span className="font-mono text-[9px] tracking-[0.15em] text-gray-400 dark:text-white/25 uppercase">{label}</span>
+                    <div className="flex flex-wrap gap-1">
+                      {cats.map((cat) => (
+                        <a
+                          key={cat}
+                          href={`/?type=${cat}`}
+                          className={`rounded-full border px-2 py-0.5 text-[10px] font-medium transition-opacity hover:opacity-75 ${CATEGORY_COLORS[cat]}`}
+                        >
+                          {categoryLabel(cat)}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
 
               {/* Stats grid */}
               <div className="grid grid-cols-2 gap-1.5">
                 {[
                   { value: loading ? '—' : allPrompts.length.toLocaleString(), label: 'Prompts', sub: 'and growing' },
-                  { value: '16', label: 'Task types', sub: 'image · video · llm' },
-                  { value: '20+', label: 'AI models', sub: 'tracked & labeled' },
-                  { value: '100%', label: 'Human-sourced', sub: 'zero synthetic' },
+                  { value: '16', label: 'Techniques', sub: 'T2I · T2V · system · more' },
+                  { value: '20+', label: 'AI models', sub: 'every major one' },
+                  { value: '0%', label: 'AI-generated', sub: 'all human-sourced' },
                 ].map((s) => (
                   <div key={s.label} className="flex flex-col gap-0.5 rounded-lg bg-black/[0.03] dark:bg-white/[0.04] border border-black/[0.06] dark:border-white/[0.06] px-3 py-2.5">
                     <span className="font-mono text-lg font-semibold text-gray-900 dark:text-white leading-none">{s.value}</span>
@@ -470,9 +524,9 @@ function PromptsPageInner() {
               {/* Feature flags */}
               <div className="flex flex-col gap-1.5">
                 {[
-                  'Multi-modal — image, video, audio, 3D, and LLM',
-                  'Rich metadata — category, model, themes, styles',
-                  'Sourced live from Twitter/X and AI subreddits',
+                  'Covers image, video, audio, 3D, and LLM',
+                  'Filter to any model, style, or technique',
+                  'Updated continuously as practitioners post new work',
                 ].map((f) => (
                   <span key={f} className="flex items-start gap-1.5 text-[10px] text-gray-400 dark:text-white/30 leading-relaxed">
                     <svg className="h-2.5 w-2.5 text-emerald-500 dark:text-emerald-400/70 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -516,7 +570,7 @@ function PromptsPageInner() {
         {/* Filters */}
         <div className="flex flex-col gap-2 border border-black/[0.06] dark:border-white/6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] px-4 py-3">
 
-          {/* Row: Modality — Image / Video / Multi-Shot */}
+          {/* Row: Modality — Image / Video */}
           <div className="flex items-center gap-2">
             <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">Modality</span>
             <div className="flex items-center gap-1.5">
@@ -538,16 +592,6 @@ function PromptsPageInner() {
                   {mt === 'image' ? 'Image' : 'Video'}
                 </button>
               ))}
-              <button
-                onClick={() => setActiveMultiShot((v) => !v)}
-                className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                  activeMultiShot
-                    ? 'bg-emerald-100 text-emerald-700 border-emerald-200 font-medium dark:bg-emerald-900/50 dark:text-emerald-300 dark:border-emerald-800/50'
-                    : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                }`}
-              >
-                Multi-Shot
-              </button>
             </div>
           </div>
 
@@ -566,7 +610,7 @@ function PromptsPageInner() {
                 >
                   All
                 </button>
-                {(['image_t2i', 'image_r2i'] as const).filter((c) => (categoryCounts[c] ?? 0) > 0).map((cat) => (
+                {(['image_t2i', 'image_r2i'] as const).filter((c) => (categoryCounts[c] ?? 0) >= 10).map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
@@ -598,7 +642,7 @@ function PromptsPageInner() {
                 >
                   All
                 </button>
-                {(['video_t2v', 'video_r2v'] as const).filter((c) => (categoryCounts[c] ?? 0) > 0).map((cat) => (
+                {(['video_t2v', 'video_i2v', 'video_r2v'] as const).filter((c) => (categoryCounts[c] ?? 0) >= 10).map((cat) => (
                   <button
                     key={cat}
                     onClick={() => { setActiveCategory(cat); setActiveMultiShot(false) }}
@@ -611,6 +655,22 @@ function PromptsPageInner() {
                     {categoryLabel(cat)}<span className="opacity-50"> {categoryCounts[cat]}</span>
                   </button>
                 ))}
+                {multiShotVideoCount >= 10 && (
+                  <button
+                    onClick={() => {
+                      const next = !activeMultiShot
+                      setActiveMultiShot(next)
+                      if (next) setActiveCategory('all')
+                    }}
+                    className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                      activeMultiShot
+                        ? 'bg-emerald-100 text-emerald-700 border-emerald-200 font-medium dark:bg-emerald-900/50 dark:text-emerald-300 dark:border-emerald-800/50'
+                        : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                    }`}
+                  >
+                    Multishot<span className="opacity-50"> {multiShotVideoCount}</span>
+                  </button>
+                )}
               </div>
             </div>
           )}
@@ -628,11 +688,11 @@ function PromptsPageInner() {
             <div className="flex flex-col gap-2 pt-2 border-t border-black/[0.06] dark:border-white/6">
 
               {/* Extra image types */}
-              {activeMediaType === 'image' && (['image_i2i', 'image_character_ref', 'image_inpainting'] as const).some((c) => (categoryCounts[c] ?? 0) > 0) && (
+              {activeMediaType === 'image' && (['image_i2i', 'image_character_ref', 'image_inpainting'] as const).some((c) => (categoryCounts[c] ?? 0) >= 10) && (
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">More</span>
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    {(['image_i2i', 'image_character_ref', 'image_inpainting'] as const).filter((c) => (categoryCounts[c] ?? 0) > 0).map((cat) => (
+                    {(['image_i2i', 'image_character_ref', 'image_inpainting'] as const).filter((c) => (categoryCounts[c] ?? 0) >= 10).map((cat) => (
                       <button
                         key={cat}
                         onClick={() => setActiveCategory(cat)}
@@ -650,23 +710,20 @@ function PromptsPageInner() {
               )}
 
               {/* Extra video types */}
-              {activeMediaType === 'video' && (['video_i2v', 'video_v2v'] as const).some((c) => (categoryCounts[c] ?? 0) > 0) && (
+              {activeMediaType === 'video' && (categoryCounts['video_v2v'] ?? 0) >= 10 && (
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">More</span>
                   <div className="flex items-center gap-1.5">
-                    {(['video_i2v', 'video_v2v'] as const).filter((c) => (categoryCounts[c] ?? 0) > 0).map((cat) => (
-                      <button
-                        key={cat}
-                        onClick={() => { setActiveCategory(cat); setActiveMultiShot(false) }}
-                        className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                          activeCategory === cat && !activeMultiShot
-                            ? `${CATEGORY_COLORS[cat]} font-medium`
-                            : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                        }`}
-                      >
-                        {categoryLabel(cat)}<span className="opacity-50"> {categoryCounts[cat]}</span>
-                      </button>
-                    ))}
+                    <button
+                      onClick={() => { setActiveCategory('video_v2v'); setActiveMultiShot(false) }}
+                      className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
+                        activeCategory === 'video_v2v' && !activeMultiShot
+                          ? `${CATEGORY_COLORS['video_v2v']} font-medium`
+                          : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+                      }`}
+                    >
+                      {categoryLabel('video_v2v')}<span className="opacity-50"> {categoryCounts['video_v2v']}</span>
+                    </button>
                   </div>
                 </div>
               )}
@@ -749,7 +806,7 @@ function PromptsPageInner() {
                     All
                   </button>
                   {[...THEMES]
-                    .filter((t) => themeCounts[t.value] > 0)
+                    .filter((t) => (themeCounts[t.value] ?? 0) >= 10)
                     .sort((a, b) => (themeCounts[b.value] ?? 0) - (themeCounts[a.value] ?? 0))
                     .map((t) => (
                       <button
@@ -809,6 +866,25 @@ function PromptsPageInner() {
             </div>
           )}
         </div>
+
+        {/* Active filter chips */}
+        {activeChips.length > 0 && (
+          <div className="flex items-center gap-1.5 flex-wrap -mt-2">
+            {activeChips.map((chip, i) => (
+              <span key={i} className="flex items-center gap-1 rounded-full border border-black/[0.1] dark:border-white/10 bg-black/[0.04] dark:bg-white/[0.04] pl-2.5 pr-1.5 py-1 text-xs text-gray-600 dark:text-zinc-300">
+                {chip.label}
+                <button onClick={chip.onRemove} className="flex items-center justify-center h-3.5 w-3.5 rounded-full text-gray-400 hover:text-gray-700 hover:bg-black/[0.08] dark:text-zinc-500 dark:hover:text-zinc-200 dark:hover:bg-white/10 transition-colors">
+                  <svg className="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+              </span>
+            ))}
+            {activeChips.length > 1 && (
+              <button onClick={clearAllFilters} className="text-xs text-gray-400 dark:text-zinc-600 hover:text-gray-600 dark:hover:text-zinc-400 transition-colors">
+                Clear all
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Results count + share */}
         {!loading && (
