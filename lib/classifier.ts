@@ -314,13 +314,16 @@ export async function classifyPromptBatch(
 }[]> {
   const client = getClient()
 
-  // Include thread context so the extractor sees the full conversation
-  const input = prompts.map((p) => {
+  // Use sequential 1-based indices as IDs — avoids UUID serialisation issues
+  // (JSON.stringify drops keys with undefined values; models reliably echo short integers)
+  const indexToId = new Map(prompts.map((p, i) => [String(i + 1), p.id]))
+
+  const input = prompts.map((p, i) => {
     const threadContext = p.thread_tweets?.length
       ? '\n\nThread context:\n' + p.thread_tweets.map((t) => t.tweet_text).join('\n---\n')
       : ''
     const fullText = preprocessTweet(p.tweet_text + threadContext).slice(0, 3000)
-    return { id: p.id, text: fullText }
+    return { id: String(i + 1), text: fullText }
   })
 
   const message = await withRetry(() =>
@@ -343,11 +346,9 @@ export async function classifyPromptBatch(
   const raw = (toolUse.input as { results: any }).results
   const results: any[] = Array.isArray(raw) ? raw : raw ? [raw] : []
 
-  const validIds = new Set(prompts.map((p) => p.id))
-
-  const matched = results.filter((r) => r.id && validIds.has(r.id))
+  const matched = results.filter((r) => r.id && indexToId.has(r.id))
   if (matched.length < results.length) {
-    console.warn('[classifyPromptBatch] ID mismatch — sent:', [...validIds], '| received:', results.map((r) => r.id))
+    console.warn('[classifyPromptBatch] ID mismatch — sent indices:', [...indexToId.keys()], '| received:', results.map((r) => r.id))
   }
   if (matched.length === 0 && results.length > 0) {
     throw new Error(`All ${results.length} results had unrecognised IDs. First returned ID: ${results[0]?.id}`)
@@ -355,7 +356,7 @@ export async function classifyPromptBatch(
 
   return matched
     .map((r) => ({
-      id: r.id as string,
+      id: indexToId.get(r.id) as string,
       prompt_category: VALID_PROMPT_CATEGORIES.has(r.prompt_category) ? r.prompt_category : 'other',
       extracted_prompt: r.extracted_prompt ?? null,
       detected_model: normaliseModel(r.detected_model),

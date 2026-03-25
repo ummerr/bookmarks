@@ -199,31 +199,34 @@ export default function ToolsPage() {
       const { unclassified } = await countRes.json()
       setPromptsTotal(unclassified)
 
-      const BATCH = 5
-      let offset = 0
+      // Always use offset: 0 — the server filters out already-classified items,
+      // so the "first N unclassified" advances naturally each round.
+      // Incrementing offset was wrong: after classifying batch 1, offset=5 would
+      // skip items 6-10 (now positions 1-5 in the unclassified set).
+      const BATCH = 3
       let totalClassified = 0
       const allErrors: string[] = []
 
-      while (offset <= unclassified) {
+      for (let batchNum = 1; ; batchNum++) {
         const res = await fetch('/api/prompts/classify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ limit: BATCH, offset }),
+          body: JSON.stringify({ limit: BATCH, offset: 0 }),
         })
         const text = await res.text()
         let data: { classified: number; batchTotal: number; errors: string[]; error?: string }
         try { data = JSON.parse(text) } catch {
-          allErrors.push(`Offset ${offset}: server error ${res.status}`)
+          allErrors.push(`Batch ${batchNum}: server error ${res.status}`)
           setPromptsErrors([...allErrors])
           break
         }
-        if (data.error) { allErrors.push(`Offset ${offset}: ${data.error}`); break }
+        if (data.error) { allErrors.push(`Batch ${batchNum}: ${data.error}`); break }
         totalClassified += data.classified
         allErrors.push(...(data.errors ?? []))
-        offset += BATCH
-        setPromptsDone(Math.min(offset, unclassified))
+        setPromptsDone(totalClassified)
         setPromptsErrors([...allErrors])
-        if (data.batchTotal === 0) break
+        if (data.batchTotal === 0) break  // no more unclassified items
+        if (data.classified === 0) break  // made no progress — avoid infinite loop
       }
 
       setPromptsResult(`Classified ${totalClassified} of ${unclassified} prompts`)
