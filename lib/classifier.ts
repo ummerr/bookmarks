@@ -346,17 +346,27 @@ export async function classifyPromptBatch(
   const raw = (toolUse.input as { results: any }).results
   const results: any[] = Array.isArray(raw) ? raw : raw ? [raw] : []
 
-  const matched = results.filter((r) => r.id && indexToId.has(r.id))
-  if (matched.length < results.length) {
-    console.warn('[classifyPromptBatch] ID mismatch — sent indices:', [...indexToId.keys()], '| received:', results.map((r) => r.id))
-  }
-  if (matched.length === 0 && results.length > 0) {
-    throw new Error(`All ${results.length} results had unrecognised IDs. First returned ID: ${results[0]?.id}`)
+  // Normalise id to string — model sometimes returns integers
+  for (const r of results) {
+    if (r.id != null) r.id = String(r.id)
   }
 
-  return matched
-    .map((r) => ({
-      id: indexToId.get(r.id) as string,
+  const matched = results.filter((r) => r.id && indexToId.has(r.id))
+  if (matched.length < results.length) {
+    console.warn('[classifyPromptBatch] ID mismatch — sent:', [...indexToId.keys()], '| received:', results.map((r) => r.id))
+  }
+
+  // Positional fallback: if no IDs matched at all, pair results to prompts by order
+  const toMap = matched.length > 0
+    ? matched.map((r) => ({ r, id: indexToId.get(r.id) as string }))
+    : results.slice(0, prompts.length).map((r, i) => {
+        console.warn(`[classifyPromptBatch] Positional fallback for index ${i + 1}`)
+        return { r, id: prompts[i].id }
+      })
+
+  return toMap
+    .map(({ r, id }) => ({
+      id,
       prompt_category: VALID_PROMPT_CATEGORIES.has(r.prompt_category) ? r.prompt_category : 'other',
       extracted_prompt: r.extracted_prompt ?? null,
       detected_model: normaliseModel(r.detected_model),
