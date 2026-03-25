@@ -239,7 +239,7 @@ DETECTED MODEL:
 - Do not include version numbers or extra words — just the tool name.
 
 For each item return:
-- id: the item id
+- id: copy the exact "id" string from the input item — do not change it
 - prompt_category: one category from above
 - detected_model: the AI tool name if identifiable — use null if unclear
 - extracted_prompt: ONLY the clean prompt text — strip social framing, hashtags, engagement bait. Keep model syntax (--ar, --v, negative prompts, cfg, etc.). Return null only if no clear prompt text exists.
@@ -283,7 +283,7 @@ const EXTRACT_TOOL: Anthropic.Tool = {
         items: {
           type: 'object',
           properties: {
-            id:                 { type: 'string' },
+            id:                 { type: 'string', description: 'Copy the id field from the input item exactly' },
             prompt_category:    { type: 'string' },
             detected_model:     { type: ['string', 'null'] },
             extracted_prompt:   { type: ['string', 'null'] },
