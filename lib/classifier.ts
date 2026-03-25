@@ -199,12 +199,11 @@ const PROMPT_SYSTEM = `You are an AI prompt classifier and extractor. For each t
 
 CATEGORIES:
 
-Image Generation:
-- image_t2i: Text-to-image — prompt only, no input image (Midjourney, DALL-E, Flux, Stable Diffusion, Firefly, Ideogram, Leonardo)
-- image_i2i: Image-to-image — structural/style transfer, img2img, ControlNet depth/pose/canny
-- image_r2i: Reference-to-image — an uploaded or reference image guides the OUTPUT subject, object, or scene (IP-Adapter subject reference, style reference from an uploaded image, "generate something like this image")
-- image_character_ref: Character / face / person consistency across generations (InstantID, face swap, consistent character LoRA)
-- image_inpainting: Inpainting, outpainting, masking, regional editing
+Image Generation — categorise by the PRIMARY SUBJECT / CONTENT of the image:
+- image_person: The primary subject is one or more people, characters, or faces. Includes portraits, fashion photography with models, character design, group shots, fictional characters. Use this whenever a human or character is the main focus.
+- image_advertisement: Product photography, commercial imagery, brand marketing, e-commerce product shots, lifestyle advertising — the primary purpose is to showcase a product or brand. Fashion flats (no model) also count.
+- image_collage: Mood boards, collages, grid layouts, multi-panel compositions, scrapbook-style images — the prompt intentionally combines multiple images or visual elements into one composition.
+- image_t2i: All other image generation — landscapes, nature, architecture, abstract art, sci-fi/fantasy environments, animals, vehicles, food, surreal imagery, concept art without a primary human subject. Use this as the default when none of the above fit.
 
 Video Generation:
 - video_t2v: Text-to-video — prompt only, no input image (Sora, Kling, Runway Gen3, Pika, Hailuo, Luma, Wan)
@@ -252,6 +251,7 @@ For each item return:
 Classify all items provided.`
 
 const VALID_PROMPT_CATEGORIES = new Set<PromptCategory>([
+  'image_person', 'image_advertisement', 'image_collage',
   'image_t2i', 'image_i2i', 'image_r2i', 'image_character_ref', 'image_inpainting',
   'video_t2v', 'video_i2v', 'video_r2v', 'video_v2v',
   'audio', 'threed',

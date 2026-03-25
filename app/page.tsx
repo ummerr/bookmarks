@@ -56,7 +56,10 @@ function modelToFamily(model: string): string {
 
 const CATEGORIES: { value: PromptCategory | 'all'; label: string }[] = [
   { value: 'all',                  label: 'All' },
-  { value: 'image_t2i',           label: 'T2I' },
+  { value: 'image_person',        label: 'Person' },
+  { value: 'image_advertisement', label: 'Ad' },
+  { value: 'image_collage',       label: 'Collage' },
+  { value: 'image_t2i',           label: 'General' },
   { value: 'image_i2i',           label: 'I2I' },
   { value: 'image_r2i',           label: 'R2I' },
   { value: 'image_character_ref', label: 'Char Ref' },
@@ -109,8 +112,11 @@ const REFERENCE_TYPE_LABELS: Record<string, string> = {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
+  image_person:        'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:border-blue-800/50',
+  image_advertisement: 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/50 dark:text-amber-300 dark:border-amber-800/50',
+  image_collage:       'bg-fuchsia-100 text-fuchsia-700 border-fuchsia-200 dark:bg-fuchsia-900/50 dark:text-fuchsia-300 dark:border-fuchsia-800/50',
   image_t2i:           'bg-pink-100 text-pink-700 border-pink-200 dark:bg-pink-900/50 dark:text-pink-300 dark:border-pink-800/50',
-  image_i2i:           'bg-fuchsia-100 text-fuchsia-700 border-fuchsia-200 dark:bg-fuchsia-900/50 dark:text-fuchsia-300 dark:border-fuchsia-800/50',
+  image_i2i:           'bg-pink-100 text-pink-700 border-pink-200 dark:bg-pink-900/50 dark:text-pink-300 dark:border-pink-800/50',
   image_r2i:           'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/50 dark:text-orange-300 dark:border-orange-800/50',
   image_character_ref: 'bg-rose-100 text-rose-700 border-rose-200 dark:bg-rose-900/50 dark:text-rose-300 dark:border-rose-800/50',
   image_inpainting:    'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/50 dark:text-red-300 dark:border-red-800/50',
@@ -610,7 +616,7 @@ function PromptsPageInner() {
                 >
                   All
                 </button>
-                {(['image_t2i', 'image_r2i'] as const).filter((c) => (categoryCounts[c] ?? 0) >= 10).map((cat) => (
+                {(['image_person', 'image_advertisement', 'image_collage'] as const).filter((c) => (categoryCounts[c] ?? 0) >= 10).map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
@@ -688,11 +694,11 @@ function PromptsPageInner() {
             <div className="flex flex-col gap-2 pt-2 border-t border-black/[0.06] dark:border-white/6">
 
               {/* Extra image types */}
-              {activeMediaType === 'image' && (['image_i2i', 'image_character_ref', 'image_inpainting'] as const).some((c) => (categoryCounts[c] ?? 0) >= 10) && (
+              {activeMediaType === 'image' && (['image_t2i', 'image_i2i', 'image_character_ref', 'image_inpainting'] as const).some((c) => (categoryCounts[c] ?? 0) >= 10) && (
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">More</span>
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    {(['image_i2i', 'image_character_ref', 'image_inpainting'] as const).filter((c) => (categoryCounts[c] ?? 0) >= 10).map((cat) => (
+                    {(['image_t2i', 'image_i2i', 'image_character_ref', 'image_inpainting'] as const).filter((c) => (categoryCounts[c] ?? 0) >= 10).map((cat) => (
                       <button
                         key={cat}
                         onClick={() => setActiveCategory(cat)}

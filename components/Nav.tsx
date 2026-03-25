@@ -5,12 +5,9 @@ import { usePathname } from 'next/navigation'
 import ThemeToggle from './ThemeToggle'
 
 const LINKS = [
-  { href: '/prompts',   label: 'Prompts' },
-  { href: '/datacard',  label: 'Datacard' },
-  { href: '/random',    label: 'Random' },
-  { href: '/studio',    label: 'Studio' },
-  { href: '/bookmarks', label: 'Bookmarks' },
-  { href: '/tools',     label: 'Tools', secret: true },
+  { href: '/',       label: 'Prompts' },
+  { href: '/random', label: 'Random' },
+  { href: '/studio', label: 'Studio' },
 ]
 
 export default function Nav() {
@@ -23,21 +20,24 @@ export default function Nav() {
           <span className="text-[#1DA1F2]">✦</span> ummerr
         </span>
         <div className="flex items-center gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden flex-1">
-          {LINKS.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className={`shrink-0 rounded-lg px-3 py-1.5 text-sm transition-colors ${
-                l.secret
-                  ? 'text-[#f7f6f3] dark:text-[#0a0a0a] hover:text-[#f7f6f3] dark:hover:text-[#0a0a0a] cursor-default'
-                  : pathname === l.href
-                  ? 'bg-black/8 text-gray-900 dark:bg-white/10 dark:text-white'
-                  : 'text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5'
-              }`}
-            >
-              {l.label}
-            </Link>
-          ))}
+          {LINKS.map((l) => {
+            const isActive = l.href === '/'
+              ? pathname === '/' || pathname === '/prompts'
+              : pathname === l.href
+            return (
+              <Link
+                key={l.href}
+                href={l.href}
+                className={`shrink-0 rounded-lg px-3 py-1.5 text-sm transition-colors ${
+                  isActive
+                    ? 'bg-black/8 text-gray-900 dark:bg-white/10 dark:text-white'
+                    : 'text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5'
+                }`}
+              >
+                {l.label}
+              </Link>
+            )
+          })}
         </div>
         <ThemeToggle />
       </div>
