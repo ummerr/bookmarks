@@ -9,15 +9,13 @@ const MEDIA_TYPES = [
   { value: 'all',   label: 'All' },
   { value: 'image', label: 'Image' },
   { value: 'video', label: 'Video' },
-  { value: 'llm',   label: 'LLM' },
 ] as const
 type MediaType = typeof MEDIA_TYPES[number]['value']
 
 const MEDIA_TYPE_CATEGORIES: Record<MediaType, (PromptCategory | 'all')[]> = {
-  all:   ['all', 'image_t2i', 'image_i2i', 'image_r2i', 'image_character_ref', 'image_inpainting', 'video_t2v', 'video_i2v', 'video_r2v', 'video_v2v', 'audio', 'threed', 'system_prompt', 'writing', 'coding', 'analysis', 'other'],
-  image: ['image_t2i', 'image_i2i', 'image_r2i', 'image_character_ref', 'image_inpainting'],
+  all:   ['all', 'image_person', 'image_advertisement', 'image_collage', 'image_t2i', 'image_i2i', 'image_r2i', 'image_character_ref', 'image_inpainting', 'video_t2v', 'video_i2v', 'video_r2v', 'video_v2v', 'audio', 'threed', 'system_prompt', 'writing', 'coding', 'analysis', 'other'],
+  image: ['image_person', 'image_advertisement', 'image_collage', 'image_t2i', 'image_i2i', 'image_r2i', 'image_character_ref', 'image_inpainting'],
   video: ['video_t2v', 'video_i2v', 'video_r2v', 'video_v2v'],
-  llm:   ['system_prompt', 'writing', 'coding', 'analysis', 'audio', 'threed', 'other'],
 }
 
 // Model families — order matters (more specific first)
@@ -308,9 +306,10 @@ function PromptsPageInner() {
   const searchParams = useSearchParams()
 
   const [allPrompts, setAllPrompts] = useState<Bookmark[]>([])
-  const [activeMediaType, setActiveMediaType] = useState<MediaType>(
-    (searchParams.get('media') as MediaType) || 'all'
-  )
+  const [activeMediaType, setActiveMediaType] = useState<MediaType>(() => {
+    const m = searchParams.get('media')
+    return (m === 'image' || m === 'video') ? m : 'all'
+  })
   const [activeCategory, setActiveCategory] = useState<PromptCategory | 'all' | 'uncategorized'>(
     (searchParams.get('type') as PromptCategory | 'all' | 'uncategorized') || 'all'
   )
@@ -443,7 +442,7 @@ function PromptsPageInner() {
 
   const activeChips = [
     ...(search.trim() ? [{ label: `"${search}"`, onRemove: () => setSearch('') }] : []),
-    ...(activeMediaType !== 'all' ? [{ label: activeMediaType === 'llm' ? 'LLM' : activeMediaType.charAt(0).toUpperCase() + activeMediaType.slice(1), onRemove: () => { setActiveMediaType('all'); setActiveCategory('all') } }] : []),
+    ...(activeMediaType !== 'all' ? [{ label: activeMediaType.charAt(0).toUpperCase() + activeMediaType.slice(1), onRemove: () => { setActiveMediaType('all'); setActiveCategory('all') } }] : []),
     ...(activeCategory !== 'all' && activeCategory !== 'uncategorized' ? [{ label: categoryLabel(activeCategory), onRemove: () => setActiveCategory('all') }] : []),
     ...(activeCategory === 'uncategorized' ? [{ label: 'Untagged', onRemove: () => setActiveCategory('all') }] : []),
     ...(activeTheme !== 'all' ? [{ label: THEMES.find((t) => t.value === activeTheme)?.label ?? activeTheme, onRemove: () => setActiveTheme('all') }] : []),
@@ -734,68 +733,6 @@ function PromptsPageInner() {
                 </div>
               )}
 
-              {/* LLM + other modalities */}
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">Other</span>
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <button
-                    onClick={() => { setActiveMediaType('llm'); setActiveCategory('all'); setActiveMultiShot(false) }}
-                    className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                      activeMediaType === 'llm'
-                        ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
-                        : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                    }`}
-                  >
-                    LLM
-                  </button>
-                  {uncategorizedCount > 0 && (
-                    <button
-                      onClick={() => { setActiveCategory('uncategorized'); setActiveModel('all') }}
-                      className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                        activeCategory === 'uncategorized'
-                          ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
-                          : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                      }`}
-                    >
-                      Untagged<span className="opacity-50"> {uncategorizedCount}</span>
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* LLM subcategories */}
-              {activeMediaType === 'llm' && (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">Type</span>
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <button
-                      onClick={() => setActiveCategory('all')}
-                      className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                        activeCategory === 'all'
-                          ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
-                          : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                      }`}
-                    >
-                      All
-                    </button>
-                    {CATEGORIES
-                      .filter((cat) => cat.value !== 'all' && MEDIA_TYPE_CATEGORIES['llm'].includes(cat.value) && (categoryCounts[cat.value] ?? 0) > 0)
-                      .map((cat) => (
-                        <button
-                          key={cat.value}
-                          onClick={() => setActiveCategory(cat.value)}
-                          className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                            activeCategory === cat.value
-                              ? `${CATEGORY_COLORS[cat.value]} font-medium`
-                              : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                          }`}
-                        >
-                          {cat.label}<span className="opacity-50"> {categoryCounts[cat.value]}</span>
-                        </button>
-                      ))}
-                  </div>
-                </div>
-              )}
 
               {/* Theme */}
               <div className="flex items-center gap-2">
