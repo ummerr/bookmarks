@@ -6,11 +6,11 @@ import ThemeToggle from './ThemeToggle'
 
 const LINKS = [
   { href: '/prompts',             label: 'Prompts' },
-  { href: '/state-of-prompting',  label: 'State of Prompting' },
   { href: '/datacard',            label: 'Datacard' },
   { href: '/random',              label: 'Random' },
   { href: '/studio',              label: 'Studio' },
   { href: '/bookmarks',           label: 'Bookmarks' },
+  { href: '/state-of-prompting',  label: 'State of Prompting' },
   { href: '/tools',               label: 'Tools', secret: true },
 ]
 
