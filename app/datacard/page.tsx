@@ -191,6 +191,38 @@ export default function DatacardPage() {
           )}
         </Section>
 
+        {/* Task categories */}
+        <Section title="Task Categories">
+          <div className="flex flex-col gap-4">
+            {['Image', 'Video', 'Text', 'Other'].map((group) => {
+              const cats = PROMPT_CATEGORIES.filter((c) => c.group === group)
+              const counts = stats?.byCategory ?? []
+              return (
+                <div key={group} className="flex flex-col gap-2">
+                  <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500">{group}</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {cats.map((c) => {
+                      const count = counts.find((x) => x.label === c.key)?.value
+                      return (
+                        <div
+                          key={c.key}
+                          className="flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs"
+                          style={{ color: c.color, borderColor: `${c.color}40`, background: `${c.color}10` }}
+                        >
+                          <span className="font-medium">{c.label}</span>
+                          {count !== undefined && (
+                            <span className="opacity-60 tabular-nums">{count}</span>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </Section>
+
         {/* About */}
         <Section title="About the Dataset">
           <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
@@ -317,38 +349,6 @@ export default function DatacardPage() {
                 <p className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">{s.desc}</p>
               </div>
             ))}
-          </div>
-        </Section>
-
-        {/* Task categories */}
-        <Section title="Task Categories">
-          <div className="flex flex-col gap-4">
-            {['Image', 'Video', 'Text', 'Other'].map((group) => {
-              const cats = PROMPT_CATEGORIES.filter((c) => c.group === group)
-              const counts = stats?.byCategory ?? []
-              return (
-                <div key={group} className="flex flex-col gap-2">
-                  <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500">{group}</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {cats.map((c) => {
-                      const count = counts.find((x) => x.label === c.key)?.value
-                      return (
-                        <div
-                          key={c.key}
-                          className="flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs"
-                          style={{ color: c.color, borderColor: `${c.color}40`, background: `${c.color}10` }}
-                        >
-                          <span className="font-medium">{c.label}</span>
-                          {count !== undefined && (
-                            <span className="opacity-60 tabular-nums">{count}</span>
-                          )}
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              )
-            })}
           </div>
         </Section>
 
