@@ -297,7 +297,7 @@ export default function ToolsPage() {
       const { total } = await countRes.json()
       setReclassifyTotal(total)
 
-      const BATCH = 5
+      const BATCH = 2
       let offset = 0
       let totalClassified = 0
       const allErrors: string[] = []
