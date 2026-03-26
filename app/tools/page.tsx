@@ -3,6 +3,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import type { CategoryCounts } from '@/lib/types'
 
+const CLASSIFY_JOB_KEY = 'tools:classify-prompts'
+const RECLASSIFY_JOB_KEY = 'tools:reclassify'
+
 // Keep in sync with app/api/reddit/ingest/route.ts
 const PROMPT_SUBREDDITS = [
   'midjourney',
@@ -170,6 +173,23 @@ export default function ToolsPage() {
 
   useEffect(() => { fetchCounts() }, [fetchCounts])
 
+  // Auto-resume any job that was interrupted by a page refresh
+  useEffect(() => {
+    if (localStorage.getItem(CLASSIFY_JOB_KEY)) {
+      runPromptClassify()
+      return
+    }
+    const saved = localStorage.getItem(RECLASSIFY_JOB_KEY)
+    if (saved) {
+      try {
+        const { offset, total } = JSON.parse(saved)
+        runReclassify(offset, total)
+      } catch {
+        localStorage.removeItem(RECLASSIFY_JOB_KEY)
+      }
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   async function runMainClassify() {
     setClassifyingMain(true)
     setMainResult(null)
@@ -188,11 +208,13 @@ export default function ToolsPage() {
   }
 
   async function runPromptClassify() {
+    if (classifyingPrompts) return
     setClassifyingPrompts(true)
     setPromptsResult(null)
     setPromptsErrors([])
     setPromptsDone(0)
     setPromptsTotal(null)
+    localStorage.setItem(CLASSIFY_JOB_KEY, '1')
 
     try {
       const countRes = await fetch('/api/prompts/classify')
@@ -201,8 +223,6 @@ export default function ToolsPage() {
 
       // Always use offset: 0 — the server filters out already-classified items,
       // so the "first N unclassified" advances naturally each round.
-      // Incrementing offset was wrong: after classifying batch 1, offset=5 would
-      // skip items 6-10 (now positions 1-5 in the unclassified set).
       const BATCH = 2
       let totalClassified = 0
       const allErrors: string[] = []
@@ -225,8 +245,8 @@ export default function ToolsPage() {
         allErrors.push(...(data.errors ?? []))
         setPromptsDone(totalClassified)
         setPromptsErrors([...allErrors])
-        if (data.batchTotal === 0) break  // no more unclassified items
-        if (data.classified === 0) break  // made no progress — avoid infinite loop
+        if (data.batchTotal === 0) break
+        if (data.classified === 0) break
       }
 
       setPromptsResult(`Classified ${totalClassified} of ${unclassified} prompts`)
@@ -235,6 +255,7 @@ export default function ToolsPage() {
       setPromptsResult(`Failed: ${String(err)}`)
     } finally {
       setClassifyingPrompts(false)
+      localStorage.removeItem(CLASSIFY_JOB_KEY)
     }
   }
 
@@ -284,29 +305,35 @@ export default function ToolsPage() {
     fetchCounts()
   }
 
-  async function runReclassify() {
+  async function runReclassify(startOffset = 0, startTotal?: number) {
+    if (reclassifying) return
     cancelReclassify.current = false
     setReclassifying(true)
     setReclassifyResult(null)
     setReclassifyErrors([])
-    setReclassifyDone(0)
-    setReclassifyTotal(null)
+    setReclassifyDone(startOffset)
+    setReclassifyTotal(startTotal ?? null)
 
     try {
-      const countRes = await fetch('/api/prompts/reclassify')
-      const { total } = await countRes.json()
+      let total = startTotal ?? 0
+      if (!startTotal) {
+        const countRes = await fetch('/api/prompts/reclassify')
+        total = (await countRes.json()).total
+      }
       setReclassifyTotal(total)
 
       const BATCH = 2
-      let offset = 0
+      let offset = startOffset
       let totalClassified = 0
       const allErrors: string[] = []
 
       while (offset < total) {
         if (cancelReclassify.current) {
+          localStorage.removeItem(RECLASSIFY_JOB_KEY)
           setReclassifyResult(`Cancelled after ${totalClassified} of ${total} prompts`)
           break
         }
+        localStorage.setItem(RECLASSIFY_JOB_KEY, JSON.stringify({ offset, total }))
         const res = await fetch('/api/prompts/reclassify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -329,6 +356,7 @@ export default function ToolsPage() {
       }
 
       if (!cancelReclassify.current) {
+        localStorage.removeItem(RECLASSIFY_JOB_KEY)
         setReclassifyResult(`Re-classified ${totalClassified} of ${total} prompts`)
       }
       fetchCounts()
@@ -516,7 +544,7 @@ export default function ToolsPage() {
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-3">
                 <button
-                  onClick={runReclassify}
+                  onClick={() => runReclassify()}
                   disabled={reclassifying}
                   className="flex items-center gap-2 rounded-lg bg-black/[0.06] dark:bg-white/8 border border-black/[0.1] dark:border-white/10 px-4 py-2 text-sm font-medium text-gray-700 dark:text-white hover:bg-black/[0.1] dark:hover:bg-white/12 disabled:opacity-50 transition-colors"
                 >
