@@ -154,6 +154,54 @@ export default function ToolsPage() {
     })
   }
 
+  // Fix themes (Haiku)
+  const [rethemeRunning, setRethemeRunning] = useState(false)
+  const [rethemeTotal, setRethemeTotal] = useState<number | null>(null)
+  const [rethemedDone, setRethemedDone] = useState(0)
+  const [rethemeResult, setRethemeResult] = useState<string | null>(null)
+  const [rethemeErrors, setRethemeErrors] = useState<string[]>([])
+
+  async function runRetheme() {
+    if (rethemeRunning) return
+    setRethemeRunning(true)
+    setRethemeResult(null)
+    setRethemeErrors([])
+    setRethemedDone(0)
+    setRethemeTotal(null)
+    try {
+      const countRes = await fetch('/api/prompts/retheme')
+      const total = (await countRes.json()).total
+      setRethemeTotal(total)
+      let tagged = 0
+      const allErrors: string[] = []
+      for (;;) {
+        const res = await fetch('/api/prompts/retheme', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ limit: 10 }),
+        })
+        const text = await res.text()
+        let data: { tagged: number; batchTotal: number; errors: string[]; error?: string }
+        try { data = JSON.parse(text) } catch {
+          allErrors.push(`server error ${res.status}`)
+          setRethemeErrors([...allErrors])
+          break
+        }
+        if (data.error) { allErrors.push(data.error); break }
+        tagged += data.tagged
+        allErrors.push(...(data.errors ?? []))
+        setRethemedDone(tagged)
+        setRethemeErrors([...allErrors])
+        if (data.batchTotal === 0) break
+      }
+      setRethemeResult(`Tagged ${tagged} of ${total} prompts`)
+    } catch (err) {
+      setRethemeResult(`Failed: ${String(err)}`)
+    } finally {
+      setRethemeRunning(false)
+    }
+  }
+
   // Re-classify
   const [reclassifying, setReclassifying] = useState(false)
   const [reclassifyTotal, setReclassifyTotal] = useState<number | null>(null)
@@ -533,6 +581,35 @@ export default function ToolsPage() {
               )}
 
               {redditResult && <ResultLine result={redditResult} errors={redditErrors} />}
+            </div>
+          </Section>
+
+          {/* Fix Themes */}
+          <Section
+            title="Fix Themes (Haiku)"
+            description="Backfill prompt_themes on prompts that are missing them — runs Haiku only, fast and cheap."
+          >
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={runRetheme}
+                  disabled={rethemeRunning}
+                  className="flex items-center gap-2 rounded-lg bg-black/[0.06] dark:bg-white/8 border border-black/[0.1] dark:border-white/10 px-4 py-2 text-sm font-medium text-gray-700 dark:text-white hover:bg-black/[0.1] dark:hover:bg-white/12 disabled:opacity-50 transition-colors"
+                >
+                  {rethemeRunning && <Spinner />}
+                  {rethemeRunning ? 'Tagging…' : 'Fix Themes'}
+                </button>
+                {rethemeRunning && rethemeTotal !== null && (
+                  <span className="text-xs text-gray-400 dark:text-zinc-500 tabular-nums">
+                    {rethemedDone} / {rethemeTotal}
+                  </span>
+                )}
+              </div>
+              {rethemeRunning && rethemeTotal !== null && (
+                <ProgressBar pct={(rethemedDone / rethemeTotal) * 100} color="bg-emerald-400" />
+              )}
+              {rethemeRunning && rethemeTotal === null && <ProgressBar indeterminate color="bg-emerald-400" />}
+              {rethemeResult && <ResultLine result={rethemeResult} errors={rethemeErrors} />}
             </div>
           </Section>
 
