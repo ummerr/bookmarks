@@ -203,7 +203,7 @@ export default function ToolsPage() {
       // so the "first N unclassified" advances naturally each round.
       // Incrementing offset was wrong: after classifying batch 1, offset=5 would
       // skip items 6-10 (now positions 1-5 in the unclassified set).
-      const BATCH = 3
+      const BATCH = 2
       let totalClassified = 0
       const allErrors: string[] = []
 

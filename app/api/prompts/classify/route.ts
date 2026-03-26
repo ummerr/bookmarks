@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { countUnclassifiedPrompts, getAllPrompts, getUnclassifiedPrompts, updatePromptExtraction } from '@/lib/db'
 import { classifyPromptBatch } from '@/lib/classifier'
 
-export const maxDuration = 60
+export const maxDuration = 300
 
 const BATCH_SIZE = 5
 const CONCURRENCY = 1
