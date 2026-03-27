@@ -163,6 +163,30 @@ function CopyButton({ text }: { text: string }) {
   )
 }
 
+function ShareButton({ id }: { id: string }) {
+  const [copied, setCopied] = useState(false)
+  async function copy() {
+    const url = `${window.location.origin}/prompts/${id}`
+    await navigator.clipboard.writeText(url)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+  return (
+    <button
+      onClick={copy}
+      className={`flex items-center gap-1.5 text-xs transition-colors ${
+        copied ? 'text-violet-500 dark:text-violet-400' : 'text-gray-400 dark:text-zinc-600 hover:text-gray-600 dark:hover:text-zinc-400'
+      }`}
+    >
+      {copied ? (
+        <><svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>Link copied</>
+      ) : (
+        <><svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>Share</>
+      )}
+    </button>
+  )
+}
+
 function CopyLinkButton() {
   const [copied, setCopied] = useState(false)
   async function copy() {
@@ -180,7 +204,7 @@ function CopyLinkButton() {
       {copied ? (
         <><svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>Link copied</>
       ) : (
-        <><svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>Share</>
+        <><svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>Share view</>
       )}
     </button>
   )
@@ -272,7 +296,10 @@ function PromptCard({ bookmark }: { bookmark: Bookmark }) {
 
       {/* Footer */}
       <div className="flex items-center justify-between gap-2">
-        <CopyButton text={prompt} />
+        <div className="flex items-center gap-2">
+          <CopyButton text={prompt} />
+          <ShareButton id={bookmark.id} />
+        </div>
         {hasRawTweet && (
           <button
             onClick={() => setExpanded((v) => !v)}
