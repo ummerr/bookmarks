@@ -178,55 +178,31 @@ export default function StateOfPromptingPage() {
                   number="01"
                   color="#ec4899"
                   title="Creators are uploading references instead of writing descriptions"
-                  body="Experienced creators are moving away from typing prompts toward uploading reference images, style boards, and character sheets. Text-to-video still accounts for roughly two-thirds of workflows, but the best results increasingly come from image-guided pipelines — not text alone."
+                  body="The shift happened through tooling. Midjourney added style and character reference flags. Runway, Kling, and Veo made image-to-video a core feature. Creators stopped describing their characters in text and started uploading character sheets. A photo of a face contains more information than any sentence describing one."
                 />
                 <FindingCard
                   number="02"
                   color="#8b5cf6"
-                  title="Prompt engineering as a job is effectively over"
-                  body="The trial-and-error era of crafting the perfect sentence for an AI ended between late 2024 and early 2025. 'Prompt Engineer' ranked second-to-last in new roles companies plan to hire for. What replaced it isn't better prompting — it's building systems: AI agents, retrieval pipelines, and structured inputs."
+                  title="Prompt engineering as a job is over"
+                  body="'Prompt Engineer' ranked second-to-last in new AI roles companies plan to hire for. What replaced it isn't better prompting — it's building systems: agents, retrieval pipelines, and structured context. Andrej Karpathy named the successor in mid-2025: context engineering — deciding what information the AI sees, not how you phrase the request."
                 />
                 <FindingCard
                   number="03"
-                  color="#f97316"
-                  title="Templates dominate but produce generic results"
-                  body="Most people use AI through templates — pre-filled structures that reduce guesswork and cut iteration time by 50–70%. But borrowed templates produce borrowed results. The people who stand out treat a template as a starting point and inject their own specifics on top."
+                  color="#a855f7"
+                  title="AI performance degrades as its working memory fills up"
+                  body="AI has a working memory limit. As it fills with old instructions, outdated notes, and irrelevant history, quality degrades — the AI misses things, contradicts itself, loses the thread. More memory delays this; it doesn't fix it. The goal is filling that memory with precisely the right information for the next step, nothing else."
                 />
                 <FindingCard
                   number="04"
-                  color="#06b6d4"
-                  title="Good video prompts describe physics, not aesthetics"
-                  body="The best video prompts in 2026 don't describe what a scene looks like — they describe what's happening physically. Camera movement, forces acting on objects, cause and effect. Adjective-heavy descriptions like 'cinematic and atmospheric' have been replaced by instructions like 'gimbal tracking shot, rear suspension compressing on impact'."
+                  color="#f59e0b"
+                  title="Modular skills are replacing bloated instruction docs"
+                  body="One enormous instruction doc that tries to cover every scenario degrades quality and is slow to load. Skills are the fix: small, focused instruction files that load only when the AI actually needs them. A conversation might invoke one or two while 300 others stay invisible. Over 31,000 skills are now in circulation across 30+ AI tools."
                 />
                 <FindingCard
                   number="05"
-                  color="#22c55e"
-                  title="Every major AI video tool now accepts images, audio, and video as input"
-                  body="You can no longer get the best results by typing into a single text box. Every leading platform — Kling, Veo, Runway — now accepts a mix of text, images, audio clips, and video as combined input. The tools that still rely on text alone are falling behind."
-                />
-                <FindingCard
-                  number="06"
-                  color="#a855f7"
-                  title="AI performance degrades as its working memory fills up"
-                  body="Modern AI has a working memory — the information it holds while completing a task. When that memory fills up with old, irrelevant details, the AI starts making worse decisions. Bigger memory doesn't fix this; it just delays it. Managing what the AI sees at any given moment is the central engineering challenge of 2026."
-                />
-                <FindingCard
-                  number="07"
-                  color="#14b8a6"
-                  title="The new skill is deciding how much to trust the AI, not how to talk to it"
-                  body="Companies are no longer asking whether AI can do a task. They're asking: which tasks should run automatically, which need a human check, and which should never be delegated? Designing those rules is the real skill of 2026 — not crafting clever prompts."
-                />
-                <FindingCard
-                  number="08"
-                  color="#f59e0b"
-                  title="Modular skills are replacing bloated instruction docs"
-                  body="Giving an AI one enormous instruction document covering every possible scenario upfront is slow, expensive, and degrades quality over time. Skills are the fix: small, focused instruction files that only load when the AI actually needs them. Over 31,000 skills are now in circulation across 30+ AI coding tools."
-                />
-                <FindingCard
-                  number="09"
                   color="#ef4444"
-                  title="Sora shut down on March 24, 2026 — six months after its public launch"
-                  body="OpenAI shut down Sora on March 24, 2026 — the app, the developer API, and video generation in ChatGPT. The economics never worked: running costs hit $15M per day against $2.1M in total lifetime revenue. Downloads had fallen 66% since November, deepfake scandals were escalating, and a $1B Disney deal collapsed the same week. OpenAI is pivoting the Sora team to world simulation for robotics."
+                  title="Sora shut down on March 24, 2026 — six months after launch"
+                  body="OpenAI shut down Sora — the app, the API, and video generation in ChatGPT. The economics never worked: $15M/day in costs against $2.1M in total lifetime revenue. Downloads fell 66%, deepfake scandals escalated, and a $1B Disney deal collapsed the same week. The Sora team is now redirected to world simulation for robotics."
                 />
               </div>
             </Section>
@@ -255,13 +231,13 @@ export default function StateOfPromptingPage() {
             <Section title="The Shift to References" id="references">
               <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
                 <p>
-                  In 2023, the dominant idea was simple: write a better prompt, get a better output. AI generation was treated like a search engine — type something, get something back. Prompt engineering was framed as a learnable skill, a new kind of digital literacy. By 2025, that idea had quietly collapsed.
+                  In 2023, the dominant idea was simple: write a better prompt, get a better output. By 2025, that had quietly collapsed — not through debate, but through tooling.
                 </p>
                 <p>
-                  The collapse happened through tooling. Stable Diffusion added ways to feed in reference images directly. Midjourney introduced <code className="text-xs bg-black/[0.05] dark:bg-white/[0.05] px-1 py-0.5 rounded">--sref</code> (style reference) and <code className="text-xs bg-black/[0.05] dark:bg-white/[0.05] px-1 py-0.5 rounded">--cref</code> (character reference). Video tools like Runway, Kling, and Veo made image-to-video a core feature, not an add-on. Creators stopped describing their characters in text and started uploading character sheets. Style boards replaced style adjectives.
+                  Midjourney introduced <code className="text-xs bg-black/[0.05] dark:bg-white/[0.05] px-1 py-0.5 rounded">--sref</code> (style reference) and <code className="text-xs bg-black/[0.05] dark:bg-white/[0.05] px-1 py-0.5 rounded">--cref</code> (character reference). Runway, Kling, and Veo made image-to-video a core feature. Creators stopped describing their characters and started uploading character sheets. Style boards replaced style adjectives.
                 </p>
                 <p>
-                  The reason is obvious once you see it: <span className="font-medium text-gray-900 dark:text-white">a photo of a face contains more information than any sentence describing one.</span> Text descriptions lose detail. Reference images don't. Users understood this before platforms did.
+                  The reason is obvious once you see it: <span className="font-medium text-gray-900 dark:text-white">a photo of a face contains more information than any sentence describing one.</span> Text descriptions lose detail. Reference images don't.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
                   {[
@@ -281,10 +257,7 @@ export default function StateOfPromptingPage() {
             <Section title="The Template Era" id="templates">
               <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
                 <p>
-                  For every person sharing a new prompting trick, there are thousands who just want a reliable output. Templates fill that gap — and the numbers confirm they dominate how most people actually use generative AI.
-                </p>
-                <p>
-                  The appeal is practical: a good template pre-fills the hard parts so you only have to fill in the subject. For a cinematic video shot, the camera angle, lighting, lens type, and mood are already there. Iteration time drops 50–70%. You stop staring at a blank box.
+                  Templates dominate how most people use generative AI. A good template pre-fills the hard parts — camera angle, lighting, mood — so you only fill in the subject. Iteration time drops 50–70%.
                 </p>
                 <Insight
                   quote="AI prompts are like recipes — you wouldn't use a cake recipe to make soup. Different content types need different prompt structures. By anchoring responses with predefined sections, you're not just asking what it should say, you're telling it how to say it."
@@ -292,7 +265,7 @@ export default function StateOfPromptingPage() {
                   color="#22c55e"
                 />
                 <p>
-                  But templates have a ceiling. Borrowed templates produce borrowed results. The people getting standout outputs treat templates as a starting point — adding their own references, adjusting details, and occasionally breaking the structure on purpose. <span className="font-medium text-gray-900 dark:text-white">A template is the floor, not the ceiling.</span>
+                  But templates have a ceiling. Borrowed templates produce borrowed results. People getting standout outputs treat templates as a starting point — adding their own references, adjusting specifics, occasionally breaking the structure. <span className="font-medium text-gray-900 dark:text-white">A template is the floor, not the ceiling.</span>
                 </p>
               </div>
             </Section>
@@ -300,7 +273,7 @@ export default function StateOfPromptingPage() {
             <Section title="Prompt Engineering Is Dead" id="prompt-engineering">
               <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
                 <p>
-                  "Prompt engineer" had a brief run as a real job title — roughly 2023 to mid-2024. By 2025, it ranked second-to-last among new AI roles companies planned to hire for. IEEE Spectrum ran the obituary. The consensus was unusually clear for a fast-moving industry.
+                  "Prompt engineer" had a brief run as a real job title — roughly 2023 to mid-2024. By 2025, it ranked second-to-last among new AI roles companies planned to hire for. IEEE Spectrum ran the obituary.
                 </p>
                 <Insight
                   quote="The primitive era of prompt engineering — characterized by trial-and-error iteration and artisanal prompt crafting — died somewhere between late 2024 and early 2025."
@@ -308,10 +281,10 @@ export default function StateOfPromptingPage() {
                   color="#f97316"
                 />
                 <p>
-                  What replaced it wasn't better prompting — it was a fundamentally different way of working with AI. In mid-2025, AI researcher Andrej Karpathy named the successor: <span className="font-medium text-gray-900 dark:text-white">"context engineering"</span>. The idea is that what you give the AI matters more than how you phrase the request. For most serious AI applications, the "prompt" is now a system — documents, tools, data pipelines — not a carefully worded sentence.
+                  What replaced it was a different way of working with AI entirely. In mid-2025, Andrej Karpathy named the successor: <span className="font-medium text-gray-900 dark:text-white">"context engineering"</span> — what you give the AI matters more than how you phrase the request. For serious applications, the "prompt" is now a system: documents, tools, data pipelines, not a carefully worded sentence.
                 </p>
                 <p>
-                  For image and video specifically, the shift is from <span className="font-medium text-gray-900 dark:text-white">describing what you want to showing what you want</span>. Instead of prompting a video tool to create a scene, experienced creators upload a reference frame, a character sheet, and a shot list. Written text becomes directorial notes on top of a visual brief — not the main input.
+                  For image and video, this means <span className="font-medium text-gray-900 dark:text-white">showing instead of describing</span>. Experienced creators upload a reference frame, character sheet, and shot list. Text becomes directorial notes on top of a visual brief — not the main input.
                 </p>
                 <div className="rounded-xl bg-black/[0.03] dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/6 p-4 flex flex-col gap-2">
                   <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500">What replaced prompt engineering</p>
@@ -334,10 +307,10 @@ export default function StateOfPromptingPage() {
             <Section title="Context Engineering" id="context-engineering">
               <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
                 <p>
-                  Context engineering isn't about writing better prompts. It's about deciding what information the AI has access to at any given moment — what it can see, what gets cleared out when it's no longer relevant, and what only loads when needed.
+                  Context engineering is about deciding what information the AI can see at any given moment — what loads, what stays out, what gets cleared when it's no longer relevant.
                 </p>
                 <p>
-                  The problem it solves has a name: <span className="font-medium text-gray-900 dark:text-white">context rot</span>. AI models have a working memory — a limit to how much they can hold at once while completing a task. As that memory fills up with old notes, outdated instructions, and irrelevant history, quality degrades. The AI starts missing things it should catch, contradicts itself, and loses the thread. More memory helps, but doesn't fix the root problem: the wrong things are taking up space. The goal, as Karpathy put it, is filling that memory with "precisely the right information for the next step" — not more, not less.
+                  The problem it solves is <span className="font-medium text-gray-900 dark:text-white">context rot</span>. As working memory fills up with old notes, outdated instructions, and irrelevant history, quality degrades — the AI misses things, contradicts itself, loses the thread. More memory delays this; it doesn't fix it. The goal is filling that memory with "precisely the right information for the next step" — not more, not less.
                 </p>
                 <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] overflow-hidden">
                   <div className="grid grid-cols-3 text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 border-b border-black/[0.06] dark:border-white/6 px-4 py-2.5">
@@ -379,7 +352,7 @@ export default function StateOfPromptingPage() {
                 </div>
                 <div className="rounded-xl bg-violet-50 dark:bg-violet-950/20 border border-violet-200 dark:border-violet-800/30 p-4">
                   <p className="text-sm text-violet-700 dark:text-violet-300 leading-relaxed">
-                    <span className="font-semibold">Known territory vs. unknown territory.</span> AI models are trained on enormous amounts of public data — so they already understand TypeScript, React, Python, and most popular tools deeply. But they know nothing about your company's internal systems or custom software. Without deliberately providing that information, they'll fill the gaps by guessing — and get it wrong confidently. Context engineering is largely about knowing which situation you're in and giving the AI the missing knowledge explicitly.
+                    <span className="font-semibold">Known vs. unknown territory.</span> AI already understands TypeScript, React, Python, and most popular tools. It knows nothing about your internal systems. Without that information, it fills the gaps by guessing — confidently. Context engineering is knowing which situation you're in and supplying the missing knowledge explicitly.
                   </p>
                 </div>
               </div>
@@ -388,7 +361,7 @@ export default function StateOfPromptingPage() {
             <Section title="How Much Should You Trust the AI?" id="autonomy">
               <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
                 <p>
-                  The 2026 question isn't "can AI do this?" — it's "should we let the AI decide how to do this?" Teams using AI effectively have stopped thinking about it as a tool and started thinking about it as a colleague — one that needs clear boundaries about which decisions it can make alone.
+                  The 2026 question isn't "can AI do this?" — it's "should we let it decide alone?" Teams using AI well have defined clear boundaries about which decisions it can make autonomously and which always need a human.
                 </p>
                 <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] overflow-hidden">
                   <div className="grid grid-cols-3 text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 border-b border-black/[0.06] dark:border-white/6 px-4 py-2.5">
@@ -441,10 +414,10 @@ export default function StateOfPromptingPage() {
             <Section title="Skills: Replacing the Bloated Instruction Doc" id="skills">
               <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
                 <p>
-                  The most common mistake when setting up an AI agent is giving it one enormous instruction document that tries to cover every scenario it might encounter. These documents grow to tens of thousands of words. Every session, the AI reads the whole thing — whether or not any of it is relevant. Quality degrades, instructions conflict, and failures become hard to diagnose.
+                  The most common mistake with AI agents is one enormous instruction document covering every scenario. Every session loads the whole thing — whether or not any of it is relevant. Quality degrades, instructions conflict, failures are hard to diagnose.
                 </p>
                 <p>
-                  Skills are the fix. A skill is a small, focused instruction file for a specific type of task — writing a PR description, reviewing code, setting up a database. The AI only loads a skill when it's actually doing that task. The rest stays out of the way.
+                  Skills are the fix: small, focused instruction files for a specific task — writing a PR description, reviewing code, setting up a database. The AI only loads one when it's actually needed. The rest stays invisible.
                 </p>
                 <Insight
                   quote="In practice, a typical conversation might invoke one or two skills while the rest remain invisible — allowing you to register 300 skills while consuming fewer words than a traditional mega-prompt setup."
@@ -494,7 +467,7 @@ export default function StateOfPromptingPage() {
                 </p>
                 <div className="rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/30 p-4">
                   <p className="text-sm text-amber-700 dark:text-amber-300 leading-relaxed">
-                    <span className="font-semibold">The gap between theory and practice is real.</span> Skills clearly work as an approach, but most AI agent projects don't make it to production. Research projects 40% will fail by 2027. The most important skills aren't creative — they're structural: knowing when to use a tool, how to coordinate across tasks, and when to stop and ask a human.
+                    <span className="font-semibold">The gap between theory and practice is real.</span> Skills clearly work, but most AI agent projects don't reach production — research predicts 40% will fail by 2027. The most important skills aren't creative. They're structural: knowing when to use a tool, how to coordinate across tasks, when to stop and ask a human.
                   </p>
                 </div>
               </div>
@@ -520,10 +493,6 @@ export default function StateOfPromptingPage() {
                   ))}
                 </div>
 
-                <p>
-                  At peak it cost OpenAI roughly $15M a day just to keep the servers running. In its entire public life, the app generated about $2.1M in revenue — less than two hours of operating costs. Downloads peaked at 3.3M in November 2025, then fell steadily to 1.1M by February 2026. Only 1 in 100 users was still active after 30 days.
-                </p>
-
                 <div className="rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-zinc-900 p-4">
                   <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">How it unraveled</h4>
                   <div className="flex flex-col gap-2">
@@ -544,10 +513,7 @@ export default function StateOfPromptingPage() {
                 </div>
 
                 <p>
-                  The deepfake crisis accelerated the shutdown. Synthetic videos of Martin Luther King Jr. and Robin Williams spread widely — their daughters publicly asked people to stop. OpenAI had no reliable detection system and no policy enforcement that worked at scale.
-                </p>
-                <p>
-                  The collapse of the Disney deal may have been the final trigger. Disney had been in discussions about a $1B partnership to use Sora for film and marketing production. When the deal fell apart, Disney's team learned about it 30 minutes after sitting in a joint planning meeting. The combination of cratering usage, runaway costs, reputational damage, and a lost anchor customer made the math impossible.
+                  The deepfake crisis accelerated things. Synthetic videos of MLK Jr. and Robin Williams went viral — their daughters publicly asked people to stop. OpenAI had no working enforcement at scale. Then the $1B Disney deal collapsed: Disney's team found out 30 minutes after sitting in a joint planning meeting. Cratering usage, unsustainable costs, reputational damage, and a lost anchor customer — the math became impossible.
                 </p>
 
                 <div className="rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30 p-4">
@@ -623,31 +589,8 @@ export default function StateOfPromptingPage() {
                     For scenes with multiple actions: use timed segments — <span className="font-mono text-gray-600 dark:text-zinc-300">(0–5s)</span>, <span className="font-mono text-gray-600 dark:text-zinc-300">(5–12s)</span> — rather than describing everything at once. Physics-based tools handle sequential instructions better than simultaneous ones.
                   </p>
                 </div>
-                <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] overflow-hidden">
-                  <div className="grid grid-cols-4 text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 border-b border-black/[0.06] dark:border-white/6 px-4 py-2.5">
-                    <span>Model</span>
-                    <span>Best described as</span>
-                    <span>What to give it</span>
-                    <span>What makes it unique</span>
-                  </div>
-                  {[
-                    { model: 'Veo 3.1', paradigm: 'Cinematic renderer', strategy: 'Reference images, structured lists, labelled audio sections', feature: 'Blends start and end frames; integrated audio design', color: '#1DA1F2' },
-                    { model: 'Kling 3.0', paradigm: 'Multimodal engine', strategy: 'Multiple reference files with brief directorial notes', feature: 'Text, image, audio, and video processed together natively', color: '#ec4899' },
-                    { model: 'Runway Gen-4.5', paradigm: 'Cinematic realist', strategy: 'Named camera movements, atmosphere, pacing — skip physics detail', feature: 'Top-ranked for fluid, fabric, and complex movement', color: '#f97316' },
-                  ].map((row, i) => (
-                    <div
-                      key={row.model}
-                      className={`grid grid-cols-4 px-4 py-3 text-xs items-start gap-2 ${i % 2 === 0 ? '' : 'bg-black/[0.015] dark:bg-white/[0.015]'}`}
-                    >
-                      <span className="font-semibold" style={{ color: row.color }}>{row.model}</span>
-                      <span className="text-gray-500 dark:text-zinc-400 leading-relaxed">{row.paradigm}</span>
-                      <span className="text-gray-500 dark:text-zinc-400 leading-relaxed">{row.strategy}</span>
-                      <span className="text-gray-500 dark:text-zinc-400 leading-relaxed">{row.feature}</span>
-                    </div>
-                  ))}
-                </div>
                 <p>
-                  The most underrated shift: sound. Tools like Kling 3.0 now generate audio — effects, ambient noise, dialogue — in the same pass as the video. If you want good audio, describe it in the brief from the start.
+                  The most underrated shift: sound. Kling 3.0 and Veo 3.1 now generate audio — effects, ambient noise, dialogue — in the same pass as the video. Describe it in the brief from the start or it becomes an afterthought.
                 </p>
               </div>
             </Section>
@@ -655,7 +598,7 @@ export default function StateOfPromptingPage() {
             <Section title="Every Major Tool Now Accepts Multiple Input Types" id="multimodal">
               <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
                 <p>
-                  A year ago, most AI video tools had one input: a text box. Today, every major platform accepts a combination of text, images, audio, and video. Typing a description is no longer the primary way to control what you get.
+                  A year ago, most AI video tools had one input: a text box. Today every major platform accepts text, images, audio, and video in combination.
                 </p>
                 <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] overflow-hidden">
                   <div className="grid grid-cols-4 text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 border-b border-black/[0.06] dark:border-white/6 px-4 py-2.5">
@@ -682,7 +625,7 @@ export default function StateOfPromptingPage() {
                   ))}
                 </div>
                 <p>
-                  If you're still relying on text-only prompts, you're working with one hand tied behind your back. The tools that accept reference images, audio clips, and video deliver substantially better results when you use those inputs.
+                  Text-only prompts leave most of the available control unused. The tools that accept reference images, audio clips, and video deliver substantially better results when you use those inputs.
                 </p>
               </div>
             </Section>
@@ -692,37 +635,27 @@ export default function StateOfPromptingPage() {
                 {[
                   {
                     title: 'Build a folder of reference images, not a folder of prompts',
-                    body: 'The most valuable thing you can collect in 2026 is a curated set of reference images — faces, visual styles, compositions, colour palettes you like. Prompts go out of date between model versions. A good reference image works across tools and stays relevant indefinitely.',
+                    body: 'Prompts go out of date between model versions. A good reference image — face, visual style, composition, colour palette — works across tools and stays useful indefinitely.',
                     color: '#f97316',
                   },
                   {
                     title: 'Use text to direct, not to describe',
-                    body: "Once you have reference images, your written prompt is directorial notes — what happens, how the camera moves, what the emotional beat is. It shouldn't be carrying the visual weight. \"Close-up on her face as she hears the news\" beats \"a beautiful cinematic close-up with dramatic lighting and emotional depth\".",
+                    body: "Once you have references, written text is directorial notes — what happens, how the camera moves, the emotional beat. It shouldn't carry the visual weight. \"Close-up on her face as she hears the news\" beats \"a beautiful cinematic close-up with dramatic lighting and emotional depth\".",
                     color: '#8b5cf6',
                   },
                   {
-                    title: "Learn the tool you're actually using",
-                    body: 'Veo 3.1 wants structured ingredient lists. Kling 3.0 wants multiple reference files. Runway wants precise camera choreography. A prompt written for one rarely works as well on another. Spend time understanding what each tool actually responds to.',
-                    color: '#1DA1F2',
-                  },
-                  {
-                    title: 'Include sound in the brief from the start',
-                    body: 'Several tools now generate audio alongside video in a single pass. If you want the right sound effects, ambient noise, or dialogue, describe them in the prompt. Treating audio as an afterthought produces audio as an afterthought.',
-                    color: '#06b6d4',
-                  },
-                  {
                     title: 'Replace large instruction docs with focused skills',
-                    body: "If your AI agent runs on one massive instruction file, it's degrading over time. Break it into small, focused skill files that each cover one type of task. Only the relevant one should load at any given moment — that's how the most reliable agent setups are built.",
+                    body: "If your AI agent runs on one massive instruction file, it's degrading over time. Break it into small skill files, each covering one type of task. Only the relevant one loads at any given moment — that's how reliable agent setups are built.",
                     color: '#f59e0b',
                   },
                   {
                     title: 'Write documentation that AI can actually use',
-                    body: "AI agents don't skim. They read everything — appendices, footnotes, technical specs. If your internal documentation is written for humans to scan quickly, it may not give an AI agent what it needs to be accurate. Key information needs to be explicit, not implied.",
+                    body: "AI agents don't skim. They read everything. If your internal docs are written for humans to scan quickly, the agent may not find what it needs. Key information must be explicit, not implied.",
                     color: '#a855f7',
                   },
                   {
                     title: 'Decide in advance what the AI can do on its own',
-                    body: 'When AI can produce code, content, or actions at speed, the bottleneck shifts to oversight — not output. The teams that avoid costly mistakes have thought carefully about which decisions need a human in the loop, and made that policy explicit before they needed it.',
+                    body: 'When AI produces code, content, or actions at speed, the bottleneck shifts to oversight. The teams that avoid costly mistakes define which decisions need a human in the loop — before they need that policy, not after.',
                     color: '#14b8a6',
                   },
                 ].map((item) => (
