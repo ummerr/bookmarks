@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
-export const alt = 'Prompts curated by ummerr'
+export const alt = 'The Real Prompts Dataset — prompts.ummerr.com'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -18,50 +18,79 @@ export default function OGImage() {
           justifyContent: 'space-between',
           padding: '64px 72px',
           fontFamily: 'sans-serif',
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        {/* Top: logo + title */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        {/* Subtle radial glow top-right */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '-120px',
+            right: '-120px',
+            width: '480px',
+            height: '480px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(29,161,242,0.18) 0%, transparent 70%)',
+            display: 'flex',
+          }}
+        />
+
+        {/* Top section */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          {/* Logo row */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ color: '#1DA1F2', fontSize: '24px' }}>✦</span>
-            <span style={{ color: '#52525b', fontSize: '18px', letterSpacing: '0.05em' }}>prompts.ummerr.com</span>
+            <span style={{ color: '#1DA1F2', fontSize: '22px' }}>✦</span>
+            <span style={{ color: '#52525b', fontSize: '16px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              prompts.ummerr.com
+            </span>
           </div>
-          <div style={{ color: '#ffffff', fontSize: '58px', fontWeight: 700, lineHeight: 1.1 }}>
-            Prompts, curated by ummerr
+
+          {/* Main headline */}
+          <div
+            style={{
+              color: '#ffffff',
+              fontSize: '64px',
+              fontWeight: 800,
+              lineHeight: 1.05,
+              letterSpacing: '-0.02em',
+              maxWidth: '780px',
+            }}
+          >
+            The prompts that actually work.
+          </div>
+
+          {/* Sub-headline */}
+          <div style={{ color: '#71717a', fontSize: '22px', lineHeight: 1.4, maxWidth: '680px' }}>
+            Hand-curated from practitioners who ship — not scraped, not synthetic.
+            Tagged with model, technique, style, and reference requirements.
           </div>
         </div>
 
-        {/* Bottom: three feature cards */}
-        <div style={{ display: 'flex', gap: '16px' }}>
+        {/* Bottom: stat pills */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           {[
-            {
-              title: 'Full-spectrum taxonomy',
-              body: 'Spans every AI media type — text-to-image, video, audio, 3D, and LLM prompts — under one unified taxonomy.',
-            },
-            {
-              title: 'Structurally rich',
-              body: 'Every prompt tagged with technique, themes, art style, detected model, and reference requirements.',
-            },
-            {
-              title: 'Reference-aware',
-              body: 'Distinguishes reference-based workflows (IP-Adapter, face swap, img2img) from pure text prompts.',
-            },
-          ].map((f) => (
+            { label: 'Real prompts', accent: true },
+            { label: 'Text · Image · Video · Audio · 3D' },
+            { label: 'Full taxonomy' },
+            { label: 'Reference-aware' },
+          ].map((pill) => (
             <div
-              key={f.title}
+              key={pill.label}
               style={{
-                flex: 1,
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: '16px',
-                padding: '24px',
                 display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
+                alignItems: 'center',
+                padding: '10px 20px',
+                borderRadius: '9999px',
+                fontSize: '15px',
+                fontWeight: pill.accent ? 700 : 500,
+                background: pill.accent ? '#1DA1F2' : 'rgba(255,255,255,0.06)',
+                border: pill.accent ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                color: pill.accent ? '#ffffff' : '#a1a1aa',
+                letterSpacing: '0.01em',
               }}
             >
-              <div style={{ color: '#e4e4e7', fontSize: '18px', fontWeight: 600 }}>{f.title}</div>
-              <div style={{ color: '#71717a', fontSize: '15px', lineHeight: 1.5 }}>{f.body}</div>
+              {pill.label}
             </div>
           ))}
         </div>

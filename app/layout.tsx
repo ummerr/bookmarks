@@ -5,9 +5,9 @@ import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
-const TITLE = 'ummerr/prompts — The Real Prompts Dataset'
+const TITLE = 'The prompts that actually work — prompts.ummerr.com'
 const DESCRIPTION =
-  'A hand-curated dataset of AI prompts from practitioners who ship. Not synthetic. Not scraped from SEO farms. Real prompts that produced real results — tagged with task type, model, visual theme, art style, and reference requirements.'
+  'Hand-curated AI prompts from practitioners who ship. Not synthetic. Not scraped from SEO farms. Tagged with model, technique, art style, and reference requirements across text, image, video, audio, and 3D.'
 
 export const metadata: Metadata = {
   title: TITLE,
