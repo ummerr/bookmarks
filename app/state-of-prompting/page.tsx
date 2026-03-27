@@ -46,8 +46,7 @@ const NAV_SECTIONS = [
   { id: 'findings',            label: 'Key Findings' },
   { id: 'from-the-data',      label: 'From the Dataset' },
   { id: 'references',         label: 'The Reference Shift' },
-  { id: 'prompt-engineering', label: 'Prompt Engineering' },
-  { id: 'context-engineering', label: 'Brief Architecture' },
+  { id: 'prompt-engineering', label: 'Context Engineering' },
   { id: 'video',              label: 'Video Prompting' },
   { id: 'multishot',          label: 'Multi-Shot' },
   { id: 'multimodal',         label: 'Multimodal' },
@@ -265,28 +264,18 @@ export default function StateOfPromptingPage() {
       <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-12">
 
         {/* Hero */}
-        <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-6 md:p-8 flex flex-col gap-5 mb-10">
-          <div className="flex flex-wrap gap-2 items-center">
-            <Badge color="#1DA1F2">Q1 2026</Badge>
-            <Badge color="#8b5cf6">Video & Image AI</Badge>
-            <Badge color="#f97316">Prompting Research</Badge>
-            <Badge color="#22c55e">Skills</Badge>
-          </div>
-          <div>
-            <h1 className="font-serif text-3xl md:text-4xl text-gray-900 dark:text-white tracking-tight">State of Prompting 2026</h1>
-            <p className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-gray-400 dark:text-zinc-500">Updated Mar 26, 2026</p>
-            <p className="mt-3 text-[15px] text-gray-500 dark:text-zinc-400 leading-[1.7] max-w-2xl">
-              The typed prompt is no longer the main way people get results from AI. This report covers what replaced it — reference images, modular skills, and a new way of thinking about what information AI actually needs.
-            </p>
-          </div>
-          <div className="flex items-center justify-between gap-4 pt-2 border-t border-black/[0.06] dark:border-white/6">
-            <p className="text-xs text-gray-400 dark:text-zinc-500">
-              Industry data sourced from public research, product announcements, and community analysis.
-              Dataset insights from <span className="font-medium text-gray-600 dark:text-zinc-300">ummerr/ai-prompts</span> — a curated collection of real-world AI generation prompts.
-            </p>
-            <p className="text-xs text-gray-400 dark:text-zinc-500 shrink-0">
-              Updated <span className="font-medium text-gray-600 dark:text-zinc-300">Mar 26, 2026</span>
-            </p>
+        <div className="mb-12">
+          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-gray-400 dark:text-zinc-500 mb-3">Q1 2026 · Image & Video Generation</p>
+          <h1 className="font-serif text-4xl md:text-5xl text-gray-900 dark:text-white tracking-tight leading-[1.1]">
+            The prompt is no longer<br className="hidden md:block" /> the product.
+          </h1>
+          <p className="mt-4 text-[15px] text-gray-500 dark:text-zinc-400 leading-[1.7] max-w-2xl">
+            In 2023, a good prompt was the whole skill. In 2026, the prompt is the last 10% — after you've chosen the right model, uploaded reference images, and structured a brief. This report shows what changed, backed by {stats?.total?.toLocaleString() ?? '—'} real prompts from viral posts on X.
+          </p>
+          <div className="mt-4 flex items-center gap-4 text-xs text-gray-400 dark:text-zinc-500">
+            <span>Based on the <Link href="/prompts" className="text-violet-600 dark:text-violet-400 hover:underline">ummerr/prompts</Link> dataset + <a href="https://artificialanalysis.ai" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">Artificial Analysis</a> arena data</span>
+            <span>·</span>
+            <span>Mar 2026</span>
           </div>
         </div>
 
@@ -313,20 +302,14 @@ export default function StateOfPromptingPage() {
                 <FindingCard
                   number="03"
                   color="#a855f7"
-                  title="Model selection matters — and the leaderboards shift by task"
-                  body="Google's Veo 3.1 sweeps the T2V arena top 5, but xAI's Grok leads I2V and Video Edit. OpenAI leads Image Edit. No single model wins everywhere. Most people pick one tool and iterate on their prompt — but the arena data shows switching models for different task types (text-to-video vs. image-to-video vs. editing) produces bigger gains than rewriting the same prompt."
+                  title="No single model wins everywhere"
+                  body="Veo 3.1 sweeps T2V. Grok leads I2V and Video Edit. Gemini leads T2I. Switching models for different task types produces bigger gains than rewriting the same prompt."
                 />
                 <FindingCard
                   number="04"
                   color="#f59e0b"
                   title="The best video prompts describe forces, not aesthetics"
-                  body="Adjective-heavy descriptions — 'cinematic', 'dramatic', 'beautiful' — produce averaged, generic results. The prompts that work describe what is physically happening: camera movement, forces acting on objects, cause and effect sequences. 'Gimbal tracking shot, rear suspension compressing on impact' beats 'cinematic car scene' every time."
-                />
-                <FindingCard
-                  number="05"
-                  color="#ef4444"
-                  title="Sora shut down on March 24, 2026 — six months after launch"
-                  body="OpenAI shut down Sora — the app, the API, and video generation in ChatGPT. The economics never worked: $15M/day in costs against $2.1M in total lifetime revenue. Downloads fell 66%, deepfake scandals escalated, and a $1B Disney deal collapsed the same week. The Sora team is now redirected to world simulation for robotics."
+                  body="'Gimbal tracking shot, rear suspension compressing on impact' beats 'cinematic car scene' every time. The prompts that work describe physics: camera movement, forces on objects, cause and effect."
                 />
               </div>
             </Section>
@@ -403,41 +386,17 @@ export default function StateOfPromptingPage() {
                       </div>
                     )}
 
-                    {/* Synthesis */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {[
-                        {
-                          title: 'Arena rankings ≠ viral share',
-                          body: `The models that top Artificial Analysis arenas aren't always the ones that dominate viral posts. What goes viral reflects accessibility and community familiarity as much as raw quality.`,
-                          color: '#8b5cf6',
-                        },
-                        {
-                          title: `${refPct}% use references — the rest don't`,
-                          body: `Reference-guided generation is the expert technique — but ${100 - refPct}% of viral prompts are still text-only. The gap between best practice and actual practice is wide.`,
-                          color: '#f97316',
-                        },
-                        {
-                          title: `${longPromptPct}% of prompts are 200+ characters`,
-                          body: 'Most viral prompts are short. The "describe everything" advice from 2023 hasn\'t aged well — models fill in the gaps now. Specificity on one or two things beats verbosity.',
-                          color: '#ec4899',
-                        },
-                        {
-                          title: topThemes.length > 0 ? `"${topThemes[0].label}" dominates` : 'Theme concentration',
-                          body: topThemes.length >= 3
-                            ? `Top themes — ${topThemes.slice(0, 3).map((t) => t.label).join(', ')} — account for the majority. Certain aesthetics consistently outperform.`
-                            : 'A few dominant aesthetics consistently drive engagement.',
-                          color: '#14b8a6',
-                        },
-                      ].map((item) => (
-                        <div
-                          key={item.title}
-                          className="rounded-xl border bg-white dark:bg-[#111] p-4 flex flex-col gap-2"
-                          style={{ borderColor: `${item.color}30` }}
-                        >
-                          <span className="text-xs font-bold" style={{ color: item.color }}>{item.title}</span>
-                          <p className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">{item.body}</p>
-                        </div>
-                      ))}
+                    {/* Synthesis — one-line observations */}
+                    <div className="rounded-xl border border-black/[0.06] dark:border-white/[0.06] bg-white dark:bg-[#111] p-4 flex flex-col gap-2">
+                      <h4 className="text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-400 dark:text-zinc-500">What the numbers say</h4>
+                      <div className="flex flex-col gap-1.5 text-xs text-gray-600 dark:text-zinc-300">
+                        <p>→ <span className="font-medium">{100 - refPct}% of viral prompts are still text-only</span> — reference-guided generation is best practice, not common practice.</p>
+                        <p>→ <span className="font-medium">Only {longPromptPct}% exceed 200 characters.</span> Short, specific prompts outperform verbose ones. Models fill gaps better than they parse walls of text.</p>
+                        {topThemes.length >= 3 && (
+                          <p>→ <span className="font-medium">Top themes: {topThemes.slice(0, 3).map((t) => t.label).join(', ')}.</span> The aesthetic distribution is heavily skewed — a few styles dominate viral engagement.</p>
+                        )}
+                        <p>→ <span className="font-medium">What tops the arena ≠ what goes viral.</span> Accessibility, speed, and community familiarity drive sharing as much as raw output quality.</p>
+                      </div>
                     </div>
                   </>
                 )}
@@ -480,65 +439,36 @@ export default function StateOfPromptingPage() {
               </div>
             </Section>
 
-            <Section title="Prompt Engineering Is Dead" id="prompt-engineering">
+            <Section title="From Prompt Engineering to Context Engineering" id="prompt-engineering">
               <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
-                <p>
-                  "Prompt engineer" had a brief run as a real job title — roughly 2023 to mid-2024. By 2025, it ranked second-to-last among new AI roles companies planned to hire for. IEEE Spectrum ran the obituary.
-                </p>
                 <Insight
                   quote="The primitive era of prompt engineering — characterized by trial-and-error iteration and artisanal prompt crafting — died somewhere between late 2024 and early 2025."
                   source="Death of Prompt Engineering: AI Orchestration in 2026 — BigBlue Academy"
                   color="#f97316"
                 />
                 <p>
-                  What replaced it was a different way of working with AI entirely. In mid-2025, Andrej Karpathy named the successor: <span className="font-medium text-gray-900 dark:text-white">"context engineering"</span> — what you give the AI matters more than how you phrase the request. For serious applications, the "prompt" is now a system: documents, tools, data pipelines, not a carefully worded sentence.
-                </p>
-                <div className="rounded-xl bg-black/[0.03] dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/6 p-4 flex flex-col gap-2">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500">What replaced prompt engineering</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-1">
-                    {[
-                      { label: 'Context Engineering', desc: 'Deciding what information the AI sees — not just what you type, but what documents and data it has access to', color: '#8b5cf6' },
-                      { label: 'Agent Systems', desc: 'AI that runs multi-step tasks automatically: searching, writing, using tools, checking its own work', color: '#3b82f6' },
-                      { label: 'Reference-Guided Generation', desc: 'For images and video — upload what you want instead of describing it', color: '#f97316' },
-                    ].map((r) => (
-                      <div key={r.label} className="flex flex-col gap-1">
-                        <span className="text-xs font-semibold" style={{ color: r.color }}>{r.label}</span>
-                        <p className="text-[11px] text-gray-500 dark:text-zinc-400 leading-relaxed">{r.desc}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </Section>
-
-            <Section title="Brief Architecture: What You Put In" id="context-engineering">
-              <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
-                <p>
-                  Most generations fail not because the prompt is badly worded, but because the wrong information is in the brief. What you include shapes the output as much as what you ask for.
-                </p>
-                <p>
-                  A generation model's "context" is everything you feed it: the text prompt, reference images, audio clips, previous frames. The skill is knowing what to include and — just as importantly — what to leave out. Too many competing references and the model averages them into something generic. Too little and it fills the gaps by guessing.
+                  Andrej Karpathy named the successor in mid-2025: <span className="font-medium text-gray-900 dark:text-white">context engineering</span> — what information the AI sees matters more than how you phrase the request. For image and video generation, context means the full brief: reference images, audio clips, previous frames, and text. The skill is knowing what to include and what to leave out.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {[
                     {
                       label: 'One reference per role',
-                      desc: "Don't stack five style references hoping the model blends them well. Pick one. Competing references produce averaged, muddied results.",
+                      desc: "Don't stack five style references hoping the model blends them. Pick one. Competing references produce averaged, muddied results.",
                       color: '#ec4899',
                     },
                     {
-                      label: 'Replace words with images',
-                      desc: "A style reference image is more precise than 200 words about the aesthetic. If you can show it, don't describe it.",
-                      color: '#8b5cf6',
-                    },
-                    {
                       label: 'Keep the brief scene-specific',
-                      desc: "Don't carry forward every reference from your last five shots. Only include what's directly relevant to this frame or clip.",
+                      desc: "Only include what's relevant to this frame. Don't carry forward every reference from your last five shots.",
                       color: '#f97316',
                     },
                     {
-                      label: 'Maintain a style card for long projects',
-                      desc: 'For multi-scene or multi-session work, keep a consistent core brief — character, palette, look — rather than re-explaining from scratch each time.',
+                      label: 'Known vs. unknown',
+                      desc: "Models already know cinematic language, lighting, and art movements. Supply what they don't know: your character, your palette, your style.",
+                      color: '#8b5cf6',
+                    },
+                    {
+                      label: 'Maintain a style card',
+                      desc: 'For multi-scene work, keep a consistent core brief — character, palette, look — rather than re-explaining each time.',
                       color: '#14b8a6',
                     },
                   ].map((item) => (
@@ -547,11 +477,6 @@ export default function StateOfPromptingPage() {
                       <p className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">{item.desc}</p>
                     </div>
                   ))}
-                </div>
-                <div className="rounded-xl bg-violet-50 dark:bg-violet-950/20 border border-violet-200 dark:border-violet-800/30 p-4">
-                  <p className="text-sm text-violet-700 dark:text-violet-300 leading-relaxed">
-                    <span className="font-semibold">Known vs. unknown.</span> Models already understand cinematic language, lighting setups, camera moves, and art movements deeply. What they don't know is your specific character design, your brand palette, or the visual style you've built across prior sessions. That's the part you need to supply explicitly — with reference images, not descriptions.
-                  </p>
                 </div>
               </div>
             </Section>
