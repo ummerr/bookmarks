@@ -278,7 +278,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     fetch('/api/stats')
-      .then((r) => r.json())
+      .then((r) => { if (!r.ok) throw new Error(r.statusText); return r.json() })
       .then((data) => {
         const breakdown = data.byCategory ? computeMediaBreakdown(data.byCategory) : []
         const imageCount = breakdown.find((b) => b.label === 'Image')?.count ?? 0

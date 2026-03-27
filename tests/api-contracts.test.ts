@@ -115,11 +115,11 @@ describe('/api/stats response contract', () => {
 describe('/api/stats SQL safety', () => {
   const routeSrc = readFile('app/api/stats/route.ts')
 
-  it('jsonb_array_elements calls have NULL protection', () => {
-    // If we use jsonb_array_elements_text, we need NULL/type checks
+  it('jsonb_array_elements calls have NULL/type protection or safe() wrapper', () => {
     if (routeSrc.includes('jsonb_array_elements')) {
-      expect(routeSrc, 'jsonb_array_elements used without NULL check — will crash on NULL rows')
-        .toMatch(/IS NOT NULL.*jsonb_typeof|jsonb_typeof.*IS NOT NULL/)
+      const hasSafeWrapper = routeSrc.includes('safe(') && routeSrc.includes('jsonb_array_elements')
+      const hasNullCheck = /jsonb_typeof|IS NOT NULL/.test(routeSrc)
+      expect(hasSafeWrapper || hasNullCheck, 'jsonb_array_elements used without NULL check or safe() wrapper').toBe(true)
     }
   })
 

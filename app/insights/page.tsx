@@ -241,8 +241,8 @@ export default function InsightsPage() {
 
   useEffect(() => {
     fetch('/api/stats')
-      .then((r) => r.json())
-      .then((d) => { setStats(d); setLoading(false) })
+      .then((r) => { if (!r.ok) throw new Error(r.statusText); return r.json() })
+      .then((d) => { if (d.total != null) setStats(d); setLoading(false) })
       .catch(() => setLoading(false))
   }, [])
 

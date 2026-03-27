@@ -213,8 +213,8 @@ export default function StateOfPromptingPage() {
 
   useEffect(() => {
     fetch('/api/stats')
-      .then((r) => r.json())
-      .then((d) => setStats(d))
+      .then((r) => { if (!r.ok) throw new Error(r.statusText); return r.json() })
+      .then((d) => { if (d.total != null) setStats(d) })
       .catch(() => {})
 
     // Fetch real prompt examples for each section
@@ -798,8 +798,12 @@ enters. Warm golden lighting.`}</pre>
                     <div className="rounded-xl border border-black/[0.06] dark:border-white/[0.06] bg-white dark:bg-[#111] p-4 flex flex-col gap-2">
                       <h4 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400 dark:text-zinc-500">What the numbers say</h4>
                       <div className="flex flex-col gap-1.5 text-xs text-gray-600 dark:text-zinc-300">
-                        <p>→ <span className="font-medium">{100 - refPct}% of viral prompts are still text-only</span> — reference-guided generation is best practice, not common practice.</p>
-                        <p>→ <span className="font-medium">Only {longPromptPct}% exceed 200 characters.</span> Short, specific prompts outperform verbose ones. Models fill gaps better than they parse walls of text.</p>
+                        <p>→ <span className="font-medium">{refPct}% of viral prompts use reference images.</span> {refPct >= 40
+                          ? 'Reference is the new text — creators increasingly let images do the talking instead of writing longer descriptions.'
+                          : 'Reference-guided generation is best practice, not yet common practice. Most viral prompts are still text-only.'}</p>
+                        <p>→ <span className="font-medium">{longPromptPct}% exceed 200 characters.</span> {longPromptPct >= 50
+                          ? 'Viral prompts tend to be detailed and descriptive — creators invest in specificity to get the output they want.'
+                          : 'Short, specific prompts outperform verbose ones. Models fill gaps better than they parse walls of text.'}</p>
                         {topThemes.length >= 3 && (
                           <p>→ <span className="font-medium">Top themes: {topThemes.slice(0, 3).map((t) => t.label).join(', ')}.</span> The aesthetic distribution is heavily skewed — a few styles dominate viral engagement.</p>
                         )}
