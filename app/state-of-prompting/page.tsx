@@ -2,14 +2,6 @@
 
 import { useState, useEffect } from 'react'
 
-interface StatsData {
-  total: number
-  withReference: number
-  withTheme: number
-  byCategory: { label: string; value: number }[]
-  byModel: { label: string; value: number }[]
-}
-
 const NAV_SECTIONS = [
   { id: 'findings',            label: 'Key Findings' },
   { id: 'references',         label: 'The Reference Shift' },
@@ -96,26 +88,10 @@ function FindingCard({ number, title, body, color }: {
   )
 }
 
-function StatCard({ value, label, sublabel, color }: { value: string; label: string; sublabel?: string; color: string }) {
-  return (
-    <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-white/[0.03] px-5 py-4 flex flex-col gap-0.5">
-      <div className="text-2xl md:text-3xl font-bold tabular-nums tracking-tight" style={{ color }}>{value}</div>
-      <div className="text-xs font-medium text-gray-700 dark:text-zinc-300">{label}</div>
-      {sublabel && <div className="text-[11px] text-gray-400 dark:text-zinc-500">{sublabel}</div>}
-    </div>
-  )
-}
+
 
 export default function StateOfPromptingPage() {
-  const [stats, setStats] = useState<StatsData | null>(null)
   const [activeId, setActiveId] = useState('')
-
-  useEffect(() => {
-    fetch('/api/stats')
-      .then((r) => r.json())
-      .then(setStats)
-      .catch(() => {})
-  }, [])
 
   useEffect(() => {
     const observers: IntersectionObserver[] = []
@@ -131,13 +107,6 @@ export default function StateOfPromptingPage() {
     })
     return () => observers.forEach((o) => o.disconnect())
   }, [])
-
-  const refPct = stats ? Math.round((stats.withReference / stats.total) * 100) : null
-  const videoCats = ['video_t2v', 'video_i2v', 'video_r2v', 'video_v2v']
-  const videoTotal = stats
-    ? stats.byCategory.filter((c) => videoCats.includes(c.label)).reduce((s, c) => s + c.value, 0)
-    : null
-  const videoPct = stats && videoTotal !== null ? Math.round((videoTotal / stats.total) * 100) : null
 
   return (
     <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
@@ -208,27 +177,6 @@ export default function StateOfPromptingPage() {
                 />
               </div>
             </Section>
-
-            {stats && (
-              <Section title="From This Dataset">
-                <p className="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">
-                  Patterns from <span className="font-medium text-gray-700 dark:text-zinc-200">{stats.total.toLocaleString()} real-world prompts</span> shared publicly by practitioners — consistent with the broader trends described here.
-                </p>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <StatCard value={`${refPct ?? '—'}%`} label="need a reference image" sublabel="face, style, object, or pose" color="#f97316" />
-                  <StatCard value={`${videoPct ?? '—'}%`} label="are video prompts" sublabel="text-to-video, image-to-video…" color="#8b5cf6" />
-                  <StatCard value={stats.byModel.length.toString()} label="distinct AI models" sublabel="tracked in the wild" color="#1DA1F2" />
-                  <StatCard value={stats.withTheme.toLocaleString()} label="theme-tagged prompts" sublabel="person, cinematic, scifi…" color="#22c55e" />
-                </div>
-                {refPct !== null && refPct > 25 && (
-                  <div className="rounded-xl bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800/30 p-4">
-                    <p className="text-sm text-orange-700 dark:text-orange-300 leading-relaxed">
-                      <span className="font-semibold">{refPct}% of prompts in this dataset require a reference image</span> — nearly one in three. The real number is likely higher: many text-only prompts are shared alongside a reference output image, even when the workflow doesn't formally require one.
-                    </p>
-                  </div>
-                )}
-              </Section>
-            )}
 
             <Section title="The Shift to References" id="references">
               <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
