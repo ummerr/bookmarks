@@ -11,9 +11,18 @@ function getSql() {
 // ── Row → Bookmark ────────────────────────────────────────────────────────
 
 function detectMultiShot(text: string): boolean {
-  const shotCount = (text.match(/\bshot\s*\d+/gi) ?? []).length
-  const cutCount = (text.match(/\bcut\s*\d+/gi) ?? []).length
-  return shotCount >= 2 || cutCount >= 2
+  if (!text) return false
+  // Timestamp syntax: [0s], [3s], [0s-3s], [3s-6s] — Kling / Seedance style
+  if ((text.match(/\[\d+s(?:-\d+s)?\]/gi) ?? []).length >= 2) return true
+  // Numbered shot / cut labels: "Shot 1", "Shot 2" / "Cut 1", "Cut 2"
+  if ((text.match(/\bshot\s*\d+/gi) ?? []).length >= 2) return true
+  if ((text.match(/\bcut\s*\d+/gi) ?? []).length >= 2) return true
+  // Scene / clip labels: "Scene 1", "Clip 2"
+  if ((text.match(/\bscene\s*\d+/gi) ?? []).length >= 2) return true
+  if ((text.match(/\bclip\s*\d+/gi) ?? []).length >= 2) return true
+  // Ordinal shot labels: "first shot", "second shot"
+  if ((text.match(/\b(first|second|third|fourth)\s+shot\b/gi) ?? []).length >= 2) return true
+  return false
 }
 
 // Safely coerce a JSONB column to an array — handles string, parsed array, or junk
