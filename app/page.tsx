@@ -139,10 +139,22 @@ interface FeaturedPrompt {
   author_handle: string
 }
 
-function FeaturedPromptCard({ prompt }: { prompt: FeaturedPrompt }) {
+function FeaturedPromptCard() {
+  const [prompt, setPrompt] = useState<FeaturedPrompt | null>(null)
+  const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
 
-  const categoryLabel = prompt.prompt_category
+  function fetchRandom() {
+    setLoading(true)
+    fetch('/api/prompts/random')
+      .then((r) => r.json())
+      .then((data) => { if (data.extracted_prompt) setPrompt(data) })
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => { fetchRandom() }, [])
+
+  const categoryLabel = prompt?.prompt_category
     ? TECHNIQUE_LABELS[prompt.prompt_category]?.label ?? prompt.prompt_category.replace(/_/g, ' ')
     : null
 
@@ -153,7 +165,7 @@ function FeaturedPromptCard({ prompt }: { prompt: FeaturedPrompt }) {
           Random prompt
         </span>
         <div className="flex items-center gap-2">
-          {prompt.detected_model && (
+          {prompt?.detected_model && (
             <span className="rounded-full bg-violet-500/10 px-2.5 py-0.5 text-xs font-medium text-violet-600 dark:text-violet-400">
               {prompt.detected_model}
             </span>
@@ -163,31 +175,55 @@ function FeaturedPromptCard({ prompt }: { prompt: FeaturedPrompt }) {
               {categoryLabel}
             </span>
           )}
+          <button
+            onClick={fetchRandom}
+            disabled={loading}
+            className="rounded-full p-1.5 text-gray-400 dark:text-zinc-500 hover:text-gray-700 dark:hover:text-zinc-300 hover:bg-black/[0.05] dark:hover:bg-white/[0.05] transition-colors disabled:opacity-40"
+            title="Shuffle"
+          >
+            <svg
+              className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`}
+              fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
         </div>
       </div>
-      <pre className="whitespace-pre-wrap font-mono text-[13px] leading-relaxed text-gray-800 dark:text-zinc-200 max-h-48 overflow-y-auto mb-5">
-        {prompt.extracted_prompt}
-      </pre>
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() => {
-            navigator.clipboard.writeText(prompt.extracted_prompt)
-            setCopied(true)
-            setTimeout(() => setCopied(false), 2000)
-          }}
-          className="rounded-lg bg-black/5 dark:bg-white/5 px-3.5 py-1.5 text-sm font-medium text-gray-700 dark:text-zinc-300 hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
-        >
-          {copied ? 'Copied!' : 'Copy prompt'}
-        </button>
-        <a
-          href={prompt.tweet_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300 transition-colors"
-        >
-          @{prompt.author_handle} &rarr;
-        </a>
-      </div>
+      {prompt ? (
+        <>
+          <pre className="whitespace-pre-wrap font-mono text-[13px] leading-relaxed text-gray-800 dark:text-zinc-200 max-h-48 overflow-y-auto mb-5">
+            {prompt.extracted_prompt}
+          </pre>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(prompt.extracted_prompt)
+                setCopied(true)
+                setTimeout(() => setCopied(false), 2000)
+              }}
+              className="rounded-lg bg-black/5 dark:bg-white/5 px-3.5 py-1.5 text-sm font-medium text-gray-700 dark:text-zinc-300 hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+            >
+              {copied ? 'Copied!' : 'Copy prompt'}
+            </button>
+            <a
+              href={prompt.tweet_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300 transition-colors"
+            >
+              @{prompt.author_handle} &rarr;
+            </a>
+          </div>
+        </>
+      ) : (
+        <div className="h-24 flex items-center justify-center">
+          <svg className="h-4 w-4 animate-spin text-gray-300 dark:text-zinc-600" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+          </svg>
+        </div>
+      )}
     </div>
   )
 }
@@ -236,7 +272,6 @@ export default function LandingPage() {
   const [stats, setStats] = useState<Stats>({
     total: 0, models: 0, withReference: 0, imageCount: 0, videoCount: 0, loaded: false,
   })
-  const [featured, setFeatured] = useState<FeaturedPrompt | null>(null)
   const [mediaBreakdown, setMediaBreakdown] = useState<MediaBreakdown[]>([])
   const [techniques, setTechniques] = useState<TechniqueBreakdown[]>([])
   const [topModels, setTopModels] = useState<ModelCount[]>([])
@@ -275,12 +310,6 @@ export default function LandingPage() {
         setStats((s) => ({ ...s, loaded: true }))
       })
 
-    fetch('/api/prompts/random')
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.extracted_prompt) setFeatured(data)
-      })
-      .catch(() => {})
   }, [])
 
   return (
@@ -394,11 +423,9 @@ export default function LandingPage() {
       )}
 
       {/* ── Featured prompt ───────────────────────────────────────────── */}
-      {featured && (
-        <section className="max-w-4xl mx-auto px-5 pb-20">
-          <FeaturedPromptCard prompt={featured} />
-        </section>
-      )}
+      <section className="max-w-4xl mx-auto px-5 pb-20">
+        <FeaturedPromptCard />
+      </section>
 
       {/* ── Benchmark comparison ──────────────────────────────────────── */}
       <section className="max-w-4xl mx-auto px-5 pb-20">
