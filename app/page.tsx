@@ -244,25 +244,25 @@ export default function LandingPage() {
     fetch('/api/stats')
       .then((r) => r.json())
       .then((data) => {
-        if (data.total) {
-          const uniqueModels = data.byModel?.length ?? 0
-          const breakdown = data.byCategory ? computeMediaBreakdown(data.byCategory) : []
-          const imageCount = breakdown.find((b) => b.label === 'Image')?.count ?? 0
-          const videoCount = breakdown.find((b) => b.label === 'Video')?.count ?? 0
-          setStats({
-            total: data.total,
-            models: uniqueModels,
-            withReference: data.withReference ?? 0,
-            imageCount,
-            videoCount,
-            loaded: true,
-          })
-          setMediaBreakdown(breakdown)
-          if (data.byCategory) setTechniques(computeTechniques(data.byCategory))
-          if (data.byModel) setTopModels(data.byModel)
-        }
+        const uniqueModels = data.byModel?.length ?? 0
+        const breakdown = data.byCategory ? computeMediaBreakdown(data.byCategory) : []
+        const imageCount = breakdown.find((b) => b.label === 'Image')?.count ?? 0
+        const videoCount = breakdown.find((b) => b.label === 'Video')?.count ?? 0
+        setStats({
+          total: data.total ?? 0,
+          models: uniqueModels,
+          withReference: data.withReference ?? 0,
+          imageCount,
+          videoCount,
+          loaded: true,
+        })
+        setMediaBreakdown(breakdown)
+        if (data.byCategory) setTechniques(computeTechniques(data.byCategory))
+        if (data.byModel) setTopModels(data.byModel)
       })
-      .catch(() => {})
+      .catch(() => {
+        setStats((s) => ({ ...s, loaded: true }))
+      })
 
     fetch('/api/prompts/random')
       .then((r) => r.json())
