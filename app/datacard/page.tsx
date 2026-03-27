@@ -163,7 +163,7 @@ function StatPill({ value, label, sub, color }: { value: string | number; label:
         {typeof value === 'number' ? value.toLocaleString() : value}
       </div>
       <div className="text-xs font-medium text-gray-700 dark:text-zinc-300">{label}</div>
-      {sub && <div className="text-[10px] text-gray-400 dark:text-zinc-600">{sub}</div>}
+      {sub && <div className="text-[11px] text-gray-400 dark:text-zinc-600">{sub}</div>}
     </div>
   )
 }
@@ -254,13 +254,13 @@ export default function DatacardPage() {
             >
               Download CSV
             </a>
-            <span className="text-[10px] text-gray-400 dark:text-zinc-600">CC BY 4.0 — cite as ummerr/prompts</span>
+            <span className="text-[11px] text-gray-400 dark:text-zinc-600">CC BY 4.0 — cite as ummerr/prompts</span>
           </div>
         </div>
 
         {/* Research Context ─────────────────────────────────────────────── */}
         <Section title="Why This Dataset Exists">
-          <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
+          <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
             <p>
               Existing prompt evaluation benchmarks — DrawBench, PartiPrompts, T2I-CompBench — were
               designed for model evaluation, not for studying practitioner behavior. They are either
@@ -440,7 +440,7 @@ export default function DatacardPage() {
 
         {/* About ────────────────────────────────────────────────────────── */}
         <Section title="Curation & Collection">
-          <div className="flex flex-col gap-3 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
+          <div className="flex flex-col gap-3 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
             <div className="rounded-xl bg-black/[0.03] dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/6 p-4 flex flex-col gap-4">
               <div>
                 <span className="font-semibold text-gray-900 dark:text-white">Selection mechanism.</span>{' '}
@@ -537,12 +537,12 @@ export default function DatacardPage() {
                 style={{ borderColor: `${l.color}30` }}
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: l.color }}>Limitation</span>
+                  <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: l.color }}>Limitation</span>
                   <span className="text-sm font-semibold text-gray-900 dark:text-white">{l.title}</span>
                 </div>
                 <p className="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">{l.body}</p>
                 <div className="flex gap-2 pt-1 border-t border-black/[0.05] dark:border-white/5">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-500 shrink-0 mt-0.5">Mitigation</span>
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-emerald-500 shrink-0 mt-0.5">Mitigation</span>
                   <p className="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">{l.mitigation}</p>
                 </div>
               </div>
@@ -636,7 +636,7 @@ export default function DatacardPage() {
         {/* License ──────────────────────────────────────────────────────── */}
         <Section title="License & Citation">
           <div className="flex flex-col gap-3">
-            <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-5 flex flex-col gap-3 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
+            <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-5 flex flex-col gap-3 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
               <div className="flex items-center gap-2">
                 <span className="font-semibold text-gray-900 dark:text-white">License:</span>
                 <Badge color="#22c55e">Creative Commons Attribution 4.0 (CC BY 4.0)</Badge>

@@ -144,7 +144,7 @@ export default function PromptCard({ bookmark }: { bookmark: Bookmark }) {
       )}
 
       {/* Prompt text */}
-      <pre className="whitespace-pre-wrap break-words text-sm text-gray-700 dark:text-zinc-100 font-mono leading-relaxed bg-black/[0.03] dark:bg-white/[0.03] rounded-lg p-3 border border-black/[0.05] dark:border-white/5 overflow-auto max-h-64">
+      <pre className="whitespace-pre-wrap break-words text-[13.5px] text-gray-700 dark:text-zinc-100 font-mono leading-[1.7] bg-black/[0.03] dark:bg-white/[0.03] rounded-lg p-3 border border-black/[0.05] dark:border-white/5 overflow-auto max-h-64">
         {prompt}
       </pre>
 

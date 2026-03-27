@@ -58,7 +58,7 @@ const NAV_SECTIONS = [
 function SectionNav({ activeId }: { activeId: string }) {
   return (
     <nav className="flex flex-col gap-0.5">
-      <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 mb-2 px-2">
+      <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 mb-2 px-2">
         On this page
       </p>
       {NAV_SECTIONS.map((s) => (
@@ -110,7 +110,7 @@ function Insight({ quote, source, color = '#1DA1F2' }: { quote: string; source: 
   return (
     <div className="rounded-xl border bg-white dark:bg-[#111] p-6" style={{ borderColor: `${color}30` }}>
       <p className="font-serif text-base md:text-[17px] italic text-gray-800 dark:text-zinc-100 leading-[1.6]">"{quote}"</p>
-      <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-400 dark:text-zinc-500">{source}</p>
+      <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400 dark:text-zinc-500">{source}</p>
     </div>
   )
 }
@@ -123,7 +123,7 @@ function FindingCard({ number, title, body, color }: {
       <div className="font-mono text-lg font-bold tabular-nums shrink-0 leading-none mt-0.5" style={{ color }}>{number}</div>
       <div className="flex flex-col gap-2">
         <div className="text-[15px] font-semibold text-gray-900 dark:text-white leading-snug">{title}</div>
-        <div className="text-sm text-gray-500 dark:text-zinc-400 leading-[1.7]">{body}</div>
+        <div className="text-[15px] text-gray-500 dark:text-zinc-400 leading-[1.75]">{body}</div>
       </div>
     </div>
   )
@@ -146,12 +146,12 @@ function RealPrompt({ prompt, label, onShuffle, loading }: {
     <div className="rounded-xl border-l-[3px] border border-black/[0.06] dark:border-white/[0.06] bg-white dark:bg-[#111] overflow-hidden" style={{ borderLeftColor: '#8b5cf680' }}>
       {label && (
         <div className="flex items-center justify-between px-4 pt-3">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-violet-500/70">{label}</span>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-violet-500/70">{label}</span>
           {onShuffle && (
             <button
               onClick={onShuffle}
               disabled={loading}
-              className="text-[10px] text-gray-400 dark:text-zinc-500 hover:text-violet-500 transition-colors disabled:opacity-50"
+              className="text-[11px] text-gray-400 dark:text-zinc-500 hover:text-violet-500 transition-colors disabled:opacity-50"
             >
               {loading ? '…' : '↻ shuffle'}
             </button>
@@ -164,29 +164,29 @@ function RealPrompt({ prompt, label, onShuffle, loading }: {
         <>
           <pre className="px-4 py-3 text-[12px] font-mono text-gray-700 dark:text-zinc-200 leading-[1.7] whitespace-pre-wrap">{displayText}</pre>
           {isLong && (
-            <button onClick={() => setExpanded(!expanded)} className="px-4 pb-1 text-[10px] text-violet-500 hover:underline">
+            <button onClick={() => setExpanded(!expanded)} className="px-4 pb-1 text-[11px] text-violet-500 hover:underline">
               {expanded ? 'Show less' : 'Show full prompt'}
             </button>
           )}
           <div className="flex items-center gap-2 px-4 py-2.5 border-t border-black/[0.04] dark:border-white/[0.04] bg-black/[0.015] dark:bg-white/[0.015] flex-wrap">
             {prompt?.detected_model && (
-              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-violet-500/10 text-violet-600 dark:text-violet-400">{prompt.detected_model}</span>
+              <span className="text-[11px] font-medium px-1.5 py-0.5 rounded bg-violet-500/10 text-violet-600 dark:text-violet-400">{prompt.detected_model}</span>
             )}
             {prompt?.prompt_category && (
-              <span className="text-[10px] text-gray-400 dark:text-zinc-500">{CATEGORY_LABELS[prompt.prompt_category] ?? prompt.prompt_category}</span>
+              <span className="text-[11px] text-gray-400 dark:text-zinc-500">{CATEGORY_LABELS[prompt.prompt_category] ?? prompt.prompt_category}</span>
             )}
             {prompt?.requires_reference && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-orange-500/10 text-orange-600 dark:text-orange-400">reference</span>
+              <span className="text-[11px] px-1.5 py-0.5 rounded bg-orange-500/10 text-orange-600 dark:text-orange-400">reference</span>
             )}
             {prompt?.is_multi_shot && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-teal-500/10 text-teal-600 dark:text-teal-400">multi-shot</span>
+              <span className="text-[11px] px-1.5 py-0.5 rounded bg-teal-500/10 text-teal-600 dark:text-teal-400">multi-shot</span>
             )}
-            <span className="text-[10px] text-gray-300 dark:text-zinc-600 tabular-nums">{text.length} chars</span>
+            <span className="text-[11px] text-gray-300 dark:text-zinc-600 tabular-nums">{text.length} chars</span>
             <a
               href={prompt?.tweet_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-auto text-[10px] text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300 transition-colors"
+              className="ml-auto text-[11px] text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300 transition-colors"
             >
               @{prompt?.author_handle} ↗
             </a>
@@ -320,7 +320,7 @@ export default function StateOfPromptingPage() {
             </Section>
 
             <Section title="The Shift to References" id="references">
-              <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
+              <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <p>
                   In 2023, the dominant idea was simple: write a better prompt, get a better output. By 2025, that had quietly collapsed — not through debate, but through tooling.
                 </p>
@@ -352,7 +352,7 @@ export default function StateOfPromptingPage() {
             </Section>
 
             <Section title="From Prompt Engineering to Context Engineering" id="prompt-engineering">
-              <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
+              <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <Insight
                   quote="The primitive era of prompt engineering — characterized by trial-and-error iteration and artisanal prompt crafting — died somewhere between late 2024 and early 2025."
                   source="Death of Prompt Engineering: AI Orchestration in 2026 — BigBlue Academy"
@@ -394,7 +394,7 @@ export default function StateOfPromptingPage() {
             </Section>
 
             <Section title="How Video Prompting Works Now" id="video">
-              <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
+              <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <p>
                   Video prompting is a different skill from image prompting. Each of the major tools has a distinct personality — a prompt that works on one can fail on another.
                 </p>
@@ -407,7 +407,7 @@ export default function StateOfPromptingPage() {
                 <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-5 md:p-6">
                   <div className="flex items-center justify-between mb-1">
                     <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Arena Leaderboards</h4>
-                    <a href="https://artificialanalysis.ai" target="_blank" rel="noopener noreferrer" className="text-[10px] text-gray-400 dark:text-zinc-500 font-mono hover:underline">Source: Artificial Analysis · Mar 2026</a>
+                    <a href="https://artificialanalysis.ai" target="_blank" rel="noopener noreferrer" className="text-[11px] text-gray-400 dark:text-zinc-500 font-mono hover:underline">Source: Artificial Analysis · Mar 2026</a>
                   </div>
                   <p className="text-[11px] text-gray-400 dark:text-zinc-500 mb-5">Top 5 by ELO across five arena categories. Scores reflect community head-to-head voting, not automated benchmarks.</p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -480,7 +480,7 @@ export default function StateOfPromptingPage() {
                               const isDead = 'dead' in e && (e as { dead?: boolean }).dead
                               return (
                                 <div key={e.model} className={`flex items-center gap-2 ${isDead ? 'opacity-45' : ''}`}>
-                                  <span className="text-[10px] font-mono text-gray-400 dark:text-zinc-500 w-3 text-right">{i + 1}</span>
+                                  <span className="text-[11px] font-mono text-gray-400 dark:text-zinc-500 w-3 text-right">{i + 1}</span>
                                   <span className={`text-[11px] font-medium w-36 shrink-0 truncate ${isDead ? 'text-gray-400 dark:text-zinc-500 line-through' : 'text-gray-700 dark:text-zinc-300'}`}>{e.model}</span>
                                   <div className="flex-1 h-4 bg-black/[0.03] dark:bg-white/[0.03] rounded overflow-hidden">
                                     <div
@@ -488,7 +488,7 @@ export default function StateOfPromptingPage() {
                                       style={{ width: `${barPct}%`, backgroundColor: isDead ? '#6b728020' : `${arena.color}25`, borderLeft: `2px solid ${isDead ? '#6b7280' : arena.color}` }}
                                     />
                                   </div>
-                                  <span className={`text-[10px] font-mono font-semibold w-9 text-right ${isDead ? 'line-through' : ''}`} style={{ color: isDead ? '#6b7280' : arena.color }}>{e.elo}</span>
+                                  <span className={`text-[11px] font-mono font-semibold w-9 text-right ${isDead ? 'line-through' : ''}`} style={{ color: isDead ? '#6b7280' : arena.color }}>{e.elo}</span>
                                 </div>
                               )
                             })}
@@ -588,7 +588,7 @@ export default function StateOfPromptingPage() {
             </Section>
 
             <Section title="Multi-Shot Prompting" id="multishot">
-              <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
+              <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <p>
                   Single-shot AI video is B-roll. Multi-shot AI video is an edited scene. Kling 3.0's February 2026 launch popularized the technique — and it's now the standard for anything with narrative structure.
                 </p>
@@ -602,7 +602,7 @@ export default function StateOfPromptingPage() {
                       <div className="px-4 py-2.5 bg-pink-500/5 dark:bg-pink-500/10 border-b border-black/[0.06] dark:border-white/6 flex items-center gap-2">
                         <span className="w-2.5 h-2.5 rounded-full bg-pink-500" />
                         <span className="text-[11px] font-bold uppercase tracking-widest text-pink-600 dark:text-pink-400">Kling 3.0</span>
-                        <span className="ml-auto text-[10px] text-gray-400 dark:text-zinc-500">Shot-label format</span>
+                        <span className="ml-auto text-[11px] text-gray-400 dark:text-zinc-500">Shot-label format</span>
                       </div>
                       <pre className="text-[11px] text-gray-600 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap font-mono p-4 bg-white dark:bg-[#111]">{`Shot 1 (0–4s): Wide — rain-soaked city street,
 amber streetlights, slow dolly forward.
@@ -613,7 +613,7 @@ running through alley, tracking shot.
 Shot 3 (8–12s): Close-up — catching breath,
 eyes wide. [breathless]: "They found us."`}</pre>
                       <div className="px-4 py-2 border-t border-black/[0.04] dark:border-white/[0.04] bg-black/[0.01] dark:bg-white/[0.01]">
-                        <p className="text-[10px] text-gray-400 dark:text-zinc-500">Up to 6 shots · native lip-sync · speaker attribution</p>
+                        <p className="text-[11px] text-gray-400 dark:text-zinc-500">Up to 6 shots · native lip-sync · speaker attribution</p>
                       </div>
                     </div>
                     {/* Seedance column */}
@@ -621,7 +621,7 @@ eyes wide. [breathless]: "They found us."`}</pre>
                       <div className="px-4 py-2.5 bg-emerald-500/5 dark:bg-emerald-500/10 border-b border-black/[0.06] dark:border-white/6 flex items-center gap-2">
                         <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                         <span className="text-[11px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Seedance 2.0</span>
-                        <span className="ml-auto text-[10px] text-gray-400 dark:text-zinc-500">Timestamp format</span>
+                        <span className="ml-auto text-[11px] text-gray-400 dark:text-zinc-500">Timestamp format</span>
                       </div>
                       <pre className="text-[11px] text-gray-600 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap font-mono p-4 bg-white dark:bg-[#111]">{`[0s]: Wide shot — character enters a dimly
 lit cafe, looking around curiously.
@@ -636,7 +636,7 @@ coffee with a warm smile.
 [10s]: Close-up — eyes react as someone
 enters. Warm golden lighting.`}</pre>
                       <div className="px-4 py-2 border-t border-black/[0.04] dark:border-white/[0.04] bg-black/[0.01] dark:bg-white/[0.01]">
-                        <p className="text-[10px] text-gray-400 dark:text-zinc-500">Uses <code className="bg-black/[0.05] dark:bg-white/[0.05] px-1 rounded">Shot switch</code> or <code className="bg-black/[0.05] dark:bg-white/[0.05] px-1 rounded">Cut to</code> as scene markers</p>
+                        <p className="text-[11px] text-gray-400 dark:text-zinc-500">Uses <code className="bg-black/[0.05] dark:bg-white/[0.05] px-1 rounded">Shot switch</code> or <code className="bg-black/[0.05] dark:bg-white/[0.05] px-1 rounded">Cut to</code> as scene markers</p>
                       </div>
                     </div>
                   </div>
@@ -683,7 +683,7 @@ enters. Warm golden lighting.`}</pre>
             </Section>
 
             <Section title="Every Major Tool Now Accepts Multiple Input Types" id="multimodal">
-              <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
+              <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <p>
                   A year ago, most AI video tools had one input: a text box. Today every major platform accepts text, images, audio, and video in combination.
                 </p>
@@ -725,7 +725,7 @@ enters. Warm golden lighting.`}</pre>
             </Section>
 
             <Section title="From the Dataset" id="from-the-data">
-              <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
+              <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <p>
                   The claims above come from industry reports. This section is different — it's what we see in <Link href="/prompts" className="text-violet-600 dark:text-violet-400 hover:underline font-medium">{stats?.total?.toLocaleString() ?? '—'} real prompts</Link> sourced from viral posts on X. Every prompt below is real — click shuffle to see more.
                 </p>
@@ -777,7 +777,7 @@ enters. Warm golden lighting.`}</pre>
                             const pct = stats.total ? Math.round((m.value / stats.total) * 100) : 0
                             return (
                               <div key={m.label} className="flex items-center gap-2">
-                                <span className="text-[10px] font-mono text-gray-400 dark:text-zinc-500 w-3 text-right">{i + 1}</span>
+                                <span className="text-[11px] font-mono text-gray-400 dark:text-zinc-500 w-3 text-right">{i + 1}</span>
                                 <span className="text-[11px] font-medium w-28 shrink-0 truncate text-gray-700 dark:text-zinc-300">{m.label}</span>
                                 <div className="flex-1 h-4 bg-black/[0.03] dark:bg-white/[0.03] rounded overflow-hidden">
                                   <div
@@ -785,7 +785,7 @@ enters. Warm golden lighting.`}</pre>
                                     style={{ width: `${Math.max(5, (m.value / (topModels[0]?.value || 1)) * 100)}%` }}
                                   />
                                 </div>
-                                <span className="text-[10px] font-mono text-gray-400 dark:text-zinc-500 w-14 text-right shrink-0">
+                                <span className="text-[11px] font-mono text-gray-400 dark:text-zinc-500 w-14 text-right shrink-0">
                                   {m.value} ({pct}%)
                                 </span>
                               </div>
@@ -797,7 +797,7 @@ enters. Warm golden lighting.`}</pre>
 
                     {/* Synthesis — one-line observations */}
                     <div className="rounded-xl border border-black/[0.06] dark:border-white/[0.06] bg-white dark:bg-[#111] p-4 flex flex-col gap-2">
-                      <h4 className="text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-400 dark:text-zinc-500">What the numbers say</h4>
+                      <h4 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400 dark:text-zinc-500">What the numbers say</h4>
                       <div className="flex flex-col gap-1.5 text-xs text-gray-600 dark:text-zinc-300">
                         <p>→ <span className="font-medium">{100 - refPct}% of viral prompts are still text-only</span> — reference-guided generation is best practice, not common practice.</p>
                         <p>→ <span className="font-medium">Only {longPromptPct}% exceed 200 characters.</span> Short, specific prompts outperform verbose ones. Models fill gaps better than they parse walls of text.</p>
@@ -817,7 +817,7 @@ enters. Warm golden lighting.`}</pre>
             </Section>
 
             <Section title="Why Sora Shut Down" id="sora">
-              <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
+              <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <p>
                   On March 24, 2026 — six months after its public launch — OpenAI announced the full shutdown of Sora: the consumer app, ChatGPT video generation, and the API. All of it. At its peak, Sora 2 was the only non-Google model in the T2V top 5 (ELO 1,367), but the economics were never close to working.
                 </p>

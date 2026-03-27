@@ -8,9 +8,9 @@ import { modelToFamily } from '@/components/prompts/constants'
 
 function getBenchmarks(liveTotal: number) {
   return [
-    { name: 'DrawBench',      size: '200',   source: 'Synthetic (LLM)',        modality: 'Image only',    engagement: '—' },
-    { name: 'PartiPrompts',   size: '1,632', source: 'Crowdworkers (Google)',  modality: 'Image only',    engagement: '—' },
-    { name: 'ummerr/prompts', size: liveTotal ? `${liveTotal.toLocaleString()}+` : '—', source: 'Organic / in-the-wild', modality: 'Image + Video', engagement: 'Yes (viral filter)', highlight: true },
+    { name: 'DrawBench',      size: '200',   source: 'Synthetic (LLM)',        modality: 'Image only',    curated: '2022',       engagement: '—' },
+    { name: 'PartiPrompts',   size: '1,632', source: 'Crowdworkers (Google)',  modality: 'Image only',    curated: '2022',       engagement: '—' },
+    { name: 'ummerr/prompts', size: liveTotal ? `${liveTotal.toLocaleString()}+` : '—', source: 'Organic / in-the-wild', modality: 'Image + Video', curated: 'Mar 2026', engagement: 'Yes (viral filter)', highlight: true },
   ]
 }
 
@@ -192,7 +192,7 @@ function FeaturedPromptCard() {
       </div>
       {prompt ? (
         <>
-          <pre className="whitespace-pre-wrap font-mono text-[13px] leading-relaxed text-gray-800 dark:text-zinc-200 max-h-48 overflow-y-auto mb-5">
+          <pre className="whitespace-pre-wrap font-mono text-sm leading-[1.7] text-gray-800 dark:text-zinc-200 max-h-48 overflow-y-auto mb-5">
             {prompt.extracted_prompt}
           </pre>
           <div className="flex items-center gap-3">
@@ -326,7 +326,7 @@ export default function LandingPage() {
             A curated dataset of image and video generation prompts sourced from viral posts on X.
             Every entry is a real prompt that real practitioners shared — and thousands of people copied.
           </p>
-          <p className="mt-3 text-sm text-gray-400 dark:text-zinc-500">
+          <p className="mt-3 text-base text-gray-400 dark:text-zinc-500">
             Hand-labelled by model, technique, theme, and reference type. Zero synthetic prompts.
           </p>
 
@@ -444,6 +444,7 @@ export default function LandingPage() {
                 <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Size</th>
                 <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Source</th>
                 <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Modality</th>
+                <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Curated</th>
                 <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Engagement</th>
               </tr>
             </thead>
