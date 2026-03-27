@@ -158,10 +158,10 @@ export default function DatacardPage() {
       .catch(() => setLoading(false))
   }, [])
 
-  const modelCount = useMemo(() => stats?.byModel.length ?? 0, [stats])
-  const techniqueCount = useMemo(() => stats?.byCategory.length ?? 0, [stats])
-  const topCategory = useMemo(() => stats?.byCategory[0] ?? null, [stats])
-  const topModel = useMemo(() => stats?.byModel[0] ?? null, [stats])
+  const modelCount = useMemo(() => stats?.byModel?.length ?? 0, [stats])
+  const techniqueCount = useMemo(() => stats?.byCategory?.length ?? 0, [stats])
+  const topCategory = useMemo(() => stats?.byCategory?.[0] ?? null, [stats])
+  const topModel = useMemo(() => stats?.byModel?.[0] ?? null, [stats])
 
   return (
     <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
