@@ -312,6 +312,9 @@ function PromptsPageInner() {
   const [activeModel, setActiveModel] = useState<string>(searchParams.get('model') || 'all')
   const [activeMultiShot, setActiveMultiShot] = useState(searchParams.get('multi_shot') === 'true')
   const [search, setSearch] = useState(searchParams.get('q') || '')
+  const [sortBy, setSortBy] = useState<'date' | 'model' | 'length'>(
+    (searchParams.get('sort') as 'date' | 'model' | 'length') || 'date'
+  )
   const [loading, setLoading] = useState(true)
   const [showAllModels, setShowAllModels] = useState(false)
   const [showAdvanced, setShowAdvanced] = useState(
@@ -328,9 +331,10 @@ function PromptsPageInner() {
     if (activeTheme !== 'all') params.set('theme', activeTheme)
     if (activeModel !== 'all') params.set('model', activeModel)
     if (activeMultiShot) params.set('multi_shot', 'true')
+    if (sortBy !== 'date') params.set('sort', sortBy)
     const qs = params.toString()
     router.replace(`${pathname}${qs ? `?${qs}` : ''}`, { scroll: false })
-  }, [search, activeMediaType, activeCategory, activeTheme, activeModel, activeMultiShot]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [search, activeMediaType, activeCategory, activeTheme, activeModel, activeMultiShot, sortBy]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function fetchPrompts(cat: PromptCategory | 'all' | 'uncategorized') {
     setLoading(true)
@@ -414,15 +418,25 @@ function PromptsPageInner() {
           p.author_handle.toLowerCase().includes(q)
       )
     }
-    // Items with no theme tags sink to the bottom
+    // Sort
     result = [...result].sort((a, b) => {
-      const aHas = (a.prompt_themes?.length ?? 0) > 0
-      const bHas = (b.prompt_themes?.length ?? 0) > 0
-      if (aHas === bHas) return 0
-      return aHas ? -1 : 1
+      if (sortBy === 'model') {
+        const aModel = (a.detected_model ?? '').toLowerCase()
+        const bModel = (b.detected_model ?? '').toLowerCase()
+        if (aModel !== bModel) return aModel.localeCompare(bModel)
+      }
+      if (sortBy === 'length') {
+        const aLen = (a.extracted_prompt ?? a.tweet_text).length
+        const bLen = (b.extracted_prompt ?? b.tweet_text).length
+        return bLen - aLen
+      }
+      // Default: by date (most recent first), items with no date sink
+      const aDate = a.bookmarked_at ?? a.created_at ?? ''
+      const bDate = b.bookmarked_at ?? b.created_at ?? ''
+      return bDate.localeCompare(aDate)
     })
     return result
-  }, [allPrompts, activeMediaType, activeTheme, activeModel, activeMultiShot, search])
+  }, [allPrompts, activeMediaType, activeTheme, activeModel, activeMultiShot, search, sortBy])
 
   function clearAllFilters() {
     setActiveMediaType('all')
@@ -431,6 +445,7 @@ function PromptsPageInner() {
     setActiveModel('all')
     setActiveMultiShot(false)
     setSearch('')
+    setSortBy('date')
   }
 
   const activeChips = [
@@ -821,13 +836,35 @@ function PromptsPageInner() {
           </div>
         )}
 
-        {/* Results count + share */}
+        {/* Results count + sort + share */}
         {!loading && (
           <div className="flex items-center justify-between -mb-2">
             <span className="text-xs text-gray-400 dark:text-zinc-600 font-mono">
               {filtered.length.toLocaleString()} prompts
             </span>
-            <CopyLinkButton />
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] text-gray-400 dark:text-zinc-600">Sort</span>
+                {([
+                  { value: 'date', label: 'Date' },
+                  { value: 'model', label: 'Model' },
+                  { value: 'length', label: 'Length' },
+                ] as const).map((s) => (
+                  <button
+                    key={s.value}
+                    onClick={() => setSortBy(s.value)}
+                    className={`rounded-md px-2 py-0.5 text-[11px] transition-colors ${
+                      sortBy === s.value
+                        ? 'bg-black/[0.06] dark:bg-white/[0.08] text-gray-700 dark:text-zinc-200 font-medium'
+                        : 'text-gray-400 dark:text-zinc-600 hover:text-gray-600 dark:hover:text-zinc-400'
+                    }`}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+              <CopyLinkButton />
+            </div>
           </div>
         )}
 
