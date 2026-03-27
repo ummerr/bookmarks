@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
+import { modelToFamily } from '@/components/prompts/constants'
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -245,6 +246,18 @@ export default function InsightsPage() {
       .catch(() => setLoading(false))
   }, [])
 
+  const byModelAggregated = useMemo(() => {
+    if (!stats?.byModel) return []
+    const map = new Map<string, number>()
+    for (const m of stats.byModel) {
+      const family = modelToFamily(m.label)
+      map.set(family, (map.get(family) ?? 0) + m.value)
+    }
+    return Array.from(map.entries())
+      .map(([label, value]) => ({ label, value }))
+      .sort((a, b) => b.value - a.value)
+  }, [stats])
+
   const imageCount = useMemo(() =>
     stats?.byCategory?.filter((c) => c.label.startsWith('image_')).reduce((s, c) => s + c.value, 0) ?? 0
   , [stats])
@@ -297,7 +310,7 @@ export default function InsightsPage() {
           <StatCard value={imageCount} label="Image prompts" color="#ec4899" />
           <StatCard value={videoCount} label="Video prompts" color="#6366f1" />
           <StatCard value={`${refPct}%`} label="Use references" sub={`${stats.withReference ?? 0} prompts`} color="#f97316" />
-          <StatCard value={stats.byModel?.length ?? 0} label="Distinct models" color="#3b82f6" />
+          <StatCard value={byModelAggregated.length} label="Distinct models" color="#3b82f6" />
         </div>
 
         {/* Technique distribution */}
@@ -310,9 +323,9 @@ export default function InsightsPage() {
         )}
 
         {/* Model share */}
-        {(stats.byModel?.length ?? 0) > 0 && (
+        {byModelAggregated.length > 0 && (
           <Section title="Model Share" description="Which AI models appear most often in viral prompts.">
-            <HorizontalBarChart data={stats.byModel.slice(0, 15)} />
+            <HorizontalBarChart data={byModelAggregated.slice(0, 15)} />
           </Section>
         )}
 

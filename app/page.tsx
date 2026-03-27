@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { modelToFamily } from '@/components/prompts/constants'
 
 // ── Benchmark data (condensed from datacard) ────────────────────────────────
 
@@ -244,13 +245,12 @@ export default function LandingPage() {
     fetch('/api/stats')
       .then((r) => r.json())
       .then((data) => {
-        const uniqueModels = data.byModel?.length ?? 0
         const breakdown = data.byCategory ? computeMediaBreakdown(data.byCategory) : []
         const imageCount = breakdown.find((b) => b.label === 'Image')?.count ?? 0
         const videoCount = breakdown.find((b) => b.label === 'Video')?.count ?? 0
         setStats({
           total: data.total ?? 0,
-          models: uniqueModels,
+          models: 0, // will be overwritten after aggregation below
           withReference: data.withReference ?? 0,
           imageCount,
           videoCount,
@@ -258,7 +258,18 @@ export default function LandingPage() {
         })
         setMediaBreakdown(breakdown)
         if (data.byCategory) setTechniques(computeTechniques(data.byCategory))
-        if (data.byModel) setTopModels(data.byModel)
+        if (data.byModel) {
+          const map = new Map<string, number>()
+          for (const m of data.byModel as { label: string; value: number }[]) {
+            const family = modelToFamily(m.label)
+            map.set(family, (map.get(family) ?? 0) + m.value)
+          }
+          const aggregated = Array.from(map.entries())
+            .map(([label, value]) => ({ label, value }))
+            .sort((a, b) => b.value - a.value)
+          setTopModels(aggregated)
+          setStats((s) => ({ ...s, models: aggregated.length }))
+        }
       })
       .catch(() => {
         setStats((s) => ({ ...s, loaded: true }))
