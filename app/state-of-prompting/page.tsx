@@ -7,8 +7,7 @@ const NAV_SECTIONS = [
   { id: 'references',         label: 'The Reference Shift' },
   { id: 'templates',          label: 'Templates' },
   { id: 'prompt-engineering', label: 'Prompt Engineering' },
-  { id: 'context-engineering', label: 'Context Engineering' },
-  { id: 'skills',             label: 'Skills' },
+  { id: 'context-engineering', label: 'Brief Architecture' },
   { id: 'sora',               label: 'Why Sora Shut Down' },
   { id: 'video',              label: 'Video Prompting' },
   { id: 'multimodal',         label: 'Multimodal' },
@@ -167,8 +166,8 @@ export default function StateOfPromptingPage() {
                 <FindingCard
                   number="04"
                   color="#f59e0b"
-                  title="Modular skills are replacing bloated instruction docs"
-                  body="One enormous instruction doc that tries to cover every scenario degrades quality and is slow to load. Skills are the fix: small, focused instruction files that load only when the AI actually needs them. A conversation might invoke one or two while 300 others stay invisible. Over 31,000 skills are now in circulation across 30+ AI tools."
+                  title="The best video prompts describe forces, not aesthetics"
+                  body="Adjective-heavy descriptions — 'cinematic', 'dramatic', 'beautiful' — produce averaged, generic results. The prompts that work describe what is physically happening: camera movement, forces acting on objects, cause and effect sequences. 'Gimbal tracking shot, rear suspension compressing on impact' beats 'cinematic car scene' every time."
                 />
                 <FindingCard
                   number="05"
@@ -255,117 +254,46 @@ export default function StateOfPromptingPage() {
               </div>
             </Section>
 
-            <Section title="Context Engineering" id="context-engineering">
+            <Section title="Brief Architecture: What You Put In" id="context-engineering">
               <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
                 <p>
-                  Context engineering is about deciding what information the AI can see at any given moment — what loads, what stays out, what gets cleared when it's no longer relevant.
+                  Most generations fail not because the prompt is badly worded, but because the wrong information is in the brief. What you include shapes the output as much as what you ask for.
                 </p>
                 <p>
-                  The problem it solves is <span className="font-medium text-gray-900 dark:text-white">context rot</span>. As working memory fills up with old notes, outdated instructions, and irrelevant history, quality degrades — the AI misses things, contradicts itself, loses the thread. More memory delays this; it doesn't fix it. The goal is filling that memory with "precisely the right information for the next step" — not more, not less.
+                  A generation model's "context" is everything you feed it: the text prompt, reference images, audio clips, previous frames. The skill is knowing what to include and — just as importantly — what to leave out. Too many competing references and the model averages them into something generic. Too little and it fills the gaps by guessing.
                 </p>
-                <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] overflow-hidden">
-                  <div className="grid grid-cols-3 text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 border-b border-black/[0.06] dark:border-white/6 px-4 py-2.5">
-                    <span>Technique</span>
-                    <span>How it works</span>
-                    <span>Why it helps</span>
-                  </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {[
                     {
-                      pattern: 'Load on demand',
-                      mech: 'Only bring in tools and instructions when the AI actually needs them. Remove them after.',
-                      goal: "Stops the AI paying attention to rules for situations that haven't happened yet.",
+                      label: 'One reference per role',
+                      desc: "Don't stack five style references hoping the model blends them well. Pick one. Competing references produce averaged, muddied results.",
+                      color: '#ec4899',
                     },
                     {
-                      pattern: 'Summarise history',
-                      mech: 'Periodically compress old conversation history into a short summary. Discard the raw detail.',
-                      goal: 'Keeps memory lean without losing the key decisions already made.',
+                      label: 'Replace words with images',
+                      desc: "A style reference image is more precise than 200 words about the aesthetic. If you can show it, don't describe it.",
+                      color: '#8b5cf6',
                     },
                     {
-                      pattern: 'Store completed work externally',
-                      mech: 'Move finished task records to a database. Pull them back only if they become relevant again.',
-                      goal: 'Prevents long-running tasks from accumulating clutter that buries the current work.',
+                      label: 'Keep the brief scene-specific',
+                      desc: "Don't carry forward every reference from your last five shots. Only include what's directly relevant to this frame or clip.",
+                      color: '#f97316',
                     },
                     {
-                      pattern: 'Limit available tools',
-                      mech: 'Only show the AI which tools it can use right now — not everything it will ever need.',
-                      goal: 'Fewer options means sharper focus and fewer opportunities to go off track.',
+                      label: 'Maintain a style card for long projects',
+                      desc: 'For multi-scene or multi-session work, keep a consistent core brief — character, palette, look — rather than re-explaining from scratch each time.',
+                      color: '#14b8a6',
                     },
-                  ].map((row, i) => (
-                    <div
-                      key={row.pattern}
-                      className={`grid grid-cols-3 px-4 py-3 text-xs items-start gap-2 ${i % 2 === 0 ? '' : 'bg-black/[0.015] dark:bg-white/[0.015]'}`}
-                    >
-                      <span className="font-medium text-gray-800 dark:text-zinc-200">{row.pattern}</span>
-                      <span className="text-gray-500 dark:text-zinc-400 leading-relaxed">{row.mech}</span>
-                      <span className="text-gray-500 dark:text-zinc-400 leading-relaxed">{row.goal}</span>
+                  ].map((item) => (
+                    <div key={item.label} className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4 flex flex-col gap-1.5">
+                      <span className="text-xs font-bold uppercase tracking-widest" style={{ color: item.color }}>{item.label}</span>
+                      <p className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">{item.desc}</p>
                     </div>
                   ))}
                 </div>
                 <div className="rounded-xl bg-violet-50 dark:bg-violet-950/20 border border-violet-200 dark:border-violet-800/30 p-4">
                   <p className="text-sm text-violet-700 dark:text-violet-300 leading-relaxed">
-                    <span className="font-semibold">Known vs. unknown territory.</span> AI already understands TypeScript, React, Python, and most popular tools. It knows nothing about your internal systems. Without that information, it fills the gaps by guessing — confidently. Context engineering is knowing which situation you're in and supplying the missing knowledge explicitly.
-                  </p>
-                </div>
-              </div>
-            </Section>
-
-            <Section title="Skills: Replacing the Bloated Instruction Doc" id="skills">
-              <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
-                <p>
-                  The most common mistake with AI agents is one enormous instruction document covering every scenario. Every session loads the whole thing — whether or not any of it is relevant. Quality degrades, instructions conflict, failures are hard to diagnose.
-                </p>
-                <p>
-                  Skills are the fix: small, focused instruction files for a specific task — writing a PR description, reviewing code, setting up a database. The AI only loads one when it's actually needed. The rest stays invisible.
-                </p>
-                <Insight
-                  quote="In practice, a typical conversation might invoke one or two skills while the rest remain invisible — allowing you to register 300 skills while consuming fewer words than a traditional mega-prompt setup."
-                  source="5 Skills Every AI Agent Needs — Medium"
-                  color="#f59e0b"
-                />
-                <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] overflow-hidden">
-                  <div className="grid grid-cols-3 text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 border-b border-black/[0.06] dark:border-white/6 px-4 py-2.5">
-                    <span>Concept</span>
-                    <span>What it is</span>
-                    <span>When to use it</span>
-                  </div>
-                  {[
-                    {
-                      concept: 'Prompt',
-                      what: 'A one-off instruction you type each time. The AI forgets it after.',
-                      when: "Quick, single tasks where you don't expect to repeat them.",
-                    },
-                    {
-                      concept: 'Skill',
-                      what: 'A saved set of instructions for a specific type of task. Loads automatically when relevant.',
-                      when: 'Repeated workflows you want the AI to handle consistently every time.',
-                    },
-                    {
-                      concept: 'Tool',
-                      what: 'Something the AI can do — run code, search the web, call an external service.',
-                      when: 'When the AI needs to take an action, not just produce text.',
-                    },
-                    {
-                      concept: 'Project context',
-                      what: 'Background information about your product, codebase, or team.',
-                      when: 'Giving the AI the knowledge it needs to be useful in your specific situation.',
-                    },
-                  ].map((row, i) => (
-                    <div
-                      key={row.concept}
-                      className={`grid grid-cols-3 px-4 py-3 text-xs items-start gap-2 ${i % 2 === 0 ? '' : 'bg-black/[0.015] dark:bg-white/[0.015]'}`}
-                    >
-                      <span className="font-semibold text-gray-800 dark:text-zinc-200">{row.concept}</span>
-                      <span className="text-gray-500 dark:text-zinc-400 leading-relaxed">{row.what}</span>
-                      <span className="text-gray-500 dark:text-zinc-400 leading-relaxed">{row.when}</span>
-                    </div>
-                  ))}
-                </div>
-                <p>
-                  Skills have taken off quickly. The same file format (<code className="text-xs bg-black/[0.05] dark:bg-white/[0.05] px-1 py-0.5 rounded">SKILL.md</code>) is now used across Claude Code, OpenAI's Codex, GitHub Copilot, Google's Gemini CLI, and Cursor — over 30 AI tools in total. A community library has 1,200+ shared skills; the broader marketplace has more than 31,000.
-                </p>
-                <div className="rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/30 p-4">
-                  <p className="text-sm text-amber-700 dark:text-amber-300 leading-relaxed">
-                    <span className="font-semibold">The gap between theory and practice is real.</span> Skills clearly work, but most AI agent projects don't reach production — research predicts 40% will fail by 2027. The most important skills aren't creative. They're structural: knowing when to use a tool, how to coordinate across tasks, when to stop and ask a human.
+                    <span className="font-semibold">Known vs. unknown.</span> Models already understand cinematic language, lighting setups, camera moves, and art movements deeply. What they don't know is your specific character design, your brand palette, or the visual style you've built across prior sessions. That's the part you need to supply explicitly — with reference images, not descriptions.
                   </p>
                 </div>
               </div>
@@ -615,9 +543,6 @@ export default function StateOfPromptingPage() {
                   { label: 'Prompt Engineering in 2025: The Latest Best Practices', url: 'https://www.news.aakashg.com/p/prompt-engineering' },
                   { label: 'AI Video Trends: Predictions For 2026 — LTX Studio', url: 'https://ltx.studio/blog/ai-video-trends' },
                   { label: 'Prompt Engineering Jobs Are Obsolete in 2025 — Salesforce Ben', url: 'https://www.salesforceben.com/prompt-engineering-jobs-are-obsolete-in-2025-heres-why/' },
-                  { label: 'Skills Explained: How Skills Compare to Prompts, Projects, MCP, and Subagents — Anthropic', url: 'https://claude.com/blog/skills-explained' },
-                  { label: '5 Skills Every AI Agent Needs (And Why Your Mega-Prompt Is Holding You Back) — Medium', url: 'https://medium.com/@Micheal-Lanham/5-skills-every-ai-agent-needs-and-why-your-mega-prompt-is-holding-you-back-4b4ab2471c0e' },
-                  { label: 'Agent Skills: The Architectural Shift from Mega-Prompts to Progressive Disclosure — Substack', url: 'https://micheallanham.substack.com/p/agent-skills-the-architectural-shift' },
                   { label: 'Context Engineering for Coding Agents — Martin Fowler', url: 'https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html' },
                 ].map((s) => (
                   <a
