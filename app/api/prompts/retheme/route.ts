@@ -1,18 +1,20 @@
 import { NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import postgres from 'postgres'
-
-export const maxDuration = 300
+import { withRetry } from '@/lib/classifier'
 
 let _sql: ReturnType<typeof postgres> | undefined
 function getSql() {
   return (_sql ??= postgres(process.env.DATABASE_URL!, { ssl: 'require' }))
 }
 
-const VALID_THEMES = new Set([
+const VALID_THEMES = [
   'person', 'cinematic', 'landscape', 'architecture', 'scifi',
   'fantasy', 'abstract', 'fashion', 'product', 'horror',
-])
+] as const
+const VALID_THEMES_SET = new Set<string>(VALID_THEMES)
+
+const THEME_SYSTEM = `Tag visual themes for AI image/video prompts. Pick 1-3 themes per item. Return [] for text/audio/3D/coding prompts.`
 
 const THEME_TOOL: Anthropic.Tool = {
   name: 'tag_themes',
@@ -26,7 +28,7 @@ const THEME_TOOL: Anthropic.Tool = {
           type: 'object',
           properties: {
             id:            { type: 'string', description: 'Copy the id field from the input item exactly' },
-            prompt_themes: { type: 'array', items: { type: 'string' } },
+            prompt_themes: { type: 'array', items: { type: 'string', enum: [...VALID_THEMES] }, maxItems: 3 },
           },
           required: ['id', 'prompt_themes'],
         },
@@ -41,9 +43,7 @@ const client = new Anthropic()
 export async function GET() {
   const sql = getSql()
   const rows = await sql<{ n: string }[]>`
-    SELECT COUNT(*) as n FROM bookmarks
-    WHERE category = 'prompts'
-    AND (prompt_themes IS NULL OR prompt_themes = '[]'::jsonb)
+    SELECT COUNT(*) as n FROM bookmarks WHERE category = 'prompts'
   `
   return NextResponse.json({ total: Number(rows[0].n) })
 }
@@ -51,32 +51,34 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}))
-    const limit: number = body.limit ?? 10
+    const limit: number = body.limit ?? 20
+    const offset: number = body.offset ?? 0
 
     const sql = getSql()
-    // Always fetch from the top — filter advances naturally as rows are updated
     const rows = await sql<{ id: string; tweet_text: string }[]>`
       SELECT id, tweet_text FROM bookmarks
       WHERE category = 'prompts'
-      AND (prompt_themes IS NULL OR prompt_themes = '[]'::jsonb)
       ORDER BY created_at ASC
-      LIMIT ${limit}
+      LIMIT ${limit} OFFSET ${offset}
     `
 
     if (rows.length === 0) return NextResponse.json({ tagged: 0, batchTotal: 0, errors: [] })
 
     const input = rows.map((r) => ({ id: r.id, text: r.tweet_text.slice(0, 600) }))
 
-    const msg = await client.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1024,
-      tools: [THEME_TOOL],
-      tool_choice: { type: 'any' },
-      messages: [{
-        role: 'user',
-        content: `Tag visual themes for each prompt. Return 0-3 themes per item from this list only: person, cinematic, landscape, architecture, scifi, fantasy, abstract, fashion, product, horror. Return [] for text/audio/3D/coding prompts.\n\n${JSON.stringify(input)}`,
-      }],
-    })
+    const msg = await withRetry(() =>
+      client.messages.create({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1024,
+        system: THEME_SYSTEM,
+        tools: [THEME_TOOL],
+        tool_choice: { type: 'tool', name: 'tag_themes' },
+        messages: [{
+          role: 'user',
+          content: `Tag themes:\n${JSON.stringify(input)}`,
+        }],
+      })
+    )
 
     const toolUse = msg.content.find((b) => b.type === 'tool_use')
     if (!toolUse || toolUse.type !== 'tool_use') {
@@ -90,10 +92,9 @@ export async function POST(req: Request) {
 
     for (let i = 0; i < results.length; i++) {
       const r = results[i]
-      // Match by id, fall back to positional
       const row = rows.find((b) => b.id === String(r.id)) ?? rows[i]
       if (!row) continue
-      const themes = (r.prompt_themes ?? []).filter((t) => VALID_THEMES.has(t))
+      const themes = (r.prompt_themes ?? []).filter((t) => VALID_THEMES_SET.has(t))
       try {
         await sql`
           UPDATE bookmarks
@@ -103,14 +104,6 @@ export async function POST(req: Request) {
         tagged++
       } catch (err) {
         errors.push(`id ${row.id}: ${String(err)}`)
-      }
-    }
-
-    // Any rows not covered by results — mark with empty array so they don't loop forever
-    if (results.length < rows.length) {
-      for (const row of rows.slice(results.length)) {
-        await sql`UPDATE bookmarks SET prompt_themes = '[]'::jsonb, updated_at = NOW()::TEXT WHERE id = ${row.id}`
-        tagged++
       }
     }
 

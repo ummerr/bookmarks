@@ -173,24 +173,27 @@ export default function ToolsPage() {
       const total = (await countRes.json()).total
       setRethemeTotal(total)
       let tagged = 0
+      let offset = 0
       const allErrors: string[] = []
-      for (;;) {
+      const BATCH = 10
+      while (offset < total) {
         const res = await fetch('/api/prompts/retheme', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ limit: 10 }),
+          body: JSON.stringify({ limit: BATCH, offset }),
         })
         const text = await res.text()
         let data: { tagged: number; batchTotal: number; errors: string[]; error?: string }
         try { data = JSON.parse(text) } catch {
-          allErrors.push(`server error ${res.status}`)
+          allErrors.push(`Offset ${offset}: server error ${res.status}`)
           setRethemeErrors([...allErrors])
           break
         }
         if (data.error) { allErrors.push(data.error); break }
         tagged += data.tagged
         allErrors.push(...(data.errors ?? []))
-        setRethemedDone(tagged)
+        offset += BATCH
+        setRethemedDone(Math.min(offset, total))
         setRethemeErrors([...allErrors])
         if (data.batchTotal === 0) break
       }
@@ -243,10 +246,19 @@ export default function ToolsPage() {
     setMainResult(null)
     setMainErrors([])
     try {
-      const res = await fetch('/api/classify', { method: 'POST' })
-      const data: ClassifyResult = await res.json()
-      setMainResult(data.message ?? `Classified ${data.classified} of ${data.total} bookmarks`)
-      setMainErrors(data.errors ?? [])
+      let total = 0
+      const allErrors: string[] = []
+      // Loop: each request classifies one batch, returns remaining count
+      while (true) {
+        const res = await fetch('/api/classify', { method: 'POST' })
+        const data = await res.json()
+        if (data.error) { allErrors.push(data.error); break }
+        total += data.classified ?? 0
+        allErrors.push(...(data.errors ?? []))
+        setMainErrors([...allErrors])
+        if ((data.remaining ?? 0) === 0 || data.classified === 0) break
+      }
+      setMainResult(total === 0 ? 'Nothing to classify' : `Classified ${total} bookmarks`)
       fetchCounts()
     } catch (err) {
       setMainResult(`Failed: ${String(err)}`)
@@ -445,7 +457,7 @@ export default function ToolsPage() {
           {/* Classify Bookmarks */}
           <Section
             title="Classify Bookmarks"
-            description={`Run Sonnet on all unclassified bookmarks to sort them into Tech / Career / Prompts / Uncategorized. ${counts?.pending ?? '…'} pending.`}
+            description={`Run Haiku on all unclassified bookmarks to sort them into Tech / Career / Prompts / Uncategorized. ${counts?.pending ?? '…'} pending.`}
           >
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-3">
@@ -467,7 +479,7 @@ export default function ToolsPage() {
           {/* Classify Prompts */}
           <Section
             title="Classify Prompts"
-            description={`Run Sonnet on bookmarks tagged as Prompts to extract categories, themes, models, and reference image requirements. ${unclassifiedPrompts ?? '…'} unclassified.`}
+            description={`Run Haiku on bookmarks tagged as Prompts to extract categories, themes, models, and reference image requirements. ${unclassifiedPrompts ?? '…'} unclassified.`}
           >
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-3">
