@@ -5,7 +5,26 @@ export const alt = 'The most shared AI prompts on X — prompts.ummerr.com'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
-export default function OGImage() {
+async function fetchStats(): Promise<{ total: number; models: number; techniques: number }> {
+  try {
+    const base = process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'http://localhost:3000'
+    const res = await fetch(`${base}/api/stats`, { next: { revalidate: 3600 } })
+    const data = await res.json()
+    return {
+      total: data.total ?? 0,
+      models: data.byModel?.length ?? 0,
+      techniques: data.byCategory?.length ?? 0,
+    }
+  } catch {
+    return { total: 0, models: 0, techniques: 0 }
+  }
+}
+
+export default async function OGImage() {
+  const stats = await fetchStats()
+
   return new ImageResponse(
     (
       <div
@@ -32,16 +51,14 @@ export default function OGImage() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span style={{ color: '#1DA1F2', fontSize: '22px' }}>✦</span>
-            <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '15px', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+            <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '15px', letterSpacing: '0.12em', textTransform: 'uppercase' as const }}>
               prompts.ummerr.com
             </span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             {[
-              { label: 'Image',  bg: 'rgba(59,130,246,0.15)',  border: 'rgba(59,130,246,0.4)',  color: '#93c5fd' },
+              { label: 'Image',  bg: 'rgba(236,72,153,0.15)',  border: 'rgba(236,72,153,0.4)',  color: '#f9a8d4' },
               { label: 'Video',  bg: 'rgba(139,92,246,0.15)', border: 'rgba(139,92,246,0.4)', color: '#c4b5fd' },
-              { label: 'Audio',  bg: 'rgba(6,182,212,0.15)',  border: 'rgba(6,182,212,0.4)',  color: '#67e8f9' },
-              { label: '3D',     bg: 'rgba(20,184,166,0.15)', border: 'rgba(20,184,166,0.4)', color: '#5eead4' },
             ].map((chip) => (
               <div key={chip.label} style={{ display: 'flex', padding: '6px 14px', borderRadius: '9999px', fontSize: '13px', fontWeight: 600, background: chip.bg, border: `1px solid ${chip.border}`, color: chip.color, letterSpacing: '0.02em' }}>
                 {chip.label}
@@ -56,20 +73,20 @@ export default function OGImage() {
             The most shared<br />AI prompts on X.
           </div>
           <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '22px', lineHeight: 1.5, maxWidth: '680px', fontWeight: 400 }}>
-            Sourced from high-engagement posts — if thousands already
-            copied it into their tools, it works.
+            Image and video generation prompts sourced from viral posts.
+            Hand-labelled by model, technique, and theme.
           </div>
         </div>
 
         {/* Bottom stats row */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0px', position: 'relative' }}>
           {[
-            { value: '500+',  label: 'viral X prompts',  color: '#a78bfa' },
-            { value: '0%',    label: 'synthetic',        color: '#34d399' },
-            { value: '14',    label: 'techniques',       color: '#60a5fa' },
-            { value: '20+',   label: 'AI models tracked', color: '#f472b6' },
+            { value: stats.total ? `${stats.total.toLocaleString()}+` : '500+', label: 'prompts',           color: '#a78bfa' },
+            { value: '0%',                                                       label: 'synthetic',         color: '#34d399' },
+            { value: stats.techniques ? `${stats.techniques}` : '12',            label: 'techniques',        color: '#60a5fa' },
+            { value: stats.models ? `${stats.models}+` : '20+',                  label: 'AI models tracked', color: '#f472b6' },
           ].map((stat, i) => (
-            <div key={stat.value} style={{ display: 'flex', alignItems: 'center', gap: '0px' }}>
+            <div key={stat.label} style={{ display: 'flex', alignItems: 'center', gap: '0px' }}>
               {i > 0 && <div style={{ width: '1px', height: '36px', background: 'rgba(255,255,255,0.08)', margin: '0 28px', display: 'flex' }} />}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                 <span style={{ fontSize: '28px', fontWeight: 800, color: stat.color, lineHeight: 1, letterSpacing: '-0.02em' }}>{stat.value}</span>

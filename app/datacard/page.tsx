@@ -53,13 +53,15 @@ const PROMPT_CATEGORIES = [
   { key: 'video_v2v',           label: 'Video → Video',     group: 'Video', color: '#3b82f6' },
 ]
 
-const BENCHMARKS = [
-  { name: 'DrawBench',       size: '200',    source: 'Synthetic (LLM)',      modality: 'Image only',     provenance: 'None',            engagement: '—' },
-  { name: 'PartiPrompts',    size: '1,632',  source: 'Crowdworkers (Google)', modality: 'Image only',     provenance: 'None',            engagement: '—' },
-  { name: 'T2I-CompBench',   size: '6,000',  source: 'Synthetic (GPT-4)',    modality: 'Image only',     provenance: 'None',            engagement: '—' },
-  { name: 'GenAI-Bench',     size: '1,200',  source: 'LLM + human mix',      modality: 'Image + Video',  provenance: 'None',            engagement: '—' },
-  { name: 'ummerr/prompts',  size: '500+',   source: 'Organic / in-the-wild', modality: 'Image + Video', provenance: 'Full (URL + author)', engagement: 'Yes (viral filter)' },
-]
+function getBenchmarks(total: number) {
+  return [
+    { name: 'DrawBench',       size: '200',    source: 'Synthetic (LLM)',      modality: 'Image only',     provenance: 'None',            engagement: '—' },
+    { name: 'PartiPrompts',    size: '1,632',  source: 'Crowdworkers (Google)', modality: 'Image only',     provenance: 'None',            engagement: '—' },
+    { name: 'T2I-CompBench',   size: '6,000',  source: 'Synthetic (GPT-4)',    modality: 'Image only',     provenance: 'None',            engagement: '—' },
+    { name: 'GenAI-Bench',     size: '1,200',  source: 'LLM + human mix',      modality: 'Image + Video',  provenance: 'None',            engagement: '—' },
+    { name: 'ummerr/prompts',  size: total ? `${total.toLocaleString()}+` : '—', source: 'Organic / in-the-wild', modality: 'Image + Video', provenance: 'Full (URL + author)', engagement: 'Yes (viral filter)' },
+  ]
+}
 
 const RESEARCH_APPLICATIONS = [
   {
@@ -192,11 +194,25 @@ export default function DatacardPage() {
           <div className="flex flex-wrap gap-2">
             <Tag color="#ec4899">image-generation</Tag>
             <Tag color="#8b5cf6">video-generation</Tag>
-            <Tag color="#06b6d4">audio-generation</Tag>
             <Tag color="#22c55e">in-the-wild-prompts</Tag>
             <Tag color="#f97316">practitioner-behavior</Tag>
             <Tag color="#3b82f6">engagement-filtered</Tag>
-            <Tag color="#a855f7">multimodal</Tag>
+          </div>
+
+          <div className="flex items-center gap-3 pt-4 border-t border-black/[0.06] dark:border-white/6">
+            <a
+              href="/api/prompts/download?format=json"
+              className="rounded-lg bg-black/[0.05] dark:bg-white/[0.05] px-4 py-2 text-xs font-medium text-gray-700 dark:text-zinc-300 hover:bg-black/[0.08] dark:hover:bg-white/[0.08] transition-colors"
+            >
+              Download JSON
+            </a>
+            <a
+              href="/api/prompts/download?format=csv"
+              className="rounded-lg bg-black/[0.05] dark:bg-white/[0.05] px-4 py-2 text-xs font-medium text-gray-700 dark:text-zinc-300 hover:bg-black/[0.08] dark:hover:bg-white/[0.08] transition-colors"
+            >
+              Download CSV
+            </a>
+            <span className="text-[10px] text-gray-400 dark:text-zinc-600">CC BY 4.0 — cite as ummerr/prompts</span>
           </div>
         </div>
 
@@ -230,7 +246,7 @@ export default function DatacardPage() {
                 </tr>
               </thead>
               <tbody>
-                {BENCHMARKS.map((b, i) => {
+                {getBenchmarks(stats?.total ?? 0).map((b, i) => {
                   const isThis = b.name === 'ummerr/prompts'
                   return (
                     <tr

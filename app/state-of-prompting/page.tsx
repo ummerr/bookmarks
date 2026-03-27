@@ -320,22 +320,33 @@ export default function StateOfPromptingPage() {
                   ))}
                 </div>
 
-                <div className="rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-zinc-900 p-4">
-                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">How it unraveled</h4>
-                  <div className="flex flex-col gap-2">
-                    {[
-                      { date: 'Sep 2025', event: 'Sora launches publicly, wide press coverage' },
-                      { date: 'Nov 2025', event: 'Downloads peak at 3.3M — then start falling' },
-                      { date: 'Dec 2025', event: 'Deepfake scandals escalate; MLK Jr. and Robin Williams likenesses go viral without consent' },
-                      { date: 'Jan 2026', event: 'Internal teams describe GPU strain — "the chips are melting"' },
-                      { date: 'Mar 2026', event: '$1B Disney partnership collapses; Disney notified 30 minutes after a joint planning meeting' },
-                      { date: 'Mar 24, 2026', event: 'OpenAI shuts down Sora entirely; team redirected to robotics world simulation' },
-                    ].map(({ date, event }) => (
-                      <div key={date} className="flex gap-3 text-xs">
-                        <span className="shrink-0 font-mono text-gray-400 dark:text-zinc-500 w-20">{date}</span>
-                        <span className="text-gray-600 dark:text-zinc-300">{event}</span>
-                      </div>
-                    ))}
+                <div className="rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-zinc-900 p-5 md:p-6">
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-5">How it unraveled</h4>
+                  <div className="relative">
+                    {/* Timeline line */}
+                    <div className="absolute left-[5px] top-2 bottom-2 w-px bg-gradient-to-b from-amber-400 via-red-400 to-red-600 dark:from-amber-500 dark:via-red-500 dark:to-red-700" />
+                    <div className="flex flex-col gap-4">
+                      {[
+                        { date: 'Sep 2025', event: 'Sora launches publicly, wide press coverage', severity: 0 },
+                        { date: 'Nov 2025', event: 'Downloads peak at 3.3M — then start falling', severity: 1 },
+                        { date: 'Dec 2025', event: 'Deepfake scandals escalate; MLK Jr. and Robin Williams likenesses go viral without consent', severity: 2 },
+                        { date: 'Jan 2026', event: 'Internal teams describe GPU strain — "the chips are melting"', severity: 2 },
+                        { date: 'Mar 2026', event: '$1B Disney partnership collapses; Disney notified 30 minutes after a joint planning meeting', severity: 3 },
+                        { date: 'Mar 24, 2026', event: 'OpenAI shuts down Sora entirely; team redirected to robotics world simulation', severity: 3 },
+                      ].map(({ date, event, severity }) => {
+                        const dotColor = severity === 0 ? 'bg-amber-400' : severity === 1 ? 'bg-orange-400' : severity === 2 ? 'bg-red-400' : 'bg-red-600'
+                        const isTerminal = severity === 3
+                        return (
+                          <div key={date} className="flex gap-4 items-start pl-0 relative">
+                            <div className={`relative z-10 shrink-0 mt-1.5 rounded-full ${dotColor} ${isTerminal ? 'w-3 h-3 -ml-[1px]' : 'w-[11px] h-[11px]'} ring-2 ring-white dark:ring-zinc-900`} />
+                            <div className="flex flex-col gap-0.5 min-w-0">
+                              <span className="text-[11px] font-mono font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">{date}</span>
+                              <span className={`text-xs leading-relaxed ${isTerminal ? 'text-red-600 dark:text-red-400 font-semibold' : 'text-gray-600 dark:text-zinc-300'}`}>{event}</span>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
                   </div>
                 </div>
 
@@ -361,6 +372,45 @@ export default function StateOfPromptingPage() {
                   source="How to Actually Control Next-Gen Video AI — Medium"
                   color="#8b5cf6"
                 />
+                {/* Model leaderboard visual */}
+                <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-5 md:p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Video Model Leaderboard</h4>
+                    <span className="text-[10px] text-gray-400 dark:text-zinc-500 font-mono">ELO · Artificial Analysis T2V Arena</span>
+                  </div>
+                  <div className="flex flex-col gap-2.5">
+                    {[
+                      { model: 'Seedance 2.0',       elo: 1380, color: '#10b981' },
+                      { model: 'Kling 3.0',           elo: 1340, color: '#ec4899' },
+                      { model: 'Veo 3.1',             elo: 1310, color: '#1DA1F2' },
+                      { model: 'Runway Gen-4.5',      elo: 1275, color: '#f97316' },
+                      { model: 'Grok Imagine Video',  elo: 1250, color: '#9333ea' },
+                      { model: 'Sora 2',              elo: 0,    color: '#6b7280', dead: true },
+                    ].map((m, i) => {
+                      const maxElo = 1380
+                      const minElo = 1150
+                      const barPct = m.dead ? 0 : Math.max(5, ((m.elo - minElo) / (maxElo - minElo)) * 100)
+                      return (
+                        <div key={m.model} className={`flex items-center gap-3 ${m.dead ? 'opacity-40' : ''}`}>
+                          <span className="text-xs font-mono text-gray-400 dark:text-zinc-500 w-4 text-right">{i + 1}</span>
+                          <span className="text-xs font-semibold w-32 shrink-0 truncate" style={{ color: m.color }}>{m.dead ? `🪦 ${m.model}` : m.model}</span>
+                          <div className="flex-1 h-5 bg-black/[0.03] dark:bg-white/[0.03] rounded-md overflow-hidden">
+                            {!m.dead && (
+                              <div
+                                className="h-full rounded-md transition-all duration-700"
+                                style={{ width: `${barPct}%`, backgroundColor: `${m.color}30`, borderLeft: `3px solid ${m.color}` }}
+                              />
+                            )}
+                          </div>
+                          <span className="text-xs font-mono font-semibold w-10 text-right" style={{ color: m.dead ? '#6b7280' : m.color }}>
+                            {m.dead ? '—' : m.elo}
+                          </span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {[
                     {
@@ -451,10 +501,16 @@ export default function StateOfPromptingPage() {
                 <p>
                   Multi-shot prompting describes two or more distinct camera cuts in a single prompt. The model generates them as a coherent sequence — same characters, consistent environment, natural transitions. The underlying research (Kuaishou's MultiShotMaster, CVPR 2026) modified how the model handles position embeddings to deliberately break continuity at shot boundaries while keeping character identity stable across them.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4 flex flex-col gap-2">
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-pink-500 dark:text-pink-400">Shot-label format (Kling 3.0)</p>
-                    <pre className="text-[11px] text-gray-600 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap font-mono bg-black/[0.03] dark:bg-white/[0.03] rounded-lg p-3">{`Shot 1 (0–4s): Wide — rain-soaked city street,
+                <div className="rounded-xl border border-black/[0.08] dark:border-white/8 overflow-hidden">
+                  <div className="grid grid-cols-1 sm:grid-cols-2">
+                    {/* Kling column */}
+                    <div className="border-b sm:border-b-0 sm:border-r border-black/[0.06] dark:border-white/6">
+                      <div className="px-4 py-2.5 bg-pink-500/5 dark:bg-pink-500/10 border-b border-black/[0.06] dark:border-white/6 flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-pink-500" />
+                        <span className="text-[11px] font-bold uppercase tracking-widest text-pink-600 dark:text-pink-400">Kling 3.0</span>
+                        <span className="ml-auto text-[10px] text-gray-400 dark:text-zinc-500">Shot-label format</span>
+                      </div>
+                      <pre className="text-[11px] text-gray-600 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap font-mono p-4 bg-white dark:bg-[#111]">{`Shot 1 (0–4s): Wide — rain-soaked city street,
 amber streetlights, slow dolly forward.
 
 Shot 2 (4–8s): Medium — woman in red coat
@@ -462,11 +518,18 @@ running through alley, tracking shot.
 
 Shot 3 (8–12s): Close-up — catching breath,
 eyes wide. [breathless]: "They found us."`}</pre>
-                    <p className="text-[11px] text-gray-400 dark:text-zinc-500">Kling 3.0 supports up to 6 shots with native lip-sync and speaker attribution per character.</p>
-                  </div>
-                  <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4 flex flex-col gap-2">
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-emerald-500 dark:text-emerald-400">Timestamp format (Seedance 2.0)</p>
-                    <pre className="text-[11px] text-gray-600 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap font-mono bg-black/[0.03] dark:bg-white/[0.03] rounded-lg p-3">{`[0s]: Wide shot — character enters a dimly
+                      <div className="px-4 py-2 border-t border-black/[0.04] dark:border-white/[0.04] bg-black/[0.01] dark:bg-white/[0.01]">
+                        <p className="text-[10px] text-gray-400 dark:text-zinc-500">Up to 6 shots · native lip-sync · speaker attribution</p>
+                      </div>
+                    </div>
+                    {/* Seedance column */}
+                    <div>
+                      <div className="px-4 py-2.5 bg-emerald-500/5 dark:bg-emerald-500/10 border-b border-black/[0.06] dark:border-white/6 flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                        <span className="text-[11px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Seedance 2.0</span>
+                        <span className="ml-auto text-[10px] text-gray-400 dark:text-zinc-500">Timestamp format</span>
+                      </div>
+                      <pre className="text-[11px] text-gray-600 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap font-mono p-4 bg-white dark:bg-[#111]">{`[0s]: Wide shot — character enters a dimly
 lit cafe, looking around curiously.
 
 [Shot switch]
@@ -478,7 +541,10 @@ coffee with a warm smile.
 
 [10s]: Close-up — eyes react as someone
 enters. Warm golden lighting.`}</pre>
-                    <p className="text-[11px] text-gray-400 dark:text-zinc-500">Seedance 2.0 uses <code className="bg-black/[0.05] dark:bg-white/[0.05] px-1 rounded">Shot switch</code> or <code className="bg-black/[0.05] dark:bg-white/[0.05] px-1 rounded">Cut to</code> as explicit scene-change markers.</p>
+                      <div className="px-4 py-2 border-t border-black/[0.04] dark:border-white/[0.04] bg-black/[0.01] dark:bg-white/[0.01]">
+                        <p className="text-[10px] text-gray-400 dark:text-zinc-500">Uses <code className="bg-black/[0.05] dark:bg-white/[0.05] px-1 rounded">Shot switch</code> or <code className="bg-black/[0.05] dark:bg-white/[0.05] px-1 rounded">Cut to</code> as scene markers</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] overflow-hidden">
@@ -565,46 +631,49 @@ enters. Warm golden lighting.`}</pre>
             </Section>
 
             <Section title="What to Actually Do About It" id="practitioners">
-              <div className="flex flex-col gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[
                   {
-                    title: 'Build a folder of reference images, not a folder of prompts',
+                    title: 'Build a reference library',
                     body: 'Prompts go out of date between model versions. A good reference image — face, visual style, composition, colour palette — works across tools and stays useful indefinitely.',
                     color: '#f97316',
+                    icon: '📂',
                   },
                   {
-                    title: 'Use text to direct, not to describe',
-                    body: "Once you have references, written text is directorial notes — what happens, how the camera moves, the emotional beat. It shouldn't carry the visual weight. \"Close-up on her face as she hears the news\" beats \"a beautiful cinematic close-up with dramatic lighting and emotional depth\".",
+                    title: 'Direct, don\'t describe',
+                    body: "Text becomes directorial notes on top of visual references. \"Close-up on her face as she hears the news\" beats \"a beautiful cinematic close-up with dramatic lighting and emotional depth\".",
                     color: '#8b5cf6',
+                    icon: '🎬',
                   },
                   {
-                    title: 'Learn the shot vocabulary',
-                    body: "Models respond to cinematography terminology far more reliably than emotional or aesthetic adjectives. 'Gimbal tracking shot, low angle, rack focus to background' gives the model something precise to execute. 'Cinematic and dramatic' gives it nothing. One hour learning standard shot types pays off across every generation you do.",
+                    title: 'Learn shot vocabulary',
+                    body: "'Gimbal tracking shot, low angle, rack focus to background' gives the model something precise. 'Cinematic and dramatic' gives it nothing.",
                     color: '#f59e0b',
+                    icon: '🎥',
                   },
                   {
-                    title: 'Test across models before iterating on your prompt',
-                    body: "The quality gap between models is larger than the gap between a good and bad prompt. Before spending time refining your text, run the same prompt through two or three models. The right tool for the task type will be immediately obvious — then optimize from there.",
+                    title: 'Test models before iterating',
+                    body: "The quality gap between models is larger than the gap between a good and bad prompt. Run the same prompt through two or three tools first.",
                     color: '#a855f7',
+                    icon: '🔬',
                   },
                   {
-                    title: 'Plan multi-shot sequences before you open the tool',
-                    body: "You can't direct a 30-second narrative in a single prompt. Write the shot list first — what happens in each shot, how the camera moves, where the cut falls. Then generate shot by shot using timestamp or shot-label syntax. The planning is the work; the prompting is execution.",
+                    title: 'Plan shots before prompting',
+                    body: "Write the shot list first — what happens, how the camera moves, where the cut falls. The planning is the work; the prompting is execution.",
                     color: '#14b8a6',
+                    icon: '📋',
                   },
                 ].map((item) => (
                   <div
                     key={item.title}
-                    className="rounded-xl border bg-white dark:bg-[#111] p-4"
-                    style={{ borderColor: `${item.color}25` }}
+                    className="rounded-xl border bg-white dark:bg-[#111] p-5 flex flex-col gap-2"
+                    style={{ borderColor: `${item.color}30` }}
                   >
-                    <div className="flex items-start gap-3">
-                      <div className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: item.color }} />
-                      <div className="flex flex-col gap-1">
-                        <span className="text-sm font-semibold text-gray-900 dark:text-white">{item.title}</span>
-                        <p className="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">{item.body}</p>
-                      </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{item.icon}</span>
+                      <span className="text-sm font-bold text-gray-900 dark:text-white">{item.title}</span>
                     </div>
+                    <p className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">{item.body}</p>
                   </div>
                 ))}
               </div>
