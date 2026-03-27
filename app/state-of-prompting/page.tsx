@@ -618,15 +618,9 @@ enters. Warm golden lighting.`}</pre>
                 <p>
                   Text-only prompts leave most of the available control unused. The tools that accept reference images, audio clips, and video deliver substantially better results when you use those inputs.
                 </p>
-                <div className="rounded-xl border border-purple-200 dark:border-purple-800/30 bg-purple-50 dark:bg-purple-950/20 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-purple-500 dark:text-purple-400 mb-2">Aurora (xAI) — what makes it different</p>
-                  <div className="flex flex-col gap-1.5 text-xs text-purple-700 dark:text-purple-300 leading-relaxed">
-                    <p><span className="font-semibold">Autoregressive, not diffusion.</span> Most image models use diffusion. Aurora predicts image tokens step-by-step — like an LLM — which gives it better coherence on complex multi-condition prompts but more latency.</p>
-                    <p><span className="font-semibold">Generates real people.</span> Aurora will render named real individuals. DALL-E 3, Imagen, and Midjourney all refuse. This is both the standout feature and the source of ongoing regulatory scrutiny.</p>
-                    <p><span className="font-semibold">Iterative chat editing.</span> Built into Grok's conversational interface — follow up with plain language corrections ("make the lighting warmer", "add sunglasses") rather than rewriting from scratch. It responds to these better than most peers.</p>
-                    <p><span className="font-semibold">Prompting style:</span> Comma-separated ingredients outperform prose. Include lighting setup, medium, and lens/camera language. Handles up to ~1,000 characters — longer detailed prompts outperform short ones.</p>
-                  </div>
-                </div>
+                <p className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">
+                  <span className="font-semibold text-purple-600 dark:text-purple-400">Aurora (xAI)</span> is the outlier — autoregressive (not diffusion), renders named real people (others refuse), and supports iterative chat editing. Prompt with comma-separated ingredients, not prose.
+                </p>
               </div>
             </Section>
 
