@@ -483,9 +483,8 @@ function PromptsPageInner() {
               <div className="flex flex-col gap-2">
                 {(
                   [
-                    { label: 'Image', cats: ['image_t2i', 'image_r2i', 'image_i2i', 'image_character_ref', 'image_inpainting'] },
+                    { label: 'Image', cats: ['image_t2i', 'image_r2i', 'image_i2i', 'image_character_ref'] },
                     { label: 'Video', cats: ['video_t2v', 'video_r2v', 'video_i2v', 'video_v2v'] },
-                    { label: 'Other', cats: ['audio', 'threed'] },
                   ] as { label: string; cats: (keyof typeof CATEGORY_COLORS)[] }[]
                 ).map(({ label, cats }) => (
                   <div key={label} className="flex flex-col gap-1">
