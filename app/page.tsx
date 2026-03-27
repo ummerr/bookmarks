@@ -8,9 +8,9 @@ import { modelToFamily } from '@/components/prompts/constants'
 
 function getBenchmarks(liveTotal: number) {
   return [
-    { name: 'DrawBench',      size: '200',   source: 'Synthetic (LLM)',        modality: 'Image only',    curated: '2022',       engagement: '—' },
-    { name: 'PartiPrompts',   size: '1,632', source: 'Crowdworkers (Google)',  modality: 'Image only',    curated: '2022',       engagement: '—' },
-    { name: 'ummerr/prompts', size: liveTotal ? `${liveTotal.toLocaleString()}+` : '—', source: 'Organic / in-the-wild', modality: 'Image + Video', curated: 'Mar 2026', engagement: 'Yes (viral filter)', highlight: true },
+    { name: 'DrawBench',      size: '200',   source: 'Synthetic (LLM)',        modality: 'Image only',    curated: '2022' },
+    { name: 'PartiPrompts',   size: '1,632', source: 'Crowdworkers (Google)',  modality: 'Image only',    curated: '2022' },
+    { name: 'ummerr/prompts', size: liveTotal ? `${liveTotal.toLocaleString()}+` : '—', source: 'Organic / in-the-wild', modality: 'Image + Video', curated: 'Mar 2026', highlight: true },
   ]
 }
 
@@ -445,7 +445,6 @@ export default function LandingPage() {
                 <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Source</th>
                 <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Modality</th>
                 <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Curated</th>
-                <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Engagement</th>
               </tr>
             </thead>
             <tbody>
@@ -465,7 +464,6 @@ export default function LandingPage() {
                   <td className="px-5 py-3 text-gray-600 dark:text-zinc-300">{b.source}</td>
                   <td className="px-5 py-3 text-gray-600 dark:text-zinc-300">{b.modality}</td>
                   <td className={`px-5 py-3 font-mono text-xs ${b.highlight ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-gray-400 dark:text-zinc-500'}`}>{b.curated}</td>
-                  <td className="px-5 py-3 text-gray-600 dark:text-zinc-300">{b.engagement}</td>
                 </tr>
               ))}
             </tbody>
