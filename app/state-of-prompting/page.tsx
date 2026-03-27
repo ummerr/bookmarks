@@ -157,10 +157,13 @@ export default function StateOfPromptingPage() {
               The typed prompt is no longer the main way people get results from AI. This report covers what replaced it — reference images, modular skills, and a new way of thinking about what information AI actually needs.
             </p>
           </div>
-          <div className="flex flex-col gap-1 pt-2 border-t border-black/[0.06] dark:border-white/6">
+          <div className="flex items-center justify-between gap-4 pt-2 border-t border-black/[0.06] dark:border-white/6">
             <p className="text-xs text-gray-400 dark:text-zinc-500">
               Industry data sourced from public research, product announcements, and community analysis.
               Dataset insights from <span className="font-medium text-gray-600 dark:text-zinc-300">ummerr/ai-prompts</span> — a curated collection of real-world AI generation prompts.
+            </p>
+            <p className="text-xs text-gray-400 dark:text-zinc-500 shrink-0">
+              Updated <span className="font-medium text-gray-600 dark:text-zinc-300">Mar 26, 2026</span>
             </p>
           </div>
         </div>
