@@ -247,10 +247,15 @@ function PromptsPageInner() {
                   The Most Shared AI Prompts on X
                 </h1>
                 <p className="text-[11px] text-gray-500 dark:text-white/40 leading-relaxed">
-                  Every prompt is sourced from high-engagement posts on X/Twitter —
-                  high views, reposts, and shares. If thousands of people already
-                  copied it into their tools, it works.
+                  A corpus of organic, in-the-wild generative AI prompts sourced from high-engagement posts on X/Twitter — covering image and video generation. Unlike synthetic benchmarks, every entry reflects a real practitioner decision: what to generate, how to phrase it, and which model to use.
                 </p>
+                <div className="flex flex-wrap gap-1">
+                  {['CC BY 4.0', 'Multi-Modal', 'In-the-Wild', 'Engagement-Filtered'].map((tag) => (
+                    <span key={tag} className="rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-500/15 px-1.5 py-0.5 text-[9px] font-mono font-medium">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
 
               {/* Task categories */}
@@ -308,6 +313,38 @@ function PromptsPageInner() {
                     {f}
                   </span>
                 ))}
+              </div>
+
+              {/* Topic tags */}
+              <div className="flex flex-wrap gap-1">
+                {['image-generation', 'video-generation', 'in-the-wild-prompts', 'practitioner-behavior', 'engagement-filtered'].map((tag) => (
+                  <span key={tag} className="rounded-md bg-black/[0.03] dark:bg-white/[0.04] border border-black/[0.06] dark:border-white/[0.06] px-1.5 py-0.5 text-[9px] font-mono text-gray-400 dark:text-zinc-500">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              {/* Download + license */}
+              <div className="flex flex-col gap-2">
+                <div className="flex gap-1.5">
+                  <a
+                    href="/api/prompts/download?format=json"
+                    className="flex-1 flex items-center justify-center gap-1.5 rounded-lg border border-black/[0.08] dark:border-white/8 bg-black/[0.03] dark:bg-white/[0.04] px-2.5 py-2 text-[11px] font-medium text-gray-600 dark:text-zinc-300 hover:bg-black/[0.06] dark:hover:bg-white/[0.08] transition-colors"
+                  >
+                    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    JSON
+                  </a>
+                  <a
+                    href="/api/prompts/download?format=csv"
+                    className="flex-1 flex items-center justify-center gap-1.5 rounded-lg border border-black/[0.08] dark:border-white/8 bg-black/[0.03] dark:bg-white/[0.04] px-2.5 py-2 text-[11px] font-medium text-gray-600 dark:text-zinc-300 hover:bg-black/[0.06] dark:hover:bg-white/[0.08] transition-colors"
+                  >
+                    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    CSV
+                  </a>
+                </div>
+                <span className="text-[9px] text-gray-400 dark:text-white/20 text-center">
+                  CC BY 4.0 — cite as <span className="font-mono">ummerr/prompts</span>
+                </span>
               </div>
             </div>
           </div>
