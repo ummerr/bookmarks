@@ -327,20 +327,20 @@ function PromptsPageInner() {
               {/* Download + license */}
               <div className="flex flex-col gap-2">
                 <div className="flex gap-1.5">
-                  <a
-                    href="/api/prompts/download?format=json"
-                    className="flex-1 flex items-center justify-center gap-1.5 rounded-lg border border-black/[0.08] dark:border-white/8 bg-black/[0.03] dark:bg-white/[0.04] px-2.5 py-2 text-[11px] font-medium text-gray-600 dark:text-zinc-300 hover:bg-black/[0.06] dark:hover:bg-white/[0.08] transition-colors"
-                  >
-                    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                    JSON
-                  </a>
-                  <a
-                    href="/api/prompts/download?format=csv"
-                    className="flex-1 flex items-center justify-center gap-1.5 rounded-lg border border-black/[0.08] dark:border-white/8 bg-black/[0.03] dark:bg-white/[0.04] px-2.5 py-2 text-[11px] font-medium text-gray-600 dark:text-zinc-300 hover:bg-black/[0.06] dark:hover:bg-white/[0.08] transition-colors"
-                  >
-                    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                    CSV
-                  </a>
+                  {[
+                    { format: 'jsonl', label: 'JSONL' },
+                    { format: 'csv',   label: 'CSV' },
+                    { format: 'json',  label: 'JSON' },
+                  ].map(({ format, label }) => (
+                    <a
+                      key={format}
+                      href={`/api/prompts/download?format=${format}`}
+                      className="flex-1 flex items-center justify-center gap-1 rounded-lg border border-black/[0.08] dark:border-white/8 bg-black/[0.03] dark:bg-white/[0.04] px-2 py-2 text-[11px] font-medium text-gray-600 dark:text-zinc-300 hover:bg-black/[0.06] dark:hover:bg-white/[0.08] transition-colors"
+                    >
+                      <svg className="h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                      {label}
+                    </a>
+                  ))}
                 </div>
                 <span className="text-[9px] text-gray-400 dark:text-white/20 text-center">
                   CC BY 4.0 — cite as <span className="font-mono">ummerr/prompts</span>
