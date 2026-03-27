@@ -97,7 +97,7 @@ function Section({ title, children, id }: { title: string; children: React.React
   return (
     <div className="flex flex-col gap-6 scroll-mt-20" id={id}>
       <div className="border-b border-black/[0.06] dark:border-white/[0.06] pb-3">
-        <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-gray-400 dark:text-zinc-500">
+        <h2 className="font-serif text-xl md:text-2xl text-gray-900 dark:text-white tracking-tight">
           {title}
         </h2>
       </div>
