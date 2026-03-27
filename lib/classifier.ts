@@ -36,20 +36,37 @@ const MODEL_ALIASES: Record<string, string> = {
   'runway':            'Runway',
   'runway gen3':       'Runway',
   'runway gen-3':      'Runway',
+  'runway gen-4':      'Runway',
+  'runway gen4':       'Runway',
+  'runway gen-4.5':    'Runway',
   'runwayml':          'Runway',
   // Kling
   'kling':             'Kling',
+  'kling 3':           'Kling',
+  'kling 3.0':         'Kling',
   // Pika
   'pika':              'Pika',
   'pika labs':         'Pika',
+  'pika 2.5':          'Pika',
   // Luma
   'luma':              'Luma',
   'luma dream machine': 'Luma',
   'luma ai':           'Luma',
   // Hailuo
   'hailuo':            'Hailuo',
-  // Sora
+  // Sora (shut down Mar 2026)
   'sora':              'Sora',
+  'sora 2':            'Sora',
+  // Veo (Google)
+  'veo':               'Veo',
+  'veo 3':             'Veo',
+  'veo 3.1':           'Veo',
+  'google veo':        'Veo',
+  // Aurora / Grok (xAI)
+  'aurora':            'Aurora',
+  'grok imagine':      'Aurora',
+  'grok imagine video': 'Aurora',
+  'xai aurora':        'Aurora',
   // Wan
   'wan':               'Wan',
   // Suno
@@ -121,7 +138,7 @@ const CLASSIFY_SYSTEM = `Classify each tweet into exactly one category.
 Categories:
 - tech_ai_product: Technology, AI/ML, startups, developer tools, product launches, tech industry news
 - career_productivity: Career growth, job advice, productivity systems, professional development
-- prompts: ANY tweet containing an AI prompt — image gen (Midjourney, DALL-E, Flux, SD, Firefly, Ideogram, Leonardo, ANY tool), video gen (Sora, Runway, Kling, Pika, Luma, Hailuo, Wan), audio gen (Suno, Udio, ElevenLabs), 3D gen, LLM prompts, system prompts, prompt engineering. KEY: if the text reads like a descriptive prompt for any AI tool — even unnamed ones — classify as "prompts".
+- prompts: ANY tweet containing an AI prompt — image gen (Midjourney, DALL-E, Flux, SD, Firefly, Ideogram, Leonardo, Aurora, ANY tool), video gen (Veo, Runway, Kling, Pika, Luma, Hailuo, Wan, Aurora/Grok, ANY tool), audio gen (Suno, Udio, ElevenLabs), 3D gen, LLM prompts, system prompts, prompt engineering. KEY: if the text reads like a descriptive prompt for any AI tool — even unnamed ones — classify as "prompts".
 - uncategorized: Does not fit above, or confidence < 0.7.
 
 Rules: confidence 0.0-1.0. If < 0.7, category must be "uncategorized". Classify all tweets.`
@@ -202,7 +219,11 @@ const PROMPT_SYSTEM = `Classify and extract AI prompts from tweets.
 CATEGORIES (pick one):
 
 CRITICAL RULE — reference-based categories take priority:
-If the prompt contains bracketed placeholders like [SUBJECT], [YOUR IMAGE], [REFERENCE], [UPLOADED IMAGE], [SOURCE IMAGE], [INPUT], or similar tokens indicating the user must supply an image, classify as image_r2i (for images) or video_r2v (for video). These categories OVERRIDE subject-based categories like image_person or image_t2i. Also use image_r2i for workflows explicitly described as IP-Adapter, ControlNet, face swap, img2img, style transfer, or reference-to-image.
+If the prompt contains ANY of these reference signals, classify as image_r2i (for images) or video_r2v (for video) — these OVERRIDE subject-based categories like image_person or image_t2i:
+- Bracketed placeholders: [SUBJECT], [YOUR IMAGE], [REFERENCE], [UPLOADED IMAGE], [SOURCE IMAGE], [INPUT]
+- Midjourney reference flags: --sref (style reference), --cref (character reference)
+- Workflow keywords: IP-Adapter, ControlNet, face swap, img2img, style transfer, reference-to-image
+- Explicit instructions to "upload", "attach", or "use your image/photo" as input
 
 Image:
 - image_r2i: Reference-to-image — prompt requires a user-supplied reference image (bracketed placeholders, IP-Adapter, ControlNet, face swap, img2img, style transfer). USE THIS whenever the prompt cannot work without an input image.
@@ -213,9 +234,9 @@ Image:
 - image_t2i: All other text-to-image (landscapes, abstract, sci-fi, animals, food, concept art). Default for image prompts with no reference requirement.
 
 Video:
-- video_r2v: Reference-to-video — a reference/uploaded image guides the video (character consistency, scene reference, NOT direct animation). Use for bracketed placeholders in video prompts.
+- video_r2v: Reference-to-video — a reference/uploaded image guides the video (character consistency, scene reference, NOT direct animation). Use for bracketed placeholders or --sref/--cref in video prompts.
 - video_i2v: Image-to-video — directly animating or extending a specific still image
-- video_t2v: Text-to-video, prompt only (Sora, Kling, Runway, Pika, Hailuo, Luma, Wan)
+- video_t2v: Text-to-video, prompt only (Veo, Kling, Runway, Pika, Hailuo, Luma, Wan, Aurora/Grok)
 - video_v2v: Video-to-video (restyle, motion transfer, lip sync)
 
 Other: audio (music/voice/SFX), threed (3D models/scenes)
