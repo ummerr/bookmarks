@@ -557,6 +557,13 @@ export default function StateOfPromptingPage() {
                       strategy: 'Be specific about camera movement: steadicam, gimbal, handheld. Skip descriptions of how things physically behave. Focus on atmosphere, blocking, and timing.',
                       color: '#f97316',
                     },
+                    {
+                      model: '🪦 RIP Sora 2',
+                      personality: 'Shut Down Mar 24, 2026',
+                      desc: 'The most technically ambitious video model — diffusion-based world simulation with physics understanding. Shut down after six months due to $15M/day inference costs against $2.1M lifetime revenue.',
+                      strategy: 'N/A — no longer available. Its approach of describing physical forces rather than aesthetics influenced how video prompts are written across all remaining tools.',
+                      color: '#6b7280',
+                    },
                   ].map((m) => (
                     <div
                       key={m.model}
@@ -608,19 +615,20 @@ export default function StateOfPromptingPage() {
                     <span>Audio</span>
                   </div>
                   {[
-                    { name: 'Kling 3.0',      text: true, visual: true, audio: true  },
-                    { name: 'Veo 3.1',        text: true, visual: true, audio: true  },
-                    { name: 'Runway Gen-4.5', text: true, visual: true, audio: false },
-                    { name: 'Pika 2.5',       text: true, visual: true, audio: false },
+                    { name: 'Kling 3.0',         text: true,  visual: true,  audio: true,  dead: false },
+                    { name: 'Veo 3.1',            text: true,  visual: true,  audio: true,  dead: false },
+                    { name: 'Runway Gen-4.5',     text: true,  visual: true,  audio: false, dead: false },
+                    { name: 'Pika 2.5',           text: true,  visual: true,  audio: false, dead: false },
+                    { name: '🪦 RIP Sora 2',      text: true,  visual: true,  audio: true,  dead: true  },
                   ].map((p, i) => (
                     <div
                       key={p.name}
-                      className={`grid grid-cols-4 px-4 py-2.5 text-xs items-center ${i % 2 === 0 ? '' : 'bg-black/[0.015] dark:bg-white/[0.015]'}`}
+                      className={`grid grid-cols-4 px-4 py-2.5 text-xs items-center ${p.dead ? 'opacity-50' : i % 2 === 0 ? '' : 'bg-black/[0.015] dark:bg-white/[0.015]'}`}
                     >
-                      <span className="font-medium text-gray-800 dark:text-zinc-200">{p.name}</span>
-                      <span>{p.text ? '✓' : '—'}</span>
-                      <span>{p.visual ? <span className="text-emerald-500 font-medium">✓</span> : '—'}</span>
-                      <span>{p.audio ? <span className="text-violet-500 font-medium">✓</span> : <span className="text-gray-300 dark:text-zinc-600">—</span>}</span>
+                      <span className={`font-medium ${p.dead ? 'text-gray-400 dark:text-zinc-500' : 'text-gray-800 dark:text-zinc-200'}`}>{p.name}</span>
+                      <span className={p.dead ? 'line-through' : ''}>{p.text ? '✓' : '—'}</span>
+                      <span className={p.dead ? 'line-through' : ''}>{p.visual ? <span className={p.dead ? 'text-gray-400' : 'text-emerald-500 font-medium'}>✓</span> : '—'}</span>
+                      <span className={p.dead ? 'line-through' : ''}>{p.audio ? <span className={p.dead ? 'text-gray-400' : 'text-violet-500 font-medium'}>✓</span> : <span className="text-gray-300 dark:text-zinc-600">—</span>}</span>
                     </div>
                   ))}
                 </div>
