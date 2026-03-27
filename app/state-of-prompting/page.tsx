@@ -278,7 +278,7 @@ export default function StateOfPromptingPage() {
           </div>
           <div className="flex items-center justify-between gap-4 pt-2 border-t border-black/[0.06] dark:border-white/6">
             <p className="text-xs text-gray-400 dark:text-zinc-500">
-              Industry data from public research, product announcements, and <a href="https://artificialanalysis.ai" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">Artificial Analysis</a> arena rankings.
+              Industry data from public research and product announcements. Arena rankings manually sourced from the <a href="https://artificialanalysis.ai" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">Artificial Analysis</a> arena tool (Mar 2026).
               Dataset insights from <Link href="/prompts" className="font-medium text-gray-600 dark:text-zinc-300 hover:underline">ummerr/prompts</Link>.
             </p>
           </div>
