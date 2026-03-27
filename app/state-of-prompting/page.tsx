@@ -7,7 +7,6 @@ interface LabelValue { label: string; value: number }
 interface StatsData {
   total: number
   withReference: number
-  multiShot?: number
   byCategory: LabelValue[]
   byModel: LabelValue[]
   byTheme?: LabelValue[]

@@ -11,7 +11,6 @@ interface LabelValue { label: string; value: number }
 interface StatsData {
   total: number
   withReference: number
-  multiShot: number
   byCategory: LabelValue[]
   byModel: LabelValue[]
   byTheme: LabelValue[]
@@ -205,7 +204,6 @@ export default function DatacardPage() {
     stats?.byCategory?.filter((c) => c.label.startsWith('video_')).reduce((s, c) => s + c.value, 0) ?? 0
   , [stats])
   const refPct = stats?.total ? Math.round((stats.withReference / stats.total) * 100) : 0
-  const multiShotPct = stats?.total ? Math.round(((stats.multiShot ?? 0) / stats.total) * 100) : 0
 
   return (
     <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
@@ -324,12 +322,11 @@ export default function DatacardPage() {
             </div>
           ) : stats ? (
             <>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
                 <StatPill value={stats.total} label="total prompts" sub="sourced from X/Twitter" color="#1DA1F2" />
                 <StatPill value={imageCount} label="image prompts" color="#ec4899" />
                 <StatPill value={videoCount} label="video prompts" color="#8b5cf6" />
                 <StatPill value={`${refPct}%`} label="use references" sub={`${stats.withReference} prompts`} color="#f97316" />
-                <StatPill value={`${multiShotPct}%`} label="multi-shot" sub={`${stats.multiShot ?? 0} prompts`} color="#14b8a6" />
                 <StatPill value={modelCount} label="distinct models" color="#3b82f6" />
               </div>
 
