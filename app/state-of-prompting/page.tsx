@@ -10,6 +10,7 @@ const NAV_SECTIONS = [
   { id: 'context-engineering', label: 'Brief Architecture' },
   { id: 'sora',               label: 'Why Sora Shut Down' },
   { id: 'video',              label: 'Video Prompting' },
+  { id: 'multishot',          label: 'Multi-Shot' },
   { id: 'multimodal',         label: 'Multimodal' },
   { id: 'practitioners',      label: 'Takeaways' },
   { id: 'sources',            label: 'Sources' },
@@ -353,7 +354,7 @@ export default function StateOfPromptingPage() {
             <Section title="How Video Prompting Works Now" id="video">
               <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
                 <p>
-                  Video prompting is a different skill from image prompting. The three remaining major tools — Veo 3.1, Kling 3.0, and Runway Gen-4.5 — each respond to inputs differently, and a prompt that works well on one can fail on another.
+                  Video prompting is a different skill from image prompting. Each of the major tools has a distinct personality — a prompt that works on one can fail on another.
                 </p>
                 <Insight
                   quote="Modern prompting requires stopping description of what things look like and instead describing the forces acting on them."
@@ -363,38 +364,45 @@ export default function StateOfPromptingPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {[
                     {
-                      model: 'Veo 3.1',
-                      personality: 'Rendering Engine',
-                      desc: 'Works best with structured, ingredient-list prompts and reference images. You can provide a start frame and an end frame and it fills in the motion between them.',
-                      strategy: 'Lead with the subject and shot type. Upload reference images instead of describing them. Use labelled sections for dialogue and sound effects.',
-                      color: '#1DA1F2',
+                      model: 'Seedance 2.0',
+                      personality: 'Leaderboard #1',
+                      desc: "ByteDance's dual-branch diffusion transformer co-generates video and audio in a single pass — not spliced together after. Holds #1 ELO across all three Artificial Analysis arenas (T2V, I2V, and audio-video) as of March 2026. Standout character consistency and physics.",
+                      strategy: 'Assign explicit roles to each reference asset using the @reference system. Describe physics consequences ("tires smoke as the car drifts") not just actions ("car turns"). Use [Xs] timestamp notation for shot boundaries. Limit multi-shot to 2–3 shots for best character hold.',
+                      color: '#10b981',
                     },
                     {
                       model: 'Kling 3.0',
-                      personality: 'Multimodal Engine',
-                      desc: 'The first model to genuinely treat text, images, audio, and video as equal inputs processed together. Multiple references work better here than anywhere else.',
-                      strategy: 'Give it as many reference files as you have — image, audio clip, reference video — with brief notes on each. Use the storyboard tool to direct shot by shot.',
+                      personality: 'Multi-Shot Pioneer',
+                      desc: 'Popularized storyboard-mode prompting — up to 6 distinct camera cuts from a single prompt. Native lip-sync and speaker attribution across shots. The research behind it (MultiShotMaster, CVPR 2026) is open-sourced.',
+                      strategy: 'Use Custom Storyboard mode for full control. Structure each shot as: Scene → Characters → Action → Camera → Audio. Label dialogue per speaker. Give it as many reference files as you have.',
                       color: '#ec4899',
+                    },
+                    {
+                      model: 'Veo 3.1',
+                      personality: 'Rendering Engine',
+                      desc: 'Works best with structured, ingredient-list prompts and reference images. Provide a start frame and end frame and it fills in the motion. Deep Google infrastructure means reliable uptime and API access.',
+                      strategy: 'Lead with subject and shot type. Upload reference images instead of describing them. Use labelled sections for dialogue and sound effects.',
+                      color: '#1DA1F2',
                     },
                     {
                       model: 'Runway Gen-4.5',
                       personality: 'Cinematic Realist',
-                      desc: "Leads on visual quality and physical realism. You don't need to explain how physics works — just tell it how the camera moves.",
-                      strategy: 'Be specific about camera movement: steadicam, gimbal, handheld. Skip descriptions of how things physically behave. Focus on atmosphere, blocking, and timing.',
+                      desc: "Leads on per-shot visual quality and physical realism. The go-to for complex particle effects, fire, fabric, and fluid. Single shot per generation — multi-shot requires manual assembly.",
+                      strategy: 'Be specific about camera movement: steadicam, gimbal, handheld. Skip physics descriptions — it handles those. Focus on atmosphere, blocking, and timing.',
                       color: '#f97316',
                     },
                     {
                       model: 'Grok Imagine Video',
-                      personality: 'Leaderboard #1',
-                      desc: 'Built on Aurora\'s autoregressive architecture. Generates up to 15 seconds from text or image in ~17 seconds. Ranked #1 on the Artificial Analysis image-to-video leaderboard (ELO 1,336). Supports video extension and natural language editing.',
-                      strategy: 'Use comma-separated ingredient prompts rather than prose. Feed a reference image to anchor style and subject. Use iterative chat refinement — describe changes in plain language rather than rewriting the full prompt.',
+                      personality: 'Top 3 Leaderboard',
+                      desc: "Built on Aurora's autoregressive architecture. Generates up to 15 seconds in ~17 seconds. Ranked top 3 on Artificial Analysis I2V (ELO 1,329) — highest-rated non-ByteDance model. Supports video extension and natural language editing.",
+                      strategy: 'Use comma-separated ingredient prompts rather than prose. Feed a reference image to anchor style and subject. Use iterative chat refinement rather than rewriting from scratch.',
                       color: '#9333ea',
                     },
                     {
                       model: '🪦 RIP Sora 2',
                       personality: 'Shut Down Mar 24, 2026',
                       desc: 'The most technically ambitious video model — diffusion-based world simulation with physics understanding. Shut down after six months due to $15M/day inference costs against $2.1M lifetime revenue.',
-                      strategy: 'N/A — no longer available. Its approach of describing physical forces rather than aesthetics influenced how video prompts are written across all remaining tools.',
+                      strategy: 'N/A — no longer available. Its world-state persistence approach (characters held across shots automatically) influenced the multi-shot techniques every remaining tool now implements.',
                       color: '#6b7280',
                     },
                   ].map((m) => (
@@ -435,6 +443,79 @@ export default function StateOfPromptingPage() {
               </div>
             </Section>
 
+            <Section title="Multi-Shot Prompting" id="multishot">
+              <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
+                <p>
+                  Single-shot AI video is B-roll. Multi-shot AI video is an edited scene. Kling 3.0's February 2026 launch popularized the technique — and it's now the standard for anything with narrative structure.
+                </p>
+                <p>
+                  Multi-shot prompting describes two or more distinct camera cuts in a single prompt. The model generates them as a coherent sequence — same characters, consistent environment, natural transitions. The underlying research (Kuaishou's MultiShotMaster, CVPR 2026) modified how the model handles position embeddings to deliberately break continuity at shot boundaries while keeping character identity stable across them.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4 flex flex-col gap-2">
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-pink-500 dark:text-pink-400">Shot-label format (Kling 3.0)</p>
+                    <pre className="text-[11px] text-gray-600 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap font-mono bg-black/[0.03] dark:bg-white/[0.03] rounded-lg p-3">{`Shot 1 (0–4s): Wide — rain-soaked city street,
+amber streetlights, slow dolly forward.
+
+Shot 2 (4–8s): Medium — woman in red coat
+running through alley, tracking shot.
+
+Shot 3 (8–12s): Close-up — catching breath,
+eyes wide. [breathless]: "They found us."`}</pre>
+                    <p className="text-[11px] text-gray-400 dark:text-zinc-500">Kling 3.0 supports up to 6 shots with native lip-sync and speaker attribution per character.</p>
+                  </div>
+                  <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4 flex flex-col gap-2">
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-emerald-500 dark:text-emerald-400">Timestamp format (Seedance 2.0)</p>
+                    <pre className="text-[11px] text-gray-600 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap font-mono bg-black/[0.03] dark:bg-white/[0.03] rounded-lg p-3">{`[0s]: Wide shot — character enters a dimly
+lit cafe, looking around curiously.
+
+[Shot switch]
+
+[5s]: Medium — sitting down, ordering
+coffee with a warm smile.
+
+[Shot switch]
+
+[10s]: Close-up — eyes react as someone
+enters. Warm golden lighting.`}</pre>
+                    <p className="text-[11px] text-gray-400 dark:text-zinc-500">Seedance 2.0 uses <code className="bg-black/[0.05] dark:bg-white/[0.05] px-1 rounded">Shot switch</code> or <code className="bg-black/[0.05] dark:bg-white/[0.05] px-1 rounded">Cut to</code> as explicit scene-change markers.</p>
+                  </div>
+                </div>
+                <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] overflow-hidden">
+                  <div className="grid grid-cols-4 text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 border-b border-black/[0.06] dark:border-white/6 px-4 py-2.5">
+                    <span>Model</span>
+                    <span>Max shots</span>
+                    <span>Syntax</span>
+                    <span>Lip-sync</span>
+                  </div>
+                  {[
+                    { model: 'Kling 3.0',       shots: '6',  syntax: 'Shot N (Xs): …',            lipsync: true,  color: '#ec4899' },
+                    { model: 'Seedance 2.0',    shots: '3–5', syntax: '[Xs]: … / Shot switch',     lipsync: true,  color: '#10b981' },
+                    { model: 'Veo 3.1',         shots: '2–3', syntax: 'Start/end frame reference', lipsync: true,  color: '#1DA1F2' },
+                    { model: 'Runway Gen-4.5',  shots: '1',  syntax: 'Single shot — assemble in post', lipsync: false, color: '#f97316' },
+                    { model: 'Grok Imagine Video', shots: '1', syntax: 'Single shot per generation', lipsync: false, color: '#9333ea' },
+                  ].map((row, i) => (
+                    <div key={row.model} className={`grid grid-cols-4 px-4 py-2.5 text-xs items-center gap-2 ${i % 2 === 0 ? '' : 'bg-black/[0.015] dark:bg-white/[0.015]'}`}>
+                      <span className="font-semibold" style={{ color: row.color }}>{row.model}</span>
+                      <span className="text-gray-600 dark:text-zinc-300 font-medium">{row.shots}</span>
+                      <span className="text-gray-500 dark:text-zinc-400">{row.syntax}</span>
+                      <span>{row.lipsync ? <span className="text-violet-500 font-medium">✓</span> : <span className="text-gray-300 dark:text-zinc-600">—</span>}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="rounded-xl bg-pink-50 dark:bg-pink-950/20 border border-pink-200 dark:border-pink-800/30 p-4">
+                  <p className="text-sm text-pink-700 dark:text-pink-300 leading-relaxed">
+                    <span className="font-semibold">The Continuity Lock.</span> Open every multi-shot prompt with a shared constants block — time of day, location, character description, color grade, visual style. This is the "lock sheet" that anchors all shots to the same world. Repeat the same character descriptors verbatim in every shot. Even small wording changes can cause face drift.
+                  </p>
+                </div>
+                <div className="rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/30 p-4">
+                  <p className="text-sm text-amber-700 dark:text-amber-300 leading-relaxed">
+                    <span className="font-semibold">Where it breaks down.</span> Character consistency degrades past 4–5 shots. Hard cuts between very different environments (outdoor → indoor, day → night) produce visual seams. Timestamps are probabilistic — the model interprets them, not executes them literally. No current model stores character profiles between sessions: if you come back tomorrow, re-anchor with the same reference image.
+                  </p>
+                </div>
+              </div>
+            </Section>
+
             <Section title="Every Major Tool Now Accepts Multiple Input Types" id="multimodal">
               <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
                 <p>
@@ -448,6 +529,7 @@ export default function StateOfPromptingPage() {
                     <span>Audio</span>
                   </div>
                   {[
+                    { name: 'Seedance 2.0',        text: true,  visual: true,  audio: true,  dead: false },
                     { name: 'Kling 3.0',           text: true,  visual: true,  audio: true,  dead: false },
                     { name: 'Veo 3.1',             text: true,  visual: true,  audio: true,  dead: false },
                     { name: 'Grok Imagine Video',  text: true,  visual: true,  audio: false, dead: false },
@@ -544,6 +626,15 @@ export default function StateOfPromptingPage() {
                   { label: 'AI Video Trends: Predictions For 2026 — LTX Studio', url: 'https://ltx.studio/blog/ai-video-trends' },
                   { label: 'Prompt Engineering Jobs Are Obsolete in 2025 — Salesforce Ben', url: 'https://www.salesforceben.com/prompt-engineering-jobs-are-obsolete-in-2025-heres-why/' },
                   { label: 'Context Engineering for Coding Agents — Martin Fowler', url: 'https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html' },
+                  { label: 'Seedance 2.0 Official — ByteDance Seed', url: 'https://seed.bytedance.com/en/seedance2_0' },
+                  { label: 'Seedance 2.0 vs Veo 3.1: Which Is Best? — SitePoint', url: 'https://www.sitepoint.com/seedance-2-0-vs-veo-3-1-which-is-best-for-ai-video-creators/' },
+                  { label: 'Seedance 2.0 Complete Guide — WaveSpeedAI', url: 'https://wavespeed.ai/blog/posts/seedance-2-0-complete-guide-multimodal-video-creation/' },
+                  { label: 'Artificial Analysis Text-to-Video Leaderboard', url: 'https://artificialanalysis.ai/video/leaderboard/text-to-video' },
+                  { label: 'MultiShotMaster (Kuaishou / Kling Research) — arXiv:2512.03041', url: 'https://arxiv.org/html/2512.03041' },
+                  { label: 'VideoGen-of-Thought — arXiv:2503.15138', url: 'https://arxiv.org/abs/2503.15138' },
+                  { label: 'Kling 3.0 Multi-Shot Prompting Guide — fal.ai', url: 'https://blog.fal.ai/kling-3-0-prompting-guide/' },
+                  { label: 'Timeline Prompting with Seedance 2.0 — MindStudio', url: 'https://www.mindstudio.ai/blog/timeline-prompting-seedance-2-cinematic-ai-video' },
+                  { label: 'Timestamp Prompting Guide — Artlist', url: 'https://artlist.io/blog/timestamp-prompting/' },
                 ].map((s) => (
                   <a
                     key={s.url}
