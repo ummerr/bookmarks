@@ -16,6 +16,13 @@ function detectMultiShot(text: string): boolean {
   return shotCount >= 2 || cutCount >= 2
 }
 
+// Safely coerce a JSONB column to an array — handles string, parsed array, or junk
+function toArray(val: unknown): unknown[] {
+  if (Array.isArray(val)) return val
+  if (typeof val === 'string') { try { const p = JSON.parse(val); if (Array.isArray(p)) return p } catch {} }
+  return []
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toBookmark(row: Record<string, any>): Bookmark {
   const extracted_prompt = row.extracted_prompt ?? null
@@ -25,8 +32,8 @@ function toBookmark(row: Record<string, any>): Bookmark {
     media_urls: typeof row.media_urls === 'string' ? JSON.parse(row.media_urls) : (row.media_urls ?? []),
     media_alt_texts: typeof row.media_alt_texts === 'string' ? JSON.parse(row.media_alt_texts) : (row.media_alt_texts ?? []),
     thread_tweets: typeof row.thread_tweets === 'string' ? JSON.parse(row.thread_tweets) : (row.thread_tweets ?? []),
-    prompt_themes: typeof row.prompt_themes === 'string' ? JSON.parse(row.prompt_themes) : (row.prompt_themes ?? []),
-    art_styles: typeof row.art_styles === 'string' ? JSON.parse(row.art_styles) : (row.art_styles ?? []),
+    prompt_themes: toArray(row.prompt_themes),
+    art_styles: toArray(row.art_styles),
     is_thread: Boolean(row.is_thread),
     confidence: Number(row.confidence),
     prompt_category: row.prompt_category ?? null,
