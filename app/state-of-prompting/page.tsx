@@ -115,7 +115,7 @@ export default function StateOfPromptingPage() {
         {/* Hero */}
         <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-6 md:p-8 flex flex-col gap-5 mb-10">
           <div className="flex flex-wrap gap-2 items-center">
-            <Badge color="#1DA1F2">March 2026</Badge>
+            <Badge color="#1DA1F2">Q1 2026</Badge>
             <Badge color="#8b5cf6">Video & Image AI</Badge>
             <Badge color="#f97316">Prompting Research</Badge>
             <Badge color="#22c55e">Skills</Badge>
