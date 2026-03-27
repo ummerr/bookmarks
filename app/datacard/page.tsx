@@ -17,20 +17,20 @@ interface StatsData {
 
 const SCHEMA_FIELDS = [
   { field: 'id',                 type: 'uuid',           nullable: false, description: 'Primary key' },
-  { field: 'tweet_id',           type: 'text',           nullable: false, description: 'Original post ID from source platform' },
-  { field: 'tweet_text',         type: 'text',           nullable: false, description: 'Full text of the source post' },
-  { field: 'author_handle',      type: 'text',           nullable: false, description: 'Platform username / subreddit handle' },
-  { field: 'author_name',        type: 'text',           nullable: true,  description: 'Display name or r/subreddit identifier' },
-  { field: 'tweet_url',          type: 'text',           nullable: false, description: 'Canonical URL of the original post' },
+  { field: 'tweet_id',           type: 'text',           nullable: false, description: 'Original post ID — enables deduplication and provenance tracing' },
+  { field: 'tweet_text',         type: 'text',           nullable: false, description: 'Full text of the source post (unmodified)' },
+  { field: 'author_handle',      type: 'text',           nullable: false, description: 'Platform username of the practitioner who shared the prompt' },
+  { field: 'author_name',        type: 'text',           nullable: true,  description: 'Display name' },
+  { field: 'tweet_url',          type: 'text',           nullable: false, description: 'Canonical URL — links to output media and original engagement context' },
   { field: 'media_urls',         type: 'text[]',         nullable: false, description: 'Output image/video URLs attached to the post' },
   { field: 'source',             type: 'enum',           nullable: false, description: 'Ingestion origin: twitter | reddit | manual' },
   { field: 'category',           type: 'enum',           nullable: false, description: 'Top-level bucket: prompts | tech_ai_product | career_productivity | uncategorized' },
-  { field: 'prompt_category',    type: 'enum',           nullable: true,  description: 'Prompt technique: image_t2i, video_t2v, audio, coding, etc. (17 values)' },
-  { field: 'extracted_prompt',   type: 'text',           nullable: true,  description: 'The clean prompt text extracted from post + comments' },
-  { field: 'detected_model',     type: 'text',           nullable: true,  description: 'AI model/tool mentioned (free-text, e.g. "Midjourney v6")' },
+  { field: 'prompt_category',    type: 'enum',           nullable: true,  description: 'Modality + technique: image_t2i, video_t2v, video_i2v, audio, etc.' },
+  { field: 'extracted_prompt',   type: 'text',           nullable: true,  description: 'Clean prompt text extracted from post + comments — social framing stripped' },
+  { field: 'detected_model',     type: 'text',           nullable: true,  description: 'AI model mentioned (free-text canonical slug, e.g. "Midjourney v6.1")' },
   { field: 'prompt_themes',      type: 'text[]',         nullable: true,  description: 'Visual themes: person, cinematic, landscape, scifi, fantasy, etc.' },
   { field: 'art_styles',         type: 'text[]',         nullable: true,  description: 'Art styles: photorealistic, anime, oil_painting, pixel_art, etc.' },
-  { field: 'requires_reference', type: 'boolean',        nullable: true,  description: 'Whether the prompt requires a reference image as input' },
+  { field: 'requires_reference', type: 'boolean',        nullable: true,  description: 'True if prompt requires a reference image as input' },
   { field: 'reference_type',     type: 'enum',           nullable: true,  description: 'face_person | style_artwork | subject_object | pose_structure | scene_background' },
   { field: 'is_thread',          type: 'boolean',        nullable: false, description: 'True if post is a multi-tweet thread' },
   { field: 'thread_tweets',      type: 'jsonb',          nullable: true,  description: 'Array of {tweet_id, tweet_text} for threaded posts' },
@@ -47,18 +47,53 @@ const PROMPT_CATEGORIES = [
   { key: 'image_i2i',           label: 'Image → Image',     group: 'Image', color: '#d946ef' },
   { key: 'image_r2i',           label: 'Reference → Image', group: 'Image', color: '#f97316' },
   { key: 'image_character_ref', label: 'Character Ref',     group: 'Image', color: '#f43f5e' },
-  { key: 'image_inpainting',    label: 'Inpainting',        group: 'Image', color: '#ef4444' },
   { key: 'video_t2v',           label: 'Text → Video',      group: 'Video', color: '#8b5cf6' },
   { key: 'video_i2v',           label: 'Image → Video',     group: 'Video', color: '#6366f1' },
   { key: 'video_r2v',           label: 'Reference → Video', group: 'Video', color: '#a855f7' },
   { key: 'video_v2v',           label: 'Video → Video',     group: 'Video', color: '#3b82f6' },
   { key: 'audio',               label: 'Audio',             group: 'Other', color: '#06b6d4' },
   { key: 'threed',              label: '3D',                group: 'Other', color: '#14b8a6' },
-  { key: 'system_prompt',       label: 'System Prompt',     group: 'Text',  color: '#0ea5e9' },
-  { key: 'writing',             label: 'Writing',           group: 'Text',  color: '#22c55e' },
-  { key: 'coding',              label: 'Coding',            group: 'Text',  color: '#eab308' },
-  { key: 'analysis',            label: 'Analysis',          group: 'Text',  color: '#f59e0b' },
-  { key: 'other',               label: 'Other',             group: 'Other', color: '#71717a' },
+]
+
+const BENCHMARKS = [
+  { name: 'DrawBench',       size: '200',    source: 'Synthetic (LLM)',      modality: 'Image only',     provenance: 'None',            engagement: '—' },
+  { name: 'PartiPrompts',    size: '1,632',  source: 'Crowdworkers (Google)', modality: 'Image only',     provenance: 'None',            engagement: '—' },
+  { name: 'T2I-CompBench',   size: '6,000',  source: 'Synthetic (GPT-4)',    modality: 'Image only',     provenance: 'None',            engagement: '—' },
+  { name: 'GenAI-Bench',     size: '1,200',  source: 'LLM + human mix',      modality: 'Image + Video',  provenance: 'None',            engagement: '—' },
+  { name: 'ummerr/prompts',  size: '500+',   source: 'Organic / in-the-wild', modality: 'Image, Video, Audio, 3D', provenance: 'Full (URL + author)', engagement: 'Yes (viral filter)' },
+]
+
+const RESEARCH_APPLICATIONS = [
+  {
+    title: 'In-the-wild prompt distribution',
+    body: 'Study what the actual distribution of prompts looks like across modalities, models, and technique types — as opposed to the synthetic or curated distributions used in most benchmarks. Useful for calibrating evaluation sets to real practitioner behavior.',
+    color: '#8b5cf6',
+  },
+  {
+    title: 'Engagement as a quality signal',
+    body: 'Each entry is sourced from high-engagement posts (high views, reposts, saves). This creates a weak but organic quality label: prompts that practitioners found compelling enough to share and reshare. Researchers can study whether engagement correlates with automated quality metrics.',
+    color: '#1DA1F2',
+  },
+  {
+    title: 'Multi-modal prompt structure analysis',
+    body: 'The dataset covers image, video, audio, and 3D generation with structured technique labels. Most existing prompt datasets are image-only. This enables cross-modal comparison: how does a T2V prompt differ structurally from a T2I prompt for the same subject?',
+    color: '#ec4899',
+  },
+  {
+    title: 'Model-conditioned prompt analysis',
+    body: 'Each entry includes a detected model field. Researchers can study how prompt style, length, technique invocation, and reference usage vary across models — Midjourney vs. FLUX vs. Kling vs. Sora — and how practitioner prompting strategies adapt to model capabilities.',
+    color: '#f97316',
+  },
+  {
+    title: 'Temporal adoption analysis',
+    body: 'bookmarked_at and created_at timestamps enable temporal slicing. Study how the prompt distribution evolves as new models are released, how quickly practitioners adopt new techniques, and how model market share shifts over time in the practitioner community.',
+    color: '#22c55e',
+  },
+  {
+    title: 'Reference image usage patterns',
+    body: 'The requires_reference and reference_type fields capture which prompts require a reference image as input, and what kind (face, style, subject, pose, background). Useful for studying how practitioners use image conditioning vs. text-only prompting across different task types.',
+    color: '#14b8a6',
+  },
 ]
 
 // ── Mini components ────────────────────────────────────────────────────────
@@ -89,9 +124,9 @@ function Tag({ children, color }: { children: React.ReactNode; color: string }) 
   )
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, id, children }: { title: string; id?: string; children: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-4">
+    <div id={id} className="flex flex-col gap-4">
       <h2 className="text-base font-semibold text-gray-900 dark:text-white tracking-tight border-b border-black/[0.06] dark:border-white/6 pb-2">
         {title}
       </h2>
@@ -100,13 +135,14 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   )
 }
 
-function StatPill({ value, label, color }: { value: string | number; label: string; color: string }) {
+function StatPill({ value, label, sub, color }: { value: string | number; label: string; sub?: string; color: string }) {
   return (
     <div className="flex flex-col gap-0.5 rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-white/[0.03] px-5 py-4">
       <div className="text-2xl md:text-3xl font-bold tabular-nums tracking-tight" style={{ color }}>
         {typeof value === 'number' ? value.toLocaleString() : value}
       </div>
-      <div className="text-xs text-gray-500 dark:text-zinc-400">{label}</div>
+      <div className="text-xs font-medium text-gray-700 dark:text-zinc-300">{label}</div>
+      {sub && <div className="text-[10px] text-gray-400 dark:text-zinc-600">{sub}</div>}
     </div>
   )
 }
@@ -124,77 +160,146 @@ export default function DatacardPage() {
       .catch(() => setLoading(false))
   }, [])
 
-  const modelCount = useMemo(() => {
-    if (!stats) return 0
-    return stats.byModel.length
-  }, [stats])
-
-  const topCategory = useMemo(() => {
-    if (!stats || stats.byCategory.length === 0) return null
-    return stats.byCategory[0]
-  }, [stats])
-
-  const topModel = useMemo(() => {
-    if (!stats || stats.byModel.length === 0) return null
-    return stats.byModel[0]
-  }, [stats])
+  const modelCount = useMemo(() => stats?.byModel.length ?? 0, [stats])
+  const techniqueCount = useMemo(() => stats?.byCategory.length ?? 0, [stats])
+  const topCategory = useMemo(() => stats?.byCategory[0] ?? null, [stats])
+  const topModel = useMemo(() => stats?.byModel[0] ?? null, [stats])
 
   return (
     <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
-      <div className="max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12 flex flex-col gap-10">
+      <div className="max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12 flex flex-col gap-12">
 
-        {/* Hero */}
-        <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-6 md:p-8 flex flex-col gap-5">
+        {/* Hero ─────────────────────────────────────────────────────────── */}
+        <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-6 md:p-8 flex flex-col gap-6">
           <div className="flex flex-wrap gap-2 items-center">
             <Badge color="#1DA1F2">Dataset</Badge>
             <Badge color="#22c55e">CC BY 4.0</Badge>
-            <Badge color="#a855f7">Multimodal</Badge>
-            <Badge color="#f97316">AI Prompts</Badge>
+            <Badge color="#a855f7">Multi-Modal</Badge>
+            <Badge color="#f97316">In-the-Wild</Badge>
+            <Badge color="#ec4899">Engagement-Filtered</Badge>
           </div>
 
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">ummerr/ai-prompts</h1>
-            <p className="mt-2 text-sm text-gray-500 dark:text-zinc-400 leading-relaxed max-w-2xl">
-              A hand-curated dataset of real-world AI generation prompts collected from practitioners sharing their work on Twitter/X and Reddit.
-              Covers image, video, audio, 3D, and text generation techniques — with structured metadata, model attribution, and visual theme tagging.
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">ummerr/prompts</h1>
+            <p className="mt-3 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed max-w-2xl">
+              A corpus of organic, in-the-wild generative AI prompts sourced from high-engagement
+              posts on X/Twitter — covering image, video, audio, and 3D generation. Unlike synthetic
+              benchmarks or crowdworker sets, every entry reflects a real practitioner decision:
+              what to generate, how to phrase it, and which model to use. High engagement acts as an
+              organic peer-review filter — these prompts were judged worth sharing by thousands of
+              practitioners, not by a crowdworker rubric.
             </p>
           </div>
 
           <div className="flex flex-wrap gap-2">
             <Tag color="#ec4899">image-generation</Tag>
             <Tag color="#8b5cf6">video-generation</Tag>
-            <Tag color="#06b6d4">text-to-image</Tag>
-            <Tag color="#22c55e">prompt-engineering</Tag>
-            <Tag color="#f97316">midjourney</Tag>
-            <Tag color="#a855f7">stable-diffusion</Tag>
-            <Tag color="#3b82f6">flux</Tag>
+            <Tag color="#06b6d4">audio-generation</Tag>
+            <Tag color="#22c55e">in-the-wild-prompts</Tag>
+            <Tag color="#f97316">practitioner-behavior</Tag>
+            <Tag color="#3b82f6">engagement-filtered</Tag>
+            <Tag color="#a855f7">multimodal</Tag>
           </div>
         </div>
 
-        {/* Live stats */}
+        {/* Research Context ─────────────────────────────────────────────── */}
+        <Section title="Why This Dataset Exists">
+          <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
+            <p>
+              Existing prompt evaluation benchmarks — DrawBench, PartiPrompts, T2I-CompBench — were
+              designed for model evaluation, not for studying practitioner behavior. They are either
+              synthetically generated or produced by crowdworkers following annotation rubrics.
+              Neither reflects the prompt distribution that real practitioners actually use when they
+              sit down to generate content.
+            </p>
+            <p>
+              This dataset fills that gap. It captures the organic prompt distribution from people
+              who actively use generative AI tools and share their results publicly. The selection
+              mechanism — social engagement — is imperfect but meaningful: a prompt that accumulates
+              high view and repost counts has passed a form of community judgment that no benchmark
+              can replicate.
+            </p>
+          </div>
+
+          {/* Comparison table */}
+          <div className="rounded-xl border border-black/[0.08] dark:border-white/8 overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-black/[0.08] dark:border-white/8 bg-black/[0.03] dark:bg-white/[0.03]">
+                  {['Dataset', 'Size', 'Source', 'Modalities', 'Provenance', 'Engagement signal'].map((h) => (
+                    <th key={h} className="text-left px-4 py-2.5 font-semibold text-gray-500 dark:text-zinc-400 whitespace-nowrap">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {BENCHMARKS.map((b, i) => {
+                  const isThis = b.name === 'ummerr/prompts'
+                  return (
+                    <tr
+                      key={b.name}
+                      className={`border-b border-black/[0.04] dark:border-white/4 last:border-0 ${
+                        isThis
+                          ? 'bg-violet-500/[0.06] dark:bg-violet-500/[0.08]'
+                          : i % 2 !== 0 ? 'bg-black/[0.015] dark:bg-white/[0.015]' : ''
+                      }`}
+                    >
+                      <td className={`px-4 py-2.5 font-mono text-[11px] whitespace-nowrap ${isThis ? 'text-violet-600 dark:text-violet-400 font-semibold' : 'text-gray-800 dark:text-zinc-200'}`}>{b.name}</td>
+                      <td className="px-4 py-2.5 text-gray-600 dark:text-zinc-400 tabular-nums">{b.size}</td>
+                      <td className={`px-4 py-2.5 ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-gray-500 dark:text-zinc-500'}`}>{b.source}</td>
+                      <td className={`px-4 py-2.5 ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-gray-500 dark:text-zinc-500'}`}>{b.modality}</td>
+                      <td className={`px-4 py-2.5 ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-gray-500 dark:text-zinc-500'}`}>{b.provenance}</td>
+                      <td className={`px-4 py-2.5 ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-gray-400 dark:text-zinc-600'}`}>{b.engagement}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Section>
+
+        {/* Stats ────────────────────────────────────────────────────────── */}
         <Section title="Dataset Size">
           {loading ? (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[0,1,2,3].map((i) => (
-                <div key={i} className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-white/[0.03] px-5 py-4 h-20 animate-pulse" />
+                <div key={i} className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-white/[0.03] px-5 py-4 h-24 animate-pulse" />
               ))}
             </div>
           ) : stats ? (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <StatPill value={stats.total} label="total prompts" color="#1DA1F2" />
-              <StatPill value={modelCount} label="AI models tracked" color="#a855f7" />
-              <StatPill value={stats.withTheme} label="theme-tagged prompts" color="#22c55e" />
-              <StatPill value={stats.withReference} label="need reference image" color="#f97316" />
+              <StatPill value={stats.total} label="total prompts" sub="sourced from X/Twitter" color="#1DA1F2" />
+              <StatPill value={modelCount} label="distinct AI models" sub="tracked by model attribution" color="#a855f7" />
+              <StatPill value={techniqueCount} label="techniques" sub="across 4 modalities" color="#22c55e" />
+              <StatPill value={stats.withReference} label="reference-image prompts" sub="requires_reference = true" color="#f97316" />
             </div>
           ) : (
             <p className="text-sm text-gray-400">Failed to load live stats.</p>
           )}
         </Section>
 
-        {/* Task categories */}
+        {/* Research Applications ────────────────────────────────────────── */}
+        <Section title="Research Applications">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {RESEARCH_APPLICATIONS.map((r) => (
+              <div
+                key={r.title}
+                className="rounded-xl border bg-white dark:bg-[#111] p-4 flex flex-col gap-2"
+                style={{ borderColor: `${r.color}30` }}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: r.color }} />
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white">{r.title}</span>
+                </div>
+                <p className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">{r.body}</p>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        {/* Task categories ──────────────────────────────────────────────── */}
         <Section title="Task Categories">
           <div className="flex flex-col gap-4">
-            {['Image', 'Video', 'Text', 'Other'].map((group) => {
+            {['Image', 'Video', 'Other'].map((group) => {
               const cats = PROMPT_CATEGORIES.filter((c) => c.group === group)
               const counts = stats?.byCategory ?? []
               return (
@@ -223,66 +328,93 @@ export default function DatacardPage() {
           </div>
         </Section>
 
-        {/* About */}
-        <Section title="About the Dataset">
-          <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
-            <div className="rounded-xl bg-black/[0.03] dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/6 p-4 flex flex-col gap-3">
+        {/* About ────────────────────────────────────────────────────────── */}
+        <Section title="Curation & Collection">
+          <div className="flex flex-col gap-3 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
+            <div className="rounded-xl bg-black/[0.03] dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/6 p-4 flex flex-col gap-4">
               <div>
-                <span className="font-semibold text-gray-900 dark:text-white">Curation.</span>{' '}
-                Prompts are sourced from public posts by AI practitioners — people actively using these tools and sharing their process.
-                Each entry is classified by an LLM (Claude claude-sonnet-4-6) and reviewed for quality before inclusion.
+                <span className="font-semibold text-gray-900 dark:text-white">Selection mechanism.</span>{' '}
+                Posts are identified via X/Twitter search and bookmark capture from practitioner accounts actively sharing AI generation work.
+                Selection is biased toward high-engagement content — posts with substantial view counts, reposts, and saves. This is not a random
+                sample; it is a practitioner-judged quality filter. Prompts that circulated widely did so because other practitioners found them
+                useful, reproducible, or instructive.
               </div>
               <div>
-                <span className="font-semibold text-gray-900 dark:text-white">Scope.</span>{' '}
-                The dataset covers the full spectrum of generative AI: image generation (text-to-image, img2img, inpainting, character references),
-                video generation (text-to-video, image-to-video, video-to-video), audio, 3D, and LLM use cases (system prompts, writing, coding).
+                <span className="font-semibold text-gray-900 dark:text-white">Extraction & labeling.</span>{' '}
+                Each entry is classified by Claude Sonnet 4.6 using structured tool-use output with strict enum validation. The classifier assigns
+                modality + technique category, detects the target model from post text, extracts the clean prompt (stripping social framing and
+                hashtags), and tags visual themes and art styles. Confidence scores are stored alongside all labels; the original post text is
+                always preserved for reclassification.
               </div>
               <div>
-                <span className="font-semibold text-gray-900 dark:text-white">Metadata.</span>{' '}
-                Beyond the raw prompt text, each row includes detected model/tool, visual theme tags, art style tags, whether a reference image
-                is needed, and the type of reference — making it useful for fine-grained retrieval and analysis.
+                <span className="font-semibold text-gray-900 dark:text-white">Coverage.</span>{' '}
+                Image generation (text-to-image, image-to-image, character references, reference-guided generation),
+                video generation (text-to-video, image-to-video, reference-to-video, video-to-video), audio, and 3D generation.
+                No LLM / text-generation prompts — this is a generative media dataset.
               </div>
             </div>
           </div>
         </Section>
 
-        {/* Limitations */}
+        {/* Highlights ───────────────────────────────────────────────────── */}
+        {stats && (topCategory || topModel) && (
+          <Section title="Highlights">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {topCategory && (
+                <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4 flex flex-col gap-1">
+                  <span className="text-xs text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-semibold">Most common technique</span>
+                  <span className="text-lg font-bold text-pink-500">{topCategory.label}</span>
+                  <span className="text-sm text-gray-500 dark:text-zinc-400">{topCategory.value.toLocaleString()} prompts</span>
+                </div>
+              )}
+              {topModel && (
+                <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4 flex flex-col gap-1">
+                  <span className="text-xs text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-semibold">Most referenced model</span>
+                  <span className="text-lg font-bold text-violet-500">{topModel.label}</span>
+                  <span className="text-sm text-gray-500 dark:text-zinc-400">{topModel.value.toLocaleString()} prompts</span>
+                </div>
+              )}
+            </div>
+          </Section>
+        )}
+
+        {/* Limitations ──────────────────────────────────────────────────── */}
         <Section title="Limitations">
           <div className="flex flex-col gap-3">
             {[
               {
                 title: 'Selection and survivorship bias',
                 body: 'Prompts are drawn exclusively from posts that practitioners chose to share publicly. This systematically over-represents prompts that produced visually impressive or socially shareable results, and under-represents failed attempts, iterative drafts, and everyday utility prompts.',
-                mitigation: 'Sourcing across both Twitter/X and Reddit partially offsets this — Reddit communities reward technical depth and reproducibility alongside aesthetics, introducing prompts that were shared for instructional value rather than purely visual impact.',
+                mitigation: 'This bias is also the dataset\'s signal: understanding the distribution of prompts that practitioners consider share-worthy is itself a research question. Sourcing across both Twitter/X and Reddit partially offsets pure aesthetics bias — Reddit communities reward technical depth and reproducibility.',
                 color: '#f97316',
               },
               {
                 title: 'Platform and demographic skew',
                 body: 'Source content is dominated by English-language posts from Twitter/X and a small set of Reddit communities. Non-English prompts, closed communities, Discord servers, and professional workflows are not represented. The dataset likely reflects the aesthetics and interests of a specific online subculture rather than the broader global practitioner population.',
-                mitigation: 'Ingestion spans multiple subreddits with different community cultures (r/midjourney, r/StableDiffusion, r/PromptEngineering, r/AIArt), broadening the range of styles, use cases, and practitioner skill levels captured.',
+                mitigation: 'Ingestion spans multiple subreddits with different community cultures (r/midjourney, r/StableDiffusion, r/FluxAI, r/kling_ai), broadening the range of styles, use cases, and practitioner skill levels captured.',
                 color: '#f97316',
               },
               {
                 title: 'LLM-assisted classification errors',
-                body: 'Category labels (prompt_category), theme tags, art style tags, model attribution, and extracted prompt text are assigned by Claude Sonnet 4.6 — not human annotators. Classification accuracy is high but not perfect. Errors cluster around: ambiguous multi-technique prompts, unfamiliar or emerging tools, non-English content, and prompts where the model name is absent from the post text.',
-                mitigation: 'The classifier uses structured tool-use output with strict enum validation, reducing free-form hallucination. Confidence scores are stored alongside labels, allowing downstream users to filter to high-confidence subsets. The raw source text is always preserved, so reclassification is non-destructive.',
+                body: 'Category labels, theme tags, art style tags, model attribution, and extracted prompt text are assigned by Claude Sonnet 4.6 — not human annotators. Errors cluster around ambiguous multi-technique prompts, unfamiliar or emerging tools, non-English content, and prompts where the model name is absent from the post text.',
+                mitigation: 'The classifier uses structured tool-use output with strict enum validation, reducing free-form hallucination. Confidence scores are stored alongside labels. The raw source text is always preserved, so reclassification is non-destructive.',
                 color: '#eab308',
               },
               {
-                title: 'No output quality validation',
-                body: 'The dataset records what practitioners shared, not whether the prompt reliably produces good results. A prompt with many upvotes or retweets is not equivalent to a prompt that has been reproducibly validated across seeds, model versions, or hardware configurations.',
-                mitigation: 'Source post URLs are retained for every entry, allowing researchers to inspect the original post context, view attached media outputs, and assess community reception. The media_urls field links directly to the output images or videos shared alongside the prompt.',
+                title: 'Engagement ≠ controlled quality validation',
+                body: 'The dataset records what practitioners shared, not whether the prompt reliably produces good results across seeds, model versions, or hardware configurations. High engagement reflects community judgment, not empirical reproducibility.',
+                mitigation: 'Source post URLs and media_urls are retained for every entry, allowing researchers to inspect original post context, attached output media, and community reception. Engagement is best treated as a weak positive label, not a ground-truth quality rating.',
                 color: '#eab308',
               },
               {
                 title: 'Temporal and model coverage skew',
-                body: 'Ingestion began in 2024 and runs on a rolling basis. Older models (pre-2023) are under-represented; newly released models may be under-represented until ingestion catches up. Coverage of any given model reflects its social media footprint, not its market share or quality.',
-                mitigation: 'The bookmarked_at and created_at timestamps are preserved for every entry, making temporal filtering straightforward. Model attribution is stored as free-text alongside a normalised canonical slug, so analyses can distinguish between model generations.',
+                body: 'Ingestion began in 2024 and runs on a rolling basis. Older models (pre-2023) are under-represented; newly released models may lag until ingestion catches up. Coverage of any given model reflects its social media footprint, not its market share or capability.',
+                mitigation: 'bookmarked_at and created_at timestamps are preserved for every entry, making temporal filtering straightforward. Model attribution is stored as free-text alongside a normalised canonical slug, so analyses can distinguish between model generations.',
                 color: '#eab308',
               },
               {
                 title: 'Near-duplicate prompts',
-                body: 'Deduplication is exact-match only on the source post ID. Reposts, quote-tweets, and community re-shares of the same underlying prompt may appear as distinct entries. Downstream users performing similarity search or fine-tuning should apply their own deduplication.',
+                body: 'Deduplication is exact-match only on the source post ID. Reposts, quote-tweets, and community re-shares of the same underlying prompt may appear as distinct entries. Downstream fine-tuning or similarity studies should apply semantic deduplication.',
                 mitigation: 'Each entry retains its author_handle and tweet_url, making provenance traceable. Semantic deduplication can be applied against the extracted_prompt field, which strips social framing and hashtags to surface the underlying prompt text.',
                 color: '#71717a',
               },
@@ -306,7 +438,7 @@ export default function DatacardPage() {
           </div>
         </Section>
 
-        {/* Sources */}
+        {/* Sources ──────────────────────────────────────────────────────── */}
         <Section title="Data Sources">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {[
@@ -314,7 +446,7 @@ export default function DatacardPage() {
                 name: 'Twitter / X',
                 icon: '✦',
                 iconColor: '#1DA1F2',
-                desc: 'Bookmarked posts from accounts sharing AI generation workflows. Includes media outputs, threads, and referenced works.',
+                desc: 'Primary source. Bookmarked posts from practitioners sharing AI generation workflows. Filtered for high engagement — views, reposts, and saves. Includes media outputs, threads, and referenced works.',
                 badge: 'Primary',
                 badgeColor: '#1DA1F2',
               },
@@ -322,7 +454,7 @@ export default function DatacardPage() {
                 name: 'Reddit',
                 icon: '◉',
                 iconColor: '#ff4500',
-                desc: 'Posts from subreddits such as r/midjourney, r/StableDiffusion, r/FluxAI, and r/kling_ai with extracted prompts from post bodies and comments.',
+                desc: 'r/midjourney, r/StableDiffusion, r/FluxAI, r/kling_ai, r/PromptEngineering. Reddit sourcing broadens demographic coverage — communities reward technical reproducibility alongside visual impact.',
                 badge: 'Secondary',
                 badgeColor: '#ff4500',
               },
@@ -330,7 +462,7 @@ export default function DatacardPage() {
                 name: 'Manual',
                 icon: '◈',
                 iconColor: '#22c55e',
-                desc: 'Hand-entered prompts from other sources — blog posts, tutorials, or community shares not covered by automated ingestion.',
+                desc: 'Hand-entered prompts from tutorials, blog posts, or community shares not covered by automated ingestion.',
                 badge: 'Supplementary',
                 badgeColor: '#22c55e',
               },
@@ -352,7 +484,7 @@ export default function DatacardPage() {
           </div>
         </Section>
 
-        {/* Schema */}
+        {/* Schema ───────────────────────────────────────────────────────── */}
         <Section title="Schema">
           <div className="rounded-xl border border-black/[0.08] dark:border-white/8 overflow-hidden">
             <table className="w-full text-xs">
@@ -389,42 +521,37 @@ export default function DatacardPage() {
           </div>
         </Section>
 
-        {/* Highlights from live data */}
-        {stats && (topCategory || topModel) && (
-          <Section title="Highlights">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {topCategory && (
-                <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4 flex flex-col gap-1">
-                  <span className="text-xs text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-semibold">Most common technique</span>
-                  <span className="text-lg font-bold text-pink-500">{topCategory.label}</span>
-                  <span className="text-sm text-gray-500 dark:text-zinc-400">{topCategory.value.toLocaleString()} prompts</span>
-                </div>
-              )}
-              {topModel && (
-                <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4 flex flex-col gap-1">
-                  <span className="text-xs text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-semibold">Most referenced model</span>
-                  <span className="text-lg font-bold text-violet-500">{topModel.label}</span>
-                  <span className="text-sm text-gray-500 dark:text-zinc-400">{topModel.value.toLocaleString()} prompts</span>
-                </div>
-              )}
+        {/* License ──────────────────────────────────────────────────────── */}
+        <Section title="License & Citation">
+          <div className="flex flex-col gap-3">
+            <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-5 flex flex-col gap-3 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-gray-900 dark:text-white">License:</span>
+                <Badge color="#22c55e">Creative Commons Attribution 4.0 (CC BY 4.0)</Badge>
+              </div>
+              <p>
+                Free to use, share, and adapt for any purpose — including commercial — with appropriate credit.
+                The original prompt texts remain the intellectual property of their authors; this dataset provides
+                structured metadata for research purposes.
+              </p>
             </div>
-          </Section>
-        )}
 
-        {/* License */}
-        <Section title="License & Attribution">
-          <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-5 flex flex-col gap-3 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
-            <div>
-              <span className="font-semibold text-gray-900 dark:text-white">License: </span>
-              <Badge color="#22c55e">Creative Commons Attribution 4.0 (CC BY 4.0)</Badge>
+            {/* BibTeX */}
+            <div className="rounded-xl border border-black/[0.08] dark:border-white/8 overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-2 border-b border-black/[0.06] dark:border-white/6 bg-black/[0.03] dark:bg-white/[0.03]">
+                <span className="text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-widest">BibTeX</span>
+              </div>
+              <pre className="px-4 py-4 text-[11px] font-mono text-gray-700 dark:text-zinc-300 leading-relaxed overflow-x-auto">{`@dataset{ummerr_prompts_2025,
+  title        = {ummerr/prompts: An In-the-Wild Generative AI Prompt Dataset},
+  author       = {ummerr},
+  year         = {2025},
+  url          = {https://prompts.ummerr.com/datacard},
+  note         = {Organic prompts sourced from high-engagement posts on X/Twitter.
+                  Covers image, video, audio, and 3D generation with structured
+                  metadata, model attribution, and technique labels.},
+  license      = {CC BY 4.0}
+}`}</pre>
             </div>
-            <p>
-              You are free to use, share, and adapt this dataset for any purpose — including commercial — as long as you give appropriate credit.
-              The original prompt texts remain the intellectual property of their authors; this dataset provides structured metadata for research purposes.
-            </p>
-            <p className="text-xs text-gray-400 dark:text-zinc-600">
-              Suggested citation: ummerr. (2025). AI Prompts Dataset. Retrieved from the ummerr bookmarks app.
-            </p>
           </div>
         </Section>
 

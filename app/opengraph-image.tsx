@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
-export const alt = 'The prompt dataset you cannot generate — prompts.ummerr.com'
+export const alt = 'The most shared AI prompts on X — prompts.ummerr.com'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -53,18 +53,18 @@ export default function OGImage() {
         {/* Headline */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
           <div style={{ color: '#ffffff', fontSize: '72px', fontWeight: 800, lineHeight: 1.0, letterSpacing: '-0.03em', maxWidth: '880px' }}>
-            The prompt dataset<br />you can't generate.
+            The most shared<br />AI prompts on X.
           </div>
           <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '22px', lineHeight: 1.5, maxWidth: '680px', fontWeight: 400 }}>
-            Hand curated. Hand-labelled. Real prompts from real practitioners —
-            across image, video, audio, and 3D generation.
+            Sourced from high-engagement posts — if thousands already
+            copied it into their tools, it works.
           </div>
         </div>
 
         {/* Bottom stats row */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0px', position: 'relative' }}>
           {[
-            { value: '500+',  label: 'real prompts',     color: '#a78bfa' },
+            { value: '500+',  label: 'viral X prompts',  color: '#a78bfa' },
             { value: '0%',    label: 'synthetic',        color: '#34d399' },
             { value: '14',    label: 'techniques',       color: '#60a5fa' },
             { value: '20+',   label: 'AI models tracked', color: '#f472b6' },

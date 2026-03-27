@@ -5,9 +5,9 @@ import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
-const TITLE = 'The prompt dataset you can\'t generate — prompts.ummerr.com'
+const TITLE = 'The most shared AI prompts on X — prompts.ummerr.com'
 const DESCRIPTION =
-  'Hand curated. Hand-labelled. The real-world prompt distribution that benchmarks don\'t capture — tagged with model, technique, reference workflow, and output domain across image, video, audio, and 3D.'
+  'Every prompt is sourced from high-engagement posts on X/Twitter — high views, reposts, and shares. If thousands of people already copied it into their tools, it works. Hand-labelled by model, technique, and output domain across image, video, audio, and 3D.'
 
 export const metadata: Metadata = {
   title: TITLE,

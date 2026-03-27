@@ -161,8 +161,8 @@ export default function StateOfPromptingPage() {
                 <FindingCard
                   number="03"
                   color="#a855f7"
-                  title="AI performance degrades as its working memory fills up"
-                  body="AI has a working memory limit. As it fills with old instructions, outdated notes, and irrelevant history, quality degrades — the AI misses things, contradicts itself, loses the thread. More memory delays this; it doesn't fix it. The goal is filling that memory with precisely the right information for the next step, nothing else."
+                  title="Model selection matters more than prompt optimization"
+                  body="The ELO gap between the best and average video generation models exceeds 300 points — larger than the quality gap between an expert and a beginner prompt on the same model. Most people spend time rewriting their prompt while running it through the wrong tool. Pick the right model for the task type first: different models have distinct strengths that no amount of prompting can compensate for."
                 />
                 <FindingCard
                   number="04"

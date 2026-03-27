@@ -470,12 +470,12 @@ function PromptsPageInner() {
               {/* Title + description */}
               <div className="flex flex-col gap-2">
                 <h1 className="text-base font-semibold text-gray-900 dark:text-white leading-tight tracking-tight">
-                  The Real Prompts Dataset
+                  The Most Shared AI Prompts on X
                 </h1>
                 <p className="text-[11px] text-gray-500 dark:text-white/40 leading-relaxed">
-                  Most prompt libraries are generated filler or SEO bait. These aren't —
-                  every entry is a real prompt from someone who posted the result publicly.
-                  Filter by model, technique, or style to skip the trial-and-error.
+                  Every prompt is sourced from high-engagement posts on X/Twitter —
+                  high views, reposts, and shares. If thousands of people already
+                  copied it into their tools, it works.
                 </p>
               </div>
 
@@ -507,7 +507,7 @@ function PromptsPageInner() {
               {/* Stats grid */}
               <div className="grid grid-cols-2 gap-1.5">
                 {[
-                  { value: loading ? '—' : allPrompts.length.toLocaleString(), label: 'Prompts', sub: 'and growing' },
+                  { value: loading ? '—' : allPrompts.length.toLocaleString(), label: 'Prompts', sub: 'sourced from X/Twitter' },
                   { value: '14', label: 'Techniques', sub: 'T2I · T2V · audio · 3D' },
                   { value: '20+', label: 'AI models', sub: 'every major one' },
                   { value: '0%', label: 'synthetic', sub: 'hand curated' },
@@ -523,9 +523,9 @@ function PromptsPageInner() {
               {/* Feature flags */}
               <div className="flex flex-col gap-1.5">
                 {[
-                  'Covers image, video, audio, and 3D generation',
+                  'Sourced from viral AI generation posts on X/Twitter',
                   'Filter to any model, style, or technique',
-                  'Updated continuously as practitioners post new work',
+                  'Updated as high-engagement posts surface new prompts',
                 ].map((f) => (
                   <span key={f} className="flex items-start gap-1.5 text-[10px] text-gray-400 dark:text-white/30 leading-relaxed">
                     <svg className="h-2.5 w-2.5 text-emerald-500 dark:text-emerald-400/70 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
