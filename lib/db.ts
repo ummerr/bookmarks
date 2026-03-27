@@ -298,6 +298,7 @@ function toPromptRow(r: Record<string, unknown>) {
     tweet_id: r.tweet_id as string,
     tweet_text: r.tweet_text as string,
     thread_tweets: typeof r.thread_tweets === 'string' ? JSON.parse(r.thread_tweets) : (r.thread_tweets ?? []),
+    media_alt_texts: typeof r.media_alt_texts === 'string' ? JSON.parse(r.media_alt_texts) : (r.media_alt_texts ?? []),
   }
 }
 
@@ -308,9 +309,9 @@ export async function countAllPrompts(): Promise<number> {
   return Number(rows[0].n)
 }
 
-export async function getAllPromptsForReclassify(limit = 500, offset = 0): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text' | 'thread_tweets'>[]> {
+export async function getAllPromptsForReclassify(limit = 500, offset = 0): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text' | 'thread_tweets' | 'media_alt_texts'>[]> {
   const rows = await getSql()<Record<string, unknown>[]>`
-    SELECT id, tweet_id, tweet_text, thread_tweets FROM bookmarks
+    SELECT id, tweet_id, tweet_text, thread_tweets, media_alt_texts FROM bookmarks
     WHERE category = 'prompts'
     ORDER BY created_at ASC
     LIMIT ${limit} OFFSET ${offset}
@@ -318,9 +319,9 @@ export async function getAllPromptsForReclassify(limit = 500, offset = 0): Promi
   return rows.map(toPromptRow)
 }
 
-export async function getUnclassifiedPrompts(limit = 50, offset = 0): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text' | 'thread_tweets'>[]> {
+export async function getUnclassifiedPrompts(limit = 50, offset = 0): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text' | 'thread_tweets' | 'media_alt_texts'>[]> {
   const rows = await getSql()<Record<string, unknown>[]>`
-    SELECT id, tweet_id, tweet_text, thread_tweets FROM bookmarks
+    SELECT id, tweet_id, tweet_text, thread_tweets, media_alt_texts FROM bookmarks
     WHERE category = 'prompts' AND prompt_category IS NULL
     ORDER BY created_at ASC
     LIMIT ${limit} OFFSET ${offset}
@@ -328,9 +329,9 @@ export async function getUnclassifiedPrompts(limit = 50, offset = 0): Promise<Pi
   return rows.map(toPromptRow)
 }
 
-export async function getAllPrompts(limit = 500): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text' | 'thread_tweets'>[]> {
+export async function getAllPrompts(limit = 500): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text' | 'thread_tweets' | 'media_alt_texts'>[]> {
   const rows = await getSql()<Record<string, unknown>[]>`
-    SELECT id, tweet_id, tweet_text, thread_tweets FROM bookmarks
+    SELECT id, tweet_id, tweet_text, thread_tweets, media_alt_texts FROM bookmarks
     WHERE category = 'prompts'
     ORDER BY created_at ASC
     LIMIT ${limit}

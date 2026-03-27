@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { insertBookmarks } from '@/lib/db'
 import type { BookmarkInsert } from '@/lib/types'
 
-export const maxDuration = 120
-
 const HEADERS = {
   'User-Agent': 'web:bookmarks-app:1.0 (by /u/bookmarks_bot)',
   'Accept': 'application/json',

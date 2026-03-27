@@ -101,7 +101,7 @@ function getClient() {
   return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 }
 
-async function withRetry<T>(fn: () => Promise<T>, retries = 3, delayMs = 5000): Promise<T> {
+export async function withRetry<T>(fn: () => Promise<T>, retries = 3, delayMs = 5000): Promise<T> {
   try {
     return await fn()
   } catch (err: unknown) {
@@ -116,15 +116,17 @@ async function withRetry<T>(fn: () => Promise<T>, retries = 3, delayMs = 5000): 
 
 // ── Bookmark classification (step 1) ──────────────────────────────────────
 
-const CLASSIFY_SYSTEM = `You are a tweet classifier. Classify each tweet into exactly one category:
+const CLASSIFY_SYSTEM = `Classify each tweet into exactly one category.
 
-- tech_ai_product: Technology, AI, ML, product management, startups, developer tools, shipping updates, tech industry news
-- career_productivity: Career growth, job searching, workplace advice, productivity systems, professional development, networking
-- prompts: ANY tweet that contains a prompt or prompt text for ANY AI tool — image generation (Midjourney, DALL-E, Flux, Stable Diffusion, Firefly, Ideogram, Leonardo, or ANY unfamiliar/unknown image gen tool), video generation (Sora, Runway, Kling, Pika, Luma, Hailuo, Wan, or any unfamiliar video tool), audio generation (Suno, Udio, ElevenLabs), 3D generation, LLM prompts (ChatGPT, Claude, Gemini), system prompts, prompt engineering. KEY RULE: if the tweet body contains descriptive visual text that reads like an image or video prompt — even if the tool name is unfamiliar or made-up — classify it as "prompts".
-- uncategorized: Does not clearly fit any category above, or you are not confident.
+Categories:
+- tech_ai_product: Technology, AI/ML, startups, developer tools, product launches, tech industry news
+- career_productivity: Career growth, job advice, productivity systems, professional development
+- prompts: ANY tweet containing an AI prompt — image gen (Midjourney, DALL-E, Flux, SD, Firefly, Ideogram, Leonardo, ANY tool), video gen (Sora, Runway, Kling, Pika, Luma, Hailuo, Wan), audio gen (Suno, Udio, ElevenLabs), 3D gen, LLM prompts, system prompts, prompt engineering. KEY: if the text reads like a descriptive prompt for any AI tool — even unnamed ones — classify as "prompts".
+- uncategorized: Does not fit above, or confidence < 0.7.
 
-Set confidence to 0.0-1.0. If confidence < 0.7, use category "uncategorized".
-Classify all tweets provided.`
+Rules: confidence 0.0-1.0. If < 0.7, category must be "uncategorized". Classify all tweets.`
+
+const VALID_CATEGORIES_LIST = ['tech_ai_product', 'career_productivity', 'prompts', 'uncategorized'] as const
 
 const CLASSIFY_TOOL: Anthropic.Tool = {
   name: 'classify_tweets',
@@ -138,9 +140,9 @@ const CLASSIFY_TOOL: Anthropic.Tool = {
           type: 'object',
           properties: {
             tweet_id:   { type: 'string' },
-            category:   { type: 'string' },
-            confidence: { type: 'number' },
-            rationale:  { type: 'string' },
+            category:   { type: 'string', enum: [...VALID_CATEGORIES_LIST] },
+            confidence: { type: 'number', minimum: 0, maximum: 1 },
+            rationale:  { type: 'string', description: 'One sentence explanation' },
           },
           required: ['tweet_id', 'category', 'confidence', 'rationale'],
         },
@@ -163,12 +165,12 @@ export async function classifyBatch(
 
   const message = await withRetry(() =>
     client.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 4096,
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 2048,
       system: CLASSIFY_SYSTEM,
       tools: [CLASSIFY_TOOL],
       tool_choice: { type: 'tool', name: 'classify_tweets' },
-      messages: [{ role: 'user', content: `Classify these tweets:\n${JSON.stringify(input, null, 2)}` }],
+      messages: [{ role: 'user', content: `Classify these tweets:\n${JSON.stringify(input)}` }],
     })
   )
 
@@ -195,83 +197,64 @@ export async function classifyBatch(
 
 // ── Prompt extraction (step 2) ─────────────────────────────────────────────
 
-const PROMPT_SYSTEM = `You are an AI prompt classifier and extractor. For each tweet that contains an AI prompt, classify it, detect the tool used, extract the clean prompt text, tag its visual themes, and identify if a reference image is required.
+const PROMPT_SYSTEM = `Classify and extract AI prompts from tweets.
 
-CATEGORIES:
+CATEGORIES (pick one):
+Image — by primary subject:
+- image_person: People/characters/faces as main focus (portraits, fashion with models, character design)
+- image_advertisement: Product photography, commercial/brand imagery, e-commerce, fashion flats
+- image_collage: Mood boards, grid layouts, multi-panel compositions
+- image_t2i: All other images (landscapes, abstract, sci-fi environments, animals, food, concept art). Default for image prompts.
 
-Image Generation — categorise by the PRIMARY SUBJECT / CONTENT of the image:
-- image_person: The primary subject is one or more people, characters, or faces. Includes portraits, fashion photography with models, character design, group shots, fictional characters. Use this whenever a human or character is the main focus.
-- image_advertisement: Product photography, commercial imagery, brand marketing, e-commerce product shots, lifestyle advertising — the primary purpose is to showcase a product or brand. Fashion flats (no model) also count.
-- image_collage: Mood boards, collages, grid layouts, multi-panel compositions, scrapbook-style images — the prompt intentionally combines multiple images or visual elements into one composition.
-- image_t2i: All other image generation — landscapes, nature, architecture, abstract art, sci-fi/fantasy environments, animals, vehicles, food, surreal imagery, concept art without a primary human subject. Use this as the default when none of the above fit.
+Video:
+- video_t2v: Text-to-video, prompt only (Sora, Kling, Runway, Pika, Hailuo, Luma, Wan)
+- video_i2v: Image-to-video, animating a still image
+- video_r2v: Reference-to-video, reference image guides output (not direct animation)
+- video_v2v: Video-to-video (restyle, motion transfer, lip sync)
 
-Video Generation:
-- video_t2v: Text-to-video — prompt only, no input image (Sora, Kling, Runway Gen3, Pika, Hailuo, Luma, Wan)
-- video_i2v: Image-to-video — directly animating or extending a specific still image
-- video_r2v: Reference-to-video — an uploaded or reference image guides the video output (subject/character/scene consistency, not direct animation of that image)
-- video_v2v: Video-to-video — restyle, motion transfer, lip sync
+Other: audio (music/voice/SFX), threed (3D models/scenes)
+Text: system_prompt, writing, coding, analysis, other
 
-Other Media:
-- audio: Music, voice, sound effects (Suno, Udio, ElevenLabs, voice cloning)
-- threed: 3D model / scene / texture (Meshy, Tripo3D, Shap-E, Luma 3D)
+THEMES (image/video only, else []): 1-3 from: person, cinematic, landscape, architecture, scifi, fantasy, abstract, fashion, product, horror
+ART STYLES (image/video only, else []): 0-3 from: photorealistic, anime, illustration, oil_painting, watercolor, digital_art, sketch, pixel_art, 3d_render, concept_art, comic_book, minimalist, surrealist, impressionist, cinematic_photo, neon_noir, vintage, flat_design
 
-Text:
-- system_prompt: System prompts, persona definitions, custom instructions for LLMs
-- writing: Creative writing, copywriting, storytelling prompts
-- coding: Code generation, debugging, architecture prompts
-- analysis: Analysis, research, summarisation, reasoning prompts
-- other: Anything else
+REFERENCE: requires_reference=true if prompt needs user-supplied input image (img2img, ControlNet, face swap, i2v). false if text-only. null for non-visual. Bracketed placeholders like [SUBJECT] strongly signal requires_reference=true.
+reference_type (if true): face_person, style_artwork, subject_object, pose_structure, scene_background
 
-THEMES (for image/video prompts only — return [] for text/audio/3D):
-Pick 1-3 that apply from: person, cinematic, landscape, architecture, scifi, fantasy, abstract, fashion, product, horror
+detected_model: Canonical tool name ("Midjourney", "Flux", "Runway" etc.) or null.
+extracted_prompt: Clean prompt only — strip social text, hashtags, engagement bait. Keep technical syntax (--ar, --v, cfg). null if no prompt found.
+id: Copy exactly from input.`
 
-ART STYLES (for image/video prompts only — return [] for text/audio/3D):
-Pick 0-3 that apply from: photorealistic, anime, illustration, oil_painting, watercolor, digital_art, sketch, pixel_art, 3d_render, concept_art, comic_book, minimalist, surrealist, impressionist, cinematic_photo, neon_noir, vintage, flat_design
-Return [] if the prompt doesn't specify or imply a visual style.
-
-REFERENCE IMAGE:
-- requires_reference: true if the prompt explicitly needs the user to supply an input image to work (e.g. img2img, IP-Adapter, ControlNet, face swap, image-to-video). false if it's purely text-driven. null for non-image/video categories.
-- reference_type: if requires_reference is true, pick one: face_person, style_artwork, subject_object, pose_structure, scene_background. Otherwise null.
-- STRONG SIGNAL: if the tweet contains placeholder tokens like [SUBJECT], [REFERENCE], [YOUR SUBJECT], [YOUR REFERENCE], or similar bracketed placeholders, the prompt almost certainly requires a reference image — set requires_reference: true and pick the appropriate reference_type.
-
-DETECTED MODEL:
-- Return the canonical tool name if identifiable (e.g. "Midjourney", "Flux", "Runway"). Use null if unclear.
-- Do not include version numbers or extra words — just the tool name.
-
-For each item return:
-- id: copy the exact "id" string from the input item — do not change it
-- prompt_category: one category from above
-- detected_model: the AI tool name if identifiable — use null if unclear
-- extracted_prompt: ONLY the clean prompt text — strip social framing, hashtags, engagement bait. Keep model syntax (--ar, --v, negative prompts, cfg, etc.). Return null only if no clear prompt text exists.
-- prompt_themes: array of 0-3 theme strings ([] for text/audio/3D prompts)
-- art_styles: array of 0-3 art style strings ([] for text/audio/3D prompts or if no style is implied)
-- requires_reference: true | false | null
-- reference_type: one of the reference types or null
-
-Classify all items provided.`
-
-const VALID_PROMPT_CATEGORIES = new Set<PromptCategory>([
+const VALID_PROMPT_CATEGORIES_LIST = [
   'image_person', 'image_advertisement', 'image_collage',
   'image_t2i', 'image_i2i', 'image_r2i', 'image_character_ref', 'image_inpainting',
   'video_t2v', 'video_i2v', 'video_r2v', 'video_v2v',
   'audio', 'threed',
   'system_prompt', 'writing', 'coding', 'analysis', 'other',
-])
-const VALID_THEMES = new Set<PromptTheme>([
+] as const
+const VALID_PROMPT_CATEGORIES = new Set<PromptCategory>(VALID_PROMPT_CATEGORIES_LIST)
+
+const VALID_THEMES_LIST = [
   'person', 'cinematic', 'landscape', 'architecture', 'scifi',
   'fantasy', 'abstract', 'fashion', 'product', 'horror',
-])
-const VALID_ART_STYLES = new Set<ArtStyle>([
+] as const
+const VALID_THEMES = new Set<PromptTheme>(VALID_THEMES_LIST)
+
+const VALID_ART_STYLES_LIST = [
   'photorealistic', 'anime', 'illustration', 'oil_painting', 'watercolor',
   'digital_art', 'sketch', 'pixel_art', '3d_render', 'concept_art',
   'comic_book', 'minimalist', 'surrealist', 'impressionist',
   'cinematic_photo', 'neon_noir', 'vintage', 'flat_design',
-])
-const VALID_REF_TYPES = new Set<ReferenceType>([
-  'face_person', 'style_artwork', 'subject_object', 'pose_structure', 'scene_background',
-])
+] as const
+const VALID_ART_STYLES = new Set<ArtStyle>(VALID_ART_STYLES_LIST)
 
-// Tool use schema — guarantees valid structured output, no JSON parsing errors
+const VALID_REF_TYPES_LIST = [
+  'face_person', 'style_artwork', 'subject_object', 'pose_structure', 'scene_background',
+] as const
+const VALID_REF_TYPES = new Set<ReferenceType>(VALID_REF_TYPES_LIST)
+
+// Tool schema with enum constraints — dramatically improves output validity,
+// especially critical for Haiku where unconstrained string fields drift.
 const EXTRACT_TOOL: Anthropic.Tool = {
   name: 'classify_prompts',
   description: 'Return classifications for all provided prompts',
@@ -284,13 +267,13 @@ const EXTRACT_TOOL: Anthropic.Tool = {
           type: 'object',
           properties: {
             id:                 { type: 'string', description: 'Copy the id field from the input item exactly' },
-            prompt_category:    { type: 'string' },
+            prompt_category:    { type: 'string', enum: [...VALID_PROMPT_CATEGORIES_LIST] },
             detected_model:     { type: ['string', 'null'] },
             extracted_prompt:   { type: ['string', 'null'] },
-            prompt_themes:      { type: 'array', items: { type: 'string' } },
-            art_styles:         { type: 'array', items: { type: 'string' } },
+            prompt_themes:      { type: 'array', items: { type: 'string', enum: [...VALID_THEMES_LIST] }, maxItems: 3 },
+            art_styles:         { type: 'array', items: { type: 'string', enum: [...VALID_ART_STYLES_LIST] }, maxItems: 3 },
             requires_reference: { type: ['boolean', 'null'] },
-            reference_type:     { type: ['string', 'null'] },
+            reference_type:     { type: ['string', 'null'], enum: [...VALID_REF_TYPES_LIST, null] },
           },
           required: ['id', 'prompt_category', 'detected_model', 'extracted_prompt', 'prompt_themes', 'art_styles', 'requires_reference', 'reference_type'],
         },
@@ -301,7 +284,7 @@ const EXTRACT_TOOL: Anthropic.Tool = {
 }
 
 export async function classifyPromptBatch(
-  prompts: Pick<Bookmark, 'id' | 'tweet_text' | 'thread_tweets'>[]
+  prompts: (Pick<Bookmark, 'id' | 'tweet_text' | 'thread_tweets'> & { media_alt_texts?: (string | null)[] })[]
 ): Promise<{
   id: string
   prompt_category: PromptCategory
@@ -315,25 +298,27 @@ export async function classifyPromptBatch(
   const client = getClient()
 
   // Use sequential 1-based indices as IDs — avoids UUID serialisation issues
-  // (JSON.stringify drops keys with undefined values; models reliably echo short integers)
   const indexToId = new Map(prompts.map((p, i) => [String(i + 1), p.id]))
 
   const input = prompts.map((p, i) => {
     const threadContext = p.thread_tweets?.length
-      ? '\n\nThread context:\n' + p.thread_tweets.map((t) => t.tweet_text).join('\n---\n')
+      ? '\n\nThread:\n' + p.thread_tweets.map((t) => t.tweet_text).join('\n---\n')
       : ''
-    const fullText = preprocessTweet(p.tweet_text + threadContext).slice(0, 3000)
+    // Include media alt texts as extra signal for visual prompt classification
+    const altTexts = (p.media_alt_texts ?? []).filter(Boolean)
+    const altContext = altTexts.length ? '\n\nImage descriptions: ' + altTexts.join(' | ') : ''
+    const fullText = preprocessTweet(p.tweet_text + threadContext + altContext).slice(0, 3000)
     return { id: String(i + 1), text: fullText }
   })
 
   const message = await withRetry(() =>
     client.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 16384,
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 4096,
       system: PROMPT_SYSTEM,
       tools: [EXTRACT_TOOL],
       tool_choice: { type: 'tool', name: 'classify_prompts' },
-      messages: [{ role: 'user', content: `Classify and extract these prompts:\n${JSON.stringify(input, null, 2)}` }],
+      messages: [{ role: 'user', content: `Classify and extract:\n${JSON.stringify(input)}` }],
     })
   )
 

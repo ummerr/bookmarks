@@ -2,25 +2,27 @@
 
 import { useState } from 'react'
 
-interface ClassifyResult {
-  classified: number
-  total: number
-  message?: string
-  errors?: string[]
-}
-
 export default function ClassifyButton({ onDone }: { onDone?: () => void }) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
-  const [result, setResult] = useState<ClassifyResult | null>(null)
+  const [classified, setClassified] = useState(0)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   async function run() {
     setStatus('loading')
-    setResult(null)
+    setClassified(0)
+    setErrorMsg(null)
 
     try {
-      const res = await fetch('/api/classify', { method: 'POST' })
-      const data: ClassifyResult = await res.json()
-      setResult(data)
+      let total = 0
+      // Loop: each request classifies one batch, returns remaining count
+      while (true) {
+        const res = await fetch('/api/classify', { method: 'POST' })
+        const data = await res.json()
+        if (data.error) { setErrorMsg(data.error); break }
+        total += data.classified ?? 0
+        setClassified(total)
+        if ((data.remaining ?? 0) === 0 || data.classified === 0) break
+      }
       setStatus('done')
       onDone?.()
     } catch {
@@ -41,7 +43,7 @@ export default function ClassifyButton({ onDone }: { onDone?: () => void }) {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
             </svg>
-            Classifying…
+            Classifying… ({classified})
           </>
         ) : (
           <>
@@ -53,30 +55,14 @@ export default function ClassifyButton({ onDone }: { onDone?: () => void }) {
         )}
       </button>
 
-      {status === 'done' && result && (
-        <div className="flex flex-col gap-1">
-          <p className="text-sm text-zinc-400">
-            {result.message
-              ? result.message
-              : `Classified ${result.classified} of ${result.total} bookmarks`}
-          </p>
-          {result.errors && result.errors.length > 0 && (
-            <details className="text-xs">
-              <summary className="cursor-pointer text-red-400 select-none">
-                {result.errors.length} batch error{result.errors.length > 1 ? 's' : ''}
-              </summary>
-              <ul className="mt-1 flex flex-col gap-0.5 pl-2 border-l border-red-500/30">
-                {result.errors.map((e, i) => (
-                  <li key={i} className="text-red-400/80 font-mono">{e}</li>
-                ))}
-              </ul>
-            </details>
-          )}
-        </div>
+      {status === 'done' && (
+        <p className="text-sm text-zinc-400">
+          {classified === 0 ? 'Nothing to classify' : `Classified ${classified} bookmarks`}
+        </p>
       )}
 
       {status === 'error' && (
-        <p className="text-sm text-red-400">Classification failed. Check your API key.</p>
+        <p className="text-sm text-red-400">{errorMsg ?? 'Classification failed. Check your API key.'}</p>
       )}
     </div>
   )

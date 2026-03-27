@@ -2,54 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { countUnclassifiedPrompts, getAllPrompts, getUnclassifiedPrompts, updatePromptExtraction } from '@/lib/db'
 import { classifyPromptBatch } from '@/lib/classifier'
 
-export const maxDuration = 300
-
+// Single batch per request — stays under Vercel Hobby 10s timeout.
+// Client loops until done.
 const BATCH_SIZE = 5
-const CONCURRENCY = 1
-
-async function runBatches(
-  prompts: Awaited<ReturnType<typeof getUnclassifiedPrompts>>
-): Promise<{ classified: number; errors: string[] }> {
-  // Split into batches
-  const batches: (typeof prompts)[] = []
-  for (let i = 0; i < prompts.length; i += BATCH_SIZE) {
-    batches.push(prompts.slice(i, i + BATCH_SIZE))
-  }
-
-  let classified = 0
-  const errors: string[] = []
-
-  // Process batches with limited concurrency
-  for (let i = 0; i < batches.length; i += CONCURRENCY) {
-    const window = batches.slice(i, i + CONCURRENCY)
-    await Promise.all(
-      window.map(async (batch, j) => {
-        const batchIndex = i + j + 1
-        try {
-          const results = await classifyPromptBatch(batch)
-          for (const r of results) {
-            await updatePromptExtraction(r.id, {
-              prompt_category: r.prompt_category,
-              extracted_prompt: r.extracted_prompt,
-              detected_model: r.detected_model,
-              prompt_themes: r.prompt_themes,
-              art_styles: r.art_styles,
-              requires_reference: r.requires_reference,
-              reference_type: r.reference_type,
-            })
-            classified++
-          }
-        } catch (err) {
-          const msg = `Batch ${batchIndex}: ${String(err)}`
-          console.error('[PROMPTS/CLASSIFY]', msg)
-          errors.push(msg)
-        }
-      })
-    )
-  }
-
-  return { classified, errors }
-}
 
 export async function GET() {
   return NextResponse.json({ unclassified: await countUnclassifiedPrompts() })
@@ -58,7 +13,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}))
-    const limit: number = body.limit ?? 20
+    const limit: number = Math.min(body.limit ?? BATCH_SIZE, BATCH_SIZE)
     const offset: number = body.offset ?? 0
     const force: boolean = body.force ?? false
 
@@ -68,7 +23,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ classified: 0, batchTotal: 0, errors: [] })
     }
 
-    const { classified, errors } = await runBatches(prompts)
+    let classified = 0
+    const errors: string[] = []
+
+    try {
+      const results = await classifyPromptBatch(prompts)
+      for (const r of results) {
+        await updatePromptExtraction(r.id, {
+          prompt_category: r.prompt_category,
+          extracted_prompt: r.extracted_prompt,
+          detected_model: r.detected_model,
+          prompt_themes: r.prompt_themes,
+          art_styles: r.art_styles,
+          requires_reference: r.requires_reference,
+          reference_type: r.reference_type,
+        })
+        classified++
+      }
+    } catch (err) {
+      const msg = `Batch: ${String(err)}`
+      console.error('[PROMPTS/CLASSIFY]', msg)
+      errors.push(msg)
+    }
 
     return NextResponse.json({ classified, batchTotal: prompts.length, errors })
   } catch (err) {
