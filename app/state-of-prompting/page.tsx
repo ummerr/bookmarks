@@ -507,6 +507,13 @@ export default function StateOfPromptingPage() {
                       color: '#1DA1F2',
                     },
                     {
+                      model: 'Seedance 2.0',
+                      personality: 'Reference Prompting King',
+                      desc: "ByteDance's breakout model and arguably the most hyped release of Q1 2026. Excels at reference-based generation — feed it character sheets, style boards, or scene photos and it maintains extraordinary fidelity across clips. Native lip-sync, audio generation, and timestamp syntax. The model that made \"upload first, prompt second\" the default workflow for video creators.",
+                      strategy: 'Lead with reference images — character sheets, style frames, environment photos. Use [Xs]: timestamp syntax for multi-cut sequences. Describe motion and forces rather than aesthetics. Let the references carry the visual identity.',
+                      color: '#10b981',
+                    },
+                    {
                       model: 'Grok Imagine Video',
                       personality: 'I2V Arena #1',
                       desc: "Built on Aurora's autoregressive architecture. #1 on the I2V arena (ELO 1,404) and #1 on Video Edit (ELO 1,259). Generates up to 15 seconds in ~17 seconds. Supports video extension and iterative chat editing — refine with natural language rather than rewriting.",
@@ -515,8 +522,8 @@ export default function StateOfPromptingPage() {
                     },
                     {
                       model: 'Kling',
-                      personality: 'Video Edit Top 3',
-                      desc: 'KlingAI holds #2 and #3 on the Video Edit arena (O3 Pro at 1,248, O1 Pro at 1,208). Popularized storyboard-mode prompting — up to 6 distinct camera cuts from a single prompt. Native lip-sync and speaker attribution across shots.',
+                      personality: 'Multi-Shot Pioneer',
+                      desc: 'The model that pioneered storyboard-mode prompting — up to 6 distinct camera cuts from a single prompt. KlingAI holds #2 and #3 on the Video Edit arena (O3 Pro at 1,248, O1 Pro at 1,208). Native lip-sync, speaker attribution, and the most granular shot-by-shot control of any current model.',
                       strategy: 'Use Custom Storyboard mode for full control. Structure each shot as: Scene → Characters → Action → Camera → Audio. Label dialogue per speaker. Give it as many reference files as you have.',
                       color: '#ec4899',
                     },
@@ -858,7 +865,7 @@ enters. Warm golden lighting.`}</pre>
 
                 <div className="rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30 p-4">
                   <p className="text-sm text-red-700 dark:text-red-300 leading-relaxed">
-                    <span className="font-semibold">The lesson.</span> The consumer product died but the model lives on. The field consolidated around Google (Veo 3.1 dominates T2V), xAI (Grok leads I2V and Video Edit), and Kling/Runway for specialized tasks. Building a consumer product around a capability that costs hundreds of dollars per clip doesn't work — but the underlying technology powers the tools that do.
+                    <span className="font-semibold">The lesson.</span> The model did not survive either — OpenAI is deprecating the API alongside the consumer app. The field consolidated around Google (Veo 3.1 dominates T2V), xAI (Grok leads I2V and Video Edit), and Kling/Seedance/Runway for specialized tasks. Building a consumer product around a capability that costs hundreds of dollars per clip doesn't work — and unlike other shutdowns, there's no API fallback this time.
                   </p>
                 </div>
               </div>
