@@ -92,9 +92,16 @@ function PromptsPageInner() {
 
   async function fetchPrompts(cat: PromptCategory | 'all' | 'uncategorized') {
     setLoading(true)
-    const params = cat !== 'all' && cat !== 'uncategorized' ? `?prompt_category=${cat}` : ''
-    const res = await fetch(`/api/prompts${params}`)
-    if (res.ok) setAllPrompts(await res.json())
+    try {
+      const params = cat !== 'all' && cat !== 'uncategorized' ? `?prompt_category=${cat}` : ''
+      const res = await fetch(`/api/prompts${params}`)
+      if (res.ok) {
+        const data = await res.json()
+        if (Array.isArray(data)) setAllPrompts(data)
+      }
+    } catch {
+      // Network error — keep existing data
+    }
     setLoading(false)
   }
 

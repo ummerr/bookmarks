@@ -180,8 +180,10 @@ export default function StudioPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: input.trim(), count: 5 }),
       })
+      if (!res.ok) throw new Error(`Server error (${res.status})`)
       const data = await res.json()
       if (data.error) throw new Error(data.error)
+      if (!Array.isArray(data.variations)) throw new Error('Invalid response')
       setVariations(data.variations)
 
       const entry: HistoryEntry = {

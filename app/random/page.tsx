@@ -100,7 +100,8 @@ function RandomPageInner() {
       setLoading(true)
       fetch(`/api/prompts/random?id=${id}`)
         .then(r => r.ok ? r.json() : null)
-        .then(data => { setPrompt(data); setLoading(false) })
+        .then(data => { if (data) setPrompt(data); setLoading(false) })
+        .catch(() => setLoading(false))
     } else {
       fetchRandom(group, multiShot)
     }

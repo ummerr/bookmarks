@@ -57,10 +57,15 @@ function DashboardInner() {
         limit: String(PAGE_SIZE),
       })
 
-      const res = await fetch(`/api/bookmarks?${params}`)
+      let res: Response
+      try {
+        res = await fetch(`/api/bookmarks?${params}`)
+      } catch {
+        setLoading(false); return
+      }
       if (!res.ok) { setLoading(false); return }
 
-      const { bookmarks: results, hasMore: more } = await res.json()
+      const { bookmarks: results = [], hasMore: more = false } = await res.json()
       setHasMore(more)
 
       if (reset || pageNum === 0) {

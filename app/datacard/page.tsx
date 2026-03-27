@@ -324,13 +324,14 @@ export default function DatacardPage() {
                 <div className="flex flex-col gap-1.5">
                   {stats.byModel.slice(0, 10).map((m) => {
                     const pct = stats.total ? (m.value / stats.total) * 100 : 0
+                    const maxModelValue = stats.byModel[0]?.value || 1
                     return (
                       <div key={m.label} className="flex items-center gap-3">
                         <span className="text-xs text-gray-600 dark:text-zinc-300 w-28 truncate text-right shrink-0 font-medium">{m.label}</span>
                         <div className="flex-1 h-5 bg-black/[0.03] dark:bg-white/[0.03] rounded overflow-hidden">
                           <div
                             className="h-full rounded bg-violet-500/20 border-l-2 border-violet-500"
-                            style={{ width: `${Math.max(3, (m.value / stats.byModel[0].value) * 100)}%` }}
+                            style={{ width: `${Math.max(3, (m.value / maxModelValue) * 100)}%` }}
                           />
                         </div>
                         <span className="text-[11px] font-mono text-gray-400 dark:text-zinc-500 w-16 text-right shrink-0">

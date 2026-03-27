@@ -467,14 +467,16 @@ export default function StateOfPromptingPage() {
                         color: '#3b82f6',
                       },
                     ].map((arena) => {
-                      const maxElo = Math.max(...arena.entries.map((e) => e.elo))
-                      const minElo = Math.min(...arena.entries.map((e) => e.elo)) - 30
+                      const elos = arena.entries.map((e) => e.elo)
+                      const maxElo = elos.length ? Math.max(...elos) : 1
+                      const minElo = elos.length ? Math.min(...elos) - 30 : 0
                       return (
                         <div key={arena.title}>
                           <h5 className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: arena.color }}>{arena.title}</h5>
                           <div className="flex flex-col gap-1.5">
                             {arena.entries.map((e, i) => {
-                              const barPct = Math.max(8, ((e.elo - minElo) / (maxElo - minElo)) * 100)
+                              const eloRange = maxElo - minElo || 1
+                              const barPct = Math.max(8, ((e.elo - minElo) / eloRange) * 100)
                               const isDead = 'dead' in e && (e as { dead?: boolean }).dead
                               return (
                                 <div key={e.model} className={`flex items-center gap-2 ${isDead ? 'opacity-45' : ''}`}>
@@ -780,7 +782,7 @@ enters. Warm golden lighting.`}</pre>
                                 <div className="flex-1 h-4 bg-black/[0.03] dark:bg-white/[0.03] rounded overflow-hidden">
                                   <div
                                     className="h-full rounded bg-violet-500/20 border-l-2 border-violet-500"
-                                    style={{ width: `${Math.max(5, (m.value / topModels[0].value) * 100)}%` }}
+                                    style={{ width: `${Math.max(5, (m.value / (topModels[0]?.value || 1)) * 100)}%` }}
                                   />
                                 </div>
                                 <span className="text-[10px] font-mono text-gray-400 dark:text-zinc-500 w-14 text-right shrink-0">
