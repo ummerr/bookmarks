@@ -54,18 +54,18 @@ function modelToFamily(model: string): string {
 
 const CATEGORIES: { value: PromptCategory | 'all'; label: string }[] = [
   { value: 'all',                  label: 'All' },
-  { value: 'image_person',        label: 'Person' },
-  { value: 'image_advertisement', label: 'Ad' },
-  { value: 'image_collage',       label: 'Collage' },
-  { value: 'image_t2i',           label: 'General' },
+  { value: 'image_person',        label: '👤 Person' },
+  { value: 'image_advertisement', label: '🛍️ Ad' },
+  { value: 'image_collage',       label: '🎨 Collage' },
+  { value: 'image_t2i',           label: '✨ General' },
   { value: 'image_i2i',           label: 'I2I' },
   { value: 'image_r2i',           label: 'R2I' },
   { value: 'image_character_ref', label: 'Char Ref' },
   { value: 'image_inpainting',    label: 'Inpainting' },
-  { value: 'video_t2v',           label: 'T2V' },
-  { value: 'video_i2v',           label: 'Frames to Video' },
-  { value: 'video_r2v',           label: 'Ref to Video' },
-  { value: 'video_v2v',           label: 'V2V' },
+  { value: 'video_t2v',           label: '📝 T2V' },
+  { value: 'video_i2v',           label: '🎞️ Frames to Video' },
+  { value: 'video_r2v',           label: '📌 Ref to Video' },
+  { value: 'video_v2v',           label: '🔁 V2V' },
   { value: 'audio',               label: 'Audio' },
   { value: 'threed',              label: '3D' },
   { value: 'system_prompt',       label: 'System Prompt' },
@@ -594,7 +594,7 @@ function PromptsPageInner() {
                       : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
                   }`}
                 >
-                  {mt === 'image' ? 'Image' : 'Video'}
+                  {mt === 'image' ? '🖼️ Image' : '🎬 Video'}
                 </button>
               ))}
             </div>

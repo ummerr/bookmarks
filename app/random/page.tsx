@@ -165,7 +165,7 @@ function RandomPageInner() {
                     : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
                 }`}
               >
-                {g}
+                {g === 'image' ? '🖼️ Image' : '🎬 Video'}
               </button>
             ))}
             <button
