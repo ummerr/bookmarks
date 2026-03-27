@@ -16,7 +16,6 @@ const NAV_SECTIONS = [
   { id: 'templates',          label: 'Templates' },
   { id: 'prompt-engineering', label: 'Prompt Engineering' },
   { id: 'context-engineering', label: 'Context Engineering' },
-  { id: 'autonomy',           label: 'How Much Autonomy?' },
   { id: 'skills',             label: 'Skills' },
   { id: 'sora',               label: 'Why Sora Shut Down' },
   { id: 'video',              label: 'Video Prompting' },
@@ -355,59 +354,6 @@ export default function StateOfPromptingPage() {
                     <span className="font-semibold">Known vs. unknown territory.</span> AI already understands TypeScript, React, Python, and most popular tools. It knows nothing about your internal systems. Without that information, it fills the gaps by guessing — confidently. Context engineering is knowing which situation you're in and supplying the missing knowledge explicitly.
                   </p>
                 </div>
-              </div>
-            </Section>
-
-            <Section title="How Much Should You Trust the AI?" id="autonomy">
-              <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
-                <p>
-                  The 2026 question isn't "can AI do this?" — it's "should we let it decide alone?" Teams using AI well have defined clear boundaries about which decisions it can make autonomously and which always need a human.
-                </p>
-                <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] overflow-hidden">
-                  <div className="grid grid-cols-3 text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 border-b border-black/[0.06] dark:border-white/6 px-4 py-2.5">
-                    <span>Level</span>
-                    <span>What happens</span>
-                    <span>Example</span>
-                  </div>
-                  {[
-                    {
-                      zone: 'Fully automatic',
-                      color: '#22c55e',
-                      def: 'The AI acts immediately without asking anyone.',
-                      ex: 'Fixing a known bug type; scaling server capacity; reordering stock.',
-                    },
-                    {
-                      zone: 'Reviewed in batches',
-                      color: '#f97316',
-                      def: 'The AI acts, but a human reviews a weekly summary of what it did.',
-                      ex: 'Filtering job applications; tagging support tickets; code review comments.',
-                    },
-                    {
-                      zone: 'Needs approval',
-                      color: '#8b5cf6',
-                      def: 'The AI does the work and proposes an action — a human signs off before anything happens.',
-                      ex: 'Sending a client contract; deploying major code changes to production.',
-                    },
-                    {
-                      zone: 'Human only',
-                      color: '#ec4899',
-                      def: "AI doesn't touch it. These decisions require judgment, empathy, or accountability.",
-                      ex: 'Difficult conversations with employees; strategic decisions; anything with serious legal risk.',
-                    },
-                  ].map((row, i) => (
-                    <div
-                      key={row.zone}
-                      className={`grid grid-cols-3 px-4 py-3 text-xs items-start gap-2 ${i % 2 === 0 ? '' : 'bg-black/[0.015] dark:bg-white/[0.015]'}`}
-                    >
-                      <span className="font-medium" style={{ color: row.color }}>{row.zone}</span>
-                      <span className="text-gray-500 dark:text-zinc-400 leading-relaxed">{row.def}</span>
-                      <span className="text-gray-500 dark:text-zinc-400 leading-relaxed">{row.ex}</span>
-                    </div>
-                  ))}
-                </div>
-                <p>
-                  Writing a prompt is a one-off act. Defining these levels is a decision that governs every future action the AI takes in that category. The teams with the most effective AI in 2026 aren't the ones with the best prompts — they're the ones who've thought carefully about these boundaries.
-                </p>
               </div>
             </Section>
 
