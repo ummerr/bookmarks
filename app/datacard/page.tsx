@@ -13,7 +13,7 @@ interface StatsData {
   withReference: number
   byCategory: LabelValue[]
   byModel: LabelValue[]
-  byTheme: LabelValue[]
+  byTheme?: LabelValue[]
   byReferenceType: LabelValue[]
   byPromptLength: LabelValue[]
 }
@@ -360,11 +360,11 @@ export default function DatacardPage() {
               </div>
 
               {/* Theme distribution */}
-              {stats.byTheme?.length > 0 && (
+              {(stats.byTheme?.length ?? 0) > 0 && (
                 <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-5">
                   <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 mb-3">Theme distribution</h3>
                   <div className="flex flex-wrap gap-2">
-                    {stats.byTheme.map((t) => (
+                    {stats.byTheme!.map((t) => (
                       <span
                         key={t.label}
                         className="inline-flex items-center gap-1.5 rounded-full border border-black/[0.08] dark:border-white/8 px-3 py-1 text-xs"

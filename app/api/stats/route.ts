@@ -10,7 +10,7 @@ export async function GET() {
   try {
     const sql = getSql()
 
-    const [categoryRows, modelRows, totalRow, refRow, refTypeRows, themeRows, promptLengthRows] = await Promise.all([
+    const [categoryRows, modelRows, totalRow, refRow, refTypeRows, promptLengthRows] = await Promise.all([
       sql<{ prompt_category: string; n: string }[]>`
         SELECT prompt_category, COUNT(*) as n
         FROM bookmarks
@@ -39,13 +39,6 @@ export async function GET() {
         GROUP BY reference_type
         ORDER BY n DESC
       `,
-      sql<{ theme: string; n: string }[]>`
-        SELECT t.theme, COUNT(*) as n
-        FROM bookmarks b, jsonb_array_elements_text(b.prompt_themes) AS t(theme)
-        WHERE b.category = 'prompts' AND b.prompt_themes IS NOT NULL AND jsonb_typeof(b.prompt_themes) = 'array'
-        GROUP BY t.theme
-        ORDER BY n DESC
-      `,
       sql<{ bucket: string; n: string }[]>`
         SELECT
           CASE
@@ -67,7 +60,6 @@ export async function GET() {
       byCategory: categoryRows.map((r) => ({ label: r.prompt_category, value: Number(r.n) })),
       byModel: modelRows.map((r) => ({ label: r.detected_model, value: Number(r.n) })),
       byReferenceType: refTypeRows.map((r) => ({ label: r.reference_type, value: Number(r.n) })),
-      byTheme: themeRows.map((r) => ({ label: r.theme, value: Number(r.n) })),
       byPromptLength: promptLengthRows.map((r) => ({ label: r.bucket, value: Number(r.n) })),
     })
   } catch (err) {
