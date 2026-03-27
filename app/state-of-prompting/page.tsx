@@ -1,6 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import Link from 'next/link'
+
+interface LabelValue { label: string; value: number }
+interface StatsData {
+  total: number
+  withReference: number
+  multiShot: number
+  byCategory: LabelValue[]
+  byModel: LabelValue[]
+  byTheme: LabelValue[]
+  byPromptLength: LabelValue[]
+}
 
 const NAV_SECTIONS = [
   { id: 'findings',            label: 'Key Findings' },
@@ -12,6 +24,7 @@ const NAV_SECTIONS = [
   { id: 'video',              label: 'Video Prompting' },
   { id: 'multishot',          label: 'Multi-Shot' },
   { id: 'multimodal',         label: 'Multimodal' },
+  { id: 'from-the-data',     label: 'From the Dataset' },
   { id: 'practitioners',      label: 'Takeaways' },
   { id: 'sources',            label: 'Sources' },
 ]
@@ -92,6 +105,31 @@ function FindingCard({ number, title, body, color }: {
 
 export default function StateOfPromptingPage() {
   const [activeId, setActiveId] = useState('')
+  const [stats, setStats] = useState<StatsData | null>(null)
+
+  useEffect(() => {
+    fetch('/api/stats')
+      .then((r) => r.json())
+      .then((d) => setStats(d))
+      .catch(() => {})
+  }, [])
+
+  const imageCount = useMemo(() =>
+    stats?.byCategory?.filter((c) => c.label.startsWith('image_')).reduce((s, c) => s + c.value, 0) ?? 0
+  , [stats])
+  const videoCount = useMemo(() =>
+    stats?.byCategory?.filter((c) => c.label.startsWith('video_')).reduce((s, c) => s + c.value, 0) ?? 0
+  , [stats])
+  const refPct = stats?.total ? Math.round((stats.withReference / stats.total) * 100) : 0
+  const multiShotPct = stats?.total ? Math.round(((stats.multiShot ?? 0) / stats.total) * 100) : 0
+  const topModels = useMemo(() => stats?.byModel?.slice(0, 5) ?? [], [stats])
+  const topThemes = useMemo(() => stats?.byTheme?.slice(0, 5) ?? [], [stats])
+  const longPromptPct = useMemo(() => {
+    if (!stats?.byPromptLength?.length) return 0
+    const total = stats.byPromptLength.reduce((s, d) => s + d.value, 0)
+    const long = stats.byPromptLength.filter((d) => d.label === 'long' || d.label === 'very_long').reduce((s, d) => s + d.value, 0)
+    return total ? Math.round((long / total) * 100) : 0
+  }, [stats])
 
   useEffect(() => {
     const observers: IntersectionObserver[] = []
@@ -161,8 +199,8 @@ export default function StateOfPromptingPage() {
                 <FindingCard
                   number="03"
                   color="#a855f7"
-                  title="Model selection matters more than prompt optimization"
-                  body="The ELO gap between the best and average video generation models exceeds 300 points — larger than the quality gap between an expert and a beginner prompt on the same model. Most people spend time rewriting their prompt while running it through the wrong tool. Pick the right model for the task type first: different models have distinct strengths that no amount of prompting can compensate for."
+                  title="Model selection matters — and the leaderboards shift by task"
+                  body="Google's Veo 3.1 sweeps the T2V arena top 5, but xAI's Grok leads I2V and Video Edit. OpenAI leads Image Edit. No single model wins everywhere. Most people pick one tool and iterate on their prompt — but the arena data shows switching models for different task types (text-to-video vs. image-to-video vs. editing) produces bigger gains than rewriting the same prompt."
                 />
                 <FindingCard
                   number="04"
@@ -356,7 +394,7 @@ export default function StateOfPromptingPage() {
 
                 <div className="rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30 p-4">
                   <p className="text-sm text-red-700 dark:text-red-300 leading-relaxed">
-                    <span className="font-semibold">What this means for video AI.</span> Sora's shutdown removes the most powerful video generator from the market — but it also clarifies the field. The remaining tools (Veo 3.1, Kling 3.0, Runway Gen-4.5) have more sustainable economics and tighter use cases. The lesson isn't that AI video failed — it's that building a consumer product around a capability that costs hundreds of dollars per clip to generate doesn't work, no matter how impressive the output.
+                    <span className="font-semibold">What this means for video AI.</span> Sora's consumer app is dead, but Sora 2 Pro still ranks #4 on the T2V arena (ELO 1,367). The field consolidated around Google (Veo 3.1 dominates T2V), xAI (Grok leads I2V and Video Edit), and Kling/Runway for specialized tasks. The lesson isn't that AI video failed — it's that building a consumer product around a capability that costs hundreds of dollars per clip to generate doesn't work, no matter how impressive the output.
                   </p>
                 </div>
               </div>
@@ -484,8 +522,8 @@ export default function StateOfPromptingPage() {
                     {
                       model: 'Sora 2 Pro',
                       personality: 'T2V Arena #4',
-                      desc: "OpenAI's top video model sits at ELO 1,367 in T2V — the only non-Google model in the top 5. World-state persistence approach keeps characters consistent across shots automatically. The most technically ambitious diffusion-based world simulator.",
-                      strategy: 'Describe scene physics and character relationships, not just visual appearance. Sora understands spatial continuity — trust it with complex multi-character blocking.',
+                      desc: "The only non-Google model in the T2V top 5 (ELO 1,367). OpenAI shut down the consumer Sora app in March 2026, but Sora 2 Pro remains available via API. Diffusion-based world simulation with strong physics understanding and spatial continuity.",
+                      strategy: 'Describe scene physics and character relationships, not just visual appearance. Trust it with complex multi-character blocking and spatial continuity across frames.',
                       color: '#10b981',
                     },
                     {
@@ -503,10 +541,10 @@ export default function StateOfPromptingPage() {
                       color: '#f97316',
                     },
                     {
-                      model: '🪦 RIP Sora 2',
-                      personality: 'Shut Down Mar 24, 2026',
-                      desc: 'The most technically ambitious video model — diffusion-based world simulation with physics understanding. Shut down after six months due to $15M/day inference costs against $2.1M lifetime revenue.',
-                      strategy: 'N/A — no longer available. Its world-state persistence approach (characters held across shots automatically) influenced the multi-shot techniques every remaining tool now implements.',
+                      model: '🪦 Sora (consumer)',
+                      personality: 'App Shut Down Mar 2026',
+                      desc: 'The consumer app, ChatGPT video generation, and most API access shut down after six months — $15M/day costs against $2.1M lifetime revenue. Sora 2 Pro survives via API (still #4 on T2V arena at ELO 1,367).',
+                      strategy: 'Sora 2 Pro is still available via API. The consumer product died but the model lives on — use it for T2V tasks where physics coherence matters.',
                       color: '#6b7280',
                     },
                   ].map((m) => (
@@ -678,6 +716,102 @@ enters. Warm golden lighting.`}</pre>
               </div>
             </Section>
 
+            <Section title="What the Data Actually Shows" id="from-the-data">
+              <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
+                <p>
+                  Everything above is sourced from industry reports and product announcements. This section is different — it's what we see in the <Link href="/prompts" className="text-violet-600 dark:text-violet-400 hover:underline font-medium">ummerr/prompts dataset</Link>, a collection of {stats?.total?.toLocaleString() ?? '—'} real prompts sourced from viral posts on X.
+                </p>
+
+                {stats && (
+                  <>
+                    {/* Key dataset stats */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {[
+                        { value: stats.total.toLocaleString(), label: 'prompts collected', color: '#1DA1F2' },
+                        { value: `${imageCount} / ${videoCount}`, label: 'image / video split', color: '#ec4899' },
+                        { value: `${refPct}%`, label: 'use reference images', color: '#f97316' },
+                        { value: `${multiShotPct}%`, label: 'are multi-shot', color: '#14b8a6' },
+                      ].map((s) => (
+                        <div key={s.label} className="rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-zinc-900 p-3 text-center">
+                          <div className="text-xl font-bold leading-tight" style={{ color: s.color }}>{s.value}</div>
+                          <div className="text-xs text-gray-500 dark:text-zinc-400 mt-1 leading-snug">{s.label}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Model share from dataset */}
+                    {topModels.length > 0 && (
+                      <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4">
+                        <h4 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 mb-3">Which models go viral</h4>
+                        <p className="text-xs text-gray-500 dark:text-zinc-400 mb-3">Model frequency in high-engagement posts — what practitioners actually share, not benchmark rankings.</p>
+                        <div className="flex flex-col gap-1.5">
+                          {topModels.map((m, i) => {
+                            const pct = stats.total ? Math.round((m.value / stats.total) * 100) : 0
+                            return (
+                              <div key={m.label} className="flex items-center gap-2">
+                                <span className="text-[10px] font-mono text-gray-400 dark:text-zinc-500 w-3 text-right">{i + 1}</span>
+                                <span className="text-[11px] font-medium w-28 shrink-0 truncate text-gray-700 dark:text-zinc-300">{m.label}</span>
+                                <div className="flex-1 h-4 bg-black/[0.03] dark:bg-white/[0.03] rounded overflow-hidden">
+                                  <div
+                                    className="h-full rounded bg-violet-500/20 border-l-2 border-violet-500"
+                                    style={{ width: `${Math.max(5, (m.value / topModels[0].value) * 100)}%` }}
+                                  />
+                                </div>
+                                <span className="text-[10px] font-mono text-gray-400 dark:text-zinc-500 w-14 text-right shrink-0">
+                                  {m.value} ({pct}%)
+                                </span>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Synthesis observations */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {[
+                        {
+                          title: 'Arena rankings ≠ viral share',
+                          body: `The models that rank highest on Artificial Analysis arenas aren't always the ones that dominate viral posts. The dataset captures what practitioners actually choose to use and share — which reflects accessibility, speed, and community familiarity as much as raw quality.`,
+                          color: '#8b5cf6',
+                        },
+                        {
+                          title: `${refPct}% use references — the rest don't`,
+                          body: `Reference-guided generation is the expert technique — but ${100 - refPct}% of viral prompts are still text-only. The gap between what's recommended (use references) and what people actually do (type a prompt) is wide. Text-only prompting isn't dead; it's still the default.`,
+                          color: '#f97316',
+                        },
+                        {
+                          title: `${longPromptPct}% of prompts are 200+ characters`,
+                          body: 'Most viral prompts are short to medium length. The "describe everything in detail" advice from 2023 hasn\'t aged well — models have gotten better at filling in the gaps. The highest-engagement prompts tend to be specific about one or two things and let the model handle the rest.',
+                          color: '#ec4899',
+                        },
+                        {
+                          title: topThemes.length > 0 ? `"${topThemes[0].label}" is the dominant theme` : 'Theme concentration',
+                          body: topThemes.length >= 3
+                            ? `The top 3 visual themes — ${topThemes.slice(0, 3).map((t) => t.label).join(', ')} — account for the majority of viral prompts. The distribution is heavily skewed: practitioners share what gets engagement, and certain aesthetics consistently outperform.`
+                            : 'Visual themes in viral prompts are concentrated around a few dominant aesthetics that consistently drive engagement.',
+                          color: '#14b8a6',
+                        },
+                      ].map((item) => (
+                        <div
+                          key={item.title}
+                          className="rounded-xl border bg-white dark:bg-[#111] p-4 flex flex-col gap-2"
+                          style={{ borderColor: `${item.color}30` }}
+                        >
+                          <span className="text-xs font-bold" style={{ color: item.color }}>{item.title}</span>
+                          <p className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">{item.body}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                <p className="text-xs text-gray-400 dark:text-zinc-500">
+                  Live data from <Link href="/insights" className="text-violet-600 dark:text-violet-400 hover:underline">Dataset Insights</Link>. Full methodology and schema on the <Link href="/datacard" className="text-violet-600 dark:text-violet-400 hover:underline">Datacard</Link>.
+                </p>
+              </div>
+            </Section>
+
             <Section title="What to Actually Do About It" id="practitioners">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[
@@ -746,7 +880,11 @@ enters. Warm golden lighting.`}</pre>
                   { label: 'Seedance 2.0 Official — ByteDance Seed', url: 'https://seed.bytedance.com/en/seedance2_0' },
                   { label: 'Seedance 2.0 vs Veo 3.1: Which Is Best? — SitePoint', url: 'https://www.sitepoint.com/seedance-2-0-vs-veo-3-1-which-is-best-for-ai-video-creators/' },
                   { label: 'Seedance 2.0 Complete Guide — WaveSpeedAI', url: 'https://wavespeed.ai/blog/posts/seedance-2-0-complete-guide-multimodal-video-creation/' },
-                  { label: 'Artificial Analysis Text-to-Video Leaderboard', url: 'https://artificialanalysis.ai/video/leaderboard/text-to-video' },
+                  { label: 'Artificial Analysis Text-to-Video Arena', url: 'https://artificialanalysis.ai/text-to-video/arena' },
+                  { label: 'Artificial Analysis Image-to-Video Arena', url: 'https://artificialanalysis.ai/text-to-video/arena' },
+                  { label: 'Artificial Analysis Text-to-Image Arena', url: 'https://artificialanalysis.ai/text-to-image/arena' },
+                  { label: 'Artificial Analysis Image Edit Arena', url: 'https://artificialanalysis.ai/text-to-image/arena' },
+                  { label: 'Artificial Analysis Video Edit Arena', url: 'https://artificialanalysis.ai/text-to-video/arena' },
                   { label: 'MultiShotMaster (Kuaishou / Kling Research) — arXiv:2512.03041', url: 'https://arxiv.org/html/2512.03041' },
                   { label: 'VideoGen-of-Thought — arXiv:2503.15138', url: 'https://arxiv.org/abs/2503.15138' },
                   { label: 'Kling 3.0 Multi-Shot Prompting Guide — fal.ai', url: 'https://blog.fal.ai/kling-3-0-prompting-guide/' },
