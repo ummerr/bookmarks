@@ -200,16 +200,22 @@ export async function classifyBatch(
 const PROMPT_SYSTEM = `Classify and extract AI prompts from tweets.
 
 CATEGORIES (pick one):
-Image — by primary subject:
-- image_person: People/characters/faces as main focus (portraits, fashion with models, character design)
+
+CRITICAL RULE — reference-based categories take priority:
+If the prompt contains bracketed placeholders like [SUBJECT], [YOUR IMAGE], [REFERENCE], [UPLOADED IMAGE], [SOURCE IMAGE], [INPUT], or similar tokens indicating the user must supply an image, classify as image_r2i (for images) or video_r2v (for video). These categories OVERRIDE subject-based categories like image_person or image_t2i. Also use image_r2i for workflows explicitly described as IP-Adapter, ControlNet, face swap, img2img, style transfer, or reference-to-image.
+
+Image:
+- image_r2i: Reference-to-image — prompt requires a user-supplied reference image (bracketed placeholders, IP-Adapter, ControlNet, face swap, img2img, style transfer). USE THIS whenever the prompt cannot work without an input image.
+- image_i2i: Image-to-image — direct transformation of an existing image (upscale, restyle, inpaint, outpaint)
+- image_person: People/characters/faces as main focus — purely text-driven, NO reference image needed
 - image_advertisement: Product photography, commercial/brand imagery, e-commerce, fashion flats
 - image_collage: Mood boards, grid layouts, multi-panel compositions
-- image_t2i: All other images (landscapes, abstract, sci-fi environments, animals, food, concept art). Default for image prompts.
+- image_t2i: All other text-to-image (landscapes, abstract, sci-fi, animals, food, concept art). Default for image prompts with no reference requirement.
 
 Video:
+- video_r2v: Reference-to-video — a reference/uploaded image guides the video (character consistency, scene reference, NOT direct animation). Use for bracketed placeholders in video prompts.
+- video_i2v: Image-to-video — directly animating or extending a specific still image
 - video_t2v: Text-to-video, prompt only (Sora, Kling, Runway, Pika, Hailuo, Luma, Wan)
-- video_i2v: Image-to-video, animating a still image
-- video_r2v: Reference-to-video, reference image guides output (not direct animation)
 - video_v2v: Video-to-video (restyle, motion transfer, lip sync)
 
 Other: audio (music/voice/SFX), threed (3D models/scenes)
@@ -218,7 +224,7 @@ Text: system_prompt, writing, coding, analysis, other
 THEMES (image/video only, else []): 1-3 from: person, cinematic, landscape, architecture, scifi, fantasy, abstract, fashion, product, horror
 ART STYLES (image/video only, else []): 0-3 from: photorealistic, anime, illustration, oil_painting, watercolor, digital_art, sketch, pixel_art, 3d_render, concept_art, comic_book, minimalist, surrealist, impressionist, cinematic_photo, neon_noir, vintage, flat_design
 
-REFERENCE: requires_reference=true if prompt needs user-supplied input image (img2img, ControlNet, face swap, i2v). false if text-only. null for non-visual. Bracketed placeholders like [SUBJECT] strongly signal requires_reference=true.
+REFERENCE: requires_reference=true if prompt needs user-supplied input image. false if text-only. null for non-visual. Set requires_reference=true for ALL image_r2i, image_i2i, video_r2v, and video_i2v prompts.
 reference_type (if true): face_person, style_artwork, subject_object, pose_structure, scene_background
 
 detected_model: Canonical tool name ("Midjourney", "Flux", "Runway" etc.) or null.
