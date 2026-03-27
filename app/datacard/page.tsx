@@ -4,13 +4,18 @@ import { useState, useEffect, useMemo } from 'react'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
+interface LabelValue { label: string; value: number }
+
 interface StatsData {
   total: number
   withReference: number
   withTheme: number
-  byCategory: { label: string; value: number }[]
-  byModel: { label: string; value: number }[]
-  byTheme: { label: string; value: number }[]
+  multiShot: number
+  byCategory: LabelValue[]
+  byModel: LabelValue[]
+  byTheme: LabelValue[]
+  byReferenceType: LabelValue[]
+  byPromptLength: LabelValue[]
 }
 
 // ── Schema docs ────────────────────────────────────────────────────────────
@@ -52,6 +57,19 @@ const PROMPT_CATEGORIES = [
   { key: 'video_r2v',           label: 'Reference → Video', group: 'Video', color: '#a855f7' },
   { key: 'video_v2v',           label: 'Video → Video',     group: 'Video', color: '#3b82f6' },
 ]
+
+const THEME_LABELS: Record<string, string> = {
+  person: 'Person',
+  cinematic: 'Cinematic',
+  landscape: 'Landscape',
+  architecture: 'Architecture',
+  scifi: 'Sci-Fi',
+  fantasy: 'Fantasy',
+  abstract: 'Abstract',
+  fashion: 'Fashion',
+  product: 'Product',
+  horror: 'Horror',
+}
 
 function getBenchmarks(total: number) {
   return [
@@ -164,6 +182,14 @@ export default function DatacardPage() {
   const techniqueCount = useMemo(() => stats?.byCategory?.length ?? 0, [stats])
   const topCategory = useMemo(() => stats?.byCategory?.[0] ?? null, [stats])
   const topModel = useMemo(() => stats?.byModel?.[0] ?? null, [stats])
+  const imageCount = useMemo(() =>
+    stats?.byCategory?.filter((c) => c.label.startsWith('image_')).reduce((s, c) => s + c.value, 0) ?? 0
+  , [stats])
+  const videoCount = useMemo(() =>
+    stats?.byCategory?.filter((c) => c.label.startsWith('video_')).reduce((s, c) => s + c.value, 0) ?? 0
+  , [stats])
+  const refPct = stats?.total ? Math.round((stats.withReference / stats.total) * 100) : 0
+  const multiShotPct = stats?.total ? Math.round(((stats.multiShot ?? 0) / stats.total) * 100) : 0
 
   return (
     <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
@@ -280,12 +306,58 @@ export default function DatacardPage() {
               ))}
             </div>
           ) : stats ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <StatPill value={stats.total} label="total prompts" sub="sourced from X/Twitter" color="#1DA1F2" />
-              <StatPill value={modelCount} label="distinct AI models" sub="tracked by model attribution" color="#a855f7" />
-              <StatPill value={techniqueCount} label="techniques" sub="across 4 modalities" color="#22c55e" />
-              <StatPill value={stats.withReference} label="reference-image prompts" sub="requires_reference = true" color="#f97316" />
-            </div>
+            <>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                <StatPill value={stats.total} label="total prompts" sub="sourced from X/Twitter" color="#1DA1F2" />
+                <StatPill value={imageCount} label="image prompts" color="#ec4899" />
+                <StatPill value={videoCount} label="video prompts" color="#8b5cf6" />
+                <StatPill value={`${refPct}%`} label="use references" sub={`${stats.withReference} prompts`} color="#f97316" />
+                <StatPill value={`${multiShotPct}%`} label="multi-shot" sub={`${stats.multiShot ?? 0} prompts`} color="#14b8a6" />
+                <StatPill value={modelCount} label="distinct models" color="#3b82f6" />
+              </div>
+
+              {/* Model distribution */}
+              <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-5">
+                <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 mb-3">Model distribution</h3>
+                <div className="flex flex-col gap-1.5">
+                  {stats.byModel.slice(0, 10).map((m) => {
+                    const pct = stats.total ? (m.value / stats.total) * 100 : 0
+                    return (
+                      <div key={m.label} className="flex items-center gap-3">
+                        <span className="text-xs text-gray-600 dark:text-zinc-300 w-28 truncate text-right shrink-0 font-medium">{m.label}</span>
+                        <div className="flex-1 h-5 bg-black/[0.03] dark:bg-white/[0.03] rounded overflow-hidden">
+                          <div
+                            className="h-full rounded bg-violet-500/20 border-l-2 border-violet-500"
+                            style={{ width: `${Math.max(3, (m.value / stats.byModel[0].value) * 100)}%` }}
+                          />
+                        </div>
+                        <span className="text-[11px] font-mono text-gray-400 dark:text-zinc-500 w-16 text-right shrink-0">
+                          {m.value} ({Math.round(pct)}%)
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Theme distribution */}
+              {stats.byTheme?.length > 0 && (
+                <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-5">
+                  <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 mb-3">Theme distribution</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {stats.byTheme.map((t) => (
+                      <span
+                        key={t.label}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-black/[0.08] dark:border-white/8 px-3 py-1 text-xs"
+                      >
+                        <span className="font-medium text-gray-700 dark:text-zinc-300">{THEME_LABELS[t.label] ?? t.label.replace(/_/g, ' ')}</span>
+                        <span className="text-gray-400 dark:text-zinc-500 tabular-nums">{t.value}</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
           ) : (
             <p className="text-sm text-gray-400">Failed to load live stats.</p>
           )}
@@ -316,9 +388,12 @@ export default function DatacardPage() {
             {['Image', 'Video'].map((group) => {
               const cats = PROMPT_CATEGORIES.filter((c) => c.group === group)
               const counts = stats?.byCategory ?? []
+              const groupTotal = cats.reduce((s, c) => s + (counts.find((x) => x.label === c.key)?.value ?? 0), 0)
               return (
                 <div key={group} className="flex flex-col gap-2">
-                  <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500">{group}</h3>
+                  <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500">
+                    {group}{groupTotal > 0 && <span className="ml-2 text-gray-300 dark:text-zinc-600">{groupTotal.toLocaleString()} total</span>}
+                  </h3>
                   <div className="flex flex-wrap gap-2">
                     {cats.map((c) => {
                       const count = counts.find((x) => x.label === c.key)?.value
@@ -377,15 +452,17 @@ export default function DatacardPage() {
               {topCategory && (
                 <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4 flex flex-col gap-1">
                   <span className="text-xs text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-semibold">Most common technique</span>
-                  <span className="text-lg font-bold text-pink-500">{topCategory.label}</span>
-                  <span className="text-sm text-gray-500 dark:text-zinc-400">{topCategory.value.toLocaleString()} prompts</span>
+                  <span className="text-lg font-bold text-pink-500">
+                    {PROMPT_CATEGORIES.find((c) => c.key === topCategory.label)?.label ?? topCategory.label.replace(/_/g, ' ')}
+                  </span>
+                  <span className="text-sm text-gray-500 dark:text-zinc-400">{topCategory.value.toLocaleString()} prompts ({stats.total ? Math.round((topCategory.value / stats.total) * 100) : 0}%)</span>
                 </div>
               )}
               {topModel && (
                 <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4 flex flex-col gap-1">
                   <span className="text-xs text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-semibold">Most referenced model</span>
                   <span className="text-lg font-bold text-violet-500">{topModel.label}</span>
-                  <span className="text-sm text-gray-500 dark:text-zinc-400">{topModel.value.toLocaleString()} prompts</span>
+                  <span className="text-sm text-gray-500 dark:text-zinc-400">{topModel.value.toLocaleString()} prompts ({stats.total ? Math.round((topModel.value / stats.total) * 100) : 0}%)</span>
                 </div>
               )}
             </div>
