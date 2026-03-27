@@ -13,7 +13,7 @@ const MEDIA_TYPES = [
 type MediaType = typeof MEDIA_TYPES[number]['value']
 
 const MEDIA_TYPE_CATEGORIES: Record<MediaType, (PromptCategory | 'all')[]> = {
-  all:   ['all', 'image_person', 'image_advertisement', 'image_collage', 'image_t2i', 'image_i2i', 'image_r2i', 'image_character_ref', 'image_inpainting', 'video_t2v', 'video_i2v', 'video_r2v', 'video_v2v', 'audio', 'threed', 'system_prompt', 'writing', 'coding', 'analysis', 'other'],
+  all:   ['all', 'image_person', 'image_advertisement', 'image_collage', 'image_t2i', 'image_i2i', 'image_r2i', 'image_character_ref', 'image_inpainting', 'video_t2v', 'video_i2v', 'video_r2v', 'video_v2v', 'audio', 'threed'],
   image: ['image_person', 'image_advertisement', 'image_collage', 'image_t2i', 'image_i2i', 'image_r2i', 'image_character_ref', 'image_inpainting'],
   video: ['video_t2v', 'video_i2v', 'video_r2v', 'video_v2v'],
 }
@@ -68,11 +68,6 @@ const CATEGORIES: { value: PromptCategory | 'all'; label: string }[] = [
   { value: 'video_v2v',           label: 'V2V' },
   { value: 'audio',               label: 'Audio' },
   { value: 'threed',              label: '3D' },
-  { value: 'system_prompt',       label: 'System Prompt' },
-  { value: 'writing',             label: 'Writing' },
-  { value: 'coding',              label: 'Coding' },
-  { value: 'analysis',            label: 'Analysis' },
-  { value: 'other',               label: 'Other' },
 ]
 
 const THEMES: { value: PromptTheme; label: string }[] = [
@@ -490,7 +485,7 @@ function PromptsPageInner() {
                   [
                     { label: 'Image', cats: ['image_t2i', 'image_r2i', 'image_i2i', 'image_character_ref', 'image_inpainting'] },
                     { label: 'Video', cats: ['video_t2v', 'video_r2v', 'video_i2v', 'video_v2v'] },
-                    { label: 'LLM',   cats: ['system_prompt', 'writing', 'coding', 'analysis', 'audio', 'threed', 'other'] },
+                    { label: 'Other', cats: ['audio', 'threed'] },
                   ] as { label: string; cats: (keyof typeof CATEGORY_COLORS)[] }[]
                 ).map(({ label, cats }) => (
                   <div key={label} className="flex flex-col gap-1">
@@ -514,7 +509,7 @@ function PromptsPageInner() {
               <div className="grid grid-cols-2 gap-1.5">
                 {[
                   { value: loading ? '—' : allPrompts.length.toLocaleString(), label: 'Prompts', sub: 'and growing' },
-                  { value: '16', label: 'Techniques', sub: 'T2I · T2V · system · more' },
+                  { value: '14', label: 'Techniques', sub: 'T2I · T2V · audio · 3D' },
                   { value: '20+', label: 'AI models', sub: 'every major one' },
                   { value: '0%', label: 'AI-generated', sub: 'all human-sourced' },
                 ].map((s) => (
@@ -529,7 +524,7 @@ function PromptsPageInner() {
               {/* Feature flags */}
               <div className="flex flex-col gap-1.5">
                 {[
-                  'Covers image, video, audio, 3D, and LLM',
+                  'Covers image, video, audio, and 3D generation',
                   'Filter to any model, style, or technique',
                   'Updated continuously as practitioners post new work',
                 ].map((f) => (
