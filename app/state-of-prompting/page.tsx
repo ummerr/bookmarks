@@ -578,18 +578,18 @@ enters. Warm golden lighting.`}</pre>
                     color: '#8b5cf6',
                   },
                   {
-                    title: 'Replace large instruction docs with focused skills',
-                    body: "If your AI agent runs on one massive instruction file, it's degrading over time. Break it into small skill files, each covering one type of task. Only the relevant one loads at any given moment — that's how reliable agent setups are built.",
+                    title: 'Learn the shot vocabulary',
+                    body: "Models respond to cinematography terminology far more reliably than emotional or aesthetic adjectives. 'Gimbal tracking shot, low angle, rack focus to background' gives the model something precise to execute. 'Cinematic and dramatic' gives it nothing. One hour learning standard shot types pays off across every generation you do.",
                     color: '#f59e0b',
                   },
                   {
-                    title: 'Write documentation that AI can actually use',
-                    body: "AI agents don't skim. They read everything. If your internal docs are written for humans to scan quickly, the agent may not find what it needs. Key information must be explicit, not implied.",
+                    title: 'Test across models before iterating on your prompt',
+                    body: "The quality gap between models is larger than the gap between a good and bad prompt. Before spending time refining your text, run the same prompt through two or three models. The right tool for the task type will be immediately obvious — then optimize from there.",
                     color: '#a855f7',
                   },
                   {
-                    title: 'Decide in advance what the AI can do on its own',
-                    body: 'When AI produces code, content, or actions at speed, the bottleneck shifts to oversight. The teams that avoid costly mistakes define which decisions need a human in the loop — before they need that policy, not after.',
+                    title: 'Plan multi-shot sequences before you open the tool',
+                    body: "You can't direct a 30-second narrative in a single prompt. Write the shot list first — what happens in each shot, how the camera moves, where the cut falls. Then generate shot by shot using timestamp or shot-label syntax. The planning is the work; the prompting is execution.",
                     color: '#14b8a6',
                   },
                 ].map((item) => (
