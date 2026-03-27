@@ -511,7 +511,7 @@ function PromptsPageInner() {
                   { value: loading ? '—' : allPrompts.length.toLocaleString(), label: 'Prompts', sub: 'and growing' },
                   { value: '14', label: 'Techniques', sub: 'T2I · T2V · audio · 3D' },
                   { value: '20+', label: 'AI models', sub: 'every major one' },
-                  { value: '0%', label: 'AI-generated', sub: 'all human-sourced' },
+                  { value: '0%', label: 'synthetic', sub: 'all human-sourced' },
                 ].map((s) => (
                   <div key={s.label} className="flex flex-col gap-0.5 rounded-lg bg-black/[0.03] dark:bg-white/[0.04] border border-black/[0.06] dark:border-white/[0.06] px-3 py-2.5">
                     <span className="font-mono text-lg font-semibold text-gray-900 dark:text-white leading-none">{s.value}</span>
