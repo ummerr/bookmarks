@@ -372,39 +372,93 @@ export default function StateOfPromptingPage() {
                   source="How to Actually Control Next-Gen Video AI — Medium"
                   color="#8b5cf6"
                 />
-                {/* Model leaderboard visual */}
+                {/* Arena leaderboards — real data from Artificial Analysis */}
                 <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-5 md:p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Video Model Leaderboard</h4>
-                    <span className="text-[10px] text-gray-400 dark:text-zinc-500 font-mono">ELO · Artificial Analysis T2V Arena</span>
+                  <div className="flex items-center justify-between mb-1">
+                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Arena Leaderboards</h4>
+                    <a href="https://artificialanalysis.ai" target="_blank" rel="noopener noreferrer" className="text-[10px] text-gray-400 dark:text-zinc-500 font-mono hover:underline">Source: Artificial Analysis · Mar 2026</a>
                   </div>
-                  <div className="flex flex-col gap-2.5">
+                  <p className="text-[11px] text-gray-400 dark:text-zinc-500 mb-5">Top 5 by ELO across five arena categories. Scores reflect community head-to-head voting, not automated benchmarks.</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {[
-                      { model: 'Seedance 2.0',       elo: 1380, color: '#10b981' },
-                      { model: 'Kling 3.0',           elo: 1340, color: '#ec4899' },
-                      { model: 'Veo 3.1',             elo: 1310, color: '#1DA1F2' },
-                      { model: 'Runway Gen-4.5',      elo: 1275, color: '#f97316' },
-                      { model: 'Grok Imagine Video',  elo: 1250, color: '#9333ea' },
-                      { model: 'Sora 2',              elo: 0,    color: '#6b7280', dead: true },
-                    ].map((m, i) => {
-                      const maxElo = 1380
-                      const minElo = 1150
-                      const barPct = m.dead ? 0 : Math.max(5, ((m.elo - minElo) / (maxElo - minElo)) * 100)
+                      {
+                        title: 'Text → Video',
+                        entries: [
+                          { model: 'Veo 3.1 Audio 1080p',      org: 'Google', elo: 1381 },
+                          { model: 'Veo 3.1 Fast Audio 1080p',  org: 'Google', elo: 1378 },
+                          { model: 'Veo 3.1 Audio',             org: 'Google', elo: 1371 },
+                          { model: 'Sora 2 Pro',                org: 'OpenAI', elo: 1367 },
+                          { model: 'Veo 3.1 Fast Audio',        org: 'Google', elo: 1366 },
+                        ],
+                        color: '#8b5cf6',
+                      },
+                      {
+                        title: 'Image → Video',
+                        entries: [
+                          { model: 'Grok Imagine Video 720p',   org: 'xAI',    elo: 1404 },
+                          { model: 'Veo 3.1 Audio 1080p',       org: 'Google', elo: 1402 },
+                          { model: 'Veo 3.1 Audio',             org: 'Google', elo: 1395 },
+                          { model: 'Veo 3.1 Fast Audio 1080p',  org: 'Google', elo: 1383 },
+                          { model: 'Grok Imagine Video 480p',   org: 'xAI',    elo: 1370 },
+                        ],
+                        color: '#ec4899',
+                      },
+                      {
+                        title: 'Text → Image',
+                        entries: [
+                          { model: 'Gemini 3.1 Flash Image',    org: 'Google',    elo: 1265 },
+                          { model: 'GPT Image 1.5 HiFi',        org: 'OpenAI',   elo: 1244 },
+                          { model: 'Gemini 3 Pro Image 2K',      org: 'Google',    elo: 1233 },
+                          { model: 'Gemini 3 Pro Image',         org: 'Google',    elo: 1232 },
+                          { model: 'MAI Image 2',               org: 'Microsoft', elo: 1190 },
+                        ],
+                        color: '#f97316',
+                      },
+                      {
+                        title: 'Image Edit',
+                        entries: [
+                          { model: 'ChatGPT Image HiFi',        org: 'OpenAI', elo: 1398 },
+                          { model: 'Gemini 3 Pro Image 2K',      org: 'Google', elo: 1391 },
+                          { model: 'Gemini 3 Pro Image',         org: 'Google', elo: 1389 },
+                          { model: 'Gemini 3.1 Flash Image',    org: 'Google', elo: 1387 },
+                          { model: 'GPT Image 1.5 HiFi',        org: 'OpenAI', elo: 1381 },
+                        ],
+                        color: '#14b8a6',
+                      },
+                      {
+                        title: 'Video Edit',
+                        entries: [
+                          { model: 'Grok Imagine Video',         org: 'xAI',    elo: 1259 },
+                          { model: 'Kling O3 Pro',               org: 'KlingAI', elo: 1248 },
+                          { model: 'Kling O1 Pro',               org: 'KlingAI', elo: 1208 },
+                          { model: 'Runway Gen-4 Aleph',         org: 'Runway', elo: 1202 },
+                        ],
+                        color: '#3b82f6',
+                      },
+                    ].map((arena) => {
+                      const maxElo = Math.max(...arena.entries.map((e) => e.elo))
+                      const minElo = Math.min(...arena.entries.map((e) => e.elo)) - 30
                       return (
-                        <div key={m.model} className={`flex items-center gap-3 ${m.dead ? 'opacity-40' : ''}`}>
-                          <span className="text-xs font-mono text-gray-400 dark:text-zinc-500 w-4 text-right">{i + 1}</span>
-                          <span className="text-xs font-semibold w-32 shrink-0 truncate" style={{ color: m.color }}>{m.dead ? `🪦 ${m.model}` : m.model}</span>
-                          <div className="flex-1 h-5 bg-black/[0.03] dark:bg-white/[0.03] rounded-md overflow-hidden">
-                            {!m.dead && (
-                              <div
-                                className="h-full rounded-md transition-all duration-700"
-                                style={{ width: `${barPct}%`, backgroundColor: `${m.color}30`, borderLeft: `3px solid ${m.color}` }}
-                              />
-                            )}
+                        <div key={arena.title}>
+                          <h5 className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: arena.color }}>{arena.title}</h5>
+                          <div className="flex flex-col gap-1.5">
+                            {arena.entries.map((e, i) => {
+                              const barPct = Math.max(8, ((e.elo - minElo) / (maxElo - minElo)) * 100)
+                              return (
+                                <div key={e.model} className="flex items-center gap-2">
+                                  <span className="text-[10px] font-mono text-gray-400 dark:text-zinc-500 w-3 text-right">{i + 1}</span>
+                                  <span className="text-[11px] font-medium w-36 shrink-0 truncate text-gray-700 dark:text-zinc-300">{e.model}</span>
+                                  <div className="flex-1 h-4 bg-black/[0.03] dark:bg-white/[0.03] rounded overflow-hidden">
+                                    <div
+                                      className="h-full rounded"
+                                      style={{ width: `${barPct}%`, backgroundColor: `${arena.color}25`, borderLeft: `2px solid ${arena.color}` }}
+                                    />
+                                  </div>
+                                  <span className="text-[10px] font-mono font-semibold w-9 text-right" style={{ color: arena.color }}>{e.elo}</span>
+                                </div>
+                              )
+                            })}
                           </div>
-                          <span className="text-xs font-mono font-semibold w-10 text-right" style={{ color: m.dead ? '#6b7280' : m.color }}>
-                            {m.dead ? '—' : m.elo}
-                          </span>
                         </div>
                       )
                     })}
@@ -414,39 +468,39 @@ export default function StateOfPromptingPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {[
                     {
-                      model: 'Seedance 2.0',
-                      personality: 'Leaderboard #1',
-                      desc: "ByteDance's dual-branch diffusion transformer co-generates video and audio in a single pass — not spliced together after. Holds #1 ELO across all three Artificial Analysis arenas (T2V, I2V, and audio-video) as of March 2026. Standout character consistency and physics.",
-                      strategy: 'Assign explicit roles to each reference asset using the @reference system. Describe physics consequences ("tires smoke as the car drifts") not just actions ("car turns"). Use [Xs] timestamp notation for shot boundaries. Limit multi-shot to 2–3 shots for best character hold.',
+                      model: 'Veo 3.1',
+                      personality: 'T2V Arena #1',
+                      desc: "Google's Veo 3.1 dominates the T2V arena — holding the top 5 spots in various configurations. Native audio generation, 1080p output, and deep integration with Google infrastructure. Works best with structured, ingredient-list prompts and reference images.",
+                      strategy: 'Lead with subject and shot type. Upload reference images instead of describing them. Use labelled sections for dialogue and sound effects. Provide a start frame and end frame and it fills in the motion.',
+                      color: '#1DA1F2',
+                    },
+                    {
+                      model: 'Grok Imagine Video',
+                      personality: 'I2V Arena #1',
+                      desc: "Built on Aurora's autoregressive architecture. #1 on the I2V arena (ELO 1,404) and #1 on Video Edit (ELO 1,259). Generates up to 15 seconds in ~17 seconds. Supports video extension and iterative chat editing — refine with natural language rather than rewriting.",
+                      strategy: 'Use comma-separated ingredient prompts rather than prose. Feed a reference image to anchor style and subject. Use iterative chat refinement rather than rewriting from scratch.',
+                      color: '#9333ea',
+                    },
+                    {
+                      model: 'Sora 2 Pro',
+                      personality: 'T2V Arena #4',
+                      desc: "OpenAI's top video model sits at ELO 1,367 in T2V — the only non-Google model in the top 5. World-state persistence approach keeps characters consistent across shots automatically. The most technically ambitious diffusion-based world simulator.",
+                      strategy: 'Describe scene physics and character relationships, not just visual appearance. Sora understands spatial continuity — trust it with complex multi-character blocking.',
                       color: '#10b981',
                     },
                     {
-                      model: 'Kling 3.0',
-                      personality: 'Multi-Shot Pioneer',
-                      desc: 'Popularized storyboard-mode prompting — up to 6 distinct camera cuts from a single prompt. Native lip-sync and speaker attribution across shots. The research behind it (MultiShotMaster, CVPR 2026) is open-sourced.',
+                      model: 'Kling',
+                      personality: 'Video Edit Top 3',
+                      desc: 'KlingAI holds #2 and #3 on the Video Edit arena (O3 Pro at 1,248, O1 Pro at 1,208). Popularized storyboard-mode prompting — up to 6 distinct camera cuts from a single prompt. Native lip-sync and speaker attribution across shots.',
                       strategy: 'Use Custom Storyboard mode for full control. Structure each shot as: Scene → Characters → Action → Camera → Audio. Label dialogue per speaker. Give it as many reference files as you have.',
                       color: '#ec4899',
                     },
                     {
-                      model: 'Veo 3.1',
-                      personality: 'Rendering Engine',
-                      desc: 'Works best with structured, ingredient-list prompts and reference images. Provide a start frame and end frame and it fills in the motion. Deep Google infrastructure means reliable uptime and API access.',
-                      strategy: 'Lead with subject and shot type. Upload reference images instead of describing them. Use labelled sections for dialogue and sound effects.',
-                      color: '#1DA1F2',
-                    },
-                    {
-                      model: 'Runway Gen-4.5',
-                      personality: 'Cinematic Realist',
-                      desc: "Leads on per-shot visual quality and physical realism. The go-to for complex particle effects, fire, fabric, and fluid. Single shot per generation — multi-shot requires manual assembly.",
-                      strategy: 'Be specific about camera movement: steadicam, gimbal, handheld. Skip physics descriptions — it handles those. Focus on atmosphere, blocking, and timing.',
+                      model: 'Gemini Image',
+                      personality: 'T2I & Edit Arena #1',
+                      desc: "Google's Gemini models dominate both the T2I arena (#1 at 1,265) and Image Edit (#2–#4). The Flash variant leads T2I; the Pro variant leads editing. Native multimodal understanding means it handles text-in-image and complex compositions better than dedicated image models.",
+                      strategy: 'Be explicit about text placement, composition, and style. For edits, describe what to change conversationally — it understands context from the source image.',
                       color: '#f97316',
-                    },
-                    {
-                      model: 'Grok Imagine Video',
-                      personality: 'Top 3 Leaderboard',
-                      desc: "Built on Aurora's autoregressive architecture. Generates up to 15 seconds in ~17 seconds. Ranked top 3 on Artificial Analysis I2V (ELO 1,329) — highest-rated non-ByteDance model. Supports video extension and natural language editing.",
-                      strategy: 'Use comma-separated ingredient prompts rather than prose. Feed a reference image to anchor style and subject. Use iterative chat refinement rather than rewriting from scratch.',
-                      color: '#9333ea',
                     },
                     {
                       model: '🪦 RIP Sora 2',
