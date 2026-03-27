@@ -10,11 +10,8 @@ interface LabelValue { label: string; value: number }
 interface StatsData {
   total: number
   withReference: number
-  withTheme: number
-  multiShot: number
   byCategory: LabelValue[]
   byModel: LabelValue[]
-  byTheme: LabelValue[]
   byReferenceType: LabelValue[]
   byPromptLength: LabelValue[]
 }
@@ -254,8 +251,7 @@ export default function InsightsPage() {
   const videoCount = useMemo(() =>
     stats?.byCategory?.filter((c) => c.label.startsWith('video_')).reduce((s, c) => s + c.value, 0) ?? 0
   , [stats])
-  const refPct = stats?.total ? Math.round((stats.withReference / stats.total) * 100) : 0
-  const multiShotPct = stats?.total ? Math.round(((stats.multiShot ?? 0) / stats.total) * 100) : 0
+  const refPct = stats?.total ? Math.round(((stats.withReference ?? 0) / stats.total) * 100) : 0
 
   if (loading) {
     return (
@@ -296,31 +292,29 @@ export default function InsightsPage() {
         </div>
 
         {/* Summary stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
           <StatCard value={stats.total} label="Total prompts" color="#8b5cf6" />
           <StatCard value={imageCount} label="Image prompts" color="#ec4899" />
-          <StatCard value={videoCount} label="Video prompts" color="#8b5cf6" />
-          <StatCard value={`${refPct}%`} label="Use references" sub={`${stats.withReference} prompts`} color="#f97316" />
-          <StatCard value={`${multiShotPct}%`} label="Multi-shot" sub={`${stats.multiShot ?? 0} prompts`} color="#14b8a6" />
+          <StatCard value={videoCount} label="Video prompts" color="#6366f1" />
+          <StatCard value={`${refPct}%`} label="Use references" sub={`${stats.withReference ?? 0} prompts`} color="#f97316" />
           <StatCard value={stats.byModel?.length ?? 0} label="Distinct models" color="#3b82f6" />
         </div>
 
         {/* Technique distribution */}
-        <Section title="Techniques" description="Prompt count by generation technique.">
-          <DonutChart
-            data={stats.byCategory.filter((c) => c.label.startsWith('image_') || c.label.startsWith('video_'))}
-          />
-        </Section>
+        {(stats.byCategory?.length ?? 0) > 0 && (
+          <Section title="Techniques" description="Prompt count by generation technique.">
+            <DonutChart
+              data={stats.byCategory.filter((c) => c.label.startsWith('image_') || c.label.startsWith('video_'))}
+            />
+          </Section>
+        )}
 
         {/* Model share */}
-        <Section title="Model Share" description="Which AI models appear most often in viral prompts.">
-          <HorizontalBarChart data={stats.byModel.slice(0, 15)} />
-        </Section>
-
-        {/* Themes */}
-        <Section title="Visual Themes" description="Tagged themes across all prompts. A prompt can have multiple themes.">
-          <HorizontalBarChart data={stats.byTheme} />
-        </Section>
+        {(stats.byModel?.length ?? 0) > 0 && (
+          <Section title="Model Share" description="Which AI models appear most often in viral prompts.">
+            <HorizontalBarChart data={stats.byModel.slice(0, 15)} />
+          </Section>
+        )}
 
         {/* Reference usage */}
         {stats.byReferenceType?.length > 0 && (
