@@ -226,6 +226,7 @@ export default function ToolsPage() {
 
   // Auto-resume any job that was interrupted by a page refresh
   useEffect(() => {
+    localStorage.removeItem(RECLASSIFY_JOB_KEY) // one-time clear of stale entry
     if (localStorage.getItem(CLASSIFY_JOB_KEY)) {
       runPromptClassify()
       return
