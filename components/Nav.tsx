@@ -10,8 +10,11 @@ const LINKS = [
   { href: '/insights',             label: 'Insights' },
   { href: '/datacard',            label: 'Datacard' },
   { href: '/random',              label: 'Random' },
-  { href: '/state-of-prompting',  label: 'State of Prompting' },
   { href: '/tools',               label: 'Tools', secret: true },
+]
+
+const RIGHT_LINKS = [
+  { href: '/state-of-prompting',  label: 'State of Prompting' },
 ]
 
 export default function Nav() {
@@ -53,7 +56,22 @@ export default function Nav() {
             </Link>
           ))}
         </div>
-        <ThemeToggle />
+        <div className="flex items-center gap-1 shrink-0">
+          {RIGHT_LINKS.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className={`shrink-0 rounded-lg px-3 py-1.5 text-sm transition-colors ${
+                pathname === l.href
+                  ? 'bg-black/8 text-gray-900 dark:bg-white/10 dark:text-white'
+                  : 'text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5'
+              }`}
+            >
+              {l.label}
+            </Link>
+          ))}
+          <ThemeToggle />
+        </div>
       </div>
     </nav>
   )
