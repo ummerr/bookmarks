@@ -408,7 +408,7 @@ export default function ToolsPage() {
         }
         if (data.error) { allErrors.push(`Offset ${offset}: ${data.error}`); break }
         totalClassified += data.classified
-        allErrors.push(...data.errors)
+        allErrors.push(...(data.errors ?? []))
         offset += BATCH
         setReclassifyDone(Math.min(offset, total))
         setReclassifyErrors([...allErrors])
@@ -421,6 +421,7 @@ export default function ToolsPage() {
       }
       fetchCounts()
     } catch (err) {
+      localStorage.removeItem(RECLASSIFY_JOB_KEY)
       setReclassifyResult(`Failed: ${String(err)}`)
     } finally {
       setReclassifying(false)
