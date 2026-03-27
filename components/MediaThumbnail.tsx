@@ -17,6 +17,7 @@ export default function MediaThumbnail({ url, size = 20 }: { url: string; size?:
       <img
         src={url}
         alt=""
+        loading="lazy"
         style={{ width: px, height: px }}
         className={`rounded-lg object-cover border border-white/8 cursor-zoom-in transition-opacity duration-150 ${hovered ? 'opacity-90' : ''}`}
       />

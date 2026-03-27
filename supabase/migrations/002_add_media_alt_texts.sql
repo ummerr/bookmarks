@@ -1,0 +1,1 @@
+ALTER TABLE bookmarks ADD COLUMN IF NOT EXISTS media_alt_texts JSONB NOT NULL DEFAULT '[]';

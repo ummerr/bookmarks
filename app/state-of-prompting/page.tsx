@@ -44,12 +44,12 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 const NAV_SECTIONS = [
   { id: 'findings',            label: 'Key Findings' },
-  { id: 'from-the-data',      label: 'From the Dataset' },
   { id: 'references',         label: 'The Reference Shift' },
   { id: 'prompt-engineering', label: 'Context Engineering' },
   { id: 'video',              label: 'Video Prompting' },
   { id: 'multishot',          label: 'Multi-Shot' },
   { id: 'multimodal',         label: 'Multimodal' },
+  { id: 'from-the-data',      label: 'From the Dataset' },
   { id: 'sora',               label: 'Why Sora Shut Down' },
   { id: 'practitioners',      label: 'Takeaways' },
   { id: 'sources',            label: 'Sources' },
@@ -234,7 +234,6 @@ export default function StateOfPromptingPage() {
     stats?.byCategory?.filter((c) => c.label.startsWith('video_')).reduce((s, c) => s + c.value, 0) ?? 0
   , [stats])
   const refPct = stats?.total ? Math.round((stats.withReference / stats.total) * 100) : 0
-  const multiShotPct = stats?.total ? Math.round(((stats.multiShot ?? 0) / stats.total) * 100) : 0
   const topModels = useMemo(() => stats?.byModel?.slice(0, 5) ?? [], [stats])
   const topThemes = useMemo(() => stats?.byTheme?.slice(0, 5) ?? [], [stats])
   const longPromptPct = useMemo(() => {
@@ -264,18 +263,24 @@ export default function StateOfPromptingPage() {
       <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-12">
 
         {/* Hero */}
-        <div className="mb-12">
-          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-gray-400 dark:text-zinc-500 mb-3">Q1 2026 · Image & Video Generation</p>
-          <h1 className="font-serif text-4xl md:text-5xl text-gray-900 dark:text-white tracking-tight leading-[1.1]">
-            The prompt is no longer<br className="hidden md:block" /> the product.
-          </h1>
-          <p className="mt-4 text-[15px] text-gray-500 dark:text-zinc-400 leading-[1.7] max-w-2xl">
-            In 2023, a good prompt was the whole skill. In 2026, the prompt is the last 10% — after you've chosen the right model, uploaded reference images, and structured a brief. This report shows what changed, backed by {stats?.total?.toLocaleString() ?? '—'} real prompts from viral posts on X.
-          </p>
-          <div className="mt-4 flex items-center gap-4 text-xs text-gray-400 dark:text-zinc-500">
-            <span>Based on the <Link href="/prompts" className="text-violet-600 dark:text-violet-400 hover:underline">ummerr/prompts</Link> dataset + <a href="https://artificialanalysis.ai" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">Artificial Analysis</a> arena data</span>
-            <span>·</span>
-            <span>Mar 2026</span>
+        <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-6 md:p-8 flex flex-col gap-5 mb-10">
+          <div className="flex flex-wrap gap-2 items-center">
+            <Badge color="#1DA1F2">Q1 2026</Badge>
+            <Badge color="#8b5cf6">Video & Image AI</Badge>
+            <Badge color="#f97316">Prompting Research</Badge>
+          </div>
+          <div>
+            <h1 className="font-serif text-3xl md:text-4xl text-gray-900 dark:text-white tracking-tight">The prompt is no longer the product.</h1>
+            <p className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-gray-400 dark:text-zinc-500">State of Prompting · Mar 2026</p>
+            <p className="mt-3 text-[15px] text-gray-500 dark:text-zinc-400 leading-[1.7] max-w-2xl">
+              In 2023, a good prompt was the whole skill. In 2026, the prompt is the last 10% — after you've chosen the right model, uploaded reference images, and structured a brief. This report covers what replaced the typed prompt and what the best practitioners actually do now.
+            </p>
+          </div>
+          <div className="flex items-center justify-between gap-4 pt-2 border-t border-black/[0.06] dark:border-white/6">
+            <p className="text-xs text-gray-400 dark:text-zinc-500">
+              Industry data from public research, product announcements, and <a href="https://artificialanalysis.ai" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">Artificial Analysis</a> arena rankings.
+              Dataset insights from <Link href="/prompts" className="font-medium text-gray-600 dark:text-zinc-300 hover:underline">ummerr/prompts</Link>.
+            </p>
           </div>
         </div>
 
@@ -311,99 +316,6 @@ export default function StateOfPromptingPage() {
                   title="The best video prompts describe forces, not aesthetics"
                   body="'Gimbal tracking shot, rear suspension compressing on impact' beats 'cinematic car scene' every time. The prompts that work describe physics: camera movement, forces on objects, cause and effect."
                 />
-              </div>
-            </Section>
-
-            <Section title="From the Dataset" id="from-the-data">
-              <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
-                <p>
-                  The claims above come from industry reports. This section is different — it's what we see in <Link href="/prompts" className="text-violet-600 dark:text-violet-400 hover:underline font-medium">{stats?.total?.toLocaleString() ?? '—'} real prompts</Link> sourced from viral posts on X. Every prompt below is real — click shuffle to see more.
-                </p>
-
-                {stats && (
-                  <>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      {[
-                        { value: stats.total.toLocaleString(), label: 'prompts collected', color: '#1DA1F2' },
-                        { value: `${imageCount} / ${videoCount}`, label: 'image / video split', color: '#ec4899' },
-                        { value: `${refPct}%`, label: 'use reference images', color: '#f97316' },
-                        { value: `${multiShotPct}%`, label: 'are multi-shot', color: '#14b8a6' },
-                      ].map((s) => (
-                        <div key={s.label} className="rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-zinc-900 p-3 text-center">
-                          <div className="text-xl font-bold leading-tight" style={{ color: s.color }}>{s.value}</div>
-                          <div className="text-xs text-gray-500 dark:text-zinc-400 mt-1 leading-snug">{s.label}</div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Real prompt examples */}
-                    <div className="flex flex-col gap-3">
-                      <RealPrompt
-                        prompt={prompts.featured1}
-                        loading={promptLoading.featured1}
-                        label="Text → Image"
-                        onShuffle={() => fetchPrompt('featured1', 'category=image_t2i')}
-                      />
-                      <RealPrompt
-                        prompt={prompts.featured2}
-                        loading={promptLoading.featured2}
-                        label="Video generation"
-                        onShuffle={() => fetchPrompt('featured2', 'group=video')}
-                      />
-                      <RealPrompt
-                        prompt={prompts.featured3}
-                        loading={promptLoading.featured3}
-                        label="Reference-guided"
-                        onShuffle={() => fetchPrompt('featured3', 'category=image_r2i')}
-                      />
-                    </div>
-
-                    {/* Model share */}
-                    {topModels.length > 0 && (
-                      <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4">
-                        <h4 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 mb-3">Which models go viral</h4>
-                        <p className="text-xs text-gray-500 dark:text-zinc-400 mb-3">Model frequency in high-engagement posts — not benchmark rankings, but what practitioners actually share.</p>
-                        <div className="flex flex-col gap-1.5">
-                          {topModels.map((m, i) => {
-                            const pct = stats.total ? Math.round((m.value / stats.total) * 100) : 0
-                            return (
-                              <div key={m.label} className="flex items-center gap-2">
-                                <span className="text-[10px] font-mono text-gray-400 dark:text-zinc-500 w-3 text-right">{i + 1}</span>
-                                <span className="text-[11px] font-medium w-28 shrink-0 truncate text-gray-700 dark:text-zinc-300">{m.label}</span>
-                                <div className="flex-1 h-4 bg-black/[0.03] dark:bg-white/[0.03] rounded overflow-hidden">
-                                  <div
-                                    className="h-full rounded bg-violet-500/20 border-l-2 border-violet-500"
-                                    style={{ width: `${Math.max(5, (m.value / topModels[0].value) * 100)}%` }}
-                                  />
-                                </div>
-                                <span className="text-[10px] font-mono text-gray-400 dark:text-zinc-500 w-14 text-right shrink-0">
-                                  {m.value} ({pct}%)
-                                </span>
-                              </div>
-                            )
-                          })}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Synthesis — one-line observations */}
-                    <div className="rounded-xl border border-black/[0.06] dark:border-white/[0.06] bg-white dark:bg-[#111] p-4 flex flex-col gap-2">
-                      <h4 className="text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-400 dark:text-zinc-500">What the numbers say</h4>
-                      <div className="flex flex-col gap-1.5 text-xs text-gray-600 dark:text-zinc-300">
-                        <p>→ <span className="font-medium">{100 - refPct}% of viral prompts are still text-only</span> — reference-guided generation is best practice, not common practice.</p>
-                        <p>→ <span className="font-medium">Only {longPromptPct}% exceed 200 characters.</span> Short, specific prompts outperform verbose ones. Models fill gaps better than they parse walls of text.</p>
-                        {topThemes.length >= 3 && (
-                          <p>→ <span className="font-medium">Top themes: {topThemes.slice(0, 3).map((t) => t.label).join(', ')}.</span> The aesthetic distribution is heavily skewed — a few styles dominate viral engagement.</p>
-                        )}
-                        <p>→ <span className="font-medium">What tops the arena ≠ what goes viral.</span> Accessibility, speed, and community familiarity drive sharing as much as raw output quality.</p>
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                <p className="text-xs text-gray-400 dark:text-zinc-500">
-                  Live data from <Link href="/insights" className="text-violet-600 dark:text-violet-400 hover:underline">Insights</Link>. Full methodology on the <Link href="/datacard" className="text-violet-600 dark:text-violet-400 hover:underline">Datacard</Link>. <Link href="/prompts" className="text-violet-600 dark:text-violet-400 hover:underline">Browse all prompts →</Link>
-                </p>
               </div>
             </Section>
 
@@ -506,7 +418,7 @@ export default function StateOfPromptingPage() {
                           { model: 'Veo 3.1 Audio 1080p',      org: 'Google', elo: 1381 },
                           { model: 'Veo 3.1 Fast Audio 1080p',  org: 'Google', elo: 1378 },
                           { model: 'Veo 3.1 Audio',             org: 'Google', elo: 1371 },
-                          { model: 'Sora 2 Pro',                org: 'OpenAI', elo: 1367 },
+                          { model: '🪦 Sora 2',                   org: 'OpenAI', elo: 1367, dead: true },
                           { model: 'Veo 3.1 Fast Audio',        org: 'Google', elo: 1366 },
                         ],
                         color: '#8b5cf6',
@@ -563,17 +475,18 @@ export default function StateOfPromptingPage() {
                           <div className="flex flex-col gap-1.5">
                             {arena.entries.map((e, i) => {
                               const barPct = Math.max(8, ((e.elo - minElo) / (maxElo - minElo)) * 100)
+                              const isDead = 'dead' in e && (e as { dead?: boolean }).dead
                               return (
-                                <div key={e.model} className="flex items-center gap-2">
+                                <div key={e.model} className={`flex items-center gap-2 ${isDead ? 'opacity-45' : ''}`}>
                                   <span className="text-[10px] font-mono text-gray-400 dark:text-zinc-500 w-3 text-right">{i + 1}</span>
-                                  <span className="text-[11px] font-medium w-36 shrink-0 truncate text-gray-700 dark:text-zinc-300">{e.model}</span>
+                                  <span className={`text-[11px] font-medium w-36 shrink-0 truncate ${isDead ? 'text-gray-400 dark:text-zinc-500 line-through' : 'text-gray-700 dark:text-zinc-300'}`}>{e.model}</span>
                                   <div className="flex-1 h-4 bg-black/[0.03] dark:bg-white/[0.03] rounded overflow-hidden">
                                     <div
                                       className="h-full rounded"
-                                      style={{ width: `${barPct}%`, backgroundColor: `${arena.color}25`, borderLeft: `2px solid ${arena.color}` }}
+                                      style={{ width: `${barPct}%`, backgroundColor: isDead ? '#6b728020' : `${arena.color}25`, borderLeft: `2px solid ${isDead ? '#6b7280' : arena.color}` }}
                                     />
                                   </div>
-                                  <span className="text-[10px] font-mono font-semibold w-9 text-right" style={{ color: arena.color }}>{e.elo}</span>
+                                  <span className={`text-[10px] font-mono font-semibold w-9 text-right ${isDead ? 'line-through' : ''}`} style={{ color: isDead ? '#6b7280' : arena.color }}>{e.elo}</span>
                                 </div>
                               )
                             })}
@@ -601,13 +514,6 @@ export default function StateOfPromptingPage() {
                       color: '#9333ea',
                     },
                     {
-                      model: 'Sora 2 Pro',
-                      personality: 'T2V Arena #4',
-                      desc: "The only non-Google model in the T2V top 5 (ELO 1,367). OpenAI shut down the consumer Sora app in March 2026, but Sora 2 Pro remains available via API. Diffusion-based world simulation with strong physics understanding and spatial continuity.",
-                      strategy: 'Describe scene physics and character relationships, not just visual appearance. Trust it with complex multi-character blocking and spatial continuity across frames.',
-                      color: '#10b981',
-                    },
-                    {
                       model: 'Kling',
                       personality: 'Video Edit Top 3',
                       desc: 'KlingAI holds #2 and #3 on the Video Edit arena (O3 Pro at 1,248, O1 Pro at 1,208). Popularized storyboard-mode prompting — up to 6 distinct camera cuts from a single prompt. Native lip-sync and speaker attribution across shots.',
@@ -622,10 +528,10 @@ export default function StateOfPromptingPage() {
                       color: '#f97316',
                     },
                     {
-                      model: '🪦 Sora (consumer)',
-                      personality: 'App Shut Down Mar 2026',
-                      desc: 'The consumer app, ChatGPT video generation, and most API access shut down after six months — $15M/day costs against $2.1M lifetime revenue. Sora 2 Pro survives via API (still #4 on T2V arena at ELO 1,367).',
-                      strategy: 'Sora 2 Pro is still available via API. The consumer product died but the model lives on — use it for T2V tasks where physics coherence matters.',
+                      model: '🪦 Sora 2',
+                      personality: 'Fully Deprecated Mar 2026',
+                      desc: 'OpenAI is shutting down both the Sora consumer app and API. At its peak, Sora 2 was the only non-Google model in the T2V top 5 (ELO 1,367) with strong physics understanding — but $15M/day inference costs against $2.1M lifetime revenue made it unsustainable.',
+                      strategy: 'Migrate to Veo 3.1 (T2V #1) or Kling 3.0 for video generation. No Sora endpoint will remain available.',
                       color: '#6b7280',
                     },
                   ].map((m) => (
@@ -809,10 +715,102 @@ enters. Warm golden lighting.`}</pre>
               </div>
             </Section>
 
+            <Section title="From the Dataset" id="from-the-data">
+              <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
+                <p>
+                  The claims above come from industry reports. This section is different — it's what we see in <Link href="/prompts" className="text-violet-600 dark:text-violet-400 hover:underline font-medium">{stats?.total?.toLocaleString() ?? '—'} real prompts</Link> sourced from viral posts on X. Every prompt below is real — click shuffle to see more.
+                </p>
+
+                {stats && (
+                  <>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {[
+                        { value: stats.total.toLocaleString(), label: 'prompts collected', color: '#1DA1F2' },
+                        { value: `${imageCount} / ${videoCount}`, label: 'image / video split', color: '#ec4899' },
+                        { value: `${refPct}%`, label: 'use reference images', color: '#f97316' },
+                      ].map((s) => (
+                        <div key={s.label} className="rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-zinc-900 p-3 text-center">
+                          <div className="text-xl font-bold leading-tight" style={{ color: s.color }}>{s.value}</div>
+                          <div className="text-xs text-gray-500 dark:text-zinc-400 mt-1 leading-snug">{s.label}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Real prompt examples */}
+                    <div className="flex flex-col gap-3">
+                      <RealPrompt
+                        prompt={prompts.featured1}
+                        loading={promptLoading.featured1}
+                        label="Text → Image"
+                        onShuffle={() => fetchPrompt('featured1', 'category=image_t2i')}
+                      />
+                      <RealPrompt
+                        prompt={prompts.featured2}
+                        loading={promptLoading.featured2}
+                        label="Video generation"
+                        onShuffle={() => fetchPrompt('featured2', 'group=video')}
+                      />
+                      <RealPrompt
+                        prompt={prompts.featured3}
+                        loading={promptLoading.featured3}
+                        label="Reference-guided"
+                        onShuffle={() => fetchPrompt('featured3', 'category=image_r2i')}
+                      />
+                    </div>
+
+                    {/* Model share */}
+                    {topModels.length > 0 && (
+                      <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4">
+                        <h4 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 mb-3">Which models go viral</h4>
+                        <p className="text-xs text-gray-500 dark:text-zinc-400 mb-3">Model frequency in high-engagement posts — not benchmark rankings, but what practitioners actually share.</p>
+                        <div className="flex flex-col gap-1.5">
+                          {topModels.map((m, i) => {
+                            const pct = stats.total ? Math.round((m.value / stats.total) * 100) : 0
+                            return (
+                              <div key={m.label} className="flex items-center gap-2">
+                                <span className="text-[10px] font-mono text-gray-400 dark:text-zinc-500 w-3 text-right">{i + 1}</span>
+                                <span className="text-[11px] font-medium w-28 shrink-0 truncate text-gray-700 dark:text-zinc-300">{m.label}</span>
+                                <div className="flex-1 h-4 bg-black/[0.03] dark:bg-white/[0.03] rounded overflow-hidden">
+                                  <div
+                                    className="h-full rounded bg-violet-500/20 border-l-2 border-violet-500"
+                                    style={{ width: `${Math.max(5, (m.value / topModels[0].value) * 100)}%` }}
+                                  />
+                                </div>
+                                <span className="text-[10px] font-mono text-gray-400 dark:text-zinc-500 w-14 text-right shrink-0">
+                                  {m.value} ({pct}%)
+                                </span>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Synthesis — one-line observations */}
+                    <div className="rounded-xl border border-black/[0.06] dark:border-white/[0.06] bg-white dark:bg-[#111] p-4 flex flex-col gap-2">
+                      <h4 className="text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-400 dark:text-zinc-500">What the numbers say</h4>
+                      <div className="flex flex-col gap-1.5 text-xs text-gray-600 dark:text-zinc-300">
+                        <p>→ <span className="font-medium">{100 - refPct}% of viral prompts are still text-only</span> — reference-guided generation is best practice, not common practice.</p>
+                        <p>→ <span className="font-medium">Only {longPromptPct}% exceed 200 characters.</span> Short, specific prompts outperform verbose ones. Models fill gaps better than they parse walls of text.</p>
+                        {topThemes.length >= 3 && (
+                          <p>→ <span className="font-medium">Top themes: {topThemes.slice(0, 3).map((t) => t.label).join(', ')}.</span> The aesthetic distribution is heavily skewed — a few styles dominate viral engagement.</p>
+                        )}
+                        <p>→ <span className="font-medium">What tops the arena ≠ what goes viral.</span> Accessibility, speed, and community familiarity drive sharing as much as raw output quality.</p>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                <p className="text-xs text-gray-400 dark:text-zinc-500">
+                  Live data from <Link href="/insights" className="text-violet-600 dark:text-violet-400 hover:underline">Insights</Link>. Full methodology on the <Link href="/datacard" className="text-violet-600 dark:text-violet-400 hover:underline">Datacard</Link>. <Link href="/prompts" className="text-violet-600 dark:text-violet-400 hover:underline">Browse all prompts →</Link>
+                </p>
+              </div>
+            </Section>
+
             <Section title="Why Sora Shut Down" id="sora">
               <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
                 <p>
-                  On March 24, 2026 — six months after its public launch — OpenAI shut down Sora's consumer app entirely. Bill Peebles, Sora's lead researcher, said in an internal note that "the economics are completely unsustainable." Sora 2 Pro survives via API (still #4 on T2V arena, ELO 1,367).
+                  On March 24, 2026 — six months after its public launch — OpenAI announced the full shutdown of Sora: the consumer app, ChatGPT video generation, and the API. All of it. At its peak, Sora 2 was the only non-Google model in the T2V top 5 (ELO 1,367), but the economics were never close to working.
                 </p>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -840,7 +838,7 @@ enters. Warm golden lighting.`}</pre>
                         { date: 'Dec 2025', event: 'Deepfake scandals escalate; MLK Jr. and Robin Williams likenesses go viral without consent', severity: 2 },
                         { date: 'Jan 2026', event: 'Internal teams describe GPU strain — "the chips are melting"', severity: 2 },
                         { date: 'Mar 2026', event: '$1B Disney partnership collapses; Disney notified 30 minutes after a joint planning meeting', severity: 3 },
-                        { date: 'Mar 24, 2026', event: 'OpenAI shuts down Sora consumer app; team redirected to robotics world simulation', severity: 3 },
+                        { date: 'Mar 24, 2026', event: 'OpenAI announces full Sora shutdown — app, API, and ChatGPT video; team redirected to robotics world simulation', severity: 3 },
                       ].map(({ date, event, severity }) => {
                         const dotColor = severity === 0 ? 'bg-amber-400' : severity === 1 ? 'bg-orange-400' : severity === 2 ? 'bg-red-400' : 'bg-red-600'
                         const isTerminal = severity === 3
