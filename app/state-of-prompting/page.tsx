@@ -7,10 +7,10 @@ interface LabelValue { label: string; value: number }
 interface StatsData {
   total: number
   withReference: number
-  multiShot: number
+  multiShot?: number
   byCategory: LabelValue[]
   byModel: LabelValue[]
-  byTheme: LabelValue[]
+  byTheme?: LabelValue[]
   byPromptLength: LabelValue[]
 }
 
@@ -69,10 +69,12 @@ function Badge({ children, color }: { children: React.ReactNode; color?: string 
 
 function Section({ title, children, id }: { title: string; children: React.ReactNode; id?: string }) {
   return (
-    <div className="flex flex-col gap-4 scroll-mt-20" id={id}>
-      <h2 className="text-base font-semibold text-gray-900 dark:text-white tracking-tight border-b border-black/[0.06] dark:border-white/6 pb-2">
-        {title}
-      </h2>
+    <div className="flex flex-col gap-6 scroll-mt-20" id={id}>
+      <div className="border-b border-black/[0.06] dark:border-white/[0.06] pb-3">
+        <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-gray-400 dark:text-zinc-500">
+          {title}
+        </h2>
+      </div>
       {children}
     </div>
   )
@@ -80,9 +82,9 @@ function Section({ title, children, id }: { title: string; children: React.React
 
 function Insight({ quote, source, color = '#1DA1F2' }: { quote: string; source: string; color?: string }) {
   return (
-    <div className="rounded-xl border bg-white dark:bg-[#111] p-5" style={{ borderColor: `${color}30` }}>
-      <p className="text-sm text-gray-700 dark:text-zinc-200 leading-relaxed italic">"{quote}"</p>
-      <p className="mt-2 text-xs text-gray-400 dark:text-zinc-500">{source}</p>
+    <div className="rounded-xl border bg-white dark:bg-[#111] p-6" style={{ borderColor: `${color}30` }}>
+      <p className="font-serif text-base md:text-[17px] italic text-gray-800 dark:text-zinc-100 leading-[1.6]">"{quote}"</p>
+      <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-400 dark:text-zinc-500">{source}</p>
     </div>
   )
 }
@@ -91,11 +93,11 @@ function FindingCard({ number, title, body, color }: {
   number: string; title: string; body: string; color: string
 }) {
   return (
-    <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-5 flex gap-4">
-      <div className="text-2xl font-bold tabular-nums shrink-0 w-8" style={{ color }}>{number}</div>
-      <div className="flex flex-col gap-1.5">
-        <div className="text-sm font-semibold text-gray-900 dark:text-white">{title}</div>
-        <div className="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">{body}</div>
+    <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-5 md:p-6 flex gap-5">
+      <div className="font-mono text-lg font-bold tabular-nums shrink-0 leading-none mt-0.5" style={{ color }}>{number}</div>
+      <div className="flex flex-col gap-2">
+        <div className="text-[15px] font-semibold text-gray-900 dark:text-white leading-snug">{title}</div>
+        <div className="text-sm text-gray-500 dark:text-zinc-400 leading-[1.7]">{body}</div>
       </div>
     </div>
   )
@@ -159,9 +161,9 @@ export default function StateOfPromptingPage() {
             <Badge color="#22c55e">Skills</Badge>
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">State of Prompting 2026</h1>
-            <p className="mt-1 text-xs text-gray-400 dark:text-zinc-500">Updated Mar 26, 2026</p>
-            <p className="mt-2 text-sm text-gray-500 dark:text-zinc-400 leading-relaxed max-w-2xl">
+            <h1 className="font-serif text-3xl md:text-4xl text-gray-900 dark:text-white tracking-tight">State of Prompting 2026</h1>
+            <p className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-gray-400 dark:text-zinc-500">Updated Mar 26, 2026</p>
+            <p className="mt-3 text-[15px] text-gray-500 dark:text-zinc-400 leading-[1.7] max-w-2xl">
               The typed prompt is no longer the main way people get results from AI. This report covers what replaced it — reference images, modular skills, and a new way of thinking about what information AI actually needs.
             </p>
           </div>

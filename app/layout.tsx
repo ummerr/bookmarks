@@ -4,7 +4,7 @@ import Nav from '@/components/Nav'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
-const instrumentSerif = Instrument_Serif({ weight: '400', subsets: ['latin'], variable: '--font-serif' })
+const instrumentSerif = Instrument_Serif({ weight: '400', style: ['normal', 'italic'], subsets: ['latin'], variable: '--font-serif' })
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' })
 
 const TITLE = 'The most shared AI prompts on X — prompts.ummerr.com'

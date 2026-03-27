@@ -222,10 +222,10 @@ function formatLabel(key: string): string {
 
 function Section({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
   return (
-    <section className="flex flex-col gap-4">
-      <div>
-        <h2 className="font-serif text-xl md:text-2xl font-medium text-gray-900 dark:text-white">{title}</h2>
-        {description && <p className="mt-1 text-sm text-gray-500 dark:text-zinc-400">{description}</p>}
+    <section className="flex flex-col gap-5">
+      <div className="border-b border-black/[0.06] dark:border-white/[0.06] pb-3">
+        <h2 className="font-serif text-xl md:text-2xl text-gray-900 dark:text-white">{title}</h2>
+        {description && <p className="mt-1.5 text-sm text-gray-500 dark:text-zinc-400 leading-[1.65]">{description}</p>}
       </div>
       {children}
     </section>

@@ -144,10 +144,12 @@ function Tag({ children, color }: { children: React.ReactNode; color: string }) 
 
 function Section({ title, id, children }: { title: string; id?: string; children: React.ReactNode }) {
   return (
-    <div id={id} className="flex flex-col gap-4">
-      <h2 className="text-base font-semibold text-gray-900 dark:text-white tracking-tight border-b border-black/[0.06] dark:border-white/6 pb-2">
-        {title}
-      </h2>
+    <div id={id} className="flex flex-col gap-5">
+      <div className="border-b border-black/[0.06] dark:border-white/[0.06] pb-3">
+        <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-gray-400 dark:text-zinc-500">
+          {title}
+        </h2>
+      </div>
       {children}
     </div>
   )
@@ -156,7 +158,7 @@ function Section({ title, id, children }: { title: string; id?: string; children
 function StatPill({ value, label, sub, color }: { value: string | number; label: string; sub?: string; color: string }) {
   return (
     <div className="flex flex-col gap-0.5 rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-white/[0.03] px-5 py-4">
-      <div className="text-2xl md:text-3xl font-bold tabular-nums tracking-tight" style={{ color }}>
+      <div className="font-mono text-2xl md:text-3xl font-bold tabular-nums tracking-tight" style={{ color }}>
         {typeof value === 'number' ? value.toLocaleString() : value}
       </div>
       <div className="text-xs font-medium text-gray-700 dark:text-zinc-300">{label}</div>
@@ -206,8 +208,8 @@ export default function DatacardPage() {
           </div>
 
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">ummerr/prompts</h1>
-            <p className="mt-3 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed max-w-2xl">
+            <h1 className="font-serif text-2xl md:text-3xl text-gray-900 dark:text-white tracking-tight">ummerr/prompts</h1>
+            <p className="mt-3 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.7] max-w-2xl">
               A corpus of organic, in-the-wild generative AI prompts sourced from high-engagement
               posts on X/Twitter — covering image and video generation. Unlike synthetic
               benchmarks or crowdworker sets, every entry reflects a real practitioner decision:

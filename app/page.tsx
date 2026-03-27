@@ -320,7 +320,7 @@ export default function LandingPage() {
               key={s.label}
               className="rounded-2xl border border-black/[0.06] dark:border-white/[0.06] bg-white/40 dark:bg-white/[0.02] px-5 py-6 text-center"
             >
-              <div className="font-serif text-3xl md:text-4xl font-medium text-gray-900 dark:text-white">
+              <div className="font-mono text-3xl md:text-4xl font-bold tabular-nums text-gray-900 dark:text-white">
                 {s.static ? (
                   `${s.value}${s.suffix}`
                 ) : !stats.loaded ? (
