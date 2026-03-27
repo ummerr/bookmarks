@@ -464,6 +464,7 @@ export default function LandingPage() {
                   <td className="px-5 py-3 text-gray-600 dark:text-zinc-300 font-mono text-xs">{b.size}</td>
                   <td className="px-5 py-3 text-gray-600 dark:text-zinc-300">{b.source}</td>
                   <td className="px-5 py-3 text-gray-600 dark:text-zinc-300">{b.modality}</td>
+                  <td className={`px-5 py-3 font-mono text-xs ${b.highlight ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-gray-400 dark:text-zinc-500'}`}>{b.curated}</td>
                   <td className="px-5 py-3 text-gray-600 dark:text-zinc-300">{b.engagement}</td>
                 </tr>
               ))}
