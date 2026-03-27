@@ -10,7 +10,7 @@ export async function GET() {
   try {
     const sql = getSql()
 
-    const [categoryRows, modelRows, totalRow, refRow, multiShotRow, refTypeRows, promptLengthRows] = await Promise.all([
+    const [categoryRows, modelRows, totalRow, refRow, refTypeRows, promptLengthRows] = await Promise.all([
       sql<{ prompt_category: string; n: string }[]>`
         SELECT prompt_category, COUNT(*) as n
         FROM bookmarks
@@ -31,10 +31,6 @@ export async function GET() {
       sql<{ ref_count: string }[]>`
         SELECT COUNT(*) as ref_count FROM bookmarks
         WHERE category = 'prompts' AND requires_reference = true
-      `,
-      sql<{ ms_count: string }[]>`
-        SELECT COUNT(*) as ms_count FROM bookmarks
-        WHERE category = 'prompts' AND is_multi_shot = true
       `,
       sql<{ reference_type: string; n: string }[]>`
         SELECT reference_type, COUNT(*) as n
@@ -61,7 +57,6 @@ export async function GET() {
     return NextResponse.json({
       total: Number(totalRow[0].total),
       withReference: Number(refRow[0].ref_count),
-      multiShot: Number(multiShotRow[0].ms_count),
       byCategory: categoryRows.map((r) => ({ label: r.prompt_category, value: Number(r.n) })),
       byModel: modelRows.map((r) => ({ label: r.detected_model, value: Number(r.n) })),
       byReferenceType: refTypeRows.map((r) => ({ label: r.reference_type, value: Number(r.n) })),
