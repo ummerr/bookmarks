@@ -51,8 +51,6 @@ const PROMPT_CATEGORIES = [
   { key: 'video_i2v',           label: 'Image → Video',     group: 'Video', color: '#6366f1' },
   { key: 'video_r2v',           label: 'Reference → Video', group: 'Video', color: '#a855f7' },
   { key: 'video_v2v',           label: 'Video → Video',     group: 'Video', color: '#3b82f6' },
-  { key: 'audio',               label: 'Audio',             group: 'Other', color: '#06b6d4' },
-  { key: 'threed',              label: '3D',                group: 'Other', color: '#14b8a6' },
 ]
 
 const BENCHMARKS = [
@@ -60,7 +58,7 @@ const BENCHMARKS = [
   { name: 'PartiPrompts',    size: '1,632',  source: 'Crowdworkers (Google)', modality: 'Image only',     provenance: 'None',            engagement: '—' },
   { name: 'T2I-CompBench',   size: '6,000',  source: 'Synthetic (GPT-4)',    modality: 'Image only',     provenance: 'None',            engagement: '—' },
   { name: 'GenAI-Bench',     size: '1,200',  source: 'LLM + human mix',      modality: 'Image + Video',  provenance: 'None',            engagement: '—' },
-  { name: 'ummerr/prompts',  size: '500+',   source: 'Organic / in-the-wild', modality: 'Image, Video, Audio, 3D', provenance: 'Full (URL + author)', engagement: 'Yes (viral filter)' },
+  { name: 'ummerr/prompts',  size: '500+',   source: 'Organic / in-the-wild', modality: 'Image + Video', provenance: 'Full (URL + author)', engagement: 'Yes (viral filter)' },
 ]
 
 const RESEARCH_APPLICATIONS = [
@@ -76,7 +74,7 @@ const RESEARCH_APPLICATIONS = [
   },
   {
     title: 'Multi-modal prompt structure analysis',
-    body: 'The dataset covers image, video, audio, and 3D generation with structured technique labels. Most existing prompt datasets are image-only. This enables cross-modal comparison: how does a T2V prompt differ structurally from a T2I prompt for the same subject?',
+    body: 'The dataset covers image and video generation with structured technique labels. Most existing prompt datasets are image-only. This enables cross-modal comparison: how does a T2V prompt differ structurally from a T2I prompt for the same subject?',
     color: '#ec4899',
   },
   {
@@ -183,7 +181,7 @@ export default function DatacardPage() {
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight">ummerr/prompts</h1>
             <p className="mt-3 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed max-w-2xl">
               A corpus of organic, in-the-wild generative AI prompts sourced from high-engagement
-              posts on X/Twitter — covering image, video, audio, and 3D generation. Unlike synthetic
+              posts on X/Twitter — covering image and video generation. Unlike synthetic
               benchmarks or crowdworker sets, every entry reflects a real practitioner decision:
               what to generate, how to phrase it, and which model to use. High engagement acts as an
               organic peer-review filter — these prompts were judged worth sharing by thousands of
@@ -299,7 +297,7 @@ export default function DatacardPage() {
         {/* Task categories ──────────────────────────────────────────────── */}
         <Section title="Task Categories">
           <div className="flex flex-col gap-4">
-            {['Image', 'Video', 'Other'].map((group) => {
+            {['Image', 'Video'].map((group) => {
               const cats = PROMPT_CATEGORIES.filter((c) => c.group === group)
               const counts = stats?.byCategory ?? []
               return (
@@ -348,8 +346,8 @@ export default function DatacardPage() {
               </div>
               <div>
                 <span className="font-semibold text-gray-900 dark:text-white">Coverage.</span>{' '}
-                Image generation (text-to-image, image-to-image, character references, reference-guided generation),
-                video generation (text-to-video, image-to-video, reference-to-video, video-to-video), audio, and 3D generation.
+                Image generation (text-to-image, image-to-image, character references, reference-guided generation) and
+                video generation (text-to-video, image-to-video, reference-to-video, video-to-video).
                 No LLM / text-generation prompts — this is a generative media dataset.
               </div>
             </div>
@@ -547,7 +545,7 @@ export default function DatacardPage() {
   year         = {2025},
   url          = {https://prompts.ummerr.com/datacard},
   note         = {Organic prompts sourced from high-engagement posts on X/Twitter.
-                  Covers image, video, audio, and 3D generation with structured
+                  Covers image and video generation with structured
                   metadata, model attribution, and technique labels.},
   license      = {CC BY 4.0}
 }`}</pre>
