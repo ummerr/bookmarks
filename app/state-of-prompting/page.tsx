@@ -532,10 +532,10 @@ enters. Warm golden lighting.`}</pre>
                     { name: 'Seedance 2.0',        text: true,  visual: true,  audio: true,  dead: false },
                     { name: 'Kling 3.0',           text: true,  visual: true,  audio: true,  dead: false },
                     { name: 'Veo 3.1',             text: true,  visual: true,  audio: true,  dead: false },
-                    { name: 'Grok Imagine Video',  text: true,  visual: true,  audio: false, dead: false },
+                    { name: 'Grok Imagine Video',  text: true,  visual: true,  audio: true,  dead: false },
                     { name: 'Runway Gen-4.5',      text: true,  visual: true,  audio: false, dead: false },
                     { name: 'Aurora (image only)', text: true,  visual: true,  audio: false, dead: false },
-                    { name: 'Pika 2.5',            text: true,  visual: true,  audio: false, dead: false },
+                    { name: 'Pika 2.5',            text: true,  visual: true,  audio: true,  dead: false },
                     { name: '🪦 RIP Sora 2',       text: true,  visual: true,  audio: true,  dead: true  },
                   ].map((p, i) => (
                     <div
