@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import type { Bookmark, PromptTheme } from '@/lib/types'
 
@@ -60,12 +60,16 @@ function RandomPageInner() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const [prompt, setPrompt] = useState<Bookmark | null>(null)
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
   const [shared, setShared] = useState(false)
   const [group, setGroup] = useState<Group>((searchParams.get('group') as Group) ?? null)
   const [multiShot, setMultiShot] = useState(searchParams.get('multi_shot') === 'true')
+
+  // History stack
+  const historyRef = useRef<Bookmark[]>([])
+  const [historyIndex, setHistoryIndex] = useState(-1)
+  const prompt = historyIndex >= 0 ? historyRef.current[historyIndex] : null
 
   function pushUrl(g: Group, ms: boolean, id?: string) {
     const params = new URLSearchParams()
@@ -73,6 +77,36 @@ function RandomPageInner() {
     if (ms) params.set('multi_shot', 'true')
     if (id) params.set('id', id)
     router.replace(`${pathname}${params.toString() ? `?${params.toString()}` : ''}`, { scroll: false })
+  }
+
+  // Push a new prompt onto the history stack (truncates any forward history)
+  function pushToHistory(bookmark: Bookmark) {
+    const nextIndex = historyIndex + 1
+    historyRef.current = [...historyRef.current.slice(0, nextIndex), bookmark]
+    setHistoryIndex(nextIndex)
+  }
+
+  const canGoBack = historyIndex > 0
+  const canGoForward = historyIndex < historyRef.current.length - 1
+
+  function goBack() {
+    if (!canGoBack) return
+    const prev = historyIndex - 1
+    setHistoryIndex(prev)
+    const p = historyRef.current[prev]
+    pushUrl(group, multiShot, p.id)
+    setCopied(false)
+    setShared(false)
+  }
+
+  function goForward() {
+    if (!canGoForward) return
+    const next = historyIndex + 1
+    setHistoryIndex(next)
+    const p = historyRef.current[next]
+    pushUrl(group, multiShot, p.id)
+    setCopied(false)
+    setShared(false)
   }
 
   const fetchRandom = useCallback(async (g: Group, ms: boolean) => {
@@ -85,10 +119,8 @@ function RandomPageInner() {
     const res = await fetch(`/api/prompts/random${p.toString() ? `?${p.toString()}` : ''}`)
     if (res.ok) {
       const data: Bookmark = await res.json()
-      setPrompt(data)
+      pushToHistory(data)
       pushUrl(g, ms, data.id)
-    } else {
-      setPrompt(null)
     }
     setLoading(false)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -100,7 +132,10 @@ function RandomPageInner() {
       setLoading(true)
       fetch(`/api/prompts/random?id=${id}`)
         .then(r => r.ok ? r.json() : null)
-        .then(data => { if (data) setPrompt(data); setLoading(false) })
+        .then(data => {
+          if (data) pushToHistory(data)
+          setLoading(false)
+        })
         .catch(() => setLoading(false))
     } else {
       fetchRandom(group, multiShot)
@@ -109,16 +144,24 @@ function RandomPageInner() {
 
   const shuffle = useCallback(() => fetchRandom(group, multiShot), [fetchRandom, group, multiShot])
 
+  // Keyboard: space = shuffle, left = back, right = forward
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.code === 'Space' && !['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) {
+      if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) return
+      if (e.code === 'Space') {
         e.preventDefault()
         fetchRandom(group, multiShot)
+      } else if (e.code === 'ArrowLeft') {
+        e.preventDefault()
+        goBack()
+      } else if (e.code === 'ArrowRight') {
+        e.preventDefault()
+        goForward()
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [fetchRandom, group, multiShot])
+  }, [fetchRandom, group, multiShot, historyIndex]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function copyPrompt() {
     if (!prompt) return
@@ -146,7 +189,9 @@ function RandomPageInner() {
           <div>
             <h1 className="text-lg font-semibold text-gray-900 dark:text-white">Random</h1>
             <p className="text-xs text-gray-400 dark:text-zinc-600 mt-0.5">
-              Press <kbd className="rounded bg-black/[0.04] dark:bg-white/5 border border-black/[0.08] dark:border-white/8 px-1 py-0.5">space</kbd> to shuffle
+              <kbd className="rounded bg-black/[0.04] dark:bg-white/5 border border-black/[0.08] dark:border-white/8 px-1 py-0.5">space</kbd> shuffle
+              {' '}<kbd className="rounded bg-black/[0.04] dark:bg-white/5 border border-black/[0.08] dark:border-white/8 px-1 py-0.5">&larr;</kbd>
+              <kbd className="rounded bg-black/[0.04] dark:bg-white/5 border border-black/[0.08] dark:border-white/8 px-1 py-0.5">&rarr;</kbd> navigate
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -183,23 +228,50 @@ function RandomPageInner() {
             >
               Multi-shot
             </button>
-            <button
-              onClick={shuffle}
-              disabled={loading}
-              className="flex items-center gap-2 rounded-xl bg-[#1DA1F2]/90 hover:bg-[#1DA1F2] disabled:opacity-50 px-4 py-2 text-sm font-semibold text-white transition-all shadow-lg shadow-[#1DA1F2]/10 hover:shadow-[#1DA1F2]/20"
-            >
-              <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <rect x="1.5" y="1.5" width="17" height="17" rx="3.5" stroke="currentColor" strokeWidth="1.5"/>
-                <circle cx="6.5" cy="6.5" r="1.25" fill="currentColor"/>
-                <circle cx="13.5" cy="6.5" r="1.25" fill="currentColor"/>
-                <circle cx="10" cy="10" r="1.25" fill="currentColor"/>
-                <circle cx="6.5" cy="13.5" r="1.25" fill="currentColor"/>
-                <circle cx="13.5" cy="13.5" r="1.25" fill="currentColor"/>
-              </svg>
-              Shuffle
-            </button>
+
+            {/* Back / Forward / Shuffle */}
+            <div className="flex items-center gap-1">
+              <button
+                onClick={goBack}
+                disabled={!canGoBack}
+                className="rounded-lg border border-black/[0.08] dark:border-white/8 p-2 text-gray-400 dark:text-zinc-500 hover:text-gray-700 dark:hover:text-zinc-300 hover:border-black/[0.15] dark:hover:border-white/15 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                title="Previous (←)"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+              </button>
+              <button
+                onClick={goForward}
+                disabled={!canGoForward}
+                className="rounded-lg border border-black/[0.08] dark:border-white/8 p-2 text-gray-400 dark:text-zinc-500 hover:text-gray-700 dark:hover:text-zinc-300 hover:border-black/[0.15] dark:hover:border-white/15 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                title="Next (→)"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+              </button>
+              <button
+                onClick={shuffle}
+                disabled={loading}
+                className="flex items-center gap-2 rounded-xl bg-[#1DA1F2]/90 hover:bg-[#1DA1F2] disabled:opacity-50 px-4 py-2 text-sm font-semibold text-white transition-all shadow-lg shadow-[#1DA1F2]/10 hover:shadow-[#1DA1F2]/20"
+              >
+                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <rect x="1.5" y="1.5" width="17" height="17" rx="3.5" stroke="currentColor" strokeWidth="1.5"/>
+                  <circle cx="6.5" cy="6.5" r="1.25" fill="currentColor"/>
+                  <circle cx="13.5" cy="6.5" r="1.25" fill="currentColor"/>
+                  <circle cx="10" cy="10" r="1.25" fill="currentColor"/>
+                  <circle cx="6.5" cy="13.5" r="1.25" fill="currentColor"/>
+                  <circle cx="13.5" cy="13.5" r="1.25" fill="currentColor"/>
+                </svg>
+                Shuffle
+              </button>
+            </div>
           </div>
         </div>
+
+        {/* Counter */}
+        {historyRef.current.length > 1 && (
+          <div className="text-[11px] text-gray-400 dark:text-zinc-600 font-mono -mt-2">
+            {historyIndex + 1} / {historyRef.current.length}
+          </div>
+        )}
 
         {/* Content */}
         {loading ? (
