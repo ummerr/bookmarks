@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import Link from 'next/link'
+import { modelToFamily } from '@/components/prompts/constants'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -9,7 +11,6 @@ interface LabelValue { label: string; value: number }
 interface StatsData {
   total: number
   withReference: number
-  withTheme: number
   multiShot: number
   byCategory: LabelValue[]
   byModel: LabelValue[]
@@ -180,7 +181,7 @@ export default function DatacardPage() {
       .catch(() => setLoading(false))
   }, [])
 
-  const modelCount = useMemo(() => stats?.byModel?.length ?? 0, [stats])
+  const modelCount = useMemo(() => byModelAggregated.length, [byModelAggregated])
   const techniqueCount = useMemo(() => stats?.byCategory?.length ?? 0, [stats])
   const topCategory = useMemo(() => stats?.byCategory?.[0] ?? null, [stats])
   const topModel = useMemo(() => stats?.byModel?.[0] ?? null, [stats])
@@ -192,6 +193,19 @@ export default function DatacardPage() {
   , [stats])
   const refPct = stats?.total ? Math.round((stats.withReference / stats.total) * 100) : 0
   const multiShotPct = stats?.total ? Math.round(((stats.multiShot ?? 0) / stats.total) * 100) : 0
+
+  // Merge model variants into families (e.g. "Nano Banana Pro" + "Nano Banana 2" → "Nano Banana")
+  const byModelAggregated = useMemo(() => {
+    if (!stats?.byModel) return []
+    const map = new Map<string, number>()
+    for (const m of stats.byModel) {
+      const family = modelToFamily(m.label)
+      map.set(family, (map.get(family) ?? 0) + m.value)
+    }
+    return Array.from(map.entries())
+      .map(([label, value]) => ({ label, value }))
+      .sort((a, b) => b.value - a.value)
+  }, [stats])
 
   return (
     <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
@@ -322,22 +336,26 @@ export default function DatacardPage() {
               <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-5">
                 <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 mb-3">Model distribution</h3>
                 <div className="flex flex-col gap-1.5">
-                  {stats.byModel.slice(0, 10).map((m) => {
-                    const pct = stats.total ? (m.value / stats.total) * 100 : 0
-                    const maxModelValue = stats.byModel[0]?.value || 1
+                  {byModelAggregated.slice(0, 12).map((m) => {
+                    const pct = stats!.total ? (m.value / stats!.total) * 100 : 0
+                    const maxModelValue = byModelAggregated[0]?.value || 1
                     return (
-                      <div key={m.label} className="flex items-center gap-3">
-                        <span className="text-xs text-gray-600 dark:text-zinc-300 w-28 truncate text-right shrink-0 font-medium">{m.label}</span>
+                      <Link
+                        key={m.label}
+                        href={`/prompts?model=${encodeURIComponent(m.label)}`}
+                        className="flex items-center gap-3 group"
+                      >
+                        <span className="text-xs text-gray-600 dark:text-zinc-300 w-28 truncate text-right shrink-0 font-medium group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">{m.label}</span>
                         <div className="flex-1 h-5 bg-black/[0.03] dark:bg-white/[0.03] rounded overflow-hidden">
                           <div
-                            className="h-full rounded bg-violet-500/20 border-l-2 border-violet-500"
+                            className="h-full rounded bg-violet-500/20 border-l-2 border-violet-500 group-hover:bg-violet-500/30 transition-colors"
                             style={{ width: `${Math.max(3, (m.value / maxModelValue) * 100)}%` }}
                           />
                         </div>
                         <span className="text-[11px] font-mono text-gray-400 dark:text-zinc-500 w-16 text-right shrink-0">
                           {m.value} ({Math.round(pct)}%)
                         </span>
-                      </div>
+                      </Link>
                     )
                   })}
                 </div>
