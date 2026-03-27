@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 const TITLE = 'The prompt dataset you can\'t generate — prompts.ummerr.com'
 const DESCRIPTION =
-  'Practitioner-sourced. Hand-labelled. The real-world prompt distribution that benchmarks don\'t capture — tagged with model, technique, reference workflow, and output domain across text, image, video, audio, and 3D.'
+  'Hand curated. Hand-labelled. The real-world prompt distribution that benchmarks don\'t capture — tagged with model, technique, reference workflow, and output domain across image, video, audio, and 3D.'
 
 export const metadata: Metadata = {
   title: TITLE,
