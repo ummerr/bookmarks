@@ -18,7 +18,7 @@ const NAV_SECTIONS = [
   { id: 'context-engineering', label: 'Context Engineering' },
   { id: 'autonomy',           label: 'How Much Autonomy?' },
   { id: 'skills',             label: 'Skills' },
-  { id: 'mcp',                label: 'MCP' },
+  { id: 'sora',               label: 'Why Sora Shut Down' },
   { id: 'video',              label: 'Video Prompting' },
   { id: 'multimodal',         label: 'Multimodal' },
   { id: 'practitioners',      label: 'Takeaways' },
@@ -150,12 +150,12 @@ export default function StateOfPromptingPage() {
             <Badge color="#1DA1F2">March 2026</Badge>
             <Badge color="#8b5cf6">Video & Image AI</Badge>
             <Badge color="#f97316">Prompting Research</Badge>
-            <Badge color="#22c55e">Skills & MCP</Badge>
+            <Badge color="#22c55e">Skills</Badge>
           </div>
           <div>
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight">State of Prompting 2026</h1>
             <p className="mt-2 text-sm text-gray-500 dark:text-zinc-400 leading-relaxed max-w-2xl">
-              The typed prompt is no longer the main way people get results from AI. This report covers what replaced it — reference images, modular skills, standardized tool connections, and a new way of thinking about what information AI actually needs.
+              The typed prompt is no longer the main way people get results from AI. This report covers what replaced it — reference images, modular skills, and a new way of thinking about what information AI actually needs.
             </p>
           </div>
           <div className="flex flex-col gap-1 pt-2 border-t border-black/[0.06] dark:border-white/6">
@@ -202,7 +202,7 @@ export default function StateOfPromptingPage() {
                   number="05"
                   color="#22c55e"
                   title="Every major AI video tool now accepts images, audio, and video as input"
-                  body="You can no longer get the best results by typing into a single text box. Every leading platform — Kling, Veo, Runway, Sora — now accepts a mix of text, images, audio clips, and video as combined input. The tools that still rely on text alone are falling behind."
+                  body="You can no longer get the best results by typing into a single text box. Every leading platform — Kling, Veo, Runway — now accepts a mix of text, images, audio clips, and video as combined input. The tools that still rely on text alone are falling behind."
                 />
                 <FindingCard
                   number="06"
@@ -224,9 +224,9 @@ export default function StateOfPromptingPage() {
                 />
                 <FindingCard
                   number="09"
-                  color="#3b82f6"
-                  title="MCP is becoming the standard way to connect AI to tools — but has a security problem"
-                  body="The Model Context Protocol (MCP) has become the dominant way to connect AI to databases, APIs, and services — 97M+ monthly downloads, backed by every major AI company. But 25% of MCP servers have no login protection at all, and connecting just 10 tools creates a 92% chance of being exploited. The technology works. The security hasn't caught up."
+                  color="#ef4444"
+                  title="Sora shut down on March 24, 2026 — six months after its public launch"
+                  body="OpenAI shut down Sora on March 24, 2026 — the app, the developer API, and video generation in ChatGPT. The economics never worked: running costs hit $15M per day against $2.1M in total lifetime revenue. Downloads had fallen 66% since November, deepfake scandals were escalating, and a $1B Disney deal collapsed the same week. OpenAI is pivoting the Sora team to world simulation for robotics."
                 />
               </div>
             </Section>
@@ -500,82 +500,68 @@ export default function StateOfPromptingPage() {
               </div>
             </Section>
 
-            <Section title="MCP: The Standard Everyone Adopted — With Caveats" id="mcp">
+            <Section title="Why Sora Shut Down" id="sora">
               <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
                 <p>
-                  Before the Model Context Protocol (MCP), connecting an AI to external tools was a mess. Each connection — AI to database, AI to Slack, AI to GitHub — needed a custom bridge built from scratch. Change your AI model, rebuild everything. MCP solved this by creating a shared plug standard: build the connection once, and it works with any AI that supports the protocol.
+                  On March 24, 2026 — six months after its public launch — OpenAI shut down Sora completely. The app, the developer API, and video generation inside ChatGPT all went dark at the same time. Bill Peebles, Sora's lead researcher, said in an internal note that "the economics are completely unsustainable."
                 </p>
-                <p>
-                  The uptake has been remarkable. MCP launched in November 2024. By early 2026 it has 97M+ monthly downloads, 10,000+ active servers, and support from Anthropic, OpenAI, Google, Microsoft, Amazon, and Bloomberg. It's now governed by the Linux Foundation — the same neutral body that maintains much of the internet's core infrastructure.
-                </p>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
-                    { value: '97M+', label: 'monthly downloads', color: '#3b82f6' },
-                    { value: '10K+', label: 'active public servers', color: '#22c55e' },
-                    { value: '5,800+', label: 'registered connections', color: '#8b5cf6' },
-                    { value: '300+', label: 'AI tools that support it', color: '#f97316' },
-                  ].map((s) => (
-                    <div key={s.label} className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-white/[0.03] px-4 py-3 flex flex-col gap-0.5">
-                      <div className="text-xl font-bold tabular-nums" style={{ color: s.color }}>{s.value}</div>
-                      <div className="text-[11px] text-gray-500 dark:text-zinc-400 leading-snug">{s.label}</div>
+                    { stat: '$15M/day', label: 'Estimated inference cost at peak' },
+                    { stat: '$2.1M', label: 'Total lifetime in-app revenue' },
+                    { stat: '−66%', label: 'Download drop Nov 2025 → Feb 2026' },
+                    { stat: '1%', label: '30-day user retention rate' },
+                  ].map(({ stat, label }) => (
+                    <div key={stat} className="rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-zinc-900 p-3 text-center">
+                      <div className="text-xl font-bold text-red-500 dark:text-red-400 leading-tight">{stat}</div>
+                      <div className="text-xs text-gray-500 dark:text-zinc-400 mt-1 leading-snug">{label}</div>
                     </div>
                   ))}
                 </div>
+
                 <p>
-                  But the honest picture is more complicated. For a small project with one or two external connections, MCP adds real complexity for minimal gain — a direct API call is simpler and faster to build. MCP makes most sense when you have many tools, need to switch between AI providers without rebuilding everything, or want to share the same connections across multiple products.
+                  At peak it cost OpenAI roughly $15M a day just to keep the servers running. In its entire public life, the app generated about $2.1M in revenue — less than two hours of operating costs. Downloads peaked at 3.3M in November 2025, then fell steadily to 1.1M by February 2026. Only 1 in 100 users was still active after 30 days.
                 </p>
-                <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] overflow-hidden">
-                  <div className="grid grid-cols-2 text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 border-b border-black/[0.06] dark:border-white/6 px-4 py-2.5">
-                    <span>MCP makes sense when…</span>
-                    <span>A direct connection works better when…</span>
-                  </div>
-                  <div className="grid grid-cols-2 divide-x divide-black/[0.06] dark:divide-white/6">
-                    <div className="flex flex-col gap-1.5 p-4">
-                      {[
-                        'You connect to many services and want one consistent approach',
-                        'You want to swap AI providers without rebuilding integrations',
-                        'Multiple products need access to the same external tools',
-                        'Your team needs proper access control and audit logs',
-                      ].map((item) => (
-                        <div key={item} className="flex items-start gap-2 text-xs text-gray-600 dark:text-zinc-300">
-                          <span className="text-emerald-500 mt-0.5 shrink-0">✓</span>
-                          <span>{item}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="flex flex-col gap-1.5 p-4">
-                      {[
-                        "You're connecting to one or two services and that's it",
-                        "You're prototyping and speed matters more than structure",
-                        'You already have working integrations and no reason to change',
-                        "Your team doesn't yet have the security setup MCP requires",
-                      ].map((item) => (
-                        <div key={item} className="flex items-start gap-2 text-xs text-gray-600 dark:text-zinc-300">
-                          <span className="text-gray-400 mt-0.5 shrink-0">○</span>
-                          <span>{item}</span>
-                        </div>
-                      ))}
-                    </div>
+
+                <div className="rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-zinc-900 p-4">
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">How it unraveled</h4>
+                  <div className="flex flex-col gap-2">
+                    {[
+                      { date: 'Sep 2025', event: 'Sora launches publicly, wide press coverage' },
+                      { date: 'Nov 2025', event: 'Downloads peak at 3.3M — then start falling' },
+                      { date: 'Dec 2025', event: 'Deepfake scandals escalate; MLK Jr. and Robin Williams likenesses go viral without consent' },
+                      { date: 'Jan 2026', event: 'Internal teams describe GPU strain — "the chips are melting"' },
+                      { date: 'Mar 2026', event: '$1B Disney partnership collapses; Disney notified 30 minutes after a joint planning meeting' },
+                      { date: 'Mar 24, 2026', event: 'OpenAI shuts down Sora entirely; team redirected to robotics world simulation' },
+                    ].map(({ date, event }) => (
+                      <div key={date} className="flex gap-3 text-xs">
+                        <span className="shrink-0 font-mono text-gray-400 dark:text-zinc-500 w-20">{date}</span>
+                        <span className="text-gray-600 dark:text-zinc-300">{event}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <div className="rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30 p-4 flex flex-col gap-2">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-red-400 dark:text-red-500">The security problem</p>
+
+                <p>
+                  The deepfake crisis accelerated the shutdown. Synthetic videos of Martin Luther King Jr. and Robin Williams spread widely — their daughters publicly asked people to stop. OpenAI had no reliable detection system and no policy enforcement that worked at scale.
+                </p>
+                <p>
+                  The collapse of the Disney deal may have been the final trigger. Disney had been in discussions about a $1B partnership to use Sora for film and marketing production. When the deal fell apart, Disney's team learned about it 30 minutes after sitting in a joint planning meeting. The combination of cratering usage, runaway costs, reputational damage, and a lost anchor customer made the math impossible.
+                </p>
+
+                <div className="rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30 p-4">
                   <p className="text-sm text-red-700 dark:text-red-300 leading-relaxed">
-                    One in four MCP servers has no password or access control at all. More than half use static credentials that are rarely changed — the equivalent of taping your house key next to the front door. Security researchers found that connecting just 10 MCP plugins creates a <span className="font-semibold">92% chance of being exploited</span>. 38% of developers say these concerns are actively stopping them from using MCP more widely. MCP's own 2026 roadmap has made security its top priority — an acknowledgment that it wasn't solved in the original release.
+                    <span className="font-semibold">What this means for video AI.</span> Sora's shutdown removes the most powerful video generator from the market — but it also clarifies the field. The remaining tools (Veo 3.1, Kling 3.0, Runway Gen-4.5) have more sustainable economics and tighter use cases. The lesson isn't that AI video failed — it's that building a consumer product around a capability that costs hundreds of dollars per clip to generate doesn't work, no matter how impressive the output.
                   </p>
                 </div>
-                <Insight
-                  quote="Function calling fits small apps and experiments. MCP shines once performance, scale, and maintainability start to matter."
-                  source="Function Calling vs MCP — LangWatch"
-                  color="#3b82f6"
-                />
               </div>
             </Section>
 
             <Section title="How Video Prompting Works Now" id="video">
               <div className="flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-300 leading-relaxed">
                 <p>
-                  Video prompting is a different skill from image prompting. The best tools in 2026 — Veo 3.1, Sora 2, Kling 3.0, Runway Gen-4.5 — each respond to inputs differently, and a prompt that works well on one can fail on another.
+                  Video prompting is a different skill from image prompting. The three remaining major tools — Veo 3.1, Kling 3.0, and Runway Gen-4.5 — each respond to inputs differently, and a prompt that works well on one can fail on another.
                 </p>
                 <Insight
                   quote="Modern prompting requires stopping description of what things look like and instead describing the forces acting on them."
@@ -590,13 +576,6 @@ export default function StateOfPromptingPage() {
                       desc: 'Works best with structured, ingredient-list prompts and reference images. You can provide a start frame and an end frame and it fills in the motion between them.',
                       strategy: 'Lead with the subject and shot type. Upload reference images instead of describing them. Use labelled sections for dialogue and sound effects.',
                       color: '#1DA1F2',
-                    },
-                    {
-                      model: 'Sora 2',
-                      personality: 'Physics Simulator',
-                      desc: 'Simulates how the world actually behaves — gravity, momentum, how objects break. Prompts describing cause and effect outperform poetic descriptions.',
-                      strategy: 'Break the scene into timed segments: (0–5s) this happens, (5–12s) this happens next. Always use the same name for each subject — never swap to "it" or "the car". Describe what physically happens, not how it looks.',
-                      color: '#8b5cf6',
                     },
                     {
                       model: 'Kling 3.0',
@@ -652,7 +631,6 @@ export default function StateOfPromptingPage() {
                     <span>What makes it unique</span>
                   </div>
                   {[
-                    { model: 'Sora 2', paradigm: 'Physics simulator', strategy: 'Cause-and-effect descriptions, timed segments, consistent subject names', feature: 'Objects behave physically correctly across the whole clip', color: '#8b5cf6' },
                     { model: 'Veo 3.1', paradigm: 'Cinematic renderer', strategy: 'Reference images, structured lists, labelled audio sections', feature: 'Blends start and end frames; integrated audio design', color: '#1DA1F2' },
                     { model: 'Kling 3.0', paradigm: 'Multimodal engine', strategy: 'Multiple reference files with brief directorial notes', feature: 'Text, image, audio, and video processed together natively', color: '#ec4899' },
                     { model: 'Runway Gen-4.5', paradigm: 'Cinematic realist', strategy: 'Named camera movements, atmosphere, pacing — skip physics detail', feature: 'Top-ranked for fluid, fabric, and complex movement', color: '#f97316' },
@@ -724,7 +702,7 @@ export default function StateOfPromptingPage() {
                   },
                   {
                     title: "Learn the tool you're actually using",
-                    body: 'Veo 3.1 wants structured ingredient lists. Sora 2 wants cause-and-effect descriptions. Kling 3.0 wants multiple reference files. A prompt written for one rarely works as well on another. Spend time understanding what each tool actually responds to.',
+                    body: 'Veo 3.1 wants structured ingredient lists. Kling 3.0 wants multiple reference files. Runway wants precise camera choreography. A prompt written for one rarely works as well on another. Spend time understanding what each tool actually responds to.',
                     color: '#1DA1F2',
                   },
                   {
@@ -784,16 +762,6 @@ export default function StateOfPromptingPage() {
                   { label: '5 Skills Every AI Agent Needs (And Why Your Mega-Prompt Is Holding You Back) — Medium', url: 'https://medium.com/@Micheal-Lanham/5-skills-every-ai-agent-needs-and-why-your-mega-prompt-is-holding-you-back-4b4ab2471c0e' },
                   { label: 'Agent Skills: The Architectural Shift from Mega-Prompts to Progressive Disclosure — Substack', url: 'https://micheallanham.substack.com/p/agent-skills-the-architectural-shift' },
                   { label: 'Context Engineering for Coding Agents — Martin Fowler', url: 'https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html' },
-                  { label: 'One Year of MCP — MCP Blog', url: 'http://blog.modelcontextprotocol.io/posts/2025-11-25-first-mcp-anniversary/' },
-                  { label: 'Why the Model Context Protocol Won — The New Stack', url: 'https://thenewstack.io/why-the-model-context-protocol-won/' },
-                  { label: 'MCP vs. Function Calling — Descope', url: 'https://www.descope.com/blog/post/mcp-vs-function-calling' },
-                  { label: 'MCP: The Hype vs. Reality — Vellum AI', url: 'https://vellum.ai/blog/mcp-the-hype-vs-reality' },
-                  { label: '2026: The Year for Enterprise-Ready MCP Adoption — CData', url: 'https://www.cdata.com/blog/2026-year-enterprise-ready-mcp-adoption' },
-                  { label: 'State of MCP Server Security 2025 — Astrix Security', url: 'https://astrix.security/learn/blog/state-of-mcp-server-security-2025/' },
-                  { label: 'MCP Stacks Have a 92% Exploit Probability — VentureBeat', url: 'https://venturebeat.com/security/mcp-stacks-have-a-92-exploit-probability-how-10-plugins-became-enterprise' },
-                  { label: "MCP's 2026 Roadmap Makes Enterprise Readiness a Top Priority — WorkOS", url: 'https://workos.com/blog/2026-mcp-roadmap-enterprise-readiness' },
-                  { label: 'The Zuplo State of MCP Report', url: 'https://zuplo.com/blog/mcp-survey' },
-                  { label: 'MCP Adoption Statistics 2025 — MCP Manager', url: 'https://mcpmanager.ai/blog/mcp-adoption-statistics/' },
                 ].map((s) => (
                   <a
                     key={s.url}
