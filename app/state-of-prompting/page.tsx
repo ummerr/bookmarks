@@ -269,10 +269,10 @@ export default function StateOfPromptingPage() {
             <Badge color="#f97316">Prompting Research</Badge>
           </div>
           <div>
-            <h1 className="font-serif text-3xl md:text-4xl text-gray-900 dark:text-white tracking-tight">The prompt is no longer the product.</h1>
+            <h1 className="font-serif text-3xl md:text-4xl text-gray-900 dark:text-white tracking-tight">References are the new Template</h1>
             <p className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-gray-400 dark:text-zinc-500">State of Prompting · Mar 2026</p>
             <p className="mt-3 text-[15px] text-gray-500 dark:text-zinc-400 leading-[1.7] max-w-2xl">
-              In 2023, a good prompt was the whole skill. In 2026, the prompt is the last 10% — after you've chosen the right model, uploaded reference images, and structured a brief. This report covers what replaced the typed prompt and what the best practitioners actually do now.
+              The best creators stopped writing longer prompts — they started uploading better references. Here's what the data says about where prompting is headed.
             </p>
           </div>
           <div className="flex items-center justify-between gap-4 pt-2 border-t border-black/[0.06] dark:border-white/6">
