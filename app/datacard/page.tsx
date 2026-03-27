@@ -181,19 +181,6 @@ export default function DatacardPage() {
       .catch(() => setLoading(false))
   }, [])
 
-  const modelCount = useMemo(() => byModelAggregated.length, [byModelAggregated])
-  const techniqueCount = useMemo(() => stats?.byCategory?.length ?? 0, [stats])
-  const topCategory = useMemo(() => stats?.byCategory?.[0] ?? null, [stats])
-  const topModel = useMemo(() => stats?.byModel?.[0] ?? null, [stats])
-  const imageCount = useMemo(() =>
-    stats?.byCategory?.filter((c) => c.label.startsWith('image_')).reduce((s, c) => s + c.value, 0) ?? 0
-  , [stats])
-  const videoCount = useMemo(() =>
-    stats?.byCategory?.filter((c) => c.label.startsWith('video_')).reduce((s, c) => s + c.value, 0) ?? 0
-  , [stats])
-  const refPct = stats?.total ? Math.round((stats.withReference / stats.total) * 100) : 0
-  const multiShotPct = stats?.total ? Math.round(((stats.multiShot ?? 0) / stats.total) * 100) : 0
-
   // Merge model variants into families (e.g. "Nano Banana Pro" + "Nano Banana 2" → "Nano Banana")
   const byModelAggregated = useMemo(() => {
     if (!stats?.byModel) return []
@@ -206,6 +193,19 @@ export default function DatacardPage() {
       .map(([label, value]) => ({ label, value }))
       .sort((a, b) => b.value - a.value)
   }, [stats])
+
+  const modelCount = useMemo(() => byModelAggregated.length, [byModelAggregated])
+  const techniqueCount = useMemo(() => stats?.byCategory?.length ?? 0, [stats])
+  const topCategory = useMemo(() => stats?.byCategory?.[0] ?? null, [stats])
+  const topModel = useMemo(() => byModelAggregated[0] ?? null, [byModelAggregated])
+  const imageCount = useMemo(() =>
+    stats?.byCategory?.filter((c) => c.label.startsWith('image_')).reduce((s, c) => s + c.value, 0) ?? 0
+  , [stats])
+  const videoCount = useMemo(() =>
+    stats?.byCategory?.filter((c) => c.label.startsWith('video_')).reduce((s, c) => s + c.value, 0) ?? 0
+  , [stats])
+  const refPct = stats?.total ? Math.round((stats.withReference / stats.total) * 100) : 0
+  const multiShotPct = stats?.total ? Math.round(((stats.multiShot ?? 0) / stats.total) * 100) : 0
 
   return (
     <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
