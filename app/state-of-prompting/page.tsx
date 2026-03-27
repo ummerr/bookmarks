@@ -122,6 +122,7 @@ export default function StateOfPromptingPage() {
           </div>
           <div>
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight">State of Prompting 2026</h1>
+            <p className="mt-1 text-xs text-gray-400 dark:text-zinc-500">Updated Mar 26, 2026</p>
             <p className="mt-2 text-sm text-gray-500 dark:text-zinc-400 leading-relaxed max-w-2xl">
               The typed prompt is no longer the main way people get results from AI. This report covers what replaced it — reference images, modular skills, and a new way of thinking about what information AI actually needs.
             </p>
