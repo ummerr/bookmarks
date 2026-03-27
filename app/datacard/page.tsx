@@ -175,8 +175,8 @@ export default function DatacardPage() {
 
   useEffect(() => {
     fetch('/api/stats')
-      .then((r) => r.json())
-      .then((d) => { setStats(d); setLoading(false) })
+      .then((r) => { if (!r.ok) throw new Error(r.statusText); return r.json() })
+      .then((d) => { if (d.total != null) setStats(d); setLoading(false) })
       .catch(() => setLoading(false))
   }, [])
 
@@ -239,19 +239,20 @@ export default function DatacardPage() {
             <Tag color="#3b82f6">engagement-filtered</Tag>
           </div>
 
-          <div className="flex items-center gap-3 pt-4 border-t border-black/[0.06] dark:border-white/6">
-            <a
-              href="/api/prompts/download?format=json"
-              className="rounded-lg bg-black/[0.05] dark:bg-white/[0.05] px-4 py-2 text-xs font-medium text-gray-700 dark:text-zinc-300 hover:bg-black/[0.08] dark:hover:bg-white/[0.08] transition-colors"
-            >
-              Download JSON
-            </a>
-            <a
-              href="/api/prompts/download?format=csv"
-              className="rounded-lg bg-black/[0.05] dark:bg-white/[0.05] px-4 py-2 text-xs font-medium text-gray-700 dark:text-zinc-300 hover:bg-black/[0.08] dark:hover:bg-white/[0.08] transition-colors"
-            >
-              Download CSV
-            </a>
+          <div className="flex items-center gap-3 pt-4 border-t border-black/[0.06] dark:border-white/6 flex-wrap">
+            {[
+              { format: 'jsonl', label: 'JSONL' },
+              { format: 'csv',   label: 'CSV' },
+              { format: 'json',  label: 'JSON' },
+            ].map(({ format, label }) => (
+              <a
+                key={format}
+                href={`/api/prompts/download?format=${format}`}
+                className="rounded-lg bg-black/[0.05] dark:bg-white/[0.05] px-4 py-2 text-xs font-medium text-gray-700 dark:text-zinc-300 hover:bg-black/[0.08] dark:hover:bg-white/[0.08] transition-colors"
+              >
+                Download {label}
+              </a>
+            ))}
             <span className="text-[11px] text-gray-400 dark:text-zinc-600">CC BY 4.0 — cite as ummerr/prompts</span>
           </div>
         </div>
