@@ -531,6 +531,12 @@ export default function DatacardPage() {
                 color: '#eab308',
               },
               {
+                title: 'Content scope exclusions',
+                body: 'This dataset focuses on professional and creative prompt engineering. NSFW and sexualized content, which represents a significant share of public image generation activity, has been excluded from collection.',
+                mitigation: 'The exclusion is deliberate — the dataset targets craft-oriented prompting rather than exhaustive coverage of all generation use cases. Researchers studying the full distribution of generative AI usage should account for this gap.',
+                color: '#71717a',
+              },
+              {
                 title: 'Near-duplicate prompts',
                 body: 'Deduplication is exact-match only on the source post ID. Reposts, quote-tweets, and community re-shares of the same underlying prompt may appear as distinct entries. Downstream fine-tuning or similarity studies should apply semantic deduplication.',
                 mitigation: 'Each entry retains its author_handle and tweet_url, making provenance traceable. Semantic deduplication can be applied against the extracted_prompt field, which strips social framing and hashtags to surface the underlying prompt text.',
