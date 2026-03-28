@@ -92,7 +92,7 @@ const MODEL_ALIASES: Record<string, string> = {
   'tripo':             'Tripo3D',
 }
 
-function normaliseModel(raw: string | null): string | null {
+export function normaliseModel(raw: string | null): string | null {
   if (!raw) return null
   const key = raw.toLowerCase().trim()
   return MODEL_ALIASES[key] ?? raw.trim()
@@ -101,7 +101,7 @@ function normaliseModel(raw: string | null): string | null {
 // ── Pre-processing ─────────────────────────────────────────────────────────
 // Strip t.co URLs, trailing hashtag clusters, and excessive whitespace before
 // sending to the API. Keeps prompt content, removes tweet boilerplate.
-function preprocessTweet(text: string): string {
+export function preprocessTweet(text: string): string {
   return text
     .replace(/https?:\/\/t\.co\/\S+/g, '')     // strip t.co shortlinks
     .replace(/(^|\s)(#\w+)/g, ' ')             // strip hashtags

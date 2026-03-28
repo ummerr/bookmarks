@@ -10,7 +10,7 @@ function getSql() {
 
 // ── Row → Bookmark ────────────────────────────────────────────────────────
 
-function detectMultiShot(text: string): boolean {
+export function detectMultiShot(text: string): boolean {
   if (!text) return false
   // Timestamp syntax: [0s], [3s], [0s-3s], [3s-6s] - Kling / Seedance style
   if ((text.match(/\[\d+s(?:-\d+s)?\]/gi) ?? []).length >= 2) return true
@@ -26,14 +26,14 @@ function detectMultiShot(text: string): boolean {
 }
 
 // Safely coerce a JSONB column to an array - handles string, parsed array, or junk
-function toArray(val: unknown): unknown[] {
+export function toArray(val: unknown): unknown[] {
   if (Array.isArray(val)) return val
   if (typeof val === 'string') { try { const p = JSON.parse(val); if (Array.isArray(p)) return p } catch {} }
   return []
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function toBookmark(row: Record<string, any>): Bookmark {
+export function toBookmark(row: Record<string, any>): Bookmark {
   const extracted_prompt = row.extracted_prompt ?? null
   const tweet_text = row.tweet_text ?? ''
   return {
