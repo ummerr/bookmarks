@@ -31,8 +31,9 @@ function Bar({ value, max, color = '#8b5cf6' }: { value: number; max: number; co
   )
 }
 
-function StrategyCard({ id, strategy, total }: { id: string; strategy: Strategy; total: number }) {
+function StrategyCard({ id, strategy, total, onRefresh }: { id: string; strategy: Strategy; total: number; onRefresh: () => void }) {
   const [showExamples, setShowExamples] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const count = strategy.count ?? strategy.removable_rows ?? 0
   const pct = total > 0 ? ((count / total) * 100).toFixed(1) : '0'
   const examples = strategy.examples ?? []
@@ -51,6 +52,35 @@ function StrategyCard({ id, strategy, total }: { id: string; strategy: Strategy;
       </div>
 
       <Bar value={count} max={total} color="#ef4444" />
+
+      {/* Delete button */}
+      {count > 0 && (
+        <button
+          disabled={deleting}
+          onClick={async () => {
+            if (!window.confirm(`Delete ${count.toLocaleString()} rows matched by "${strategy.label}"? This cannot be undone.`)) return
+            setDeleting(true)
+            try {
+              const res = await fetch('/api/prompts/quality/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ strategy: id }),
+              })
+              const data = await res.json()
+              if (!res.ok) throw new Error(data.error || 'Delete failed')
+              alert(`Deleted ${data.deleted} rows.`)
+              onRefresh()
+            } catch (err) {
+              alert(`Error: ${err}`)
+            } finally {
+              setDeleting(false)
+            }
+          }}
+          className="mt-3 w-full text-xs font-medium px-3 py-1.5 rounded-lg bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/40 hover:bg-red-100 dark:hover:bg-red-950/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {deleting ? 'Deleting...' : 'Cull these rows'}
+        </button>
+      )}
 
       {/* Duplicates: special display */}
       {strategy.unique_prompts_with_dupes != null && (
@@ -127,8 +157,10 @@ export default function QualityPage() {
   const [data, setData] = useState<QualityData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [fetchKey, setFetchKey] = useState(0)
 
   useEffect(() => {
+    setLoading(true)
     fetch('/api/prompts/quality')
       .then((r) => {
         if (!r.ok) throw new Error(`${r.status}`)
@@ -136,7 +168,9 @@ export default function QualityPage() {
       })
       .then((d) => { setData(d); setLoading(false) })
       .catch((e) => { setError(String(e)); setLoading(false) })
-  }, [])
+  }, [fetchKey])
+
+  const handleRefresh = () => setFetchKey((k) => k + 1)
 
   if (loading) {
     return (
@@ -159,7 +193,7 @@ export default function QualityPage() {
 
   const strategyOrder = [
     'too_short', 'no_extraction', 'no_category', 'no_model',
-    'duplicates', 'same_as_tweet', 'low_confidence', 'no_media',
+    'duplicates', 'same_as_tweet', 'low_confidence', 'no_media', 'foreign_language',
   ]
 
   const maxLen = Math.max(...data.distributions.prompt_length.map((b) => b.count))
@@ -206,7 +240,7 @@ export default function QualityPage() {
           {strategyOrder.map((id) => {
             const strategy = data.strategies[id]
             if (!strategy) return null
-            return <StrategyCard key={id} id={id} strategy={strategy} total={data.total} />
+            return <StrategyCard key={id} id={id} strategy={strategy} total={data.total} onRefresh={handleRefresh} />
           })}
         </div>
 

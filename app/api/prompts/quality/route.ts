@@ -43,6 +43,7 @@ export async function GET() {
       confidenceBuckets,
       lowConf,
       lengthBuckets,
+      foreignLang,
       overlaps,
     ] = await Promise.all([
       // ── 1. All counts + total in ONE query ─────────────────────────
@@ -54,6 +55,7 @@ export async function GET() {
         no_model_count: string
         same_count: string
         no_media_count: string
+        foreign_lang_count: string
         any_flag_count: string
       }[]>`
         SELECT
@@ -64,6 +66,7 @@ export async function GET() {
           COUNT(*) FILTER (WHERE detected_model IS NULL OR detected_model = '') as no_model_count,
           COUNT(*) FILTER (WHERE extracted_prompt IS NOT NULL AND extracted_prompt = tweet_text) as same_count,
           COUNT(*) FILTER (WHERE media_urls IS NULL OR media_urls::text = '[]' OR media_urls::text = 'null') as no_media_count,
+          COUNT(*) FILTER (WHERE extracted_prompt ~ '[\u4e00-\u9fff\u3400-\u4dbf]') as foreign_lang_count,
           COUNT(*) FILTER (WHERE
             extracted_prompt IS NULL
             OR (extracted_prompt IS NOT NULL AND LENGTH(extracted_prompt) < 20)
@@ -76,7 +79,7 @@ export async function GET() {
         WHERE category = 'prompts'
       `, [{
         total: '0', short_count: '0', no_extract_count: '0', no_cat_count: '0',
-        no_model_count: '0', same_count: '0', no_media_count: '0', any_flag_count: '0',
+        no_model_count: '0', same_count: '0', no_media_count: '0', foreign_lang_count: '0', any_flag_count: '0',
       }]),
 
       // ── 2. Too short examples ──────────────────────────────────────
@@ -187,7 +190,18 @@ export async function GET() {
         ORDER BY MIN(LENGTH(COALESCE(extracted_prompt, '')))
       `, []),
 
-      // ── 10. Overlap: rows by flag count ────────────────────────────
+      // ── 10. Foreign language (CJK) examples ──────────────────────────
+      safe(sql<FlagResult[]>`
+        SELECT id, tweet_id, author_handle, extracted_prompt, tweet_text,
+               detected_model, prompt_category, confidence, tweet_url
+        FROM bookmarks
+        WHERE category = 'prompts'
+          AND extracted_prompt ~ '[\u4e00-\u9fff\u3400-\u4dbf]'
+        ORDER BY created_at DESC
+        LIMIT 30
+      `, []),
+
+      // ── 11. Overlap: rows by flag count ────────────────────────────
       safe(sql<{ flags: string; n: string }[]>`
         SELECT flags, COUNT(*) as n FROM (
           SELECT id,
@@ -253,6 +267,11 @@ export async function GET() {
         no_media: {
           label: 'No media attached',
           count: Number(counts.no_media_count),
+        },
+        foreign_language: {
+          label: 'Foreign language (CJK)',
+          count: Number(counts.foreign_lang_count),
+          examples: foreignLang,
         },
       },
       distributions: {
