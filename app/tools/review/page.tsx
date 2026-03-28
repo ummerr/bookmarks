@@ -318,9 +318,14 @@ export default function ReviewPage() {
     ).then(() => fetchPrompts(author))
   }
 
-  // Image detection
+  // Image detection — media_urls may be a string (JSON) or already parsed array
   const getImageUrl = (p: ReviewPrompt): string | null => {
-    const urls = p.media_urls ?? []
+    let urls: string[] = []
+    if (Array.isArray(p.media_urls)) {
+      urls = p.media_urls
+    } else if (typeof p.media_urls === 'string') {
+      try { urls = JSON.parse(p.media_urls) } catch { urls = [] }
+    }
     const img = urls.find(u =>
       u && (u.endsWith('.jpg') || u.endsWith('.png') || u.endsWith('.gif') || u.includes('pbs.twimg.com'))
     )
