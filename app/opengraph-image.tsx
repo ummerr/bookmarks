@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
-export const alt = 'The most shared AI prompts on X - prompts.ummerr.com'
+export const alt = 'The most shared GenMedia AI prompts on X - prompts.ummerr.com'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -57,8 +57,8 @@ export default async function OGImage() {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             {[
-              { label: 'Image',  bg: 'rgba(236,72,153,0.15)',  border: 'rgba(236,72,153,0.4)',  color: '#f9a8d4' },
-              { label: 'Video',  bg: 'rgba(139,92,246,0.15)', border: 'rgba(139,92,246,0.4)', color: '#c4b5fd' },
+              { label: 'Image Gen',  bg: 'rgba(236,72,153,0.15)',  border: 'rgba(236,72,153,0.4)',  color: '#f9a8d4' },
+              { label: 'Video Gen',  bg: 'rgba(139,92,246,0.15)', border: 'rgba(139,92,246,0.4)', color: '#c4b5fd' },
             ].map((chip) => (
               <div key={chip.label} style={{ display: 'flex', padding: '6px 14px', borderRadius: '9999px', fontSize: '13px', fontWeight: 600, background: chip.bg, border: `1px solid ${chip.border}`, color: chip.color, letterSpacing: '0.02em' }}>
                 {chip.label}
@@ -69,12 +69,12 @@ export default async function OGImage() {
 
         {/* Headline */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
-          <div style={{ color: '#ffffff', fontSize: '72px', fontWeight: 800, lineHeight: 1.0, letterSpacing: '-0.03em', maxWidth: '880px' }}>
-            The most shared<br />AI prompts on X.
+          <div style={{ color: '#ffffff', fontSize: '72px', fontWeight: 800, lineHeight: 1.0, letterSpacing: '-0.03em', maxWidth: '880px', display: 'flex', flexDirection: 'column' }}>
+            <span>The most shared</span>
+            <span>GenMedia prompts on X.</span>
           </div>
           <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '22px', lineHeight: 1.5, maxWidth: '680px', fontWeight: 400 }}>
-            Image and video generation prompts sourced from viral posts.
-            Hand-labelled by model, technique, and theme.
+            Real prompts for image and video generation AI, sourced from viral posts. Hand-labelled by model, technique, and theme.
           </div>
         </div>
 
@@ -84,7 +84,7 @@ export default async function OGImage() {
             { value: stats.total ? `${stats.total.toLocaleString()}+` : '500+', label: 'prompts',           color: '#a78bfa' },
             { value: '0%',                                                       label: 'synthetic',         color: '#34d399' },
             { value: stats.techniques ? `${stats.techniques}` : '12',            label: 'techniques',        color: '#60a5fa' },
-            { value: stats.models ? `${stats.models}+` : '20+',                  label: 'AI models tracked', color: '#f472b6' },
+            { value: stats.models ? `${stats.models}+` : '20+',                  label: 'GenMedia models', color: '#f472b6' },
           ].map((stat, i) => (
             <div key={stat.label} style={{ display: 'flex', alignItems: 'center', gap: '0px' }}>
               {i > 0 && <div style={{ width: '1px', height: '36px', background: 'rgba(255,255,255,0.08)', margin: '0 28px', display: 'flex' }} />}

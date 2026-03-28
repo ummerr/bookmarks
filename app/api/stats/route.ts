@@ -64,8 +64,10 @@ export async function GET() {
       `, []),
       safe(sql<{ theme: string; n: string }[]>`
         SELECT t.theme, COUNT(*) as n
-        FROM bookmarks b, jsonb_array_elements_text(b.prompt_themes) AS t(theme)
-        WHERE b.category = 'prompts' AND jsonb_typeof(b.prompt_themes) = 'array' AND jsonb_array_length(b.prompt_themes) > 0
+        FROM (
+          SELECT prompt_themes FROM bookmarks
+          WHERE category = 'prompts' AND jsonb_typeof(prompt_themes) = 'array'
+        ) b, jsonb_array_elements_text(b.prompt_themes) AS t(theme)
         GROUP BY t.theme
         ORDER BY n DESC
       `, []),
