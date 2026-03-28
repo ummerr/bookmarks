@@ -3,9 +3,10 @@ import { randomUUID } from 'crypto'
 import type { ArtStyle, Bookmark, BookmarkInsert, Category, CategoryCounts, PromptCategory, PromptTheme, ReferenceType } from './types'
 
 // Lazy init - prevents build-time failure when Next.js collects page data
+// prepare: false for Supabase transaction pooler compatibility
 let _sql: ReturnType<typeof postgres> | undefined
-function getSql() {
-  return (_sql ??= postgres(process.env.DATABASE_URL!, { ssl: 'require' }))
+export function getSql() {
+  return (_sql ??= postgres(process.env.DATABASE_URL!, { ssl: 'require', prepare: false }))
 }
 
 // ── Row → Bookmark ────────────────────────────────────────────────────────
@@ -60,7 +61,7 @@ export function toBookmark(row: Record<string, any>): Bookmark {
 export interface QueryOptions {
   category?: Category | 'all'
   search?: string
-  sort?: 'newest' | 'oldest' | 'confidence' | 'author'
+  sort?: 'newest' | 'oldest' | 'confidence' | 'author' | 'relevance'
   page?: number
   limit?: number
 }
@@ -74,32 +75,59 @@ export async function queryBookmarks(opts: QueryOptions = {}): Promise<{
   const conditions: string[] = []
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const params: any[] = []
+  const trimmed = search.trim()
+  let hasFts = false
 
   if (category !== 'all') {
     params.push(category)
     conditions.push(`category = $${params.length}`)
   }
 
-  if (search.trim()) {
-    const term = `%${search.trim()}%`
-    params.push(term, term)
-    conditions.push(`(tweet_text ILIKE $${params.length - 1} OR author_handle ILIKE $${params.length})`)
+  if (trimmed) {
+    // Full-text search on combined tweet_text + extracted_prompt (uses GIN index)
+    // OR ILIKE fallback on author_handle for handle searches
+    // OR ILIKE on tweet_text/extracted_prompt for partial word matches FTS misses
+    params.push(trimmed)
+    const tsParam = params.length
+    const likeTerm = `%${trimmed}%`
+    params.push(likeTerm)
+    const likeParam = params.length
+    conditions.push(
+      `(to_tsvector('english', COALESCE(tweet_text, '') || ' ' || COALESCE(extracted_prompt, '')) @@ websearch_to_tsquery('english', $${tsParam})` +
+      ` OR author_handle ILIKE $${likeParam}` +
+      ` OR tweet_text ILIKE $${likeParam}` +
+      ` OR extracted_prompt ILIKE $${likeParam})`
+    )
+    hasFts = true
   }
 
   const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : ''
 
-  const orderMap = {
+  // When searching, default to relevance sort; otherwise use requested sort
+  const effectiveSort = (sort === 'relevance' || (hasFts && sort === 'newest')) && hasFts ? 'relevance' : sort
+
+  const orderMap: Record<string, string> = {
     newest: 'bookmarked_at DESC NULLS LAST, created_at DESC',
     oldest: 'bookmarked_at ASC NULLS FIRST, created_at ASC',
     confidence: 'confidence DESC',
     author: 'author_handle ASC',
   }
 
+  // For relevance sort, rank by FTS match quality
+  let orderClause: string
+  if (effectiveSort === 'relevance' && hasFts) {
+    // $1 is either the category param or the search term — find the tsquery param
+    const tsIdx = category !== 'all' ? 2 : 1
+    orderClause = `ts_rank(to_tsvector('english', COALESCE(tweet_text, '') || ' ' || COALESCE(extracted_prompt, '')), websearch_to_tsquery('english', $${tsIdx})) DESC, bookmarked_at DESC NULLS LAST`
+  } else {
+    orderClause = orderMap[effectiveSort] ?? orderMap.newest
+  }
+
   params.push(limit + 1, page * limit)
   const query = `
     SELECT * FROM bookmarks
     ${where}
-    ORDER BY ${orderMap[sort]}
+    ORDER BY ${orderClause}
     LIMIT $${params.length - 1} OFFSET $${params.length}
   `
 
@@ -125,30 +153,31 @@ export async function getCounts(): Promise<CategoryCounts> {
 }
 
 export async function insertBookmarks(bookmarks: BookmarkInsert[]): Promise<{ inserted: number; skipped: number }> {
-  let inserted = 0
+  if (bookmarks.length === 0) return { inserted: 0, skipped: 0 }
 
-  for (const b of bookmarks) {
-    const result = await getSql()`
-      INSERT INTO bookmarks
-        (id, tweet_id, tweet_text, author_handle, author_name, tweet_url,
-         media_urls, media_alt_texts, category, confidence, bookmarked_at, source)
-      VALUES (
-        ${randomUUID()},
-        ${b.tweet_id ?? null},
-        ${b.tweet_text ?? ''},
-        ${b.author_handle ?? ''},
-        ${b.author_name ?? null},
-        ${b.tweet_url ?? ''},
-        ${JSON.stringify(b.media_urls ?? [])}::jsonb,
-        ${JSON.stringify(b.media_alt_texts ?? [])}::jsonb,
-        ${b.category ?? 'uncategorized'},
-        ${b.confidence ?? 0},
-        ${b.bookmarked_at ?? null},
-        ${b.source ?? 'twitter'}
-      )
-      ON CONFLICT (tweet_id) DO NOTHING
-    `
-    inserted += result.count
+  const sql = getSql()
+
+  // Run inserts concurrently in chunks of 25 (parallel, not sequential)
+  let inserted = 0
+  for (let i = 0; i < bookmarks.length; i += 25) {
+    const chunk = bookmarks.slice(i, i + 25)
+    const results = await Promise.all(chunk.map(b =>
+      sql`
+        INSERT INTO bookmarks
+          (id, tweet_id, tweet_text, author_handle, author_name, tweet_url,
+           media_urls, media_alt_texts, category, confidence, bookmarked_at, source)
+        VALUES (
+          ${randomUUID()}, ${b.tweet_id ?? null}, ${b.tweet_text ?? ''},
+          ${b.author_handle ?? ''}, ${b.author_name ?? null}, ${b.tweet_url ?? ''},
+          ${JSON.stringify(b.media_urls ?? [])}::jsonb,
+          ${JSON.stringify(b.media_alt_texts ?? [])}::jsonb,
+          ${b.category ?? 'uncategorized'}, ${b.confidence ?? 0},
+          ${b.bookmarked_at ?? null}, ${b.source ?? 'twitter'}
+        )
+        ON CONFLICT (tweet_id) DO NOTHING
+      `
+    ))
+    inserted += results.reduce((sum, r) => sum + r.count, 0)
   }
 
   return { inserted, skipped: bookmarks.length - inserted }

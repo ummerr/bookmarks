@@ -6,7 +6,7 @@ import type { Bookmark, Category, CategoryCounts } from '@/lib/types'
 import Sidebar from '@/components/Sidebar'
 import BookmarkCard from '@/components/BookmarkCard'
 
-type SortOption = 'newest' | 'oldest' | 'confidence' | 'author'
+type SortOption = 'newest' | 'oldest' | 'confidence' | 'author' | 'relevance'
 const PAGE_SIZE = 30
 
 const EMPTY_COUNTS: CategoryCounts = {
@@ -129,6 +129,7 @@ function DashboardInner() {
                 onChange={(e) => setSort(e.target.value as SortOption)}
                 className="bg-white dark:bg-white/5 border border-black/[0.08] dark:border-white/8 rounded-lg px-3 py-1.5 text-sm text-gray-600 dark:text-zinc-300 focus:outline-none focus:border-[#1DA1F2]/50"
               >
+                {searchQuery && <option value="relevance">Best match</option>}
                 <option value="newest">Newest first</option>
                 <option value="oldest">Oldest first</option>
                 <option value="confidence">By confidence</option>
