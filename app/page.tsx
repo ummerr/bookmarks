@@ -8,14 +8,14 @@ import { modelToFamily } from '@/components/prompts/constants'
 
 function getBenchmarks(liveTotal: number) {
   return [
-    { name: 'DrawBench',       size: '200',    source: 'Synthetic (LLM)',        modality: 'Image',         engagement: 'None', multiModel: 'No',  openAccess: 'Yes',     curated: '2022' },
-    { name: 'PartiPrompts',    size: '1,632',  source: 'Crowdworkers (Google)',  modality: 'Image',         engagement: 'None', multiModel: 'No',  openAccess: 'Yes',     curated: '2022' },
-    { name: 'T2I-CompBench',   size: '6,000',  source: 'Synthetic (GPT-4)',      modality: 'Image',         engagement: 'None', multiModel: 'No',  openAccess: 'Yes',     curated: '2023' },
-    { name: 'GenAI-Bench',     size: '1,200',  source: 'LLM + human mix',        modality: 'Image + Video', engagement: 'None', multiModel: 'No',  openAccess: 'Yes',     curated: '2024' },
-    { name: 'EvalCrafter',     size: '700',    source: 'LLM + real users',       modality: 'Video',         engagement: 'None', multiModel: '5',   openAccess: 'Yes',     curated: '2024' },
-    { name: 'VBench',          size: '1,600',  source: 'Manual per dimension',   modality: 'Video',         engagement: 'None', multiModel: '4',   openAccess: 'Yes',     curated: '2024' },
-    { name: 'T2VEval-Bench',   size: '1,783',  source: 'LLM + manual',           modality: 'Video',         engagement: 'Lab MOS', multiModel: '13', openAccess: 'Partial', curated: '2025' },
-    { name: 'ummerr/prompts',  size: liveTotal ? `${liveTotal.toLocaleString()}+` : '-', source: 'Organic / in-the-wild', modality: 'Image + Video', engagement: 'Viral filter', multiModel: '40+', openAccess: 'CC BY 4.0', curated: 'Mar 2026', highlight: true },
+    { name: 'DrawBench',       size: '200',    source: 'Synthetic (LLM)',        modality: 'Image',         engagement: 'None',        curated: '2022' },
+    { name: 'PartiPrompts',    size: '1,632',  source: 'Crowdworkers (Google)',  modality: 'Image',         engagement: 'None',        curated: '2022' },
+    { name: 'T2I-CompBench',   size: '6,000',  source: 'Synthetic (GPT-4)',      modality: 'Image',         engagement: 'None',        curated: '2023' },
+    { name: 'GenAI-Bench',     size: '1,200',  source: 'LLM + human mix',        modality: 'Image + Video', engagement: 'None',        curated: '2024' },
+    { name: 'EvalCrafter',     size: '700',    source: 'LLM + real users',       modality: 'Video',         engagement: 'None',        curated: '2024' },
+    { name: 'VBench',          size: '1,600',  source: 'Manual per dimension',   modality: 'Video',         engagement: 'None',        curated: '2024' },
+    { name: 'T2VEval-Bench',   size: '1,783',  source: 'LLM + manual',           modality: 'Video',         engagement: 'Lab MOS',     curated: '2025' },
+    { name: 'ummerr/prompts',  size: liveTotal ? `${liveTotal.toLocaleString()}+` : '-', source: 'Organic / in-the-wild', modality: 'Image + Video', engagement: 'Viral filter', curated: 'Mar 2026', highlight: true },
   ]
 }
 
@@ -450,8 +450,6 @@ export default function LandingPage() {
                 <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Source</th>
                 <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Modality</th>
                 <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Engagement</th>
-                <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Models</th>
-                <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Access</th>
                 <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Curated</th>
               </tr>
             </thead>
@@ -472,8 +470,6 @@ export default function LandingPage() {
                   <td className="px-5 py-3 text-gray-600 dark:text-zinc-300 whitespace-nowrap">{b.source}</td>
                   <td className="px-5 py-3 text-gray-600 dark:text-zinc-300 whitespace-nowrap">{b.modality}</td>
                   <td className={`px-5 py-3 whitespace-nowrap ${b.highlight ? 'font-semibold text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-zinc-500'}`}>{b.engagement}</td>
-                  <td className={`px-5 py-3 font-mono text-xs ${b.highlight ? 'font-semibold text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-zinc-500'}`}>{b.multiModel}</td>
-                  <td className={`px-5 py-3 whitespace-nowrap text-xs ${b.highlight ? 'font-semibold text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-zinc-500'}`}>{b.openAccess}</td>
                   <td className={`px-5 py-3 font-mono text-xs whitespace-nowrap ${b.highlight ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-gray-400 dark:text-zinc-500'}`}>{b.curated}</td>
                 </tr>
               ))}
