@@ -45,6 +45,8 @@ export async function GET() {
       lengthBuckets,
       foreignLang,
       overlaps,
+      sourceRows,
+      sourceStats,
     ] = await Promise.all([
       // ── 1. All counts + total in ONE query ─────────────────────────
       safe(sql<{
@@ -219,10 +221,32 @@ export async function GET() {
         GROUP BY flags
         ORDER BY flags
       `, []),
+
+      // ── 12. Top sources by count ──────────────────────────────────
+      safe(sql<{ author_handle: string; n: string; avg_confidence: string; categories: string }[]>`
+        SELECT author_handle, COUNT(*) as n,
+          ROUND(AVG(confidence)::numeric, 2) as avg_confidence,
+          COUNT(DISTINCT prompt_category) as categories
+        FROM bookmarks
+        WHERE category = 'prompts' AND author_handle IS NOT NULL
+        GROUP BY author_handle
+        ORDER BY n DESC
+        LIMIT 50
+      `, []),
+
+      // ── 13. Source concentration stats ────────────────────────────
+      safe(sql<{ unique_sources: string; total: string }[]>`
+        SELECT
+          COUNT(DISTINCT author_handle) as unique_sources,
+          COUNT(*) as total
+        FROM bookmarks
+        WHERE category = 'prompts'
+      `, [{ unique_sources: '0', total: '0' }]),
     ])
 
     const counts = countsRow[0]
     const ds = dupeStats[0]
+    const ss = sourceStats[0]
 
     return NextResponse.json({
       total: Number(counts.total),
@@ -280,6 +304,16 @@ export async function GET() {
       overlap: {
         by_flag_count: overlaps.map((o) => ({ flags: Number(o.flags), count: Number(o.n) })),
         any_flag: Number(counts.any_flag_count),
+      },
+      sources: {
+        unique_count: Number(ss.unique_sources),
+        total: Number(ss.total),
+        top: sourceRows.map(r => ({
+          handle: r.author_handle,
+          count: Number(r.n),
+          avg_confidence: Number(r.avg_confidence),
+          categories: Number(r.categories),
+        })),
       },
     })
   } catch (err) {

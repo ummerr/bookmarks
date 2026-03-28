@@ -20,6 +20,11 @@ interface QualityData {
     by_flag_count: { flags: number; count: number }[]
     any_flag: number
   }
+  sources: {
+    unique_count: number
+    total: number
+    top: { handle: string; count: number; avg_confidence: number; categories: number }[]
+  }
 }
 
 function Bar({ value, max, color = '#8b5cf6' }: { value: number; max: number; color?: string }) {
@@ -243,6 +248,75 @@ export default function QualityPage() {
             return <StrategyCard key={id} id={id} strategy={strategy} total={data.total} onRefresh={handleRefresh} />
           })}
         </div>
+
+        {/* Source Diversity */}
+        {data.sources && data.sources.top.length > 0 && (() => {
+          const top5Count = data.sources.top.slice(0, 5).reduce((s, r) => s + r.count, 0)
+          const top5Pct = data.sources.total > 0 ? ((top5Count / data.sources.total) * 100).toFixed(1) : '0'
+          const topSourcePct = data.sources.total > 0 ? ((data.sources.top[0].count / data.sources.total) * 100).toFixed(1) : '0'
+          const maxCount = data.sources.top[0]?.count ?? 0
+
+          return (
+            <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-5">
+              <div className="flex items-start justify-between gap-4 mb-1">
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Source Diversity</h3>
+                  <p className="text-xs text-gray-400 dark:text-zinc-500 mt-0.5">
+                    <span className="font-mono font-semibold">{data.sources.unique_count}</span> unique sources across{' '}
+                    <span className="font-mono font-semibold">{data.sources.total.toLocaleString()}</span> prompts
+                  </p>
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="text-xs text-gray-500 dark:text-zinc-400">
+                    Top 5 concentration
+                  </div>
+                  <div className="text-lg font-bold font-mono tabular-nums text-amber-500">{top5Pct}%</div>
+                </div>
+              </div>
+
+              {Number(topSourcePct) > 15 && (
+                <div className="mt-3 mb-4 rounded-lg border border-amber-200 dark:border-amber-800/30 bg-amber-50 dark:bg-amber-950/20 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
+                  Top source <span className="font-mono font-semibold">@{data.sources.top[0].handle}</span> contributes{' '}
+                  <span className="font-mono font-semibold">{topSourcePct}%</span> of all prompts — potential bias risk
+                </div>
+              )}
+
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-[11px] text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
+                      <th className="text-left pb-2 pr-2 w-8">#</th>
+                      <th className="text-left pb-2 pr-2">Handle</th>
+                      <th className="text-right pb-2 pr-2 w-16">Prompts</th>
+                      <th className="text-right pb-2 pr-2 w-16">% Total</th>
+                      <th className="pb-2 pr-2 w-32"></th>
+                      <th className="text-right pb-2 pr-2 w-16">Avg Conf</th>
+                      <th className="text-right pb-2 w-12">Cats</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.sources.top.map((row, i) => {
+                      const rowPct = data.sources.total > 0 ? ((row.count / data.sources.total) * 100).toFixed(1) : '0'
+                      return (
+                        <tr key={row.handle} className={i % 2 === 1 ? 'bg-black/[0.02] dark:bg-white/[0.02]' : ''}>
+                          <td className="py-1.5 pr-2 text-xs text-gray-400 dark:text-zinc-500 font-mono">{i + 1}</td>
+                          <td className="py-1.5 pr-2 text-xs text-violet-600 dark:text-violet-400 font-medium">@{row.handle}</td>
+                          <td className="py-1.5 pr-2 text-xs font-mono tabular-nums text-right text-gray-700 dark:text-zinc-300">{row.count.toLocaleString()}</td>
+                          <td className="py-1.5 pr-2 text-xs font-mono tabular-nums text-right text-gray-400 dark:text-zinc-500">{rowPct}%</td>
+                          <td className="py-1.5 pr-2">
+                            <Bar value={row.count} max={maxCount} color="#8b5cf6" />
+                          </td>
+                          <td className="py-1.5 pr-2 text-xs font-mono tabular-nums text-right text-gray-500 dark:text-zinc-400">{row.avg_confidence.toFixed(2)}</td>
+                          <td className="py-1.5 text-xs font-mono tabular-nums text-right text-gray-500 dark:text-zinc-400">{row.categories}</td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )
+        })()}
 
         {/* Length distribution */}
         <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-5">
