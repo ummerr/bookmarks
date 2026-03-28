@@ -73,11 +73,14 @@ const THEME_LABELS: Record<string, string> = {
 
 function getBenchmarks(total: number) {
   return [
-    { name: 'DrawBench',       size: '200',    source: 'Synthetic (LLM)',      modality: 'Image only',     provenance: 'None',            curated: '2022',       engagement: '-' },
-    { name: 'PartiPrompts',    size: '1,632',  source: 'Crowdworkers (Google)', modality: 'Image only',     provenance: 'None',            curated: '2022',       engagement: '-' },
-    { name: 'T2I-CompBench',   size: '6,000',  source: 'Synthetic (GPT-4)',    modality: 'Image only',     provenance: 'None',            curated: '2023',       engagement: '-' },
-    { name: 'GenAI-Bench',     size: '1,200',  source: 'LLM + human mix',      modality: 'Image + Video',  provenance: 'None',            curated: '2024',       engagement: '-' },
-    { name: 'ummerr/prompts',  size: total ? `${total.toLocaleString()}+` : '-', source: 'Organic / in-the-wild', modality: 'Image + Video', provenance: 'Full (URL + author)', curated: 'Mar 2026', engagement: 'Yes (viral filter)' },
+    { name: 'DrawBench',       size: '200',    source: 'Synthetic (LLM)',       modality: 'Image',         provenance: 'None',                engagement: 'None',        multiModel: 'No',  openAccess: 'Yes',     curated: '2022' },
+    { name: 'PartiPrompts',    size: '1,632',  source: 'Crowdworkers (Google)', modality: 'Image',         provenance: 'None',                engagement: 'None',        multiModel: 'No',  openAccess: 'Yes',     curated: '2022' },
+    { name: 'T2I-CompBench',   size: '6,000',  source: 'Synthetic (GPT-4)',     modality: 'Image',         provenance: 'None',                engagement: 'None',        multiModel: 'No',  openAccess: 'Yes',     curated: '2023' },
+    { name: 'GenAI-Bench',     size: '1,200',  source: 'LLM + human mix',       modality: 'Image + Video', provenance: 'None',                engagement: 'None',        multiModel: 'No',  openAccess: 'Yes',     curated: '2024' },
+    { name: 'EvalCrafter',     size: '700',    source: 'LLM + real users',      modality: 'Video',         provenance: 'None',                engagement: 'None',        multiModel: '5',   openAccess: 'Yes',     curated: '2024' },
+    { name: 'VBench',          size: '1,600',  source: 'Manual per dimension',  modality: 'Video',         provenance: 'None',                engagement: 'None',        multiModel: '4',   openAccess: 'Yes',     curated: '2024' },
+    { name: 'T2VEval-Bench',   size: '1,783',  source: 'LLM + manual',          modality: 'Video',         provenance: 'None',                engagement: 'Lab MOS',     multiModel: '13',  openAccess: 'Partial', curated: '2025' },
+    { name: 'ummerr/prompts',  size: total ? `${total.toLocaleString()}+` : '-', source: 'Organic / in-the-wild', modality: 'Image + Video', provenance: 'Full (URL + author)', engagement: 'Viral filter', multiModel: '40+', openAccess: 'CC BY 4.0', curated: 'Mar 2026', highlight: true },
   ]
 }
 
@@ -281,14 +284,14 @@ export default function DatacardPage() {
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-black/[0.08] dark:border-white/8 bg-black/[0.03] dark:bg-white/[0.03]">
-                  {['Dataset', 'Size', 'Source', 'Modalities', 'Provenance', 'Curated', 'Engagement signal'].map((h) => (
+                  {['Dataset', 'Size', 'Source', 'Modality', 'Provenance', 'Engagement', 'Models', 'Access', 'Curated'].map((h) => (
                     <th key={h} className="text-left px-4 py-2.5 font-semibold text-gray-500 dark:text-zinc-400 whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {getBenchmarks(stats?.total ?? 0).map((b, i) => {
-                  const isThis = b.name === 'ummerr/prompts'
+                  const isThis = b.highlight
                   return (
                     <tr
                       key={b.name}
@@ -300,11 +303,13 @@ export default function DatacardPage() {
                     >
                       <td className={`px-4 py-2.5 font-mono text-[11px] whitespace-nowrap ${isThis ? 'text-violet-600 dark:text-violet-400 font-semibold' : 'text-gray-800 dark:text-zinc-200'}`}>{b.name}</td>
                       <td className="px-4 py-2.5 text-gray-600 dark:text-zinc-400 tabular-nums">{b.size}</td>
-                      <td className={`px-4 py-2.5 ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-gray-500 dark:text-zinc-500'}`}>{b.source}</td>
-                      <td className={`px-4 py-2.5 ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-gray-500 dark:text-zinc-500'}`}>{b.modality}</td>
-                      <td className={`px-4 py-2.5 ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-gray-500 dark:text-zinc-500'}`}>{b.provenance}</td>
-                      <td className={`px-4 py-2.5 font-mono text-[11px] ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-gray-400 dark:text-zinc-500'}`}>{b.curated}</td>
-                      <td className={`px-4 py-2.5 ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-gray-400 dark:text-zinc-600'}`}>{b.engagement}</td>
+                      <td className={`px-4 py-2.5 whitespace-nowrap ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-gray-500 dark:text-zinc-500'}`}>{b.source}</td>
+                      <td className={`px-4 py-2.5 whitespace-nowrap ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-gray-500 dark:text-zinc-500'}`}>{b.modality}</td>
+                      <td className={`px-4 py-2.5 whitespace-nowrap ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-gray-500 dark:text-zinc-500'}`}>{b.provenance}</td>
+                      <td className={`px-4 py-2.5 whitespace-nowrap ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-gray-400 dark:text-zinc-600'}`}>{b.engagement}</td>
+                      <td className={`px-4 py-2.5 font-mono text-[11px] ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-gray-400 dark:text-zinc-500'}`}>{b.multiModel}</td>
+                      <td className={`px-4 py-2.5 whitespace-nowrap text-[11px] ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-gray-400 dark:text-zinc-500'}`}>{b.openAccess}</td>
+                      <td className={`px-4 py-2.5 font-mono text-[11px] whitespace-nowrap ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-gray-400 dark:text-zinc-500'}`}>{b.curated}</td>
                     </tr>
                   )
                 })}

@@ -50,6 +50,7 @@ const NAV_SECTIONS = [
   { id: 'multishot',          label: 'Multi-Shot' },
   { id: 'multimodal',         label: 'Multimodal' },
   { id: 'from-the-data',      label: 'From the Dataset' },
+  { id: 'realness-gap',       label: 'The Realness Gap' },
   { id: 'sora',               label: 'Why Sora Shut Down' },
   { id: 'sources',            label: 'Sources' },
 ]
@@ -251,6 +252,31 @@ export default function StateOfPromptingPage() {
     const total = stats.byPromptLength.reduce((s, d) => s + d.value, 0)
     const long = stats.byPromptLength.filter((d) => d.label === 'long' || d.label === 'very_long').reduce((s, d) => s + d.value, 0)
     return total ? Math.round((long / total) * 100) : 0
+  }, [stats])
+
+  // Realness gap analysis: classify themes by how forgiving they are
+  const FORGIVING_THEMES = ['abstract', 'fantasy', 'scifi', 'horror']
+  const DEMANDING_THEMES = ['person', 'landscape', 'architecture', 'product']
+  const NEUTRAL_THEMES = ['cinematic', 'fashion']
+
+  const realnessData = useMemo(() => {
+    if (!stats?.byTheme?.length) return null
+    const themeMap = Object.fromEntries(stats.byTheme.map((t) => [t.label, t.value]))
+    const forgiving = FORGIVING_THEMES.reduce((s, t) => s + (themeMap[t] ?? 0), 0)
+    const demanding = DEMANDING_THEMES.reduce((s, t) => s + (themeMap[t] ?? 0), 0)
+    const neutral = NEUTRAL_THEMES.reduce((s, t) => s + (themeMap[t] ?? 0), 0)
+    const total = forgiving + demanding + neutral
+    if (!total) return null
+    return {
+      forgiving,
+      demanding,
+      neutral,
+      total,
+      forgivingPct: Math.round((forgiving / total) * 100),
+      demandingPct: Math.round((demanding / total) * 100),
+      neutralPct: Math.round((neutral / total) * 100),
+      themes: stats.byTheme,
+    }
   }, [stats])
 
   useEffect(() => {
@@ -905,6 +931,116 @@ enters. Warm golden lighting.`}</pre>
 
                 <p className="text-xs text-gray-400 dark:text-zinc-500">
                   Live data from <Link href="/insights" className="text-violet-600 dark:text-violet-400 hover:underline">Insights</Link>. Full methodology on the <Link href="/datacard" className="text-violet-600 dark:text-violet-400 hover:underline">Datacard</Link>. <Link href="/prompts" className="text-violet-600 dark:text-violet-400 hover:underline">Browse all prompts →</Link>
+                </p>
+              </div>
+            </Section>
+
+            <Section title="The Realness Gap" id="realness-gap">
+              <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
+                <p>
+                  Research from T2VEval (Qi et al., 2025) decomposes video quality into four dimensions: text fidelity, realness, technical quality, and overall impression. Their central finding: <span className="font-medium text-gray-800 dark:text-zinc-100">realness is the hardest dimension for current models.</span> Models can produce high-resolution, smooth output that matches the prompt - but still looks wrong because the physics, anatomy, or motion patterns violate cognitive expectations.
+                </p>
+
+                <Insight
+                  quote="The primary challenge faced by current T2V models lies in accurately understanding and representing the objective laws of the real world, including physical principles and cognitive commonsense knowledge."
+                  source="T2VEval — Qi et al., 2025"
+                  color="#ef4444"
+                />
+
+                <p>
+                  This has a direct implication for prompt craft: <span className="font-medium text-gray-800 dark:text-zinc-100">the community unconsciously prompts around model weaknesses.</span> If models fail at realistic human anatomy and physics, practitioners learn to prompt for stylized, fantastical, and abstract outputs instead - themes where &ldquo;realness&rdquo; is forgiving. Our dataset lets us test this hypothesis.
+                </p>
+
+                {realnessData && (
+                  <>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-zinc-900 p-4 text-center">
+                        <div className="text-2xl font-bold text-emerald-500 leading-tight">{realnessData.forgivingPct}%</div>
+                        <div className="text-xs text-gray-500 dark:text-zinc-400 mt-1">Forgiving themes</div>
+                        <div className="text-[10px] text-gray-400 dark:text-zinc-500 mt-0.5">abstract, fantasy, sci-fi, horror</div>
+                      </div>
+                      <div className="rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-zinc-900 p-4 text-center">
+                        <div className="text-2xl font-bold text-red-500 leading-tight">{realnessData.demandingPct}%</div>
+                        <div className="text-xs text-gray-500 dark:text-zinc-400 mt-1">Demanding themes</div>
+                        <div className="text-[10px] text-gray-400 dark:text-zinc-500 mt-0.5">person, landscape, architecture, product</div>
+                      </div>
+                      <div className="rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-zinc-900 p-4 text-center">
+                        <div className="text-2xl font-bold text-gray-400 leading-tight">{realnessData.neutralPct}%</div>
+                        <div className="text-xs text-gray-500 dark:text-zinc-400 mt-1">Neutral</div>
+                        <div className="text-[10px] text-gray-400 dark:text-zinc-500 mt-0.5">cinematic, fashion</div>
+                      </div>
+                    </div>
+
+                    {/* Stacked bar */}
+                    <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4">
+                      <h4 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 mb-3">Realness demand distribution</h4>
+                      <div className="flex h-8 rounded-lg overflow-hidden">
+                        <div
+                          className="bg-emerald-400/70 dark:bg-emerald-500/50 flex items-center justify-center text-[11px] font-semibold text-emerald-900 dark:text-emerald-200"
+                          style={{ width: `${realnessData.forgivingPct}%` }}
+                        >
+                          {realnessData.forgivingPct}%
+                        </div>
+                        <div
+                          className="bg-gray-200 dark:bg-zinc-700 flex items-center justify-center text-[11px] font-semibold text-gray-600 dark:text-zinc-300"
+                          style={{ width: `${realnessData.neutralPct}%` }}
+                        >
+                          {realnessData.neutralPct > 5 ? `${realnessData.neutralPct}%` : ''}
+                        </div>
+                        <div
+                          className="bg-red-400/70 dark:bg-red-500/50 flex items-center justify-center text-[11px] font-semibold text-red-900 dark:text-red-200"
+                          style={{ width: `${realnessData.demandingPct}%` }}
+                        >
+                          {realnessData.demandingPct}%
+                        </div>
+                      </div>
+                      <div className="flex justify-between mt-2 text-[10px] text-gray-400 dark:text-zinc-500">
+                        <span>← Forgiving (low realness demand)</span>
+                        <span>Demanding (high realness demand) →</span>
+                      </div>
+                    </div>
+
+                    {/* Theme-level breakdown */}
+                    <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4">
+                      <h4 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 mb-3">By theme</h4>
+                      <div className="flex flex-col gap-1.5">
+                        {realnessData.themes.map((t) => {
+                          const isForgiving = FORGIVING_THEMES.includes(t.label)
+                          const isDemanding = DEMANDING_THEMES.includes(t.label)
+                          const pct = realnessData.total ? Math.round((t.value / realnessData.total) * 100) : 0
+                          const barColor = isForgiving
+                            ? 'bg-emerald-500/20 border-l-2 border-emerald-500'
+                            : isDemanding
+                              ? 'bg-red-500/20 border-l-2 border-red-500'
+                              : 'bg-gray-300/30 dark:bg-zinc-600/30 border-l-2 border-gray-400 dark:border-zinc-500'
+                          return (
+                            <div key={t.label} className="flex items-center gap-2">
+                              <span className="text-[11px] font-medium w-24 shrink-0 truncate text-gray-700 dark:text-zinc-300">{t.label}</span>
+                              <div className="flex-1 h-4 bg-black/[0.03] dark:bg-white/[0.03] rounded overflow-hidden">
+                                <div
+                                  className={`h-full rounded ${barColor}`}
+                                  style={{ width: `${Math.max(5, (t.value / (realnessData.themes[0]?.value || 1)) * 100)}%` }}
+                                />
+                              </div>
+                              <span className="text-[11px] font-mono text-gray-400 dark:text-zinc-500 w-16 text-right shrink-0">
+                                {t.value} ({pct}%)
+                              </span>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                <div className="rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/30 p-4">
+                  <p className="text-sm text-amber-800 dark:text-amber-200 leading-relaxed">
+                    <span className="font-semibold">The implication.</span> Prompt craft has co-evolved with model limitations. We prompt for what models can do, not what we actually want. As models improve on realness - Seedance 2.0, Veo 3.1, and newer Kling versions are closing the gap - expect the prompt distribution to shift toward higher realness demand. The stylized-first era may be a temporary artifact.
+                  </p>
+                </div>
+
+                <p className="text-xs text-gray-400 dark:text-zinc-500">
+                  Analysis framework adapted from T2VEval (Qi et al., 2025). Theme classification from this dataset. &ldquo;Forgiving&rdquo; = themes where unrealistic output is aesthetically acceptable. &ldquo;Demanding&rdquo; = themes where viewers expect physical/anatomical accuracy.
                 </p>
               </div>
             </Section>

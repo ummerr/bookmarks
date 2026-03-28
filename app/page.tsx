@@ -8,9 +8,14 @@ import { modelToFamily } from '@/components/prompts/constants'
 
 function getBenchmarks(liveTotal: number) {
   return [
-    { name: 'DrawBench',      size: '200',   source: 'Synthetic (LLM)',        modality: 'Image only',    curated: '2022' },
-    { name: 'PartiPrompts',   size: '1,632', source: 'Crowdworkers (Google)',  modality: 'Image only',    curated: '2022' },
-    { name: 'ummerr/prompts', size: liveTotal ? `${liveTotal.toLocaleString()}+` : '-', source: 'Organic / in-the-wild', modality: 'Image + Video', curated: 'Mar 2026', highlight: true },
+    { name: 'DrawBench',       size: '200',    source: 'Synthetic (LLM)',        modality: 'Image',         engagement: 'None', multiModel: 'No',  openAccess: 'Yes',     curated: '2022' },
+    { name: 'PartiPrompts',    size: '1,632',  source: 'Crowdworkers (Google)',  modality: 'Image',         engagement: 'None', multiModel: 'No',  openAccess: 'Yes',     curated: '2022' },
+    { name: 'T2I-CompBench',   size: '6,000',  source: 'Synthetic (GPT-4)',      modality: 'Image',         engagement: 'None', multiModel: 'No',  openAccess: 'Yes',     curated: '2023' },
+    { name: 'GenAI-Bench',     size: '1,200',  source: 'LLM + human mix',        modality: 'Image + Video', engagement: 'None', multiModel: 'No',  openAccess: 'Yes',     curated: '2024' },
+    { name: 'EvalCrafter',     size: '700',    source: 'LLM + real users',       modality: 'Video',         engagement: 'None', multiModel: '5',   openAccess: 'Yes',     curated: '2024' },
+    { name: 'VBench',          size: '1,600',  source: 'Manual per dimension',   modality: 'Video',         engagement: 'None', multiModel: '4',   openAccess: 'Yes',     curated: '2024' },
+    { name: 'T2VEval-Bench',   size: '1,783',  source: 'LLM + manual',           modality: 'Video',         engagement: 'Lab MOS', multiModel: '13', openAccess: 'Partial', curated: '2025' },
+    { name: 'ummerr/prompts',  size: liveTotal ? `${liveTotal.toLocaleString()}+` : '-', source: 'Organic / in-the-wild', modality: 'Image + Video', engagement: 'Viral filter', multiModel: '40+', openAccess: 'CC BY 4.0', curated: 'Mar 2026', highlight: true },
   ]
 }
 
@@ -320,14 +325,14 @@ export default function LandingPage() {
 
         <div className="relative max-w-4xl mx-auto px-5 pt-24 pb-16 md:pt-32 md:pb-20 text-center">
           <h1 className="font-serif text-4xl md:text-6xl font-medium tracking-tight text-gray-900 dark:text-white leading-[1.1]">
-            The most shared<br className="hidden md:block" /> AI prompts on X
+            The first engagement-weighted<br className="hidden md:block" /> prompt benchmark
           </h1>
           <p className="mt-6 max-w-2xl mx-auto text-lg md:text-xl text-gray-500 dark:text-zinc-400 leading-relaxed">
             Image and video generation prompts sourced from viral posts on X.
-            Every entry is a real prompt that real practitioners shared - and countless others copied.
+            Every entry is organic - a real prompt that real practitioners shared and countless others copied.
           </p>
           <p className="mt-3 text-base text-gray-400 dark:text-zinc-500">
-            Curated by hand, labelled by model, technique, theme and reference type.  Zero synthetic prompts.
+            Labelled by model, technique, theme and reference type.  Zero synthetic prompts. Zero crowdworkers.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -444,6 +449,9 @@ export default function LandingPage() {
                 <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Size</th>
                 <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Source</th>
                 <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Modality</th>
+                <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Engagement</th>
+                <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Models</th>
+                <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Access</th>
                 <th className="px-5 py-3 font-medium text-gray-500 dark:text-zinc-400">Curated</th>
               </tr>
             </thead>
@@ -457,13 +465,16 @@ export default function LandingPage() {
                       : ''
                   }`}
                 >
-                  <td className={`px-5 py-3 ${b.highlight ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-zinc-300'}`}>
+                  <td className={`px-5 py-3 whitespace-nowrap ${b.highlight ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-zinc-300'}`}>
                     {b.name}
                   </td>
                   <td className="px-5 py-3 text-gray-600 dark:text-zinc-300 font-mono text-xs">{b.size}</td>
-                  <td className="px-5 py-3 text-gray-600 dark:text-zinc-300">{b.source}</td>
-                  <td className="px-5 py-3 text-gray-600 dark:text-zinc-300">{b.modality}</td>
-                  <td className={`px-5 py-3 font-mono text-xs ${b.highlight ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-gray-400 dark:text-zinc-500'}`}>{b.curated}</td>
+                  <td className="px-5 py-3 text-gray-600 dark:text-zinc-300 whitespace-nowrap">{b.source}</td>
+                  <td className="px-5 py-3 text-gray-600 dark:text-zinc-300 whitespace-nowrap">{b.modality}</td>
+                  <td className={`px-5 py-3 whitespace-nowrap ${b.highlight ? 'font-semibold text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-zinc-500'}`}>{b.engagement}</td>
+                  <td className={`px-5 py-3 font-mono text-xs ${b.highlight ? 'font-semibold text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-zinc-500'}`}>{b.multiModel}</td>
+                  <td className={`px-5 py-3 whitespace-nowrap text-xs ${b.highlight ? 'font-semibold text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-zinc-500'}`}>{b.openAccess}</td>
+                  <td className={`px-5 py-3 font-mono text-xs whitespace-nowrap ${b.highlight ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-gray-400 dark:text-zinc-500'}`}>{b.curated}</td>
                 </tr>
               ))}
             </tbody>
