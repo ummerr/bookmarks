@@ -45,12 +45,12 @@ const NAV_SECTIONS = [
   { id: 'findings',            label: 'Key Findings' },
   { id: 'references',         label: 'The Reference Shift' },
   { id: 'prompt-engineering', label: 'Context Engineering' },
+  { id: 'practitioners',      label: 'Takeaways' },
   { id: 'video',              label: 'Video Prompting' },
   { id: 'multishot',          label: 'Multi-Shot' },
   { id: 'multimodal',         label: 'Multimodal' },
   { id: 'from-the-data',      label: 'From the Dataset' },
   { id: 'sora',               label: 'Why Sora Shut Down' },
-  { id: 'practitioners',      label: 'Takeaways' },
   { id: 'sources',            label: 'Sources' },
 ]
 
@@ -389,6 +389,59 @@ export default function StateOfPromptingPage() {
                     </div>
                   ))}
                 </div>
+              </div>
+            </Section>
+
+            <Section title="What to Actually Do About It" id="practitioners">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {[
+                  {
+                    title: 'Start with a reference, add text second',
+                    body: 'Upload a face, a style frame, or a composition sketch. Then write directorial notes on top. This inverts the 2023 workflow — and it\'s what the best practitioners in the dataset already do.',
+                    color: '#f97316',
+                    icon: '📂',
+                  },
+                  {
+                    title: 'Switch models before rewriting the prompt',
+                    body: 'Veo leads T2V. Grok leads I2V. Gemini leads T2I. No model wins everywhere. Run the same prompt through two tools before spending time on iteration — the model gap is larger than the prompt gap.',
+                    color: '#8b5cf6',
+                    icon: '🔬',
+                  },
+                  {
+                    title: 'Describe forces, not aesthetics',
+                    body: '"Gimbal tracking shot, rear suspension compressing on impact" gives the model physics to simulate. "Cinematic and dramatic" gives it nothing. The best video prompts in the dataset read like shot lists, not poetry.',
+                    color: '#f59e0b',
+                    icon: '🎥',
+                  },
+                  {
+                    title: 'Include audio from the start',
+                    body: 'Veo 3.1, Kling 3.0, and Grok now generate audio in the same pass as video. If you don\'t describe sound in the brief, it becomes an afterthought. Describe dialogue, ambient noise, and effects alongside the visual.',
+                    color: '#a855f7',
+                    icon: '🔊',
+                  },
+                  {
+                    title: 'Explore the dataset',
+                    body: 'Everything in this report is grounded in real prompts from real practitioners. Browse them, shuffle them, see what actually goes viral — then adapt.',
+                    color: '#14b8a6',
+                    icon: '✦',
+                    href: '/prompts',
+                  },
+                ].map((item) => {
+                  const card = (
+                    <div
+                      key={item.title}
+                      className={`rounded-xl border bg-white dark:bg-[#111] p-5 flex flex-col gap-2 ${'href' in item ? 'hover:border-violet-300 dark:hover:border-violet-700 transition-colors' : ''}`}
+                      style={{ borderColor: `${item.color}30` }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg" style={{ color: item.color }}>{item.icon}</span>
+                        <span className="text-sm font-bold text-gray-900 dark:text-white">{item.title}</span>
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">{item.body}</p>
+                    </div>
+                  )
+                  return 'href' in item ? <Link key={item.title} href={(item as { href: string }).href}>{card}</Link> : card
+                })}
               </div>
             </Section>
 
@@ -877,59 +930,6 @@ enters. Warm golden lighting.`}</pre>
                     <span className="font-semibold">The lesson.</span> The model did not survive either — OpenAI is deprecating the API alongside the consumer app. Each 10-second clip cost ~$1.30 to generate; at 11.3 million videos a day that's $15M daily, $5.4B annually — against a company already losing twice what it earns. The field consolidated around Google (Veo 3.1), xAI (Grok), and Kling/Seedance/Runway. Unlike other shutdowns, there's no API fallback this time.
                   </p>
                 </div>
-              </div>
-            </Section>
-
-            <Section title="What to Actually Do About It" id="practitioners">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {[
-                  {
-                    title: 'Start with a reference, add text second',
-                    body: 'Upload a face, a style frame, or a composition sketch. Then write directorial notes on top. This inverts the 2023 workflow — and it\'s what the best practitioners in the dataset already do.',
-                    color: '#f97316',
-                    icon: '📂',
-                  },
-                  {
-                    title: 'Switch models before rewriting the prompt',
-                    body: 'Veo leads T2V. Grok leads I2V. Gemini leads T2I. No model wins everywhere. Run the same prompt through two tools before spending time on iteration — the model gap is larger than the prompt gap.',
-                    color: '#8b5cf6',
-                    icon: '🔬',
-                  },
-                  {
-                    title: 'Describe forces, not aesthetics',
-                    body: '"Gimbal tracking shot, rear suspension compressing on impact" gives the model physics to simulate. "Cinematic and dramatic" gives it nothing. The best video prompts in the dataset read like shot lists, not poetry.',
-                    color: '#f59e0b',
-                    icon: '🎥',
-                  },
-                  {
-                    title: 'Include audio from the start',
-                    body: 'Veo 3.1, Kling 3.0, and Grok now generate audio in the same pass as video. If you don\'t describe sound in the brief, it becomes an afterthought. Describe dialogue, ambient noise, and effects alongside the visual.',
-                    color: '#a855f7',
-                    icon: '🔊',
-                  },
-                  {
-                    title: 'Explore the dataset',
-                    body: 'Everything in this report is grounded in real prompts from real practitioners. Browse them, shuffle them, see what actually goes viral — then adapt.',
-                    color: '#14b8a6',
-                    icon: '✦',
-                    href: '/prompts',
-                  },
-                ].map((item) => {
-                  const card = (
-                    <div
-                      key={item.title}
-                      className={`rounded-xl border bg-white dark:bg-[#111] p-5 flex flex-col gap-2 ${'href' in item ? 'hover:border-violet-300 dark:hover:border-violet-700 transition-colors' : ''}`}
-                      style={{ borderColor: `${item.color}30` }}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg" style={{ color: item.color }}>{item.icon}</span>
-                        <span className="text-sm font-bold text-gray-900 dark:text-white">{item.title}</span>
-                      </div>
-                      <p className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">{item.body}</p>
-                    </div>
-                  )
-                  return 'href' in item ? <Link key={item.title} href={(item as { href: string }).href}>{card}</Link> : card
-                })}
               </div>
             </Section>
 
