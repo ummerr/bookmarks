@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import Link from 'next/link'
+
 
 interface ReviewPrompt {
   id: string
@@ -340,7 +340,7 @@ export default function ReviewPage() {
   const richness = computeRichness(promptText)
 
   return (
-    <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white flex flex-col relative overflow-hidden">
+    <div className="min-h-[calc(100vh-7rem)] text-gray-900 dark:text-white flex flex-col relative overflow-hidden">
       {/* Subtle background grid */}
       <div
         className="pointer-events-none fixed inset-0 opacity-[0.03] dark:opacity-[0.04]"
@@ -408,13 +408,7 @@ export default function ReviewPage() {
 
         {/* Header */}
         <div>
-          <Link href="/tools" className="inline-flex items-center gap-1 text-xs text-gray-400 dark:text-zinc-500 hover:text-violet-600 dark:hover:text-violet-400 transition-colors group">
-            <svg className="w-3 h-3 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-            Tools
-          </Link>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mt-2 tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
             Prompt Review
           </h1>
           <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">

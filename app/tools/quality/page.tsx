@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
+
 
 interface Strategy {
   label: string
@@ -204,15 +204,12 @@ export default function QualityPage() {
   const maxLen = Math.max(...data.distributions.prompt_length.map((b) => b.count))
 
   return (
-    <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
+    <div className="text-gray-900 dark:text-white">
       <div className="max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12 flex flex-col gap-8">
 
         {/* Header */}
         <div>
-          <Link href="/tools" className="text-xs text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300 transition-colors">
-            &larr; Tools
-          </Link>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white mt-2">Dataset Quality Audit</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Dataset Quality Audit</h1>
           <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">
             <span className="font-mono font-semibold">{data.total.toLocaleString()}</span> total prompts - flagged by {strategyOrder.length} heuristics
           </p>
