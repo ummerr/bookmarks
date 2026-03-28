@@ -538,7 +538,7 @@ export default function StateOfPromptingPage() {
                     {
                       model: '🪦 Sora 2',
                       personality: 'Fully Deprecated Mar 2026',
-                      desc: 'OpenAI is shutting down both the Sora consumer app and API. At its peak, Sora 2 was the only non-Google model in the T2V top 5 (ELO 1,367) with strong physics understanding — but $15M/day inference costs against $2.1M lifetime revenue made it unsustainable.',
+                      desc: 'OpenAI is shutting down both the Sora consumer app and API. At its peak, Sora 2 was the only non-Google model in the T2V top 5 (ELO 1,367) — but at ~$1.30 per 10-second clip and ~11.3M videos/day, the $5.4B annualized burn rate was never sustainable.',
                       strategy: 'Migrate to Veo 3.1 (T2V #1) or Kling 3.0 for video generation. No Sora endpoint will remain available.',
                       color: '#6b7280',
                     },
@@ -827,10 +827,10 @@ enters. Warm golden lighting.`}</pre>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
-                    { stat: '$15M/day', label: 'Estimated inference cost at peak' },
-                    { stat: '$2.1M', label: 'Total lifetime in-app revenue' },
-                    { stat: '−66%', label: 'Download drop Nov 2025 → Feb 2026' },
-                    { stat: '1%', label: '30-day user retention rate' },
+                    { stat: '$1.30', label: 'Cost per 10-second clip (Cantor Fitzgerald est.)' },
+                    { stat: '~11.3M', label: 'Videos generated per day at peak' },
+                    { stat: '$15M/day', label: 'Est. daily inference cost (Forbes)' },
+                    { stat: '$5.4B/yr', label: 'Annualized burn rate' },
                   ].map(({ stat, label }) => (
                     <div key={stat} className="rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-zinc-900 p-3 text-center">
                       <div className="text-xl font-bold text-red-500 dark:text-red-400 leading-tight">{stat}</div>
@@ -845,12 +845,12 @@ enters. Warm golden lighting.`}</pre>
                     <div className="absolute left-[5px] top-2 bottom-2 w-px bg-gradient-to-b from-amber-400 via-red-400 to-red-600 dark:from-amber-500 dark:via-red-500 dark:to-red-700" />
                     <div className="flex flex-col gap-4">
                       {[
-                        { date: 'Sep 2025', event: 'Sora launches publicly, wide press coverage', severity: 0 },
-                        { date: 'Nov 2025', event: 'Downloads peak at 3.3M — then start falling', severity: 1 },
-                        { date: 'Dec 2025', event: 'Deepfake scandals escalate; MLK Jr. and Robin Williams likenesses go viral without consent', severity: 2 },
-                        { date: 'Jan 2026', event: 'Internal teams describe GPU strain — "the chips are melting"', severity: 2 },
-                        { date: 'Mar 2026', event: '$1B Disney partnership collapses; Disney notified 30 minutes after a joint planning meeting', severity: 3 },
-                        { date: 'Mar 24, 2026', event: 'OpenAI announces full Sora shutdown — app, API, and ChatGPT video; team redirected to robotics world simulation', severity: 3 },
+                        { date: 'Sep 30, 2025', event: 'Sora launches publicly — 1 million downloads in the first week', severity: 0 },
+                        { date: 'Oct 2025', event: '4 million downloads by Halloween; Bill Peebles admits "the economics are currently completely unsustainable"', severity: 1 },
+                        { date: 'Nov 2025', event: 'Analyst Deepak Mathivanan (Cantor Fitzgerald) estimates $1.30/clip — ~40 min GPU time per video across 4 GPUs at ~$2/hr', severity: 1 },
+                        { date: 'Late 2025', event: 'OpenAI introduces paywall: $4 for 10 generations. Altman concedes "there is no ad model that can support the cost" of meme-making at scale', severity: 2 },
+                        { date: 'Early 2026', event: 'Usage declines as free limits are slashed; competitors (Veo, Kling, Seedance) rapidly close the quality gap', severity: 2 },
+                        { date: 'Mar 24, 2026', event: 'OpenAI announces full Sora shutdown — app, API, and ChatGPT video generation. All of it.', severity: 3 },
                       ].map(({ date, event, severity }) => {
                         const dotColor = severity === 0 ? 'bg-amber-400' : severity === 1 ? 'bg-orange-400' : severity === 2 ? 'bg-red-400' : 'bg-red-600'
                         const isTerminal = severity === 3
@@ -868,9 +868,13 @@ enters. Warm golden lighting.`}</pre>
                   </div>
                 </div>
 
+                <p className="text-xs text-gray-400 dark:text-zinc-500">
+                  Cost estimates sourced from <a href="https://www.remio.ai/post/the-real-sora-cost-openai-s-5-billion-ai-video-problem" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">Remio/Forbes analysis</a> and Cantor Fitzgerald research. Shutdown announcement via <a href="https://x.com/soraofficialapp" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">@soraofficialapp</a>.
+                </p>
+
                 <div className="rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30 p-4">
                   <p className="text-sm text-red-700 dark:text-red-300 leading-relaxed">
-                    <span className="font-semibold">The lesson.</span> The model did not survive either — OpenAI is deprecating the API alongside the consumer app. The field consolidated around Google (Veo 3.1 dominates T2V), xAI (Grok leads I2V and Video Edit), and Kling/Seedance/Runway for specialized tasks. Building a consumer product around a capability that costs hundreds of dollars per clip doesn't work — and unlike other shutdowns, there's no API fallback this time.
+                    <span className="font-semibold">The lesson.</span> The model did not survive either — OpenAI is deprecating the API alongside the consumer app. Each 10-second clip cost ~$1.30 to generate; at 11.3 million videos a day that's $15M daily, $5.4B annually — against a company already losing twice what it earns. The field consolidated around Google (Veo 3.1), xAI (Grok), and Kling/Seedance/Runway. Unlike other shutdowns, there's no API fallback this time.
                   </p>
                 </div>
               </div>
