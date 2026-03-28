@@ -103,7 +103,7 @@ export async function GET() {
                detected_model, prompt_category, confidence, tweet_url
         FROM bookmarks
         WHERE category = 'prompts' AND extracted_prompt IS NULL
-        ORDER BY created_at DESC
+        ORDER BY bookmarked_at DESC NULLS LAST, created_at DESC
         LIMIT 30
       `, []),
 
@@ -199,7 +199,7 @@ export async function GET() {
         FROM bookmarks
         WHERE category = 'prompts'
           AND extracted_prompt ~ '[\u4e00-\u9fff\u3400-\u4dbf]'
-        ORDER BY created_at DESC
+        ORDER BY bookmarked_at DESC NULLS LAST, created_at DESC
         LIMIT 30
       `, []),
 

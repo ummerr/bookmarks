@@ -189,7 +189,7 @@ export async function getUnclassified(limit = 100): Promise<Pick<Bookmark, 'id' 
   return getSql()<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text'>[]>`
     SELECT id, tweet_id, tweet_text FROM bookmarks
     WHERE confidence = 0
-    ORDER BY created_at ASC
+    ORDER BY bookmarked_at ASC NULLS LAST, created_at ASC
     LIMIT ${limit}
   `
 }
@@ -329,7 +329,7 @@ export async function getAllPromptsForReclassify(limit = 500, offset = 0): Promi
   const rows = await getSql()<Record<string, unknown>[]>`
     SELECT id, tweet_id, tweet_text, thread_tweets, media_alt_texts FROM bookmarks
     WHERE category = 'prompts'
-    ORDER BY created_at ASC
+    ORDER BY bookmarked_at ASC NULLS LAST, created_at ASC
     LIMIT ${limit} OFFSET ${offset}
   `
   return rows.map(toPromptRow)
@@ -339,7 +339,7 @@ export async function getUnclassifiedPrompts(limit = 50, offset = 0): Promise<Pi
   const rows = await getSql()<Record<string, unknown>[]>`
     SELECT id, tweet_id, tweet_text, thread_tweets, media_alt_texts FROM bookmarks
     WHERE category = 'prompts' AND prompt_category IS NULL
-    ORDER BY created_at ASC
+    ORDER BY bookmarked_at ASC NULLS LAST, created_at ASC
     LIMIT ${limit} OFFSET ${offset}
   `
   return rows.map(toPromptRow)
@@ -349,7 +349,7 @@ export async function getAllPrompts(limit = 500): Promise<Pick<Bookmark, 'id' | 
   const rows = await getSql()<Record<string, unknown>[]>`
     SELECT id, tweet_id, tweet_text, thread_tweets, media_alt_texts FROM bookmarks
     WHERE category = 'prompts'
-    ORDER BY created_at ASC
+    ORDER BY bookmarked_at ASC NULLS LAST, created_at ASC
     LIMIT ${limit}
   `
   return rows.map(toPromptRow)
@@ -400,7 +400,7 @@ export async function getThreadHeaderCandidates(): Promise<ThreadHeaderCandidate
           )
         )
       )
-    ORDER BY thread_tweet_count DESC, created_at DESC
+    ORDER BY thread_tweet_count DESC, bookmarked_at DESC NULLS LAST, created_at DESC
   `
   return rows.map((r) => ({
     id: r.id as string,

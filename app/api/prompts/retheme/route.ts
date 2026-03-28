@@ -58,7 +58,7 @@ export async function POST(req: Request) {
     const rows = await sql<{ id: string; tweet_text: string }[]>`
       SELECT id, tweet_text FROM bookmarks
       WHERE category = 'prompts'
-      ORDER BY created_at ASC
+      ORDER BY bookmarked_at ASC NULLS LAST, created_at ASC
       LIMIT ${limit} OFFSET ${offset}
     `
 

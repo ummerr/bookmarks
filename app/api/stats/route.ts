@@ -20,7 +20,7 @@ export async function GET() {
   try {
     const sql = getSql()
 
-    const [categoryRows, modelRows, totalRow, refRow, refTypeRows, promptLengthRows, themeRows] = await Promise.all([
+    const [categoryRows, modelRows, totalRow, refRow, refTypeRows, promptLengthRows, themeRows, timelineRows, modelTimelineRows] = await Promise.all([
       safe(sql<{ prompt_category: string; n: string }[]>`
         SELECT prompt_category, COUNT(*) as n
         FROM bookmarks
@@ -71,6 +71,20 @@ export async function GET() {
         GROUP BY t.theme
         ORDER BY n DESC
       `, []),
+      safe(sql<{ month: string; n: string }[]>`
+        SELECT TO_CHAR(bookmarked_at::timestamp, 'YYYY-MM') as month, COUNT(*) as n
+        FROM bookmarks
+        WHERE category = 'prompts' AND bookmarked_at IS NOT NULL
+        GROUP BY month
+        ORDER BY month
+      `, []),
+      safe(sql<{ month: string; detected_model: string; n: string }[]>`
+        SELECT TO_CHAR(bookmarked_at::timestamp, 'YYYY-MM') as month, detected_model, COUNT(*) as n
+        FROM bookmarks
+        WHERE category = 'prompts' AND bookmarked_at IS NOT NULL AND detected_model IS NOT NULL AND detected_model != ''
+        GROUP BY month, detected_model
+        ORDER BY month
+      `, []),
     ])
 
     return NextResponse.json({
@@ -81,6 +95,8 @@ export async function GET() {
       byReferenceType: refTypeRows.map((r) => ({ label: r.reference_type, value: Number(r.n) })),
       byPromptLength: promptLengthRows.map((r) => ({ label: r.bucket, value: Number(r.n) })),
       byTheme: themeRows.map((r) => ({ label: r.theme, value: Number(r.n) })),
+      timeline: timelineRows.map((r) => ({ month: r.month, value: Number(r.n) })),
+      modelTimeline: modelTimelineRows.map((r) => ({ month: r.month, model: r.detected_model, value: Number(r.n) })),
     })
   } catch (err) {
     console.error('[/api/stats]', err)
@@ -93,6 +109,8 @@ export async function GET() {
       byReferenceType: [],
       byPromptLength: [],
       byTheme: [],
+      timeline: [],
+      modelTimeline: [],
     })
   }
 }

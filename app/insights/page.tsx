@@ -7,6 +7,8 @@ import { modelToFamily } from '@/components/prompts/constants'
 // ── Types ───────────────────────────────────────────────────────────────────
 
 interface LabelValue { label: string; value: number }
+interface TimelinePoint { month: string; value: number }
+interface ModelTimelinePoint { month: string; model: string; value: number }
 
 interface StatsData {
   total: number
@@ -15,6 +17,8 @@ interface StatsData {
   byModel: LabelValue[]
   byReferenceType: LabelValue[]
   byPromptLength: LabelValue[]
+  timeline: TimelinePoint[]
+  modelTimeline: ModelTimelinePoint[]
 }
 
 // ── Chart components ────────────────────────────────────────────────────────
@@ -177,6 +181,187 @@ function PromptLengthChart({ data }: { data: LabelValue[] }) {
   )
 }
 
+function TimelineChart({ data }: { data: TimelinePoint[] }) {
+  if (data.length < 2) return null
+  const max = Math.max(...data.map((d) => d.value), 1)
+  const total = data.reduce((s, d) => s + d.value, 0)
+
+  const W = 700, H = 200, PX = 48, PY = 24, PB = 32
+  const plotW = W - PX * 2
+  const plotH = H - PY - PB
+
+  const points = data.map((d, i) => ({
+    x: PX + (i / (data.length - 1)) * plotW,
+    y: PY + plotH - (d.value / max) * plotH,
+    ...d,
+  }))
+
+  const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')
+  const areaD = `${pathD} L${points[points.length - 1].x},${PY + plotH} L${points[0].x},${PY + plotH} Z`
+
+  // Y-axis gridlines
+  const gridLines = 4
+  const yTicks = Array.from({ length: gridLines + 1 }, (_, i) => {
+    const val = Math.round((max / gridLines) * i)
+    const y = PY + plotH - (val / max) * plotH
+    return { val, y }
+  })
+
+  return (
+    <div className="w-full overflow-x-auto">
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-[700px]" preserveAspectRatio="xMidYMid meet">
+        {/* Grid */}
+        {yTicks.map((t) => (
+          <g key={t.val}>
+            <line x1={PX} y1={t.y} x2={W - PX} y2={t.y} stroke="currentColor" className="text-black/[0.06] dark:text-white/[0.06]" />
+            <text x={PX - 8} y={t.y + 3} textAnchor="end" className="fill-gray-400 dark:fill-zinc-500" style={{ fontSize: '10px' }}>{t.val}</text>
+          </g>
+        ))}
+        {/* Area fill */}
+        <path d={areaD} fill="url(#timelineGrad)" opacity={0.3} />
+        <defs>
+          <linearGradient id="timelineGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#8b5cf6" />
+            <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        {/* Line */}
+        <path d={pathD} fill="none" stroke="#8b5cf6" strokeWidth={2.5} strokeLinejoin="round" />
+        {/* Dots + labels */}
+        {points.map((p) => (
+          <g key={p.month}>
+            <circle cx={p.x} cy={p.y} r={3.5} fill="#8b5cf6" />
+            <text x={p.x} y={p.y - 10} textAnchor="middle" className="fill-gray-600 dark:fill-zinc-300" style={{ fontSize: '9px', fontWeight: 600 }}>
+              {p.value}
+            </text>
+            <text
+              x={p.x} y={H - 6} textAnchor="middle"
+              className="fill-gray-400 dark:fill-zinc-500" style={{ fontSize: '9px' }}
+              transform={data.length > 6 ? `rotate(-45, ${p.x}, ${H - 6})` : undefined}
+            >
+              {formatMonth(p.month)}
+            </text>
+          </g>
+        ))}
+      </svg>
+      <div className="mt-2 text-xs text-gray-400 dark:text-zinc-500">{total.toLocaleString()} prompts across {data.length} months</div>
+    </div>
+  )
+}
+
+function ModelShareTimelineChart({ data, modelFamilyFn }: { data: ModelTimelinePoint[]; modelFamilyFn: (m: string) => string }) {
+  if (data.length === 0) return null
+
+  // Aggregate by month + family
+  const byMonthFamily = new Map<string, Map<string, number>>()
+  for (const d of data) {
+    const family = modelFamilyFn(d.model)
+    if (!byMonthFamily.has(d.month)) byMonthFamily.set(d.month, new Map())
+    const monthMap = byMonthFamily.get(d.month)!
+    monthMap.set(family, (monthMap.get(family) ?? 0) + d.value)
+  }
+
+  const months = Array.from(byMonthFamily.keys()).sort()
+  if (months.length < 2) return null
+
+  // Find top families by total count
+  const familyTotals = new Map<string, number>()
+  for (const monthMap of byMonthFamily.values()) {
+    for (const [f, v] of monthMap) familyTotals.set(f, (familyTotals.get(f) ?? 0) + v)
+  }
+  const topFamilies = Array.from(familyTotals.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([f]) => f)
+
+  // Build stacked data
+  const stacked = months.map((month) => {
+    const monthMap = byMonthFamily.get(month)!
+    const values: Record<string, number> = {}
+    let total = 0
+    for (const f of topFamilies) {
+      const v = monthMap.get(f) ?? 0
+      values[f] = v
+      total += v
+    }
+    // "Other"
+    let otherTotal = 0
+    for (const [f, v] of monthMap) {
+      if (!topFamilies.includes(f)) otherTotal += v
+    }
+    if (otherTotal > 0) { values['Other'] = otherTotal; total += otherTotal }
+    return { month, values, total }
+  })
+
+  const allFamilies = otherTotal(stacked) ? [...topFamilies, 'Other'] : topFamilies
+  const maxTotal = Math.max(...stacked.map((s) => s.total), 1)
+
+  const W = 700, H = 240, PX = 48, PY = 16, PB = 36
+  const plotW = W - PX * 2
+  const plotH = H - PY - PB
+  const barW = Math.min(50, (plotW / months.length) * 0.7)
+  const gap = (plotW - barW * months.length) / Math.max(months.length - 1, 1)
+
+  return (
+    <div className="w-full overflow-x-auto">
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-[700px]" preserveAspectRatio="xMidYMid meet">
+        {stacked.map((s, mi) => {
+          const barX = PX + mi * (barW + gap)
+          let yOffset = PY + plotH
+          return (
+            <g key={s.month}>
+              {allFamilies.map((f, fi) => {
+                const v = s.values[f] ?? 0
+                if (v === 0) return null
+                const segH = (v / maxTotal) * plotH
+                yOffset -= segH
+                return (
+                  <rect
+                    key={f}
+                    x={barX}
+                    y={yOffset}
+                    width={barW}
+                    height={segH}
+                    rx={fi === allFamilies.length - 1 || (allFamilies.slice(fi + 1).every(fam => (s.values[fam] ?? 0) === 0)) ? 3 : 0}
+                    fill={PALETTE[fi % PALETTE.length]}
+                    opacity={0.75}
+                  />
+                )
+              })}
+              <text
+                x={barX + barW / 2} y={H - 8} textAnchor="middle"
+                className="fill-gray-400 dark:fill-zinc-500" style={{ fontSize: '9px' }}
+                transform={months.length > 6 ? `rotate(-45, ${barX + barW / 2}, ${H - 8})` : undefined}
+              >
+                {formatMonth(s.month)}
+              </text>
+            </g>
+          )
+        })}
+      </svg>
+      {/* Legend */}
+      <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-3">
+        {allFamilies.map((f, i) => (
+          <div key={f} className="flex items-center gap-1.5 text-xs">
+            <span className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: PALETTE[i % PALETTE.length] }} />
+            <span className="text-gray-600 dark:text-zinc-300">{f}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function otherTotal(stacked: { values: Record<string, number> }[]): boolean {
+  return stacked.some((s) => (s.values['Other'] ?? 0) > 0)
+}
+
+function formatMonth(ym: string): string {
+  const [y, m] = ym.split('-')
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  return `${months[Number(m) - 1]} ${y.slice(2)}`
+}
+
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -312,6 +497,20 @@ export default function InsightsPage() {
           <StatCard value={`${refPct}%`} label="Use references" sub={`${stats.withReference ?? 0} prompts`} color="#f97316" />
           <StatCard value={byModelAggregated.length} label="Distinct models" color="#3b82f6" />
         </div>
+
+        {/* Prompts over time */}
+        {(stats.timeline?.length ?? 0) >= 2 && (
+          <Section title="Prompts Over Time" description="Monthly ingestion rate — how the dataset is growing.">
+            <TimelineChart data={stats.timeline} />
+          </Section>
+        )}
+
+        {/* Model share over time */}
+        {(stats.modelTimeline?.length ?? 0) > 0 && (
+          <Section title="Model Share by Month" description="How model popularity is shifting — which tools creators are adopting.">
+            <ModelShareTimelineChart data={stats.modelTimeline} modelFamilyFn={modelToFamily} />
+          </Section>
+        )}
 
         {/* Technique distribution */}
         {(stats.byCategory?.length ?? 0) > 0 && (
