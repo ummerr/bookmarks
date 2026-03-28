@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     tool_choice: { type: 'tool', name: 'generate_variations' },
     messages: [{
       role: 'user',
-      content: `Generate ${count} creative variations of this AI image/video prompt. Each should feel meaningfully different — vary character, setting, mood, style, or action significantly. Preserve any technical suffixes (e.g. "--ar 16:9") exactly. Also list 2–4 short phrases naming the biggest changes from the original.
+      content: `Generate ${count} creative variations of this AI image/video prompt. Each should feel meaningfully different - vary character, setting, mood, style, or action significantly. Preserve any technical suffixes (e.g. "--ar 16:9") exactly. Also list 2–4 short phrases naming the biggest changes from the original.
 
 Original prompt:
 ${prompt}

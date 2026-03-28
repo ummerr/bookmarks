@@ -36,7 +36,7 @@ export default function Sidebar({
 
   return (
     <aside className="flex flex-col gap-3 md:gap-6 md:w-56 md:shrink-0">
-      {/* Logo / brand — hidden on mobile (shown in Nav) */}
+      {/* Logo / brand - hidden on mobile (shown in Nav) */}
       <div className="hidden md:flex items-center gap-2 px-1">
         <span className="text-[#1DA1F2] text-lg">✦</span>
         <span className="font-semibold text-gray-900 dark:text-white text-sm tracking-wide">Bookmarks</span>
@@ -67,7 +67,7 @@ export default function Sidebar({
         </svg>
       </button>
 
-      {/* Search + Category filters — always visible on desktop, collapsible on mobile */}
+      {/* Search + Category filters - always visible on desktop, collapsible on mobile */}
       <div className={`flex flex-col gap-3 md:gap-6 ${mobileOpen ? 'flex' : 'hidden'} md:flex`}>
         {/* Search */}
         <div className="relative">
@@ -117,7 +117,7 @@ export default function Sidebar({
         </nav>
       </div>
 
-      {/* Classified status — hidden on mobile */}
+      {/* Classified status - hidden on mobile */}
       <div className="hidden md:flex items-center justify-between text-xs px-1">
         <span className="text-gray-400 dark:text-zinc-600">
           {counts.all - counts.pending} classified
@@ -127,7 +127,7 @@ export default function Sidebar({
         )}
       </div>
 
-      {/* Nav links — hidden on mobile (shown in Nav) */}
+      {/* Nav links - hidden on mobile (shown in Nav) */}
       <div className="hidden md:flex mt-auto flex-col gap-0.5 border-t border-black/[0.08] dark:border-white/8 pt-4">
         <Link
           href="/prompts"

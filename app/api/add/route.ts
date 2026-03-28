@@ -27,7 +27,7 @@ export async function POST(req: Request) {
       })
       return NextResponse.json({ ...bookmark, ...result })
     } catch {
-      // Classification failed — still return the saved bookmark
+      // Classification failed - still return the saved bookmark
       return NextResponse.json(bookmark)
     }
   } catch (err) {

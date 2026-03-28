@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getAllPromptsForReclassify, updatePromptExtraction, countAllPrompts } from '@/lib/db'
 import { classifyPromptBatch } from '@/lib/classifier'
 
-// Single batch per request — stays under Vercel Hobby 10s timeout.
+// Single batch per request - stays under Vercel Hobby 10s timeout.
 // Client loops with offset pagination.
 const BATCH_SIZE = 5
 

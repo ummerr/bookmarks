@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!bookmark) return {}
 
   const prompt = bookmark.extracted_prompt ?? bookmark.tweet_text
-  const title = prompt.length > 80 ? `${prompt.slice(0, 80).trimEnd()}… — prompts.ummerr.com` : `${prompt} — prompts.ummerr.com`
+  const title = prompt.length > 80 ? `${prompt.slice(0, 80).trimEnd()}… - prompts.ummerr.com` : `${prompt} - prompts.ummerr.com`
   const description = prompt.length > 200 ? `${prompt.slice(0, 200).trimEnd()}…` : prompt
   const ogImage = `https://prompts.ummerr.com/prompts/${id}/opengraph-image`
 

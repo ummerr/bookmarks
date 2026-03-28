@@ -123,7 +123,7 @@ async function fetchPromptFromComments(subreddit: string, postId: string): Promi
       }
     }
   } catch {
-    // Ignore comment fetch errors — best-effort only
+    // Ignore comment fetch errors - best-effort only
   }
   return null
 }

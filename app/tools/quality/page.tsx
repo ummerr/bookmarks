@@ -175,7 +175,7 @@ export default function QualityPage() {
           </Link>
           <h1 className="text-xl font-bold text-gray-900 dark:text-white mt-2">Dataset Quality Audit</h1>
           <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">
-            <span className="font-mono font-semibold">{data.total.toLocaleString()}</span> total prompts — flagged by {strategyOrder.length} heuristics
+            <span className="font-mono font-semibold">{data.total.toLocaleString()}</span> total prompts - flagged by {strategyOrder.length} heuristics
           </p>
         </div>
 
@@ -213,7 +213,7 @@ export default function QualityPage() {
         {/* Length distribution */}
         <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-5">
           <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">Prompt length distribution</h3>
-          <p className="text-xs text-gray-400 dark:text-zinc-500 mb-4">Character count of extracted_prompt — helps calibrate the &quot;too short&quot; threshold</p>
+          <p className="text-xs text-gray-400 dark:text-zinc-500 mb-4">Character count of extracted_prompt - helps calibrate the &quot;too short&quot; threshold</p>
           <div className="flex flex-col gap-1.5">
             {data.distributions.prompt_length.map((b) => (
               <div key={b.bucket} className="flex items-center gap-3">

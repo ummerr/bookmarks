@@ -105,17 +105,19 @@ function Section({ title, children, id }: { title: string; children: React.React
   )
 }
 
-function Insight({ quote, source, color = '#1DA1F2' }: { quote: string; source: string; color?: string }) {
+function Insight({ quote, source, sourceUrl, color = '#1DA1F2' }: { quote: string; source: string; sourceUrl?: string; color?: string }) {
   return (
     <div className="rounded-xl border bg-white dark:bg-[#111] p-6" style={{ borderColor: `${color}30` }}>
       <p className="font-serif text-base md:text-[17px] italic text-gray-800 dark:text-zinc-100 leading-[1.6]">"{quote}"</p>
-      <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400 dark:text-zinc-500">{source}</p>
+      <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400 dark:text-zinc-500">
+        {sourceUrl ? <a href={sourceUrl} target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 dark:hover:text-zinc-300 hover:underline">{source}</a> : source}
+      </p>
     </div>
   )
 }
 
-function FindingCard({ number, title, body, color }: {
-  number: string; title: string; body: string; color: string
+function FindingCard({ number, title, body, color, sources }: {
+  number: string; title: string; body: string; color: string; sources?: { label: string; url: string }[]
 }) {
   return (
     <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-5 md:p-6 flex gap-5">
@@ -123,6 +125,15 @@ function FindingCard({ number, title, body, color }: {
       <div className="flex flex-col gap-2">
         <div className="text-[15px] font-semibold text-gray-900 dark:text-white leading-snug">{title}</div>
         <div className="text-[15px] text-gray-500 dark:text-zinc-400 leading-[1.75]">{body}</div>
+        {sources && sources.length > 0 && (
+          <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
+            {sources.map((s) => (
+              <a key={s.url} href={s.url} target="_blank" rel="noopener noreferrer" className="text-[11px] text-gray-400 dark:text-zinc-500 hover:text-violet-600 dark:hover:text-violet-400 hover:underline transition-colors">
+                {s.label} ↗
+              </a>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )
@@ -272,7 +283,7 @@ export default function StateOfPromptingPage() {
             <h1 className="font-serif text-3xl md:text-4xl text-gray-900 dark:text-white tracking-tight">References are the new Template</h1>
             <p className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-gray-400 dark:text-zinc-500">State of Prompting · Mar 2026</p>
             <p className="mt-3 text-[15px] text-gray-500 dark:text-zinc-400 leading-[1.7] max-w-2xl">
-              The best creators stopped writing longer prompts — they started uploading better references. Here's what the data says about where prompting is headed.
+              The best creators stopped writing longer prompts - they started uploading better references. Here's what the data says about where prompting is headed.
             </p>
           </div>
           <div className="flex items-center justify-between gap-4 pt-2 border-t border-black/[0.06] dark:border-white/6">
@@ -295,25 +306,38 @@ export default function StateOfPromptingPage() {
                   number="01"
                   color="#ec4899"
                   title="References replaced descriptions"
-                  body="Midjourney added --sref and --cref. Runway, Kling, and Veo made image-to-video a core feature. A photo of a face contains more information than any sentence describing one — so creators stopped writing and started uploading."
+                  body="Midjourney added --sref and --cref. Runway, Kling, and Veo made image-to-video a core feature. A photo of a face contains more information than any sentence describing one - so creators stopped writing and started uploading."
+                  sources={[
+                    { label: 'State of AI Video Creation 2026 - Vivideo', url: 'https://vivideo.ai/blog/state-of-ai-video-creation-2026' },
+                  ]}
                 />
                 <FindingCard
                   number="02"
                   color="#8b5cf6"
                   title="Prompt engineering as a discipline is over"
-                  body="'Prompt Engineer' ranked second-to-last in new AI roles companies plan to hire. Andrej Karpathy named the successor: context engineering — what information the AI sees matters more than how you phrase the request."
+                  body="'Prompt Engineer' ranked second-to-last in new AI roles companies plan to hire. Andrej Karpathy named the successor: context engineering - what information the AI sees matters more than how you phrase the request."
+                  sources={[
+                    { label: 'Prompt Engineering Is Dead - IEEE Spectrum', url: 'https://spectrum.ieee.org/prompt-engineering-is-dead' },
+                    { label: 'Prompt Engineering Jobs Are Obsolete - Salesforce Ben', url: 'https://www.salesforceben.com/prompt-engineering-jobs-are-obsolete-in-2025-heres-why/' },
+                  ]}
                 />
                 <FindingCard
                   number="03"
                   color="#a855f7"
                   title="No single model wins everywhere"
                   body="Veo 3.1 sweeps T2V. Grok leads I2V and Video Edit. Gemini leads T2I. Switching models for different task types produces bigger gains than rewriting the same prompt."
+                  sources={[
+                    { label: 'Artificial Analysis Arena', url: 'https://artificialanalysis.ai/text-to-video/arena' },
+                  ]}
                 />
                 <FindingCard
                   number="04"
                   color="#f59e0b"
                   title="The best video prompts describe forces, not aesthetics"
                   body="'Gimbal tracking shot, rear suspension compressing on impact' beats 'cinematic car scene' every time. The prompts that work describe physics: camera movement, forces on objects, cause and effect."
+                  sources={[
+                    { label: 'How to Actually Control Next-Gen Video AI - Medium', url: 'https://medium.com/@creativeaininja/how-to-actually-control-next-gen-video-ai-runway-kling-veo-and-sora-prompting-strategies-92ef0055658b' },
+                  ]}
                 />
               </div>
             </Section>
@@ -321,7 +345,7 @@ export default function StateOfPromptingPage() {
             <Section title="The Shift to References" id="references">
               <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <p>
-                  In 2023, the dominant idea was simple: write a better prompt, get a better output. By 2025, that had quietly collapsed — not through debate, but through tooling.
+                  In 2023, the dominant idea was simple: write a better prompt, get a better output. By 2025, that had quietly collapsed - not through debate, but through tooling.
                 </p>
                 <p>
                   Midjourney introduced <code className="text-xs bg-black/[0.05] dark:bg-white/[0.05] px-1 py-0.5 rounded">--sref</code> (style reference) and <code className="text-xs bg-black/[0.05] dark:bg-white/[0.05] px-1 py-0.5 rounded">--cref</code> (character reference). Runway, Kling, and Veo made image-to-video a core feature. Creators stopped describing their characters and started uploading character sheets. Style boards replaced style adjectives.
@@ -331,7 +355,7 @@ export default function StateOfPromptingPage() {
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
                   {[
-                    { label: 'Character reference', desc: 'Consistent faces and identity across every shot — no description needed', color: '#ec4899' },
+                    { label: 'Character reference', desc: 'Consistent faces and identity across every shot - no description needed', color: '#ec4899' },
                     { label: 'Style reference', desc: 'Lock the visual look to an image instead of trying to describe it in words', color: '#8b5cf6' },
                     { label: 'Pose reference', desc: 'Control body position and composition using a skeleton or layout image', color: '#f97316' },
                   ].map((r) => (
@@ -353,12 +377,13 @@ export default function StateOfPromptingPage() {
             <Section title="From Prompt Engineering to Context Engineering" id="prompt-engineering">
               <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <Insight
-                  quote="The primitive era of prompt engineering — characterized by trial-and-error iteration and artisanal prompt crafting — died somewhere between late 2024 and early 2025."
-                  source="Death of Prompt Engineering: AI Orchestration in 2026 — BigBlue Academy"
+                  quote="The primitive era of prompt engineering - characterized by trial-and-error iteration and artisanal prompt crafting - died somewhere between late 2024 and early 2025."
+                  source="Death of Prompt Engineering: AI Orchestration in 2026 - BigBlue Academy"
+                  sourceUrl="https://bigblue.academy/en/the-death-of-prompt-engineering-and-its-ruthless-resurrection-navigating-ai-orchestration-in-2026-and-beyond"
                   color="#f97316"
                 />
                 <p>
-                  Andrej Karpathy named the successor in mid-2025: <span className="font-medium text-gray-900 dark:text-white">context engineering</span> — what information the AI sees matters more than how you phrase the request. For image and video generation, context means the full brief: reference images, audio clips, previous frames, and text. The skill is knowing what to include and what to leave out.
+                  <a href="https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">Andrej Karpathy named the successor</a> in mid-2025: <span className="font-medium text-gray-900 dark:text-white">context engineering</span> - what information the AI sees matters more than how you phrase the request. For image and video generation, context means the full brief: reference images, audio clips, previous frames, and text. The skill is knowing what to include and what to leave out.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {[
@@ -379,7 +404,7 @@ export default function StateOfPromptingPage() {
                     },
                     {
                       label: 'Maintain a style card',
-                      desc: 'For multi-scene work, keep a consistent core brief — character, palette, look — rather than re-explaining each time.',
+                      desc: 'For multi-scene work, keep a consistent core brief - character, palette, look - rather than re-explaining each time.',
                       color: '#14b8a6',
                     },
                   ].map((item) => (
@@ -397,13 +422,13 @@ export default function StateOfPromptingPage() {
                 {[
                   {
                     title: 'Start with a reference, add text second',
-                    body: 'Upload a face, a style frame, or a composition sketch. Then write directorial notes on top. This inverts the 2023 workflow — and it\'s what the best practitioners in the dataset already do.',
+                    body: 'Upload a face, a style frame, or a composition sketch. Then write directorial notes on top. This inverts the 2023 workflow - and it\'s what the best practitioners in the dataset already do.',
                     color: '#f97316',
                     icon: '📂',
                   },
                   {
                     title: 'Switch models before rewriting the prompt',
-                    body: 'Veo leads T2V. Grok leads I2V. Gemini leads T2I. No model wins everywhere. Run the same prompt through two tools before spending time on iteration — the model gap is larger than the prompt gap.',
+                    body: 'Veo leads T2V. Grok leads I2V. Gemini leads T2I. No model wins everywhere. Run the same prompt through two tools before spending time on iteration - the model gap is larger than the prompt gap.',
                     color: '#8b5cf6',
                     icon: '🔬',
                   },
@@ -421,7 +446,7 @@ export default function StateOfPromptingPage() {
                   },
                   {
                     title: 'Explore the dataset',
-                    body: 'Everything in this report is grounded in real prompts from real practitioners. Browse them, shuffle them, see what actually goes viral — then adapt.',
+                    body: 'Everything in this report is grounded in real prompts from real practitioners. Browse them, shuffle them, see what actually goes viral - then adapt.',
                     color: '#14b8a6',
                     icon: '✦',
                     href: '/prompts',
@@ -448,14 +473,15 @@ export default function StateOfPromptingPage() {
             <Section title="How Video Prompting Works Now" id="video">
               <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <p>
-                  Video prompting is a different skill from image prompting. Each of the major tools has a distinct personality — a prompt that works on one can fail on another.
+                  Video prompting is a different skill from image prompting. Each of the major tools has a distinct personality - a prompt that works on one can fail on another.
                 </p>
                 <Insight
                   quote="Modern prompting requires stopping description of what things look like and instead describing the forces acting on them."
-                  source="How to Actually Control Next-Gen Video AI — Medium"
+                  source="How to Actually Control Next-Gen Video AI - Medium"
+                  sourceUrl="https://medium.com/@creativeaininja/how-to-actually-control-next-gen-video-ai-runway-kling-veo-and-sora-prompting-strategies-92ef0055658b"
                   color="#8b5cf6"
                 />
-                {/* Arena leaderboards — real data from Artificial Analysis */}
+                {/* Arena leaderboards - real data from Artificial Analysis */}
                 <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-5 md:p-6">
                   <div className="flex items-center justify-between mb-1">
                     <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Arena Leaderboards</h4>
@@ -556,44 +582,50 @@ export default function StateOfPromptingPage() {
                     {
                       model: 'Veo 3.1',
                       personality: 'T2V Arena #1',
-                      desc: "Google's Veo 3.1 dominates the T2V arena — holding the top 5 spots in various configurations. Native audio generation, 1080p output, and deep integration with Google infrastructure. Works best with structured, ingredient-list prompts and reference images.",
+                      desc: "Google's Veo 3.1 dominates the T2V arena - holding the top 5 spots in various configurations. Native audio generation, 1080p output, and deep integration with Google infrastructure. Works best with structured, ingredient-list prompts and reference images.",
                       strategy: 'Lead with subject and shot type. Upload reference images instead of describing them. Use labelled sections for dialogue and sound effects. Provide a start frame and end frame and it fills in the motion.',
                       color: '#1DA1F2',
+                      sourceUrl: 'https://aimlapi.com/blog/google-veo-3-1',
                     },
                     {
                       model: 'Seedance 2.0',
                       personality: 'Reference Prompting King',
-                      desc: "ByteDance's breakout model and arguably the most hyped release of Q1 2026. Excels at reference-based generation — feed it character sheets, style boards, or scene photos and it maintains extraordinary fidelity across clips. Native lip-sync, audio generation, and timestamp syntax. The model that made \"upload first, prompt second\" the default workflow for video creators.",
-                      strategy: 'Lead with reference images — character sheets, style frames, environment photos. Use [Xs]: timestamp syntax for multi-cut sequences. Describe motion and forces rather than aesthetics. Let the references carry the visual identity.',
+                      desc: "ByteDance's breakout model and arguably the most hyped release of Q1 2026. Excels at reference-based generation - feed it character sheets, style boards, or scene photos and it maintains extraordinary fidelity across clips. Native lip-sync, audio generation, and timestamp syntax. The model that made \"upload first, prompt second\" the default workflow for video creators.",
+                      strategy: 'Lead with reference images - character sheets, style frames, environment photos. Use [Xs]: timestamp syntax for multi-cut sequences. Describe motion and forces rather than aesthetics. Let the references carry the visual identity.',
+                      sourceUrl: 'https://seed.bytedance.com/en/seedance2_0',
                       color: '#10b981',
                     },
                     {
                       model: 'Grok Imagine Video',
                       personality: 'I2V Arena #1',
-                      desc: "Built on Aurora's autoregressive architecture. #1 on the I2V arena (ELO 1,404) and #1 on Video Edit (ELO 1,259). Generates up to 15 seconds in ~17 seconds. Supports video extension and iterative chat editing — refine with natural language rather than rewriting.",
+                      desc: "Built on Aurora's autoregressive architecture. #1 on the I2V arena (ELO 1,404) and #1 on Video Edit (ELO 1,259). Generates up to 15 seconds in ~17 seconds. Supports video extension and iterative chat editing - refine with natural language rather than rewriting.",
                       strategy: 'Use comma-separated ingredient prompts rather than prose. Feed a reference image to anchor style and subject. Use iterative chat refinement rather than rewriting from scratch.',
                       color: '#9333ea',
+                      sourceUrl: 'https://artificialanalysis.ai/text-to-video/arena',
                     },
                     {
                       model: 'Kling',
                       personality: 'Multi-Shot Pioneer',
-                      desc: 'The model that pioneered storyboard-mode prompting — up to 6 distinct camera cuts from a single prompt. KlingAI holds #2 and #3 on the Video Edit arena (O3 Pro at 1,248, O1 Pro at 1,208). Native lip-sync, speaker attribution, and the most granular shot-by-shot control of any current model.',
+                      desc: 'The model that pioneered storyboard-mode prompting - up to 6 distinct camera cuts from a single prompt. KlingAI holds #2 and #3 on the Video Edit arena (O3 Pro at 1,248, O1 Pro at 1,208). Native lip-sync, speaker attribution, and the most granular shot-by-shot control of any current model.',
                       strategy: 'Use Custom Storyboard mode for full control. Structure each shot as: Scene → Characters → Action → Camera → Audio. Label dialogue per speaker. Give it as many reference files as you have.',
                       color: '#ec4899',
+                      sourceUrl: 'https://cybernews.com/ai-tools/kling-ai-review/',
                     },
                     {
                       model: 'Gemini Image',
                       personality: 'T2I & Edit Arena #1',
                       desc: "Google's Gemini models dominate both the T2I arena (#1 at 1,265) and Image Edit (#2–#4). The Flash variant leads T2I; the Pro variant leads editing. Native multimodal understanding means it handles text-in-image and complex compositions better than dedicated image models.",
-                      strategy: 'Be explicit about text placement, composition, and style. For edits, describe what to change conversationally — it understands context from the source image.',
+                      strategy: 'Be explicit about text placement, composition, and style. For edits, describe what to change conversationally - it understands context from the source image.',
                       color: '#f97316',
+                      sourceUrl: 'https://artificialanalysis.ai/text-to-image/arena',
                     },
                     {
                       model: '🪦 Sora 2',
                       personality: 'Fully Deprecated Mar 2026',
-                      desc: 'OpenAI is shutting down both the Sora consumer app and API. At its peak, Sora 2 was the only non-Google model in the T2V top 5 (ELO 1,367) — but at ~$1.30 per 10-second clip and ~11.3M videos/day, the $5.4B annualized burn rate was never sustainable.',
+                      desc: 'OpenAI is shutting down both the Sora consumer app and API. At its peak, Sora 2 was the only non-Google model in the T2V top 5 (ELO 1,367) - but at ~$1.30 per 10-second clip and ~11.3M videos/day, the $5.4B annualized burn rate was never sustainable.',
                       strategy: 'Migrate to Veo 3.1 (T2V #1) or Kling 3.0 for video generation. No Sora endpoint will remain available.',
                       color: '#6b7280',
+                      sourceUrl: 'https://www.remio.ai/post/the-real-sora-cost-openai-s-5-billion-ai-video-problem',
                     },
                   ].map((m) => (
                     <div
@@ -610,6 +642,11 @@ export default function StateOfPromptingPage() {
                         <p className="text-[11px] font-semibold uppercase tracking-widest mb-1" style={{ color: m.color }}>What works</p>
                         <p className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">{m.strategy}</p>
                       </div>
+                      {m.sourceUrl && (
+                        <a href={m.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[11px] text-gray-400 dark:text-zinc-500 hover:text-violet-600 dark:hover:text-violet-400 hover:underline transition-colors mt-0.5">
+                          Source ↗
+                        </a>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -624,7 +661,7 @@ export default function StateOfPromptingPage() {
                     ))}
                   </div>
                   <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1">
-                    For scenes with multiple actions: use timed segments — <span className="font-mono text-gray-600 dark:text-zinc-300">(0–5s)</span>, <span className="font-mono text-gray-600 dark:text-zinc-300">(5–12s)</span> — rather than describing everything at once. Physics-based tools handle sequential instructions better than simultaneous ones.
+                    For scenes with multiple actions: use timed segments - <span className="font-mono text-gray-600 dark:text-zinc-300">(0–5s)</span>, <span className="font-mono text-gray-600 dark:text-zinc-300">(5–12s)</span> - rather than describing everything at once. Physics-based tools handle sequential instructions better than simultaneous ones.
                   </p>
                 </div>
                 <RealPrompt
@@ -634,7 +671,7 @@ export default function StateOfPromptingPage() {
                   onShuffle={() => fetchPrompt('video', 'group=video')}
                 />
                 <p>
-                  The most underrated shift: sound. Kling 3.0 and Veo 3.1 now generate audio — effects, ambient noise, dialogue — in the same pass as the video. Describe it in the brief from the start or it becomes an afterthought.
+                  The most underrated shift: sound. Kling 3.0 and Veo 3.1 now generate audio - effects, ambient noise, dialogue - in the same pass as the video. Describe it in the brief from the start or it becomes an afterthought.
                 </p>
               </div>
             </Section>
@@ -642,10 +679,10 @@ export default function StateOfPromptingPage() {
             <Section title="Multi-Shot Prompting" id="multishot">
               <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <p>
-                  Single-shot AI video is B-roll. Multi-shot AI video is an edited scene. Kling 3.0's February 2026 launch popularized the technique — and it's now the standard for anything with narrative structure.
+                  Single-shot AI video is B-roll. Multi-shot AI video is an edited scene. <a href="https://blog.fal.ai/kling-3-0-prompting-guide/" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">Kling 3.0's February 2026 launch</a> popularized the technique - and it's now the standard for anything with narrative structure.
                 </p>
                 <p>
-                  Multi-shot prompting describes two or more distinct camera cuts in a single prompt. The model generates them as a coherent sequence — same characters, consistent environment, natural transitions. The underlying research (Kuaishou's MultiShotMaster, CVPR 2026) modified how the model handles position embeddings to deliberately break continuity at shot boundaries while keeping character identity stable across them.
+                  Multi-shot prompting describes two or more distinct camera cuts in a single prompt. The model generates them as a coherent sequence - same characters, consistent environment, natural transitions. The underlying research (<a href="https://arxiv.org/html/2512.03041" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">Kuaishou's MultiShotMaster, CVPR 2026</a>) modified how the model handles position embeddings to deliberately break continuity at shot boundaries while keeping character identity stable across them.
                 </p>
                 <div className="rounded-xl border border-black/[0.08] dark:border-white/8 overflow-hidden">
                   <div className="grid grid-cols-1 sm:grid-cols-2">
@@ -656,13 +693,13 @@ export default function StateOfPromptingPage() {
                         <span className="text-[11px] font-bold uppercase tracking-widest text-pink-600 dark:text-pink-400">Kling 3.0</span>
                         <span className="ml-auto text-[11px] text-gray-400 dark:text-zinc-500">Shot-label format</span>
                       </div>
-                      <pre className="text-[11px] text-gray-600 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap font-mono p-4 bg-white dark:bg-[#111]">{`Shot 1 (0–4s): Wide — rain-soaked city street,
+                      <pre className="text-[11px] text-gray-600 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap font-mono p-4 bg-white dark:bg-[#111]">{`Shot 1 (0–4s): Wide - rain-soaked city street,
 amber streetlights, slow dolly forward.
 
-Shot 2 (4–8s): Medium — woman in red coat
+Shot 2 (4–8s): Medium - woman in red coat
 running through alley, tracking shot.
 
-Shot 3 (8–12s): Close-up — catching breath,
+Shot 3 (8–12s): Close-up - catching breath,
 eyes wide. [breathless]: "They found us."`}</pre>
                       <div className="px-4 py-2 border-t border-black/[0.04] dark:border-white/[0.04] bg-black/[0.01] dark:bg-white/[0.01]">
                         <p className="text-[11px] text-gray-400 dark:text-zinc-500">Up to 6 shots · native lip-sync · speaker attribution</p>
@@ -675,17 +712,17 @@ eyes wide. [breathless]: "They found us."`}</pre>
                         <span className="text-[11px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Seedance 2.0</span>
                         <span className="ml-auto text-[11px] text-gray-400 dark:text-zinc-500">Timestamp format</span>
                       </div>
-                      <pre className="text-[11px] text-gray-600 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap font-mono p-4 bg-white dark:bg-[#111]">{`[0s]: Wide shot — character enters a dimly
+                      <pre className="text-[11px] text-gray-600 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap font-mono p-4 bg-white dark:bg-[#111]">{`[0s]: Wide shot - character enters a dimly
 lit cafe, looking around curiously.
 
 [Shot switch]
 
-[5s]: Medium — sitting down, ordering
+[5s]: Medium - sitting down, ordering
 coffee with a warm smile.
 
 [Shot switch]
 
-[10s]: Close-up — eyes react as someone
+[10s]: Close-up - eyes react as someone
 enters. Warm golden lighting.`}</pre>
                       <div className="px-4 py-2 border-t border-black/[0.04] dark:border-white/[0.04] bg-black/[0.01] dark:bg-white/[0.01]">
                         <p className="text-[11px] text-gray-400 dark:text-zinc-500">Uses <code className="bg-black/[0.05] dark:bg-white/[0.05] px-1 rounded">Shot switch</code> or <code className="bg-black/[0.05] dark:bg-white/[0.05] px-1 rounded">Cut to</code> as scene markers</p>
@@ -710,25 +747,25 @@ enters. Warm golden lighting.`}</pre>
                     { model: 'Kling 3.0',       shots: '6',  syntax: 'Shot N (Xs): …',            lipsync: true,  color: '#ec4899' },
                     { model: 'Seedance 2.0',    shots: '3–5', syntax: '[Xs]: … / Shot switch',     lipsync: true,  color: '#10b981' },
                     { model: 'Veo 3.1',         shots: '2–3', syntax: 'Start/end frame reference', lipsync: true,  color: '#1DA1F2' },
-                    { model: 'Runway Gen-4.5',  shots: '1',  syntax: 'Single shot — assemble in post', lipsync: false, color: '#f97316' },
+                    { model: 'Runway Gen-4.5',  shots: '1',  syntax: 'Single shot - assemble in post', lipsync: false, color: '#f97316' },
                     { model: 'Grok Imagine Video', shots: '1', syntax: 'Single shot per generation', lipsync: false, color: '#9333ea' },
                   ].map((row, i) => (
                     <div key={row.model} className={`grid grid-cols-4 px-4 py-2.5 text-xs items-center gap-2 ${i % 2 === 0 ? '' : 'bg-black/[0.015] dark:bg-white/[0.015]'}`}>
                       <span className="font-semibold" style={{ color: row.color }}>{row.model}</span>
                       <span className="text-gray-600 dark:text-zinc-300 font-medium">{row.shots}</span>
                       <span className="text-gray-500 dark:text-zinc-400">{row.syntax}</span>
-                      <span>{row.lipsync ? <span className="text-violet-500 font-medium">✓</span> : <span className="text-gray-300 dark:text-zinc-600">—</span>}</span>
+                      <span>{row.lipsync ? <span className="text-violet-500 font-medium">✓</span> : <span className="text-gray-300 dark:text-zinc-600">-</span>}</span>
                     </div>
                   ))}
                 </div>
                 <div className="rounded-xl bg-pink-50 dark:bg-pink-950/20 border border-pink-200 dark:border-pink-800/30 p-4">
                   <p className="text-sm text-pink-700 dark:text-pink-300 leading-relaxed">
-                    <span className="font-semibold">The Continuity Lock.</span> Open every multi-shot prompt with a shared constants block — time of day, location, character description, color grade, visual style. This is the "lock sheet" that anchors all shots to the same world. Repeat the same character descriptors verbatim in every shot. Even small wording changes can cause face drift.
+                    <span className="font-semibold">The Continuity Lock.</span> Open every multi-shot prompt with a shared constants block - time of day, location, character description, color grade, visual style. This is the "lock sheet" that anchors all shots to the same world. Repeat the same character descriptors verbatim in every shot. Even small wording changes can cause face drift.
                   </p>
                 </div>
                 <div className="rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/30 p-4">
                   <p className="text-sm text-amber-700 dark:text-amber-300 leading-relaxed">
-                    <span className="font-semibold">Where it breaks down.</span> Character consistency degrades past 4–5 shots. Hard cuts between very different environments (outdoor → indoor, day → night) produce visual seams. Timestamps are probabilistic — the model interprets them, not executes them literally. No current model stores character profiles between sessions: if you come back tomorrow, re-anchor with the same reference image.
+                    <span className="font-semibold">Where it breaks down.</span> Character consistency degrades past 4–5 shots. Hard cuts between very different environments (outdoor → indoor, day → night) produce visual seams. Timestamps are probabilistic - the model interprets them, not executes them literally. No current model stores character profiles between sessions: if you come back tomorrow, re-anchor with the same reference image.
                   </p>
                 </div>
               </div>
@@ -737,7 +774,7 @@ enters. Warm golden lighting.`}</pre>
             <Section title="Every Major Tool Now Accepts Multiple Input Types" id="multimodal">
               <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <p>
-                  A year ago, most AI video tools had one input: a text box. Today every major platform accepts text, images, audio, and video in combination.
+                  A year ago, most AI video tools had one input: a text box. Today every major platform accepts text, images, audio, and video in combination. <span className="text-[11px] text-gray-400 dark:text-zinc-500">(Capabilities verified via <a href="https://vivideo.ai/blog/state-of-ai-video-creation-2026" target="_blank" rel="noopener noreferrer" className="hover:text-violet-600 dark:hover:text-violet-400 hover:underline">Vivideo</a>, <a href="https://pxz.ai/blog/veo-31-vs-top-ai-video-generators-2026" target="_blank" rel="noopener noreferrer" className="hover:text-violet-600 dark:hover:text-violet-400 hover:underline">PXZ</a>, and official documentation, Mar 2026)</span>
                 </p>
                 <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] overflow-hidden">
                   <div className="grid grid-cols-4 text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 border-b border-black/[0.06] dark:border-white/6 px-4 py-2.5">
@@ -761,9 +798,9 @@ enters. Warm golden lighting.`}</pre>
                       className={`grid grid-cols-4 px-4 py-2.5 text-xs items-center ${p.dead ? 'opacity-50' : i % 2 === 0 ? '' : 'bg-black/[0.015] dark:bg-white/[0.015]'}`}
                     >
                       <span className={`font-medium ${p.dead ? 'text-gray-400 dark:text-zinc-500' : 'text-gray-800 dark:text-zinc-200'}`}>{p.name}</span>
-                      <span className={p.dead ? 'line-through' : ''}>{p.text ? '✓' : '—'}</span>
-                      <span className={p.dead ? 'line-through' : ''}>{p.visual ? <span className={p.dead ? 'text-gray-400' : 'text-emerald-500 font-medium'}>✓</span> : '—'}</span>
-                      <span className={p.dead ? 'line-through' : ''}>{p.audio ? <span className={p.dead ? 'text-gray-400' : 'text-violet-500 font-medium'}>✓</span> : <span className="text-gray-300 dark:text-zinc-600">—</span>}</span>
+                      <span className={p.dead ? 'line-through' : ''}>{p.text ? '✓' : '-'}</span>
+                      <span className={p.dead ? 'line-through' : ''}>{p.visual ? <span className={p.dead ? 'text-gray-400' : 'text-emerald-500 font-medium'}>✓</span> : '-'}</span>
+                      <span className={p.dead ? 'line-through' : ''}>{p.audio ? <span className={p.dead ? 'text-gray-400' : 'text-violet-500 font-medium'}>✓</span> : <span className="text-gray-300 dark:text-zinc-600">-</span>}</span>
                     </div>
                   ))}
                 </div>
@@ -771,7 +808,7 @@ enters. Warm golden lighting.`}</pre>
                   Text-only prompts leave most of the available control unused. The tools that accept reference images, audio clips, and video deliver substantially better results when you use those inputs.
                 </p>
                 <p className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">
-                  <span className="font-semibold text-purple-600 dark:text-purple-400">Aurora (xAI)</span> is the outlier — autoregressive (not diffusion), renders named real people (others refuse), and supports iterative chat editing. Prompt with comma-separated ingredients, not prose.
+                  <span className="font-semibold text-purple-600 dark:text-purple-400">Aurora (xAI)</span> is the outlier - autoregressive (not diffusion), renders named real people (others refuse), and supports iterative chat editing. Prompt with comma-separated ingredients, not prose.
                 </p>
               </div>
             </Section>
@@ -779,7 +816,7 @@ enters. Warm golden lighting.`}</pre>
             <Section title="From the Dataset" id="from-the-data">
               <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <p>
-                  The claims above come from industry reports. This section is different — it's what we see in <Link href="/prompts" className="text-violet-600 dark:text-violet-400 hover:underline font-medium">{stats?.total?.toLocaleString() ?? '—'} real prompts</Link> sourced from viral posts on X. Every prompt below is real — click shuffle to see more.
+                  The claims above come from industry reports. This section is different - it's what we see in <Link href="/prompts" className="text-violet-600 dark:text-violet-400 hover:underline font-medium">{stats?.total?.toLocaleString() ?? '-'} real prompts</Link> sourced from viral posts on X. Every prompt below is real - click shuffle to see more.
                 </p>
 
                 {stats && (
@@ -823,7 +860,7 @@ enters. Warm golden lighting.`}</pre>
                     {topModels.length > 0 && (
                       <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4">
                         <h4 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 mb-3">Which models go viral</h4>
-                        <p className="text-xs text-gray-500 dark:text-zinc-400 mb-3">Model frequency in high-engagement posts — not benchmark rankings, but what practitioners actually share.</p>
+                        <p className="text-xs text-gray-500 dark:text-zinc-400 mb-3">Model frequency in high-engagement posts - not benchmark rankings, but what practitioners actually share.</p>
                         <div className="flex flex-col gap-1.5">
                           {topModels.map((m, i) => {
                             const pct = stats.total ? Math.round((m.value / stats.total) * 100) : 0
@@ -847,18 +884,18 @@ enters. Warm golden lighting.`}</pre>
                       </div>
                     )}
 
-                    {/* Synthesis — one-line observations */}
+                    {/* Synthesis - one-line observations */}
                     <div className="rounded-xl border border-black/[0.06] dark:border-white/[0.06] bg-white dark:bg-[#111] p-4 flex flex-col gap-2">
                       <h4 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400 dark:text-zinc-500">What the numbers say</h4>
                       <div className="flex flex-col gap-1.5 text-xs text-gray-600 dark:text-zinc-300">
                         <p>→ <span className="font-medium">{refPct}% of viral prompts use reference images.</span> {refPct >= 40
-                          ? 'Reference is the new text — creators increasingly let images do the talking instead of writing longer descriptions.'
+                          ? 'Reference is the new text - creators increasingly let images do the talking instead of writing longer descriptions.'
                           : 'Reference-guided generation is best practice, not yet common practice. Most viral prompts are still text-only.'}</p>
                         <p>→ <span className="font-medium">{longPromptPct}% exceed 200 characters.</span> {longPromptPct >= 50
-                          ? 'Viral prompts tend to be detailed and descriptive — creators invest in specificity to get the output they want.'
+                          ? 'Viral prompts tend to be detailed and descriptive - creators invest in specificity to get the output they want.'
                           : 'Short, specific prompts outperform verbose ones. Models fill gaps better than they parse walls of text.'}</p>
                         {topThemes.length >= 3 && (
-                          <p>→ <span className="font-medium">Top themes: {topThemes.slice(0, 3).map((t) => t.label).join(', ')}.</span> The aesthetic distribution is heavily skewed — a few styles dominate viral engagement.</p>
+                          <p>→ <span className="font-medium">Top themes: {topThemes.slice(0, 3).map((t) => t.label).join(', ')}.</span> The aesthetic distribution is heavily skewed - a few styles dominate viral engagement.</p>
                         )}
                         <p>→ <span className="font-medium">What tops the arena ≠ what goes viral.</span> Accessibility, speed, and community familiarity drive sharing as much as raw output quality.</p>
                       </div>
@@ -875,7 +912,7 @@ enters. Warm golden lighting.`}</pre>
             <Section title="Why Sora Shut Down" id="sora">
               <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <p>
-                  On March 24, 2026 — six months after its public launch — OpenAI announced the full shutdown of Sora: the consumer app, ChatGPT video generation, and the API. All of it. At its peak, Sora 2 was the only non-Google model in the T2V top 5 (ELO 1,367), but the economics were never close to working.
+                  On March 24, 2026 - six months after its public launch - OpenAI announced the full shutdown of Sora: the consumer app, ChatGPT video generation, and the API. All of it. At its peak, Sora 2 was the only non-Google model in the T2V top 5 (ELO 1,367), but the economics were never close to working.
                 </p>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -898,13 +935,13 @@ enters. Warm golden lighting.`}</pre>
                     <div className="absolute left-[5px] top-2 bottom-2 w-px bg-gradient-to-b from-amber-400 via-red-400 to-red-600 dark:from-amber-500 dark:via-red-500 dark:to-red-700" />
                     <div className="flex flex-col gap-4">
                       {[
-                        { date: 'Sep 30, 2025', event: 'Sora launches publicly — 1 million downloads in the first week', severity: 0 },
-                        { date: 'Oct 2025', event: '4 million downloads by Halloween; Bill Peebles admits "the economics are currently completely unsustainable"', severity: 1 },
-                        { date: 'Nov 2025', event: 'Analyst Deepak Mathivanan (Cantor Fitzgerald) estimates $1.30/clip — ~40 min GPU time per video across 4 GPUs at ~$2/hr', severity: 1 },
-                        { date: 'Late 2025', event: 'OpenAI introduces paywall: $4 for 10 generations. Altman concedes "there is no ad model that can support the cost" of meme-making at scale', severity: 2 },
+                        { date: 'Sep 30, 2025', event: 'Sora launches publicly - 1 million downloads in the first week', severity: 0, sourceUrl: 'https://www.remio.ai/post/the-real-sora-cost-openai-s-5-billion-ai-video-problem' },
+                        { date: 'Oct 2025', event: '4 million downloads by Halloween; Bill Peebles admits "the economics are currently completely unsustainable"', severity: 1, sourceUrl: 'https://www.remio.ai/post/the-real-sora-cost-openai-s-5-billion-ai-video-problem' },
+                        { date: 'Nov 2025', event: 'Analyst Deepak Mathivanan (Cantor Fitzgerald) estimates $1.30/clip - ~40 min GPU time per video across 4 GPUs at ~$2/hr', severity: 1, sourceUrl: 'https://www.remio.ai/post/the-real-sora-cost-openai-s-5-billion-ai-video-problem' },
+                        { date: 'Late 2025', event: 'OpenAI introduces paywall: $4 for 10 generations. Altman concedes "there is no ad model that can support the cost" of meme-making at scale', severity: 2, sourceUrl: 'https://www.remio.ai/post/the-real-sora-cost-openai-s-5-billion-ai-video-problem' },
                         { date: 'Early 2026', event: 'Usage declines as free limits are slashed; competitors (Veo, Kling, Seedance) rapidly close the quality gap', severity: 2 },
-                        { date: 'Mar 24, 2026', event: 'OpenAI announces full Sora shutdown — app, API, and ChatGPT video generation. All of it.', severity: 3 },
-                      ].map(({ date, event, severity }) => {
+                        { date: 'Mar 24, 2026', event: 'OpenAI announces full Sora shutdown - app, API, and ChatGPT video generation. All of it.', severity: 3, sourceUrl: 'https://x.com/soraofficialapp' },
+                      ].map(({ date, event, severity, sourceUrl }) => {
                         const dotColor = severity === 0 ? 'bg-amber-400' : severity === 1 ? 'bg-orange-400' : severity === 2 ? 'bg-red-400' : 'bg-red-600'
                         const isTerminal = severity === 3
                         return (
@@ -912,7 +949,10 @@ enters. Warm golden lighting.`}</pre>
                             <div className={`relative z-10 shrink-0 mt-1.5 rounded-full ${dotColor} ${isTerminal ? 'w-3 h-3 -ml-[1px]' : 'w-[11px] h-[11px]'} ring-2 ring-white dark:ring-zinc-900`} />
                             <div className="flex flex-col gap-0.5 min-w-0">
                               <span className="text-[11px] font-mono font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">{date}</span>
-                              <span className={`text-xs leading-relaxed ${isTerminal ? 'text-red-600 dark:text-red-400 font-semibold' : 'text-gray-600 dark:text-zinc-300'}`}>{event}</span>
+                              <span className={`text-xs leading-relaxed ${isTerminal ? 'text-red-600 dark:text-red-400 font-semibold' : 'text-gray-600 dark:text-zinc-300'}`}>
+                                {event}
+                                {sourceUrl && <a href={sourceUrl} target="_blank" rel="noopener noreferrer" className="ml-1 text-gray-400 dark:text-zinc-500 hover:text-violet-600 dark:hover:text-violet-400"> ↗</a>}
+                              </span>
                             </div>
                           </div>
                         )
@@ -927,7 +967,7 @@ enters. Warm golden lighting.`}</pre>
 
                 <div className="rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30 p-4">
                   <p className="text-sm text-red-700 dark:text-red-300 leading-relaxed">
-                    <span className="font-semibold">The lesson.</span> The model did not survive either — OpenAI is deprecating the API alongside the consumer app. Each 10-second clip cost ~$1.30 to generate; at 11.3 million videos a day that's $15M daily, $5.4B annually — against a company already losing twice what it earns. The field consolidated around Google (Veo 3.1), xAI (Grok), and Kling/Seedance/Runway. Unlike other shutdowns, there's no API fallback this time.
+                    <span className="font-semibold">The lesson.</span> The model did not survive either - OpenAI is deprecating the API alongside the consumer app. Each 10-second clip cost ~$1.30 to generate; at 11.3 million videos a day that's $15M daily, $5.4B annually - against a company already losing twice what it earns. The field consolidated around Google (Veo 3.1), xAI (Grok), and Kling/Seedance/Runway. Unlike other shutdowns, there's no API fallback this time.
                   </p>
                 </div>
               </div>
@@ -936,32 +976,32 @@ enters. Warm golden lighting.`}</pre>
             <Section title="Sources" id="sources">
               <div className="flex flex-col gap-1.5 text-xs text-gray-500 dark:text-zinc-400">
                 {[
-                  { label: 'The State of AI Video Creation 2026 — Vivideo', url: 'https://vivideo.ai/blog/state-of-ai-video-creation-2026' },
-                  { label: "Prompt Engineering Is Dying — What's Replacing It in 2026 — Medium", url: 'https://medium.com/@shashanky485/prompt-engineering-is-dying-whats-replacing-it-in-2026-f88d821d77ee' },
-                  { label: 'Death of Prompt Engineering: AI Orchestration in 2026 — BigBlue Academy', url: 'https://bigblue.academy/en/the-death-of-prompt-engineering-and-its-ruthless-resurrection-navigating-ai-orchestration-in-2026-and-beyond' },
-                  { label: 'AI Prompt Engineering Is Dead — IEEE Spectrum', url: 'https://spectrum.ieee.org/prompt-engineering-is-dead' },
-                  { label: 'How to Actually Control Next-Gen Video AI — Medium', url: 'https://medium.com/@creativeaininja/how-to-actually-control-next-gen-video-ai-runway-kling-veo-and-sora-prompting-strategies-92ef0055658b' },
-                  { label: 'The State of AI Video Generation in February 2026 — Medium / Cliprise', url: 'https://medium.com/@cliprise/the-state-of-ai-video-generation-in-february-2026-every-major-model-analyzed-6dbfedbe3a5c' },
-                  { label: 'Veo 3.1 vs Top AI Video Generators: 2026 Comparison — PXZ', url: 'https://pxz.ai/blog/veo-31-vs-top-ai-video-generators-2026' },
-                  { label: 'Google Veo 3.1 Overview — AI/ML API Blog', url: 'https://aimlapi.com/blog/google-veo-3-1' },
-                  { label: 'Kling AI 3.0 Review 2026 — Cybernews', url: 'https://cybernews.com/ai-tools/kling-ai-review/' },
+                  { label: 'The State of AI Video Creation 2026 - Vivideo', url: 'https://vivideo.ai/blog/state-of-ai-video-creation-2026' },
+                  { label: "Prompt Engineering Is Dying - What's Replacing It in 2026 - Medium", url: 'https://medium.com/@shashanky485/prompt-engineering-is-dying-whats-replacing-it-in-2026-f88d821d77ee' },
+                  { label: 'Death of Prompt Engineering: AI Orchestration in 2026 - BigBlue Academy', url: 'https://bigblue.academy/en/the-death-of-prompt-engineering-and-its-ruthless-resurrection-navigating-ai-orchestration-in-2026-and-beyond' },
+                  { label: 'AI Prompt Engineering Is Dead - IEEE Spectrum', url: 'https://spectrum.ieee.org/prompt-engineering-is-dead' },
+                  { label: 'How to Actually Control Next-Gen Video AI - Medium', url: 'https://medium.com/@creativeaininja/how-to-actually-control-next-gen-video-ai-runway-kling-veo-and-sora-prompting-strategies-92ef0055658b' },
+                  { label: 'The State of AI Video Generation in February 2026 - Medium / Cliprise', url: 'https://medium.com/@cliprise/the-state-of-ai-video-generation-in-february-2026-every-major-model-analyzed-6dbfedbe3a5c' },
+                  { label: 'Veo 3.1 vs Top AI Video Generators: 2026 Comparison - PXZ', url: 'https://pxz.ai/blog/veo-31-vs-top-ai-video-generators-2026' },
+                  { label: 'Google Veo 3.1 Overview - AI/ML API Blog', url: 'https://aimlapi.com/blog/google-veo-3-1' },
+                  { label: 'Kling AI 3.0 Review 2026 - Cybernews', url: 'https://cybernews.com/ai-tools/kling-ai-review/' },
                   { label: 'Prompt Engineering in 2025: The Latest Best Practices', url: 'https://www.news.aakashg.com/p/prompt-engineering' },
-                  { label: 'AI Video Trends: Predictions For 2026 — LTX Studio', url: 'https://ltx.studio/blog/ai-video-trends' },
-                  { label: 'Prompt Engineering Jobs Are Obsolete in 2025 — Salesforce Ben', url: 'https://www.salesforceben.com/prompt-engineering-jobs-are-obsolete-in-2025-heres-why/' },
-                  { label: 'Context Engineering for Coding Agents — Martin Fowler', url: 'https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html' },
-                  { label: 'Seedance 2.0 Official — ByteDance Seed', url: 'https://seed.bytedance.com/en/seedance2_0' },
-                  { label: 'Seedance 2.0 vs Veo 3.1: Which Is Best? — SitePoint', url: 'https://www.sitepoint.com/seedance-2-0-vs-veo-3-1-which-is-best-for-ai-video-creators/' },
-                  { label: 'Seedance 2.0 Complete Guide — WaveSpeedAI', url: 'https://wavespeed.ai/blog/posts/seedance-2-0-complete-guide-multimodal-video-creation/' },
+                  { label: 'AI Video Trends: Predictions For 2026 - LTX Studio', url: 'https://ltx.studio/blog/ai-video-trends' },
+                  { label: 'Prompt Engineering Jobs Are Obsolete in 2025 - Salesforce Ben', url: 'https://www.salesforceben.com/prompt-engineering-jobs-are-obsolete-in-2025-heres-why/' },
+                  { label: 'Context Engineering for Coding Agents - Martin Fowler', url: 'https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html' },
+                  { label: 'Seedance 2.0 Official - ByteDance Seed', url: 'https://seed.bytedance.com/en/seedance2_0' },
+                  { label: 'Seedance 2.0 vs Veo 3.1: Which Is Best? - SitePoint', url: 'https://www.sitepoint.com/seedance-2-0-vs-veo-3-1-which-is-best-for-ai-video-creators/' },
+                  { label: 'Seedance 2.0 Complete Guide - WaveSpeedAI', url: 'https://wavespeed.ai/blog/posts/seedance-2-0-complete-guide-multimodal-video-creation/' },
                   { label: 'Artificial Analysis Text-to-Video Arena', url: 'https://artificialanalysis.ai/text-to-video/arena' },
                   { label: 'Artificial Analysis Image-to-Video Arena', url: 'https://artificialanalysis.ai/text-to-video/arena' },
                   { label: 'Artificial Analysis Text-to-Image Arena', url: 'https://artificialanalysis.ai/text-to-image/arena' },
                   { label: 'Artificial Analysis Image Edit Arena', url: 'https://artificialanalysis.ai/text-to-image/arena' },
                   { label: 'Artificial Analysis Video Edit Arena', url: 'https://artificialanalysis.ai/text-to-video/arena' },
-                  { label: 'MultiShotMaster (Kuaishou / Kling Research) — arXiv:2512.03041', url: 'https://arxiv.org/html/2512.03041' },
-                  { label: 'VideoGen-of-Thought — arXiv:2503.15138', url: 'https://arxiv.org/abs/2503.15138' },
-                  { label: 'Kling 3.0 Multi-Shot Prompting Guide — fal.ai', url: 'https://blog.fal.ai/kling-3-0-prompting-guide/' },
-                  { label: 'Timeline Prompting with Seedance 2.0 — MindStudio', url: 'https://www.mindstudio.ai/blog/timeline-prompting-seedance-2-cinematic-ai-video' },
-                  { label: 'Timestamp Prompting Guide — Artlist', url: 'https://artlist.io/blog/timestamp-prompting/' },
+                  { label: 'MultiShotMaster (Kuaishou / Kling Research) - arXiv:2512.03041', url: 'https://arxiv.org/html/2512.03041' },
+                  { label: 'VideoGen-of-Thought - arXiv:2503.15138', url: 'https://arxiv.org/abs/2503.15138' },
+                  { label: 'Kling 3.0 Multi-Shot Prompting Guide - fal.ai', url: 'https://blog.fal.ai/kling-3-0-prompting-guide/' },
+                  { label: 'Timeline Prompting with Seedance 2.0 - MindStudio', url: 'https://www.mindstudio.ai/blog/timeline-prompting-seedance-2-cinematic-ai-video' },
+                  { label: 'Timestamp Prompting Guide - Artlist', url: 'https://artlist.io/blog/timestamp-prompting/' },
                 ].map((s) => (
                   <a
                     key={s.url}

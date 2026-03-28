@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getUnclassified, updateBookmarkByTweetId, getCounts } from '@/lib/db'
 import { classifyBatch } from '@/lib/classifier'
 
-// Single batch per request — stays under Vercel Hobby 10s timeout.
+// Single batch per request - stays under Vercel Hobby 10s timeout.
 // Client loops until remaining === 0.
 const BATCH_SIZE = 15
 

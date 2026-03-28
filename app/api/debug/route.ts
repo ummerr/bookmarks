@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { insertBookmarks, getCounts, clearAll } from '@/lib/db'
 
-// GET /api/debug — insert a test row and verify it can be read back
+// GET /api/debug - insert a test row and verify it can be read back
 export async function GET() {
   const testTweet = {
     tweet_id: `debug_test_${Date.now()}`,
@@ -18,7 +18,7 @@ export async function GET() {
   const after = await getCounts()
 
   // clean up
-  // (don't wipe real data — just report)
+  // (don't wipe real data - just report)
   return NextResponse.json({
     test_tweet_id: testTweet.tweet_id,
     inserted: result.inserted,

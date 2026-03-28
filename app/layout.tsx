@@ -7,9 +7,9 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const instrumentSerif = Instrument_Serif({ weight: '400', style: ['normal', 'italic'], subsets: ['latin'], variable: '--font-serif' })
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' })
 
-const TITLE = 'The most shared AI prompts on X — prompts.ummerr.com'
+const TITLE = 'The most shared AI prompts on X - prompts.ummerr.com'
 const DESCRIPTION =
-  'A curated dataset of image and video generation prompts sourced from viral posts on X. Hand-labelled by model, technique, theme, and reference type. Zero synthetic prompts.'
+  'Image and video generation prompts sourced from viral posts on X. Curated by hand, labelled by model, technique, theme and reference type. Zero synthetic prompts.'
 
 export const metadata: Metadata = {
   title: TITLE,

@@ -6,7 +6,7 @@ function getSql() {
   return (_sql ??= postgres(process.env.DATABASE_URL!, { ssl: 'require', connect_timeout: 5 }))
 }
 
-// Run a query with a fallback — if it fails or times out, return the fallback as a plain array
+// Run a query with a fallback - if it fails or times out, return the fallback as a plain array
 async function safe<T extends Record<string, unknown>>(promise: Promise<T[]>, fallback: T[]): Promise<T[]> {
   try {
     return Array.from(await promise)
@@ -82,7 +82,7 @@ export async function GET() {
     })
   } catch (err) {
     console.error('[/api/stats]', err)
-    // Return empty but valid response shape — never 500
+    // Return empty but valid response shape - never 500
     return NextResponse.json({
       total: 0,
       withReference: 0,

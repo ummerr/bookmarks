@@ -13,7 +13,7 @@ export const MEDIA_TYPE_CATEGORIES: Record<MediaType, (PromptCategory | 'all')[]
   video: ['video_t2v', 'video_i2v', 'video_r2v', 'video_v2v'],
 }
 
-// Model families — order matters (more specific first)
+// Model families - order matters (more specific first)
 export const MODEL_FAMILIES: { label: string; patterns: string[] }[] = [
   { label: 'Midjourney',       patterns: ['midjourney', 'mj'] },
   { label: 'Flux',             patterns: ['flux'] },
@@ -120,5 +120,5 @@ export const CATEGORY_COLORS: Record<string, string> = {
 }
 
 export function categoryLabel(val: string | null) {
-  return CATEGORIES.find((c) => c.value === val)?.label ?? val ?? '—'
+  return CATEGORIES.find((c) => c.value === val)?.label ?? val ?? '-'
 }

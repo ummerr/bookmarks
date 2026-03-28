@@ -163,6 +163,6 @@ export function parseCsv(raw: string): BookmarkInsert[] {
 export function parseUpload(content: string, filename: string): BookmarkInsert[] {
   const lower = filename.toLowerCase()
   if (lower.endsWith('.csv')) return parseCsv(content)
-  // JSON — try archive format
+  // JSON - try archive format
   return parseTwitterArchiveJson(content)
 }

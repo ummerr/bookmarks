@@ -85,7 +85,7 @@ export default function ReferenceLibrary({ references, onInsert }: Props) {
                 }}
                 onClick={() => setExpanded(expanded === ref.id ? null : ref.id)}
                 className="group relative rounded-lg overflow-hidden cursor-grab active:cursor-grabbing border border-black/[0.06] dark:border-white/6 hover:border-violet-400/40 dark:hover:border-violet-500/30 transition-all"
-                title={`@${ref.handle}${ref.refType ? ` · ${ref.refType.replace(/_/g, ' ')}` : ''} — drag to compose or click`}
+                title={`@${ref.handle}${ref.refType ? ` · ${ref.refType.replace(/_/g, ' ')}` : ''} - drag to compose or click`}
               >
                 <img
                   src={ref.thumbnail}

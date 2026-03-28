@@ -10,7 +10,7 @@ function getBenchmarks(liveTotal: number) {
   return [
     { name: 'DrawBench',      size: '200',   source: 'Synthetic (LLM)',        modality: 'Image only',    curated: '2022' },
     { name: 'PartiPrompts',   size: '1,632', source: 'Crowdworkers (Google)',  modality: 'Image only',    curated: '2022' },
-    { name: 'ummerr/prompts', size: liveTotal ? `${liveTotal.toLocaleString()}+` : '—', source: 'Organic / in-the-wild', modality: 'Image + Video', curated: 'Mar 2026', highlight: true },
+    { name: 'ummerr/prompts', size: liveTotal ? `${liveTotal.toLocaleString()}+` : '-', source: 'Organic / in-the-wild', modality: 'Image + Video', curated: 'Mar 2026', highlight: true },
   ]
 }
 
@@ -58,7 +58,7 @@ function AnimatedCount({ target, suffix = '' }: { target: number; suffix?: strin
 interface MediaBreakdown { label: string; count: number; pct: number; color: string }
 
 function computeMediaBreakdown(byCategory: { label: string; value: number }[]): MediaBreakdown[] {
-  // Only count image_* and video_* categories — the actual dataset scope
+  // Only count image_* and video_* categories - the actual dataset scope
   const image = byCategory
     .filter((c) => c.label.startsWith('image_'))
     .reduce((s, c) => s + c.value, 0)
@@ -323,11 +323,11 @@ export default function LandingPage() {
             The most shared<br className="hidden md:block" /> AI prompts on X
           </h1>
           <p className="mt-6 max-w-2xl mx-auto text-lg md:text-xl text-gray-500 dark:text-zinc-400 leading-relaxed">
-            A curated dataset of image and video generation prompts sourced from viral posts on X.
-            Every entry is a real prompt that real practitioners shared — and thousands of people copied.
+            Image and video generation prompts sourced from viral posts on X.
+            Every entry is a real prompt that real practitioners shared - and countless others copied.
           </p>
           <p className="mt-3 text-base text-gray-400 dark:text-zinc-500">
-            Hand-labelled by model, technique, theme, and reference type. Zero synthetic prompts.
+            Curated by hand, labelled by model, technique, theme and reference type.  Zero synthetic prompts.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -364,7 +364,7 @@ export default function LandingPage() {
                 {s.static ? (
                   `${s.value}${s.suffix}`
                 ) : !stats.loaded ? (
-                  '—'
+                  '-'
                 ) : (
                   <AnimatedCount target={s.value} suffix={s.suffix} />
                 )}
@@ -393,7 +393,7 @@ export default function LandingPage() {
             Techniques
           </h2>
           <p className="text-gray-500 dark:text-zinc-400 mb-8 max-w-2xl">
-            How prompts break down by generation technique — text-to-image, image-to-video, character references, and more.
+            How prompts break down by generation technique - text-to-image, image-to-video, character references, and more.
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {techniques.map((t) => (

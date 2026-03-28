@@ -295,7 +295,7 @@ export default function InsightsPage() {
             Dataset Insights
           </h1>
           <p className="mt-3 text-gray-500 dark:text-zinc-400 max-w-2xl">
-            Live statistics from the ummerr/prompts dataset — {stats.total.toLocaleString()} image and video generation
+            Live statistics from the ummerr/prompts dataset - {stats.total.toLocaleString()} image and video generation
             prompts sourced from viral posts on X.
           </p>
           <div className="mt-4 flex gap-3">

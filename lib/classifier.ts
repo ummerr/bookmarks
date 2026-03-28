@@ -138,7 +138,7 @@ const CLASSIFY_SYSTEM = `Classify each tweet into exactly one category.
 Categories:
 - tech_ai_product: Technology, AI/ML, startups, developer tools, product launches, tech industry news
 - career_productivity: Career growth, job advice, productivity systems, professional development
-- prompts: ANY tweet containing an AI prompt — image gen (Midjourney, DALL-E, Flux, SD, Firefly, Ideogram, Leonardo, Aurora, ANY tool), video gen (Veo, Runway, Kling, Pika, Luma, Hailuo, Wan, Aurora/Grok, ANY tool), audio gen (Suno, Udio, ElevenLabs), 3D gen, LLM prompts, system prompts, prompt engineering. KEY: if the text reads like a descriptive prompt for any AI tool — even unnamed ones — classify as "prompts".
+- prompts: ANY tweet containing an AI prompt - image gen (Midjourney, DALL-E, Flux, SD, Firefly, Ideogram, Leonardo, Aurora, ANY tool), video gen (Veo, Runway, Kling, Pika, Luma, Hailuo, Wan, Aurora/Grok, ANY tool), audio gen (Suno, Udio, ElevenLabs), 3D gen, LLM prompts, system prompts, prompt engineering. KEY: if the text reads like a descriptive prompt for any AI tool - even unnamed ones - classify as "prompts".
 - uncategorized: Does not fit above, or confidence < 0.7.
 
 Rules: confidence 0.0-1.0. If < 0.7, category must be "uncategorized". Classify all tweets.`
@@ -218,24 +218,24 @@ const PROMPT_SYSTEM = `Classify and extract AI prompts from tweets.
 
 CATEGORIES (pick one):
 
-CRITICAL RULE — reference-based categories take priority:
-If the prompt contains ANY of these reference signals, classify as image_r2i (for images) or video_r2v (for video) — these OVERRIDE subject-based categories like image_person or image_t2i:
+CRITICAL RULE - reference-based categories take priority:
+If the prompt contains ANY of these reference signals, classify as image_r2i (for images) or video_r2v (for video) - these OVERRIDE subject-based categories like image_person or image_t2i:
 - Bracketed placeholders: [SUBJECT], [YOUR IMAGE], [REFERENCE], [UPLOADED IMAGE], [SOURCE IMAGE], [INPUT]
 - Midjourney reference flags: --sref (style reference), --cref (character reference)
 - Workflow keywords: IP-Adapter, ControlNet, face swap, img2img, style transfer, reference-to-image
 - Explicit instructions to "upload", "attach", or "use your image/photo" as input
 
 Image:
-- image_r2i: Reference-to-image — prompt requires a user-supplied reference image (bracketed placeholders, IP-Adapter, ControlNet, face swap, img2img, style transfer). USE THIS whenever the prompt cannot work without an input image.
-- image_i2i: Image-to-image — direct transformation of an existing image (upscale, restyle, inpaint, outpaint)
-- image_person: People/characters/faces as main focus — purely text-driven, NO reference image needed
+- image_r2i: Reference-to-image - prompt requires a user-supplied reference image (bracketed placeholders, IP-Adapter, ControlNet, face swap, img2img, style transfer). USE THIS whenever the prompt cannot work without an input image.
+- image_i2i: Image-to-image - direct transformation of an existing image (upscale, restyle, inpaint, outpaint)
+- image_person: People/characters/faces as main focus - purely text-driven, NO reference image needed
 - image_advertisement: Product photography, commercial/brand imagery, e-commerce, fashion flats
 - image_collage: Mood boards, grid layouts, multi-panel compositions
 - image_t2i: All other text-to-image (landscapes, abstract, sci-fi, animals, food, concept art). Default for image prompts with no reference requirement.
 
 Video:
-- video_r2v: Reference-to-video — a reference/uploaded image guides the video (character consistency, scene reference, NOT direct animation). Use for bracketed placeholders or --sref/--cref in video prompts.
-- video_i2v: Image-to-video — directly animating or extending a specific still image
+- video_r2v: Reference-to-video - a reference/uploaded image guides the video (character consistency, scene reference, NOT direct animation). Use for bracketed placeholders or --sref/--cref in video prompts.
+- video_i2v: Image-to-video - directly animating or extending a specific still image
 - video_t2v: Text-to-video, prompt only (Veo, Kling, Runway, Pika, Hailuo, Luma, Wan, Aurora/Grok)
 - video_v2v: Video-to-video (restyle, motion transfer, lip sync)
 
@@ -249,7 +249,7 @@ REFERENCE: requires_reference=true if prompt needs user-supplied input image. fa
 reference_type (if true): face_person, style_artwork, subject_object, pose_structure, scene_background
 
 detected_model: Canonical tool name ("Midjourney", "Flux", "Runway" etc.) or null.
-extracted_prompt: Clean prompt only — strip social text, hashtags, engagement bait. Keep technical syntax (--ar, --v, cfg). null if no prompt found.
+extracted_prompt: Clean prompt only - strip social text, hashtags, engagement bait. Keep technical syntax (--ar, --v, cfg). null if no prompt found.
 id: Copy exactly from input.`
 
 const VALID_PROMPT_CATEGORIES_LIST = [
@@ -280,7 +280,7 @@ const VALID_REF_TYPES_LIST = [
 ] as const
 const VALID_REF_TYPES = new Set<ReferenceType>(VALID_REF_TYPES_LIST)
 
-// Tool schema with enum constraints — dramatically improves output validity,
+// Tool schema with enum constraints - dramatically improves output validity,
 // especially critical for Haiku where unconstrained string fields drift.
 const EXTRACT_TOOL: Anthropic.Tool = {
   name: 'classify_prompts',
@@ -324,7 +324,7 @@ export async function classifyPromptBatch(
 }[]> {
   const client = getClient()
 
-  // Use sequential 1-based indices as IDs — avoids UUID serialisation issues
+  // Use sequential 1-based indices as IDs - avoids UUID serialisation issues
   const indexToId = new Map(prompts.map((p, i) => [String(i + 1), p.id]))
 
   const input = prompts.map((p, i) => {
@@ -358,14 +358,14 @@ export async function classifyPromptBatch(
   const raw = (toolUse.input as { results: any }).results
   const results: any[] = Array.isArray(raw) ? raw : raw ? [raw] : []
 
-  // Normalise id to string — model sometimes returns integers
+  // Normalise id to string - model sometimes returns integers
   for (const r of results) {
     if (r.id != null) r.id = String(r.id)
   }
 
   const matched = results.filter((r) => r.id && indexToId.has(r.id))
   if (matched.length < results.length) {
-    console.warn('[classifyPromptBatch] ID mismatch — sent:', [...indexToId.keys()], '| received:', results.map((r) => r.id))
+    console.warn('[classifyPromptBatch] ID mismatch - sent:', [...indexToId.keys()], '| received:', results.map((r) => r.id))
   }
 
   // Positional fallback: if no IDs matched at all, pair results to prompts by order

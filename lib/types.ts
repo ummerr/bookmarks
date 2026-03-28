@@ -6,14 +6,14 @@ export type Category =
 
 export type PromptCategory =
   // ── Image Generation ──────────────────────────────
-  | 'image_person'        // People, portraits, fashion models, characters — primary subject is human/character
+  | 'image_person'        // People, portraits, fashion models, characters - primary subject is human/character
   | 'image_advertisement' // Product photography, commercial imagery, advertising, brand/marketing visuals
   | 'image_collage'       // Mood boards, collages, grid layouts, multi-panel / scrapbook compositions
   | 'image_t2i'           // General image generation (landscapes, architecture, abstract, scifi, fantasy, etc.)
-  | 'image_i2i'           // Image → Image (img2img, style transfer, ControlNet) — legacy
-  | 'image_r2i'           // Reference → Image — legacy
-  | 'image_character_ref' // Character / face consistency — legacy
-  | 'image_inpainting'    // Inpainting, outpainting, masking — legacy
+  | 'image_i2i'           // Image → Image (img2img, style transfer, ControlNet) - legacy
+  | 'image_r2i'           // Reference → Image - legacy
+  | 'image_character_ref' // Character / face consistency - legacy
+  | 'image_inpainting'    // Inpainting, outpainting, masking - legacy
   // ── Video Generation ──────────────────────────────
   | 'video_t2v'           // Text → Video (Sora, Kling, Runway Gen3, Pika, Hailuo)
   | 'video_i2v'           // Image → Video / animate still (Runway, Kling, Luma Dream Machine)

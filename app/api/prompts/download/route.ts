@@ -46,26 +46,26 @@ function toRecord(p: Bookmark) {
 type Row = ReturnType<typeof toRecord>
 
 const SCHEMA = {
-  id:                'string  — unique record identifier (UUID)',
-  tweet_id:          'string  — original tweet/post ID',
-  author_handle:     'string  — @handle of the post author',
-  tweet_url:         'string  — URL to the original post',
-  source:            'enum    — twitter | manual | reddit',
-  extracted_prompt:  'string? — AI-extracted prompt text (null if extraction failed)',
-  tweet_text:        'string  — raw post text before extraction',
-  prompt_length:     'int     — character count of extracted_prompt (or tweet_text if null)',
-  modality:          'enum    — image | video | audio | 3d | other',
-  prompt_category:   'enum?   — fine-grained category (image_person, video_t2v, etc.)',
-  detected_model:    'string? — AI model mentioned or inferred (e.g. "Midjourney v6.1")',
-  prompt_themes:     'array   — visual themes: person, cinematic, landscape, etc.',
-  art_styles:        'array   — rendering styles: photorealistic, anime, etc.',
-  requires_reference:'bool?   — whether prompt requires a reference image/video',
-  reference_type:    'enum?   — face_person | style_artwork | subject_object | pose_structure | scene_background',
-  is_multi_shot:     'bool    — computed: true if prompt contains multi-shot/scene markers',
-  media_urls:        'array   — URLs to attached images or videos',
-  media_count:       'int     — number of attached media items',
-  bookmarked_at:     'string? — ISO 8601 timestamp when post was bookmarked',
-  created_at:        'string  — ISO 8601 timestamp when record was created',
+  id:                'string  - unique record identifier (UUID)',
+  tweet_id:          'string  - original tweet/post ID',
+  author_handle:     'string  - @handle of the post author',
+  tweet_url:         'string  - URL to the original post',
+  source:            'enum    - twitter | manual | reddit',
+  extracted_prompt:  'string? - AI-extracted prompt text (null if extraction failed)',
+  tweet_text:        'string  - raw post text before extraction',
+  prompt_length:     'int     - character count of extracted_prompt (or tweet_text if null)',
+  modality:          'enum    - image | video | audio | 3d | other',
+  prompt_category:   'enum?   - fine-grained category (image_person, video_t2v, etc.)',
+  detected_model:    'string? - AI model mentioned or inferred (e.g. "Midjourney v6.1")',
+  prompt_themes:     'array   - visual themes: person, cinematic, landscape, etc.',
+  art_styles:        'array   - rendering styles: photorealistic, anime, etc.',
+  requires_reference:'bool?   - whether prompt requires a reference image/video',
+  reference_type:    'enum?   - face_person | style_artwork | subject_object | pose_structure | scene_background',
+  is_multi_shot:     'bool    - computed: true if prompt contains multi-shot/scene markers',
+  media_urls:        'array   - URLs to attached images or videos',
+  media_count:       'int     - number of attached media items',
+  bookmarked_at:     'string? - ISO 8601 timestamp when post was bookmarked',
+  created_at:        'string  - ISO 8601 timestamp when record was created',
 }
 
 // ── CSV ────────────────────────────────────────────────
@@ -118,7 +118,7 @@ export async function GET(req: NextRequest) {
     })
   }
 
-  // JSON — metadata envelope with schema
+  // JSON - metadata envelope with schema
   const payload = {
     meta: {
       name: 'ummerr/prompts',

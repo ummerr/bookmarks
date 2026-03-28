@@ -71,7 +71,7 @@ function PromptsPageInner() {
     (!!searchParams.get('model') && searchParams.get('model') !== 'all')
   )
 
-  // Scroll to top when filters change (not search — that would be jarring while typing)
+  // Scroll to top when filters change (not search - that would be jarring while typing)
   useEffect(() => {
     resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
   }, [activeMediaType, activeCategory, activeTheme, activeModel, activeMultiShot, sortBy])
@@ -100,7 +100,7 @@ function PromptsPageInner() {
         if (Array.isArray(data)) setAllPrompts(data)
       }
     } catch {
-      // Network error — keep existing data
+      // Network error - keep existing data
     }
     setLoading(false)
   }
@@ -223,7 +223,7 @@ function PromptsPageInner() {
     <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
       <div className="max-w-6xl mx-auto px-4 md:px-6 py-4 md:py-8 flex gap-6 items-start">
 
-        {/* Sidebar — dataset card, sticky */}
+        {/* Sidebar - dataset card, sticky */}
         <aside className="hidden lg:block w-64 xl:w-72 shrink-0">
           <div className="sticky top-14 rounded-2xl overflow-hidden bg-white dark:bg-[#0c0c0c] border border-black/[0.08] dark:border-white/[0.06]">
             {/* Top bar */}
@@ -247,7 +247,7 @@ function PromptsPageInner() {
                   The Most Shared AI Prompts on X
                 </h1>
                 <p className="text-[11px] text-gray-500 dark:text-white/40 leading-relaxed">
-                  A corpus of organic, in-the-wild generative AI prompts sourced from high-engagement posts on X/Twitter — covering image and video generation. Unlike synthetic benchmarks, every entry reflects a real practitioner decision: what to generate, how to phrase it, and which model to use.
+                  A corpus of organic, in-the-wild generative AI prompts sourced from high-engagement posts on X/Twitter - covering image and video generation. Unlike synthetic benchmarks, every entry reflects a real practitioner decision: what to generate, how to phrase it, and which model to use.
                 </p>
                 <div className="flex flex-wrap gap-1">
                   {['CC BY 4.0', 'Multi-Modal', 'In-the-Wild', 'Engagement-Filtered'].map((tag) => (
@@ -286,9 +286,9 @@ function PromptsPageInner() {
               {/* Stats grid */}
               <div className="grid grid-cols-2 gap-1.5">
                 {[
-                  { value: loading ? '—' : allPrompts.length.toLocaleString(), label: 'Prompts', sub: 'sourced from X' },
-                  { value: loading ? '—' : Object.keys(categoryCounts).length.toString(), label: 'Techniques', sub: 'image + video' },
-                  { value: loading ? '—' : availableModels.length.toString() + '+', label: 'AI models', sub: 'every major one' },
+                  { value: loading ? '-' : allPrompts.length.toLocaleString(), label: 'Prompts', sub: 'sourced from X' },
+                  { value: loading ? '-' : Object.keys(categoryCounts).length.toString(), label: 'Techniques', sub: 'image + video' },
+                  { value: loading ? '-' : availableModels.length.toString() + '+', label: 'AI models', sub: 'every major one' },
                   { value: '0%', label: 'Synthetic', sub: 'hand curated' },
                 ].map((s) => (
                   <div key={s.label} className="flex flex-col gap-0.5 rounded-lg bg-black/[0.03] dark:bg-white/[0.04] border border-black/[0.06] dark:border-white/[0.06] px-3 py-2.5">
@@ -343,7 +343,7 @@ function PromptsPageInner() {
                   ))}
                 </div>
                 <span className="text-[9px] text-gray-400 dark:text-white/20 text-center">
-                  CC BY 4.0 — cite as <span className="font-mono">ummerr/prompts</span>
+                  CC BY 4.0 - cite as <span className="font-mono">ummerr/prompts</span>
                 </span>
               </div>
             </div>
@@ -380,7 +380,7 @@ function PromptsPageInner() {
         {/* Filters */}
         <div className="flex flex-col gap-2 border border-black/[0.06] dark:border-white/6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] px-4 py-3">
 
-          {/* Row: Modality — Image / Video */}
+          {/* Row: Modality - Image / Video */}
           <div className="flex items-center gap-2">
             <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">Modality</span>
             <div className="flex items-center gap-1.5">

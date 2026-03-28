@@ -2,7 +2,7 @@ import postgres from 'postgres'
 import { randomUUID } from 'crypto'
 import type { ArtStyle, Bookmark, BookmarkInsert, Category, CategoryCounts, PromptCategory, PromptTheme, ReferenceType } from './types'
 
-// Lazy init — prevents build-time failure when Next.js collects page data
+// Lazy init - prevents build-time failure when Next.js collects page data
 let _sql: ReturnType<typeof postgres> | undefined
 function getSql() {
   return (_sql ??= postgres(process.env.DATABASE_URL!, { ssl: 'require' }))
@@ -12,7 +12,7 @@ function getSql() {
 
 function detectMultiShot(text: string): boolean {
   if (!text) return false
-  // Timestamp syntax: [0s], [3s], [0s-3s], [3s-6s] — Kling / Seedance style
+  // Timestamp syntax: [0s], [3s], [0s-3s], [3s-6s] - Kling / Seedance style
   if ((text.match(/\[\d+s(?:-\d+s)?\]/gi) ?? []).length >= 2) return true
   // Numbered shot / cut labels: "Shot 1", "Shot 2" / "Cut 1", "Cut 2"
   if ((text.match(/\bshot\s*\d+/gi) ?? []).length >= 2) return true
@@ -25,7 +25,7 @@ function detectMultiShot(text: string): boolean {
   return false
 }
 
-// Safely coerce a JSONB column to an array — handles string, parsed array, or junk
+// Safely coerce a JSONB column to an array - handles string, parsed array, or junk
 function toArray(val: unknown): unknown[] {
   if (Array.isArray(val)) return val
   if (typeof val === 'string') { try { const p = JSON.parse(val); if (Array.isArray(p)) return p } catch {} }

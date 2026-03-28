@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-const TITLE = 'Why Sora Shut Down — State of Prompting'
+const TITLE = 'Why Sora Shut Down - State of Prompting'
 const DESCRIPTION =
-  'On March 24, 2026, OpenAI shut down Sora entirely — app, API, and ChatGPT video. $15M/day inference costs, $2.1M lifetime revenue, 1% retention. Here\'s how it unraveled.'
+  'On March 24, 2026, OpenAI shut down Sora entirely - app, API, and ChatGPT video. $15M/day inference costs, $2.1M lifetime revenue, 1% retention. Here\'s how it unraveled.'
 
 export const metadata: Metadata = {
   title: TITLE,

@@ -281,7 +281,7 @@ export default function ToolsPage() {
       const { unclassified } = await countRes.json()
       setPromptsTotal(unclassified)
 
-      // Always use offset: 0 — the server filters out already-classified items,
+      // Always use offset: 0 - the server filters out already-classified items,
       // so the "first N unclassified" advances naturally each round.
       const BATCH = 2
       let totalClassified = 0
@@ -506,7 +506,7 @@ export default function ToolsPage() {
           {/* Reddit Ingest */}
           <Section
             title="Fetch from Reddit"
-            description="Pull top posts from AI prompt subreddits using Reddit's public API. Posts are ingested as unclassified bookmarks — run the classifiers afterwards."
+            description="Pull top posts from AI prompt subreddits using Reddit's public API. Posts are ingested as unclassified bookmarks - run the classifiers afterwards."
           >
             <div className="flex flex-col gap-3">
               <div className="flex flex-wrap gap-2">
@@ -600,7 +600,7 @@ export default function ToolsPage() {
           {/* Fix Themes */}
           <Section
             title="Fix Themes (Haiku)"
-            description="Backfill prompt_themes on prompts that are missing them — runs Haiku only, fast and cheap."
+            description="Backfill prompt_themes on prompts that are missing them - runs Haiku only, fast and cheap."
           >
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-3">
@@ -629,7 +629,7 @@ export default function ToolsPage() {
           {/* Re-classify All */}
           <Section
             title="Re-classify All Prompts"
-            description="Force re-run classification on every prompt in batches — useful to backfill themes, art styles, or model data added since the last run."
+            description="Force re-run classification on every prompt in batches - useful to backfill themes, art styles, or model data added since the last run."
           >
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-3">

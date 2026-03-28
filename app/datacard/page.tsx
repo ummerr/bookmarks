@@ -22,16 +22,16 @@ interface StatsData {
 
 const SCHEMA_FIELDS = [
   { field: 'id',                 type: 'uuid',           nullable: false, description: 'Primary key' },
-  { field: 'tweet_id',           type: 'text',           nullable: false, description: 'Original post ID — enables deduplication and provenance tracing' },
+  { field: 'tweet_id',           type: 'text',           nullable: false, description: 'Original post ID - enables deduplication and provenance tracing' },
   { field: 'tweet_text',         type: 'text',           nullable: false, description: 'Full text of the source post (unmodified)' },
   { field: 'author_handle',      type: 'text',           nullable: false, description: 'Platform username of the practitioner who shared the prompt' },
   { field: 'author_name',        type: 'text',           nullable: true,  description: 'Display name' },
-  { field: 'tweet_url',          type: 'text',           nullable: false, description: 'Canonical URL — links to output media and original engagement context' },
+  { field: 'tweet_url',          type: 'text',           nullable: false, description: 'Canonical URL - links to output media and original engagement context' },
   { field: 'media_urls',         type: 'text[]',         nullable: false, description: 'Output image/video URLs attached to the post' },
   { field: 'source',             type: 'enum',           nullable: false, description: 'Ingestion origin: twitter | reddit | manual' },
   { field: 'category',           type: 'enum',           nullable: false, description: 'Top-level bucket: prompts | tech_ai_product | career_productivity | uncategorized' },
   { field: 'prompt_category',    type: 'enum',           nullable: true,  description: 'Modality + technique: image_t2i, video_t2v, video_i2v, audio, etc.' },
-  { field: 'extracted_prompt',   type: 'text',           nullable: true,  description: 'Clean prompt text extracted from post + comments — social framing stripped' },
+  { field: 'extracted_prompt',   type: 'text',           nullable: true,  description: 'Clean prompt text extracted from post + comments - social framing stripped' },
   { field: 'detected_model',     type: 'text',           nullable: true,  description: 'AI model mentioned (free-text canonical slug, e.g. "Midjourney v6.1")' },
   { field: 'prompt_themes',      type: 'text[]',         nullable: true,  description: 'Visual themes: person, cinematic, landscape, scifi, fantasy, etc.' },
   { field: 'art_styles',         type: 'text[]',         nullable: true,  description: 'Art styles: photorealistic, anime, oil_painting, pixel_art, etc.' },
@@ -73,18 +73,18 @@ const THEME_LABELS: Record<string, string> = {
 
 function getBenchmarks(total: number) {
   return [
-    { name: 'DrawBench',       size: '200',    source: 'Synthetic (LLM)',      modality: 'Image only',     provenance: 'None',            curated: '2022',       engagement: '—' },
-    { name: 'PartiPrompts',    size: '1,632',  source: 'Crowdworkers (Google)', modality: 'Image only',     provenance: 'None',            curated: '2022',       engagement: '—' },
-    { name: 'T2I-CompBench',   size: '6,000',  source: 'Synthetic (GPT-4)',    modality: 'Image only',     provenance: 'None',            curated: '2023',       engagement: '—' },
-    { name: 'GenAI-Bench',     size: '1,200',  source: 'LLM + human mix',      modality: 'Image + Video',  provenance: 'None',            curated: '2024',       engagement: '—' },
-    { name: 'ummerr/prompts',  size: total ? `${total.toLocaleString()}+` : '—', source: 'Organic / in-the-wild', modality: 'Image + Video', provenance: 'Full (URL + author)', curated: 'Mar 2026', engagement: 'Yes (viral filter)' },
+    { name: 'DrawBench',       size: '200',    source: 'Synthetic (LLM)',      modality: 'Image only',     provenance: 'None',            curated: '2022',       engagement: '-' },
+    { name: 'PartiPrompts',    size: '1,632',  source: 'Crowdworkers (Google)', modality: 'Image only',     provenance: 'None',            curated: '2022',       engagement: '-' },
+    { name: 'T2I-CompBench',   size: '6,000',  source: 'Synthetic (GPT-4)',    modality: 'Image only',     provenance: 'None',            curated: '2023',       engagement: '-' },
+    { name: 'GenAI-Bench',     size: '1,200',  source: 'LLM + human mix',      modality: 'Image + Video',  provenance: 'None',            curated: '2024',       engagement: '-' },
+    { name: 'ummerr/prompts',  size: total ? `${total.toLocaleString()}+` : '-', source: 'Organic / in-the-wild', modality: 'Image + Video', provenance: 'Full (URL + author)', curated: 'Mar 2026', engagement: 'Yes (viral filter)' },
   ]
 }
 
 const RESEARCH_APPLICATIONS = [
   {
     title: 'In-the-wild prompt distribution',
-    body: 'Study what the actual distribution of prompts looks like across modalities, models, and technique types — as opposed to the synthetic or curated distributions used in most benchmarks. Useful for calibrating evaluation sets to real practitioner behavior.',
+    body: 'Study what the actual distribution of prompts looks like across modalities, models, and technique types - as opposed to the synthetic or curated distributions used in most benchmarks. Useful for calibrating evaluation sets to real practitioner behavior.',
     color: '#8b5cf6',
   },
   {
@@ -99,7 +99,7 @@ const RESEARCH_APPLICATIONS = [
   },
   {
     title: 'Model-conditioned prompt analysis',
-    body: 'Each entry includes a detected model field. Researchers can study how prompt style, length, technique invocation, and reference usage vary across models — Midjourney vs. FLUX vs. Kling vs. Sora — and how practitioner prompting strategies adapt to model capabilities.',
+    body: 'Each entry includes a detected model field. Researchers can study how prompt style, length, technique invocation, and reference usage vary across models - Midjourney vs. FLUX vs. Kling vs. Sora - and how practitioner prompting strategies adapt to model capabilities.',
     color: '#f97316',
   },
   {
@@ -223,10 +223,10 @@ export default function DatacardPage() {
             <h1 className="font-serif text-2xl md:text-3xl text-gray-900 dark:text-white tracking-tight">ummerr/prompts</h1>
             <p className="mt-3 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.7] max-w-2xl">
               A corpus of organic, in-the-wild generative AI prompts sourced from high-engagement
-              posts on X/Twitter — covering image and video generation. Unlike synthetic
+              posts on X/Twitter - covering image and video generation. Unlike synthetic
               benchmarks or crowdworker sets, every entry reflects a real practitioner decision:
               what to generate, how to phrase it, and which model to use. High engagement acts as an
-              organic peer-review filter — these prompts were judged worth sharing by thousands of
+              organic peer-review filter - these prompts were judged worth sharing by thousands of
               practitioners, not by a crowdworker rubric.
             </p>
           </div>
@@ -253,7 +253,7 @@ export default function DatacardPage() {
                 Download {label}
               </a>
             ))}
-            <span className="text-[11px] text-gray-400 dark:text-zinc-600">CC BY 4.0 — cite as ummerr/prompts</span>
+            <span className="text-[11px] text-gray-400 dark:text-zinc-600">CC BY 4.0 - cite as ummerr/prompts</span>
           </div>
         </div>
 
@@ -261,7 +261,7 @@ export default function DatacardPage() {
         <Section title="Why This Dataset Exists">
           <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
             <p>
-              Existing prompt evaluation benchmarks — DrawBench, PartiPrompts, T2I-CompBench — were
+              Existing prompt evaluation benchmarks - DrawBench, PartiPrompts, T2I-CompBench - were
               designed for model evaluation, not for studying practitioner behavior. They are either
               synthetically generated or produced by crowdworkers following annotation rubrics.
               Neither reflects the prompt distribution that real practitioners actually use when they
@@ -270,7 +270,7 @@ export default function DatacardPage() {
             <p>
               This dataset fills that gap. It captures the organic prompt distribution from people
               who actively use generative AI tools and share their results publicly. The selection
-              mechanism — social engagement — is imperfect but meaningful: a prompt that accumulates
+              mechanism - social engagement - is imperfect but meaningful: a prompt that accumulates
               high view and repost counts has passed a form of community judgment that no benchmark
               can replicate.
             </p>
@@ -444,7 +444,7 @@ export default function DatacardPage() {
               <div>
                 <span className="font-semibold text-gray-900 dark:text-white">Selection mechanism.</span>{' '}
                 Posts are identified via X/Twitter search and bookmark capture from practitioner accounts actively sharing AI generation work.
-                Selection is biased toward high-engagement content — posts with substantial view counts, reposts, and saves. This is not a random
+                Selection is biased toward high-engagement content - posts with substantial view counts, reposts, and saves. This is not a random
                 sample; it is a practitioner-judged quality filter. Prompts that circulated widely did so because other practitioners found them
                 useful, reproducible, or instructive.
               </div>
@@ -459,7 +459,7 @@ export default function DatacardPage() {
                 <span className="font-semibold text-gray-900 dark:text-white">Coverage.</span>{' '}
                 Image generation (text-to-image, image-to-image, character references, reference-guided generation) and
                 video generation (text-to-video, image-to-video, reference-to-video, video-to-video).
-                No LLM / text-generation prompts — this is a generative media dataset.
+                No LLM / text-generation prompts - this is a generative media dataset.
               </div>
             </div>
           </div>
@@ -496,7 +496,7 @@ export default function DatacardPage() {
               {
                 title: 'Selection and survivorship bias',
                 body: 'Prompts are drawn exclusively from posts that practitioners chose to share publicly. This systematically over-represents prompts that produced visually impressive or socially shareable results, and under-represents failed attempts, iterative drafts, and everyday utility prompts.',
-                mitigation: 'This bias is also the dataset\'s signal: understanding the distribution of prompts that practitioners consider share-worthy is itself a research question. Sourcing across both Twitter/X and Reddit partially offsets pure aesthetics bias — Reddit communities reward technical depth and reproducibility.',
+                mitigation: 'This bias is also the dataset\'s signal: understanding the distribution of prompts that practitioners consider share-worthy is itself a research question. Sourcing across both Twitter/X and Reddit partially offsets pure aesthetics bias - Reddit communities reward technical depth and reproducibility.',
                 color: '#f97316',
               },
               {
@@ -507,7 +507,7 @@ export default function DatacardPage() {
               },
               {
                 title: 'LLM-assisted classification errors',
-                body: 'Category labels, theme tags, art style tags, model attribution, and extracted prompt text are assigned by Claude Sonnet 4.6 — not human annotators. Errors cluster around ambiguous multi-technique prompts, unfamiliar or emerging tools, non-English content, and prompts where the model name is absent from the post text.',
+                body: 'Category labels, theme tags, art style tags, model attribution, and extracted prompt text are assigned by Claude Sonnet 4.6 - not human annotators. Errors cluster around ambiguous multi-technique prompts, unfamiliar or emerging tools, non-English content, and prompts where the model name is absent from the post text.',
                 mitigation: 'The classifier uses structured tool-use output with strict enum validation, reducing free-form hallucination. Confidence scores are stored alongside labels. The raw source text is always preserved, so reclassification is non-destructive.',
                 color: '#eab308',
               },
@@ -557,7 +557,7 @@ export default function DatacardPage() {
                 name: 'Twitter / X',
                 icon: '✦',
                 iconColor: '#1DA1F2',
-                desc: 'Primary source. Bookmarked posts from practitioners sharing AI generation workflows. Filtered for high engagement — views, reposts, and saves. Includes media outputs, threads, and referenced works.',
+                desc: 'Primary source. Bookmarked posts from practitioners sharing AI generation workflows. Filtered for high engagement - views, reposts, and saves. Includes media outputs, threads, and referenced works.',
                 badge: 'Primary',
                 badgeColor: '#1DA1F2',
               },
@@ -565,7 +565,7 @@ export default function DatacardPage() {
                 name: 'Reddit',
                 icon: '◉',
                 iconColor: '#ff4500',
-                desc: 'r/midjourney, r/StableDiffusion, r/FluxAI, r/kling_ai, r/PromptEngineering. Reddit sourcing broadens demographic coverage — communities reward technical reproducibility alongside visual impact.',
+                desc: 'r/midjourney, r/StableDiffusion, r/FluxAI, r/kling_ai, r/PromptEngineering. Reddit sourcing broadens demographic coverage - communities reward technical reproducibility alongside visual impact.',
                 badge: 'Secondary',
                 badgeColor: '#ff4500',
               },
@@ -641,7 +641,7 @@ export default function DatacardPage() {
                 <Badge color="#22c55e">Creative Commons Attribution 4.0 (CC BY 4.0)</Badge>
               </div>
               <p>
-                Free to use, share, and adapt for any purpose — including commercial — with appropriate credit.
+                Free to use, share, and adapt for any purpose - including commercial - with appropriate credit.
                 The original prompt texts remain the intellectual property of their authors; this dataset provides
                 structured metadata for research purposes.
               </p>
