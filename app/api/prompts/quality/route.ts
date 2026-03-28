@@ -6,7 +6,8 @@ function getSql() {
   return (_sql ??= postgres(process.env.DATABASE_URL!, { ssl: 'require', connect_timeout: 8, prepare: false }))
 }
 
-async function safe<T extends Record<string, unknown>>(promise: Promise<T[]>, fallback: T[]): Promise<T[]> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function safe<T>(promise: PromiseLike<T[]>, fallback: T[]): Promise<T[]> {
   try {
     return Array.from(await promise)
   } catch (err) {
@@ -62,14 +63,14 @@ export async function GET() {
           COUNT(*) FILTER (WHERE prompt_category IS NULL) as no_cat_count,
           COUNT(*) FILTER (WHERE detected_model IS NULL OR detected_model = '') as no_model_count,
           COUNT(*) FILTER (WHERE extracted_prompt IS NOT NULL AND extracted_prompt = tweet_text) as same_count,
-          COUNT(*) FILTER (WHERE media_urls IS NULL OR (CASE WHEN jsonb_typeof(media_urls) = 'array' THEN jsonb_array_length(media_urls) ELSE 0 END) = 0) as no_media_count,
+          COUNT(*) FILTER (WHERE media_urls IS NULL OR media_urls::text = '[]' OR media_urls::text = 'null') as no_media_count,
           COUNT(*) FILTER (WHERE
             extracted_prompt IS NULL
             OR (extracted_prompt IS NOT NULL AND LENGTH(extracted_prompt) < 20)
             OR prompt_category IS NULL
             OR detected_model IS NULL OR detected_model = ''
             OR confidence < 0.5
-            OR media_urls IS NULL OR (CASE WHEN jsonb_typeof(media_urls) = 'array' THEN jsonb_array_length(media_urls) ELSE 0 END) = 0
+            OR media_urls IS NULL OR media_urls::text = '[]' OR media_urls::text = 'null'
           ) as any_flag_count
         FROM bookmarks
         WHERE category = 'prompts'
@@ -195,7 +196,7 @@ export async function GET() {
             + (CASE WHEN prompt_category IS NULL THEN 1 ELSE 0 END)
             + (CASE WHEN detected_model IS NULL OR detected_model = '' THEN 1 ELSE 0 END)
             + (CASE WHEN confidence < 0.5 THEN 1 ELSE 0 END)
-            + (CASE WHEN media_urls IS NULL OR (CASE WHEN jsonb_typeof(media_urls) = 'array' THEN jsonb_array_length(media_urls) ELSE 0 END) = 0 THEN 1 ELSE 0 END)
+            + (CASE WHEN media_urls IS NULL OR media_urls::text = '[]' OR media_urls::text = 'null' THEN 1 ELSE 0 END)
             as flags
           FROM bookmarks
           WHERE category = 'prompts'
