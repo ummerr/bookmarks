@@ -774,7 +774,7 @@ enters. Warm golden lighting.`}</pre>
                     { model: 'Seedance 2.0',    shots: '3–5', syntax: '[Xs]: … / Shot switch',     lipsync: true,  color: '#10b981' },
                     { model: 'Veo 3.1',         shots: '2–3', syntax: 'Start/end frame reference', lipsync: true,  color: '#1DA1F2' },
                     { model: 'Runway Gen-4.5',  shots: '1',  syntax: 'Single shot - assemble in post', lipsync: false, color: '#f97316' },
-                    { model: 'Grok Imagine Video', shots: '1', syntax: 'Single shot per generation', lipsync: false, color: '#9333ea' },
+                    { model: 'Grok Imagine Video', shots: '1', syntax: 'Single shot - chain via Extend from Frame', lipsync: true, color: '#9333ea' },
                   ].map((row, i) => (
                     <div key={row.model} className={`grid grid-cols-4 px-4 py-2.5 text-xs items-center gap-2 ${i % 2 === 0 ? '' : 'bg-black/[0.015] dark:bg-white/[0.015]'}`}>
                       <span className="font-semibold" style={{ color: row.color }}>{row.model}</span>
@@ -916,7 +916,7 @@ enters. Warm golden lighting.`}</pre>
                       <div className="flex flex-col gap-1.5 text-xs text-gray-600 dark:text-zinc-300">
                         <p>→ <span className="font-medium">{refPct}% of viral prompts use reference images.</span> {refPct >= 40
                           ? 'Reference is the new text - creators increasingly let images do the talking instead of writing longer descriptions.'
-                          : 'Reference-guided generation is best practice, not yet common practice. Most viral prompts are still text-only.'}</p>
+                          : 'Every major tool now accepts image input, but most viral prompts are still text-only. The workflow shift is lagging the capability shift.'}</p>
                         <p>→ <span className="font-medium">{longPromptPct}% exceed 200 characters.</span> {longPromptPct >= 50
                           ? 'Viral prompts tend to be detailed and descriptive - creators invest in specificity to get the output they want.'
                           : 'Short, specific prompts outperform verbose ones. Models fill gaps better than they parse walls of text.'}</p>
@@ -938,7 +938,11 @@ enters. Warm golden lighting.`}</pre>
             <Section title="The Realness Gap" id="realness-gap">
               <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <p>
-                  Research from T2VEval (Qi et al., 2025) decomposes video quality into four dimensions: text fidelity, realness, technical quality, and overall impression. Their central finding: <span className="font-medium text-gray-800 dark:text-zinc-100">realness is the hardest dimension for current models.</span> Models can produce high-resolution, smooth output that matches the prompt - but still looks wrong because the physics, anatomy, or motion patterns violate cognitive expectations.
+                  Look at which themes go viral and a pattern emerges: <span className="font-medium text-gray-800 dark:text-zinc-100">creators disproportionately prompt for styles where realism doesn&rsquo;t matter.</span> Abstract, fantasy, sci-fi, and horror dominate - themes where broken physics and uncanny anatomy are aesthetically acceptable, or even desirable.
+                </p>
+
+                <p>
+                  T2VEval (Qi et al., 2025) explains why. They decompose video quality into four dimensions - text fidelity, realness, technical quality, and overall impression - and find that <span className="font-medium text-gray-800 dark:text-zinc-100">realness is the hardest dimension for current models.</span> The output can be high-resolution and prompt-faithful, but still look wrong because the physics or anatomy violates cognitive expectations.
                 </p>
 
                 <Insight
@@ -948,7 +952,7 @@ enters. Warm golden lighting.`}</pre>
                 />
 
                 <p>
-                  This has a direct implication for prompt craft: <span className="font-medium text-gray-800 dark:text-zinc-100">the community unconsciously prompts around model weaknesses.</span> If models fail at realistic human anatomy and physics, practitioners learn to prompt for stylized, fantastical, and abstract outputs instead - themes where &ldquo;realness&rdquo; is forgiving. Our dataset lets us test this hypothesis.
+                  Our data shows the community response: <span className="font-medium text-gray-800 dark:text-zinc-100">practitioners unconsciously prompt around model weaknesses.</span> They&rsquo;ve learned to avoid themes where realism is demanded - realistic portraits, architectural renders, product shots - and lean into themes where &ldquo;realness&rdquo; is forgiving.
                 </p>
 
                 {realnessData && (
@@ -1035,12 +1039,12 @@ enters. Warm golden lighting.`}</pre>
 
                 <div className="rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/30 p-4">
                   <p className="text-sm text-amber-800 dark:text-amber-200 leading-relaxed">
-                    <span className="font-semibold">The implication.</span> Prompt craft has co-evolved with model limitations. We prompt for what models can do, not what we actually want. As models improve on realness - Seedance 2.0, Veo 3.1, and newer Kling versions are closing the gap - expect the prompt distribution to shift toward higher realness demand. The stylized-first era may be a temporary artifact.
+                    <span className="font-semibold">Watch this number.</span> The forgiving-to-demanding ratio is a proxy for how much the community trusts model realism. As Seedance 2.0, Veo 3.1, and newer Kling versions close the realness gap, expect this distribution to shift. The stylized-first era may be a temporary artifact of model limitations, not creative preference.
                   </p>
                 </div>
 
                 <p className="text-xs text-gray-400 dark:text-zinc-500">
-                  Analysis framework adapted from T2VEval (Qi et al., 2025). Theme classification from this dataset. &ldquo;Forgiving&rdquo; = themes where unrealistic output is aesthetically acceptable. &ldquo;Demanding&rdquo; = themes where viewers expect physical/anatomical accuracy.
+                  Live data from <Link href="/prompts" className="text-violet-600 dark:text-violet-400 hover:underline">the dataset</Link>. Realness framework adapted from T2VEval (Qi et al., 2025). &ldquo;Forgiving&rdquo; = themes where unrealistic output is aesthetically acceptable. &ldquo;Demanding&rdquo; = themes where viewers expect physical/anatomical accuracy.
                 </p>
               </div>
             </Section>

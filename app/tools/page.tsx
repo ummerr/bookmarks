@@ -439,6 +439,24 @@ export default function ToolsPage() {
             <p className="text-sm text-gray-400 dark:text-zinc-500 mt-1">AI classification and data management</p>
           </div>
 
+          {/* Quality Tools */}
+          <div className="grid grid-cols-2 gap-3">
+            <a
+              href="/tools/quality"
+              className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-black/[0.02] dark:bg-white/[0.02] p-5 hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors group"
+            >
+              <h2 className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-[#1DA1F2] transition-colors">Dataset Quality Audit</h2>
+              <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1">Flag duplicates, low-quality entries, and source diversity issues</p>
+            </a>
+            <a
+              href="/tools/review"
+              className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-black/[0.02] dark:bg-white/[0.02] p-5 hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors group"
+            >
+              <h2 className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-[#1DA1F2] transition-colors">Prompt Reviewer</h2>
+              <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1">Tinder-style curation — rate prompts to keep, maybe, or cull</p>
+            </a>
+          </div>
+
           {/* Counts */}
           {counts && (
             <div className="grid grid-cols-3 gap-3">
