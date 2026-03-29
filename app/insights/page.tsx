@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { modelToFamily, modelFamilyMediaType } from '@/components/prompts/constants'
 
@@ -30,32 +30,75 @@ const PALETTE = [
   '#c084fc', '#d8b4fe', '#cbd5e1', '#93c5fd', '#b4bcd0',
 ]
 
+// ── Tooltip ────────────────────────────────────────────────────────────────
+
+interface TooltipData { label: string; value: string; x: number; y: number }
+
+function useTooltip() {
+  const [tip, setTip] = useState<TooltipData | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  const show = useCallback((label: string, value: string, e: React.MouseEvent) => {
+    const rect = containerRef.current?.getBoundingClientRect()
+    if (!rect) return
+    setTip({ label, value, x: e.clientX - rect.left, y: e.clientY - rect.top })
+  }, [])
+
+  const hide = useCallback(() => setTip(null), [])
+
+  return { tip, show, hide, containerRef }
+}
+
+function ChartTooltip({ tip }: { tip: TooltipData | null }) {
+  if (!tip) return null
+  return (
+    <div
+      className="absolute z-50 pointer-events-none px-2.5 py-1.5 rounded-lg bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs shadow-lg whitespace-nowrap transition-opacity duration-100"
+      style={{ left: tip.x, top: tip.y - 40, transform: 'translateX(-50%)' }}
+    >
+      <span className="font-medium">{tip.label}</span>
+      <span className="ml-1.5 opacity-70">{tip.value}</span>
+    </div>
+  )
+}
+
 function HorizontalBarChart({ data, max: maxOverride }: { data: LabelValue[]; max?: number }) {
   const max = maxOverride ?? data[0]?.value ?? 1
+  const total = data.reduce((s, d) => s + d.value, 0)
+  const { tip, show, hide, containerRef } = useTooltip()
   return (
-    <div className="flex flex-col gap-1.5">
-      {data.map((d) => (
-        <div key={d.label} className="flex items-center gap-3">
-          <span className="text-xs text-gray-600 dark:text-zinc-300 w-36 truncate text-right shrink-0 font-medium">
-            {formatLabel(d.label)}
-          </span>
-          <div className="flex-1 h-6 bg-black/[0.03] dark:bg-white/[0.03] rounded-md overflow-hidden">
-            <div
-              className="h-full rounded-md transition-all duration-500 bg-violet-500/15 dark:bg-violet-400/15 border-l-[3px] border-violet-500 dark:border-violet-400"
-              style={{ width: `${Math.max(3, (d.value / max) * 100)}%` }}
-            />
+    <div className="relative" ref={containerRef}>
+      <ChartTooltip tip={tip} />
+      <div className="flex flex-col gap-1.5">
+        {data.map((d) => (
+          <div
+            key={d.label}
+            className="flex items-center gap-3 cursor-default"
+            onMouseMove={(e) => show(formatLabel(d.label), `${d.value} (${Math.round((d.value / total) * 100)}%)`, e)}
+            onMouseLeave={hide}
+          >
+            <span className="text-xs text-gray-600 dark:text-zinc-300 w-36 truncate text-right shrink-0 font-medium">
+              {formatLabel(d.label)}
+            </span>
+            <div className="flex-1 h-6 bg-black/[0.03] dark:bg-white/[0.03] rounded-md overflow-hidden">
+              <div
+                className="h-full rounded-md transition-all duration-500 bg-violet-500/15 dark:bg-violet-400/15 border-l-[3px] border-violet-500 dark:border-violet-400"
+                style={{ width: `${Math.max(3, (d.value / max) * 100)}%` }}
+              />
+            </div>
+            <span className="text-xs font-mono text-gray-400 dark:text-zinc-500 w-10 text-right shrink-0">
+              {d.value}
+            </span>
           </div>
-          <span className="text-xs font-mono text-gray-400 dark:text-zinc-500 w-10 text-right shrink-0">
-            {d.value}
-          </span>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 }
 
 function DonutChart({ data, size = 180 }: { data: LabelValue[]; size?: number }) {
   const total = data.reduce((s, d) => s + d.value, 0)
+  const { tip, show, hide, containerRef } = useTooltip()
   if (total === 0) return null
 
   const r = size / 2 - 12
@@ -63,61 +106,66 @@ function DonutChart({ data, size = 180 }: { data: LabelValue[]; size?: number })
   let offset = 0
 
   return (
-    <div className="flex flex-col sm:flex-row items-center gap-6">
-      <svg width={size} height={size} className="shrink-0">
-        {data.map((d, i) => {
-          const pct = d.value / total
-          const dashLength = pct * circumference
-          const currentOffset = offset
-          offset += dashLength
-          return (
-            <circle
-              key={d.label}
-              cx={size / 2}
-              cy={size / 2}
-              r={r}
-              fill="none"
-              stroke={PALETTE[i % PALETTE.length]}
-              strokeWidth={20}
-              strokeDasharray={`${dashLength} ${circumference - dashLength}`}
-              strokeDashoffset={-currentOffset}
-              className="transition-all duration-500"
-              style={{ opacity: 0.65 }}
-            />
-          )
-        })}
-        <text
-          x={size / 2}
-          y={size / 2 - 6}
-          textAnchor="middle"
-          className="fill-gray-900 dark:fill-white text-2xl font-bold"
-          style={{ fontSize: '24px', fontWeight: 700 }}
-        >
-          {total}
-        </text>
-        <text
-          x={size / 2}
-          y={size / 2 + 14}
-          textAnchor="middle"
-          className="fill-gray-400 dark:fill-zinc-500"
-          style={{ fontSize: '11px' }}
-        >
-          total
-        </text>
-      </svg>
-      <div className="flex flex-col gap-1.5">
-        {data.map((d, i) => (
-          <div key={d.label} className="flex items-center gap-2 text-xs">
-            <span
-              className="w-3 h-3 rounded-sm shrink-0"
-              style={{ backgroundColor: PALETTE[i % PALETTE.length] }}
-            />
-            <span className="text-gray-600 dark:text-zinc-300 font-medium">{formatLabel(d.label)}</span>
-            <span className="text-gray-400 dark:text-zinc-500">
-              {d.value} ({Math.round((d.value / total) * 100)}%)
-            </span>
-          </div>
-        ))}
+    <div className="relative" ref={containerRef}>
+      <ChartTooltip tip={tip} />
+      <div className="flex flex-col sm:flex-row items-center gap-6">
+        <svg width={size} height={size} className="shrink-0">
+          {data.map((d, i) => {
+            const pct = d.value / total
+            const dashLength = pct * circumference
+            const currentOffset = offset
+            offset += dashLength
+            return (
+              <circle
+                key={d.label}
+                cx={size / 2}
+                cy={size / 2}
+                r={r}
+                fill="none"
+                stroke={PALETTE[i % PALETTE.length]}
+                strokeWidth={20}
+                strokeDasharray={`${dashLength} ${circumference - dashLength}`}
+                strokeDashoffset={-currentOffset}
+                className="transition-all duration-500 cursor-default"
+                style={{ opacity: 0.65 }}
+                onMouseMove={(e) => show(formatLabel(d.label), `${d.value} (${Math.round(pct * 100)}%)`, e)}
+                onMouseLeave={hide}
+              />
+            )
+          })}
+          <text
+            x={size / 2}
+            y={size / 2 - 6}
+            textAnchor="middle"
+            className="fill-gray-900 dark:fill-white text-2xl font-bold"
+            style={{ fontSize: '24px', fontWeight: 700 }}
+          >
+            {total}
+          </text>
+          <text
+            x={size / 2}
+            y={size / 2 + 14}
+            textAnchor="middle"
+            className="fill-gray-400 dark:fill-zinc-500"
+            style={{ fontSize: '11px' }}
+          >
+            total
+          </text>
+        </svg>
+        <div className="flex flex-col gap-1.5">
+          {data.map((d, i) => (
+            <div key={d.label} className="flex items-center gap-2 text-xs">
+              <span
+                className="w-3 h-3 rounded-sm shrink-0"
+                style={{ backgroundColor: PALETTE[i % PALETTE.length] }}
+              />
+              <span className="text-gray-600 dark:text-zinc-300 font-medium">{formatLabel(d.label)}</span>
+              <span className="text-gray-400 dark:text-zinc-500">
+                {d.value} ({Math.round((d.value / total) * 100)}%)
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
@@ -148,33 +196,44 @@ function PromptLengthChart({ data }: { data: LabelValue[] }) {
     .filter((d): d is LabelValue => d != null)
   const max = Math.max(...sorted.map((d) => d.value), 1)
   const total = sorted.reduce((s, d) => s + d.value, 0)
+  const { tip, show, hide, containerRef } = useTooltip()
 
   return (
-    <div className="flex items-end gap-3 h-40">
-      {sorted.map((d, i) => {
-        const pct = (d.value / max) * 100
-        return (
-          <div key={d.label} className="flex-1 flex flex-col items-center gap-1.5">
-            <span className="text-[10px] font-mono text-gray-400 dark:text-zinc-500">
-              {Math.round((d.value / total) * 100)}%
-            </span>
-            <div className="w-full bg-black/[0.03] dark:bg-white/[0.03] rounded-t-md relative" style={{ height: '100px' }}>
-              <div
-                className="absolute bottom-0 w-full rounded-t-md transition-all duration-500 bg-violet-500/50 dark:bg-violet-400/40"
-                style={{ height: `${Math.max(4, pct)}%` }}
-              />
+    <div className="relative" ref={containerRef}>
+      <ChartTooltip tip={tip} />
+      <div className="flex items-end gap-3 h-40">
+        {sorted.map((d) => {
+          const pct = (d.value / max) * 100
+          const label = labels[d.label] ?? d.label
+          return (
+            <div
+              key={d.label}
+              className="flex-1 flex flex-col items-center gap-1.5 cursor-default"
+              onMouseMove={(e) => show(label, `${d.value} (${Math.round((d.value / total) * 100)}%)`, e)}
+              onMouseLeave={hide}
+            >
+              <span className="text-[10px] font-mono text-gray-400 dark:text-zinc-500">
+                {Math.round((d.value / total) * 100)}%
+              </span>
+              <div className="w-full bg-black/[0.03] dark:bg-white/[0.03] rounded-t-md relative" style={{ height: '100px' }}>
+                <div
+                  className="absolute bottom-0 w-full rounded-t-md transition-all duration-500 bg-violet-500/50 dark:bg-violet-400/40"
+                  style={{ height: `${Math.max(4, pct)}%` }}
+                />
+              </div>
+              <span className="text-[10px] text-gray-500 dark:text-zinc-400 text-center leading-tight">
+                {label}
+              </span>
             </div>
-            <span className="text-[10px] text-gray-500 dark:text-zinc-400 text-center leading-tight">
-              {labels[d.label] ?? d.label}
-            </span>
-          </div>
-        )
-      })}
+          )
+        })}
+      </div>
     </div>
   )
 }
 
 function TimelineChart({ data, priorCount }: { data: TimelinePoint[]; priorCount?: number }) {
+  const { tip, show, hide, containerRef } = useTooltip()
   if (data.length < 2) return null
   const max = Math.max(...data.map((d) => d.value), 1)
   const total = data.reduce((s, d) => s + d.value, 0)
@@ -201,7 +260,8 @@ function TimelineChart({ data, priorCount }: { data: TimelinePoint[]; priorCount
   })
 
   return (
-    <div className="w-full overflow-x-auto">
+    <div className="w-full overflow-x-auto relative" ref={containerRef}>
+      <ChartTooltip tip={tip} />
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-[700px]" preserveAspectRatio="xMidYMid meet">
         {/* Grid */}
         {yTicks.map((t) => (
@@ -224,12 +284,18 @@ function TimelineChart({ data, priorCount }: { data: TimelinePoint[]; priorCount
         {points.map((p) => (
           <g key={p.month}>
             <circle cx={p.x} cy={p.y} r={3.5} fill="#8b5cf6" />
-            <text x={p.x} y={p.y - 10} textAnchor="middle" className="fill-gray-600 dark:fill-zinc-300" style={{ fontSize: '9px', fontWeight: 600 }}>
+            {/* Larger invisible hit area for hover */}
+            <circle
+              cx={p.x} cy={p.y} r={14} fill="transparent" className="cursor-default"
+              onMouseMove={(e) => show(formatMonth(p.month), `${p.value} prompts`, e)}
+              onMouseLeave={hide}
+            />
+            <text x={p.x} y={p.y - 10} textAnchor="middle" className="fill-gray-600 dark:fill-zinc-300 pointer-events-none" style={{ fontSize: '9px', fontWeight: 600 }}>
               {p.value}
             </text>
             <text
               x={p.x} y={H - 6} textAnchor="middle"
-              className="fill-gray-400 dark:fill-zinc-500" style={{ fontSize: '9px' }}
+              className="fill-gray-400 dark:fill-zinc-500 pointer-events-none" style={{ fontSize: '9px' }}
               transform={data.length > 6 ? `rotate(-45, ${p.x}, ${H - 6})` : undefined}
             >
               {formatMonth(p.month)}
@@ -248,6 +314,7 @@ function TimelineChart({ data, priorCount }: { data: TimelinePoint[]; priorCount
 }
 
 function ModelShareTimelineChart({ data, modelFamilyFn, priorCount }: { data: ModelTimelinePoint[]; modelFamilyFn: (m: string) => string; priorCount?: number }) {
+  const { tip, show, hide, containerRef } = useTooltip()
   if (data.length === 0) return null
 
   // Aggregate by month + family
@@ -303,7 +370,8 @@ function ModelShareTimelineChart({ data, modelFamilyFn, priorCount }: { data: Mo
   const yTicks = [0, 25, 50, 75, 100]
 
   return (
-    <div className="w-full overflow-x-auto">
+    <div className="w-full overflow-x-auto relative" ref={containerRef}>
+      <ChartTooltip tip={tip} />
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-[700px]" preserveAspectRatio="xMidYMid meet">
         {/* Grid lines */}
         {yTicks.map((pct) => {
@@ -335,12 +403,15 @@ function ModelShareTimelineChart({ data, modelFamilyFn, priorCount }: { data: Mo
                     rx={fi === allFamilies.length - 1 || (allFamilies.slice(fi + 1).every(fam => (s.values[fam] ?? 0) === 0)) ? 3 : 0}
                     fill={PALETTE[fi % PALETTE.length]}
                     opacity={0.65}
+                    className="cursor-default"
+                    onMouseMove={(e) => show(`${f} · ${formatMonth(s.month)}`, `${v} (${Math.round((v / s.total) * 100)}%)`, e)}
+                    onMouseLeave={hide}
                   />
                 )
               })}
               <text
                 x={barX + barW / 2} y={H - 8} textAnchor="middle"
-                className="fill-gray-400 dark:fill-zinc-500" style={{ fontSize: '9px' }}
+                className="fill-gray-400 dark:fill-zinc-500 pointer-events-none" style={{ fontSize: '9px' }}
                 transform={months.length > 6 ? `rotate(-45, ${barX + barW / 2}, ${H - 8})` : undefined}
               >
                 {formatMonth(s.month)}
