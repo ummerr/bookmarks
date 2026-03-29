@@ -181,7 +181,7 @@ function PromptLengthChart({ data }: { data: LabelValue[] }) {
   )
 }
 
-function TimelineChart({ data }: { data: TimelinePoint[] }) {
+function TimelineChart({ data, priorCount }: { data: TimelinePoint[]; priorCount?: number }) {
   if (data.length < 2) return null
   const max = Math.max(...data.map((d) => d.value), 1)
   const total = data.reduce((s, d) => s + d.value, 0)
@@ -244,12 +244,17 @@ function TimelineChart({ data }: { data: TimelinePoint[] }) {
           </g>
         ))}
       </svg>
-      <div className="mt-2 text-xs text-gray-400 dark:text-zinc-500">{total.toLocaleString()} prompts across {data.length} months</div>
+      <div className="mt-2 text-xs text-gray-400 dark:text-zinc-500">
+        {total.toLocaleString()} prompts across {data.length} months
+        {priorCount != null && priorCount > 0 && (
+          <span> &middot; {priorCount.toLocaleString()} earlier</span>
+        )}
+      </div>
     </div>
   )
 }
 
-function ModelShareTimelineChart({ data, modelFamilyFn }: { data: ModelTimelinePoint[]; modelFamilyFn: (m: string) => string }) {
+function ModelShareTimelineChart({ data, modelFamilyFn, priorCount }: { data: ModelTimelinePoint[]; modelFamilyFn: (m: string) => string; priorCount?: number }) {
   if (data.length === 0) return null
 
   // Aggregate by month + family
@@ -348,6 +353,11 @@ function ModelShareTimelineChart({ data, modelFamilyFn }: { data: ModelTimelineP
           </div>
         ))}
       </div>
+      {priorCount != null && priorCount > 0 && (
+        <div className="mt-2 text-xs text-gray-400 dark:text-zinc-500">
+          {priorCount.toLocaleString()} earlier prompts not shown
+        </div>
+      )}
     </div>
   )
 }
@@ -443,6 +453,33 @@ export default function InsightsPage() {
       .sort((a, b) => b.value - a.value)
   }, [stats])
 
+  // Window temporal data to last 6 months
+  const sixMonthCutoff = useMemo(() => {
+    const d = new Date()
+    d.setMonth(d.getMonth() - 5) // current month + 5 prior = 6 months
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+  }, [])
+
+  const { recentTimeline, timelinePriorCount } = useMemo(() => {
+    if (!stats?.timeline) return { recentTimeline: [], timelinePriorCount: 0 }
+    const recent = stats.timeline.filter((d) => d.month >= sixMonthCutoff)
+    const prior = stats.timeline.filter((d) => d.month < sixMonthCutoff)
+    return {
+      recentTimeline: recent,
+      timelinePriorCount: prior.reduce((s, d) => s + d.value, 0),
+    }
+  }, [stats, sixMonthCutoff])
+
+  const { recentModelTimeline, modelTimelinePriorCount } = useMemo(() => {
+    if (!stats?.modelTimeline) return { recentModelTimeline: [], modelTimelinePriorCount: 0 }
+    const recent = stats.modelTimeline.filter((d) => d.month >= sixMonthCutoff)
+    const prior = stats.modelTimeline.filter((d) => d.month < sixMonthCutoff)
+    return {
+      recentModelTimeline: recent,
+      modelTimelinePriorCount: prior.reduce((s, d) => s + d.value, 0),
+    }
+  }, [stats, sixMonthCutoff])
+
   const imageCount = useMemo(() =>
     stats?.byCategory?.filter((c) => c.label.startsWith('image_')).reduce((s, c) => s + c.value, 0) ?? 0
   , [stats])
@@ -499,16 +536,16 @@ export default function InsightsPage() {
         </div>
 
         {/* Prompts over time */}
-        {(stats.timeline?.length ?? 0) >= 2 && (
-          <Section title="Prompts Over Time" description="Monthly ingestion rate — how the dataset is growing.">
-            <TimelineChart data={stats.timeline} />
+        {recentTimeline.length >= 2 && (
+          <Section title="Prompts Over Time" description="Prompts by tweet publish date — how the dataset is growing over the last 6 months.">
+            <TimelineChart data={recentTimeline} priorCount={timelinePriorCount} />
           </Section>
         )}
 
         {/* Model share over time */}
-        {(stats.modelTimeline?.length ?? 0) > 0 && (
-          <Section title="Model Share by Month" description="How model popularity is shifting — which tools creators are adopting.">
-            <ModelShareTimelineChart data={stats.modelTimeline} modelFamilyFn={modelToFamily} />
+        {recentModelTimeline.length > 0 && (
+          <Section title="Model Share by Month" description="How model popularity is shifting over the last 6 months — which tools creators are adopting.">
+            <ModelShareTimelineChart data={recentModelTimeline} modelFamilyFn={modelToFamily} priorCount={modelTimelinePriorCount} />
           </Section>
         )}
 
