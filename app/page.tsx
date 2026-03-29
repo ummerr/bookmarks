@@ -459,22 +459,22 @@ export default function LandingPage() {
                   key={b.name}
                   className={`border-b border-black/[0.04] dark:border-white/[0.04] last:border-0 ${
                     b.highlight
-                      ? 'bg-violet-500/[0.04] dark:bg-violet-400/[0.04]'
+                      ? 'bg-emerald-500/[0.04] dark:bg-emerald-400/[0.04]'
                       : ''
                   }`}
                 >
-                  <td className={`px-5 py-3 whitespace-nowrap ${b.highlight ? 'font-bold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-zinc-300'}`}>
+                  <td className={`px-5 py-3 whitespace-nowrap ${b.highlight ? 'font-bold text-emerald-600 dark:text-emerald-400' : 'text-gray-600 dark:text-zinc-300'}`}>
                     {b.name}
                   </td>
-                  <td className={`px-5 py-3 font-mono text-xs ${b.highlight ? 'font-bold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-zinc-300'}`}>{b.size}</td>
+                  <td className={`px-5 py-3 font-mono text-xs ${b.highlight ? 'font-bold text-emerald-600 dark:text-emerald-400' : 'text-gray-600 dark:text-zinc-300'}`}>{b.size}</td>
                   <td className={`px-5 py-3 whitespace-nowrap ${b.highlight ? 'font-bold' : 'text-gray-600 dark:text-zinc-300'}`}>
                     {b.highlight
-                      ? <><span className="text-gray-900 dark:text-white">Organic / </span><span className="text-emerald-600 dark:text-emerald-400">In-the-Wild</span></>
+                      ? <><span className="text-emerald-600 dark:text-emerald-400">Organic / </span><span className="text-emerald-600 dark:text-emerald-400">In-the-Wild</span></>
                       : b.source}
                   </td>
-                  <td className={`px-5 py-3 whitespace-nowrap ${b.highlight ? 'font-bold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-zinc-300'}`}>{b.modality}</td>
+                  <td className={`px-5 py-3 whitespace-nowrap ${b.highlight ? 'font-bold text-emerald-600 dark:text-emerald-400' : 'text-gray-600 dark:text-zinc-300'}`}>{b.modality}</td>
                   <td className={`px-5 py-3 whitespace-nowrap ${b.highlight ? 'font-bold text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-zinc-500'}`}>{b.engagement}</td>
-                  <td className={`px-5 py-3 font-mono text-xs whitespace-nowrap ${b.highlight ? 'font-bold text-gray-900 dark:text-white' : 'text-gray-400 dark:text-zinc-500'}`}>{b.curated}</td>
+                  <td className={`px-5 py-3 font-mono text-xs whitespace-nowrap ${b.highlight ? 'font-bold text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-zinc-500'}`}>{b.curated}</td>
                 </tr>
               ))}
             </tbody>

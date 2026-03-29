@@ -297,21 +297,21 @@ export default function DatacardPage() {
                       key={b.name}
                       className={`border-b border-black/[0.04] dark:border-white/4 last:border-0 ${
                         isThis
-                          ? 'bg-violet-500/[0.06] dark:bg-violet-500/[0.08]'
+                          ? 'bg-emerald-500/[0.06] dark:bg-emerald-500/[0.08]'
                           : i % 2 !== 0 ? 'bg-black/[0.015] dark:bg-white/[0.015]' : ''
                       }`}
                     >
-                      <td className={`px-4 py-2.5 font-mono text-[11px] whitespace-nowrap ${isThis ? 'text-gray-900 dark:text-white font-bold' : 'text-gray-800 dark:text-zinc-200'}`}>{b.name}</td>
-                      <td className={`px-4 py-2.5 tabular-nums ${isThis ? 'text-gray-900 dark:text-white font-bold' : 'text-gray-600 dark:text-zinc-400'}`}>{b.size}</td>
+                      <td className={`px-4 py-2.5 font-mono text-[11px] whitespace-nowrap ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-gray-800 dark:text-zinc-200'}`}>{b.name}</td>
+                      <td className={`px-4 py-2.5 tabular-nums ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-gray-600 dark:text-zinc-400'}`}>{b.size}</td>
                       <td className={`px-4 py-2.5 whitespace-nowrap ${isThis ? 'font-bold' : 'text-gray-500 dark:text-zinc-500'}`}>
                         {isThis
-                          ? <><span className="text-gray-900 dark:text-white">Organic / </span><span className="text-emerald-600 dark:text-emerald-400">In-the-Wild</span></>
+                          ? <><span className="text-emerald-600 dark:text-emerald-400">Organic / </span><span className="text-emerald-600 dark:text-emerald-400">In-the-Wild</span></>
                           : b.source}
                       </td>
-                      <td className={`px-4 py-2.5 whitespace-nowrap ${isThis ? 'text-gray-900 dark:text-white font-bold' : 'text-gray-500 dark:text-zinc-500'}`}>{b.modality}</td>
+                      <td className={`px-4 py-2.5 whitespace-nowrap ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-gray-500 dark:text-zinc-500'}`}>{b.modality}</td>
                       <td className={`px-4 py-2.5 whitespace-nowrap ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-gray-500 dark:text-zinc-500'}`}>{b.provenance}</td>
                       <td className={`px-4 py-2.5 whitespace-nowrap ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-gray-400 dark:text-zinc-600'}`}>{b.engagement}</td>
-                      <td className={`px-4 py-2.5 font-mono text-[11px] whitespace-nowrap ${isThis ? 'text-gray-900 dark:text-white font-bold' : 'text-gray-400 dark:text-zinc-500'}`}>{b.curated}</td>
+                      <td className={`px-4 py-2.5 font-mono text-[11px] whitespace-nowrap ${isThis ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-gray-400 dark:text-zinc-500'}`}>{b.curated}</td>
                     </tr>
                   )
                 })}
