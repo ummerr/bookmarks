@@ -23,29 +23,26 @@ interface StatsData {
 
 // ── Chart components ────────────────────────────────────────────────────────
 
+// Muted analogous palette — violet / indigo / slate tones
 const PALETTE = [
-  '#8b5cf6', '#ec4899', '#f97316', '#14b8a6', '#3b82f6',
-  '#f59e0b', '#ef4444', '#06b6d4', '#a855f7', '#10b981',
-  '#6366f1', '#d946ef', '#f43f5e', '#22c55e', '#0ea5e9',
+  '#7c3aed', '#818cf8', '#a78bfa', '#6366f1', '#9ca3af',
+  '#a5b4fc', '#c4b5fd', '#94a3b8', '#7dd3fc', '#67e8f9',
+  '#c084fc', '#d8b4fe', '#cbd5e1', '#93c5fd', '#b4bcd0',
 ]
 
 function HorizontalBarChart({ data, max: maxOverride }: { data: LabelValue[]; max?: number }) {
   const max = maxOverride ?? data[0]?.value ?? 1
   return (
     <div className="flex flex-col gap-1.5">
-      {data.map((d, i) => (
+      {data.map((d) => (
         <div key={d.label} className="flex items-center gap-3">
           <span className="text-xs text-gray-600 dark:text-zinc-300 w-36 truncate text-right shrink-0 font-medium">
             {formatLabel(d.label)}
           </span>
           <div className="flex-1 h-6 bg-black/[0.03] dark:bg-white/[0.03] rounded-md overflow-hidden">
             <div
-              className="h-full rounded-md transition-all duration-500"
-              style={{
-                width: `${Math.max(3, (d.value / max) * 100)}%`,
-                backgroundColor: `${PALETTE[i % PALETTE.length]}30`,
-                borderLeft: `3px solid ${PALETTE[i % PALETTE.length]}`,
-              }}
+              className="h-full rounded-md transition-all duration-500 bg-violet-500/15 dark:bg-violet-400/15 border-l-[3px] border-violet-500 dark:border-violet-400"
+              style={{ width: `${Math.max(3, (d.value / max) * 100)}%` }}
             />
           </div>
           <span className="text-xs font-mono text-gray-400 dark:text-zinc-500 w-10 text-right shrink-0">
@@ -81,11 +78,11 @@ function DonutChart({ data, size = 180 }: { data: LabelValue[]; size?: number })
               r={r}
               fill="none"
               stroke={PALETTE[i % PALETTE.length]}
-              strokeWidth={22}
+              strokeWidth={20}
               strokeDasharray={`${dashLength} ${circumference - dashLength}`}
               strokeDashoffset={-currentOffset}
               className="transition-all duration-500"
-              style={{ opacity: 0.8 }}
+              style={{ opacity: 0.65 }}
             />
           )
         })}
@@ -126,13 +123,13 @@ function DonutChart({ data, size = 180 }: { data: LabelValue[]; size?: number })
   )
 }
 
-function StatCard({ value, label, sub, color }: { value: string | number; label: string; sub?: string; color: string }) {
+function StatCard({ value, label, sub }: { value: string | number; label: string; sub?: string }) {
   return (
     <div className="rounded-xl border border-black/[0.06] dark:border-white/[0.06] bg-white/40 dark:bg-white/[0.02] p-5">
-      <div className="text-2xl font-bold font-mono tabular-nums" style={{ color }}>
+      <div className="text-2xl font-bold font-mono tabular-nums text-gray-900 dark:text-white">
         {typeof value === 'number' ? value.toLocaleString() : value}
       </div>
-      <div className="text-xs font-medium text-gray-700 dark:text-zinc-300 mt-0.5">{label}</div>
+      <div className="text-xs font-medium text-gray-500 dark:text-zinc-400 mt-0.5">{label}</div>
       {sub && <div className="text-[10px] text-gray-400 dark:text-zinc-600 mt-0.5">{sub}</div>}
     </div>
   )
@@ -163,12 +160,8 @@ function PromptLengthChart({ data }: { data: LabelValue[] }) {
             </span>
             <div className="w-full bg-black/[0.03] dark:bg-white/[0.03] rounded-t-md relative" style={{ height: '100px' }}>
               <div
-                className="absolute bottom-0 w-full rounded-t-md transition-all duration-500"
-                style={{
-                  height: `${Math.max(4, pct)}%`,
-                  backgroundColor: PALETTE[i],
-                  opacity: 0.7,
-                }}
+                className="absolute bottom-0 w-full rounded-t-md transition-all duration-500 bg-violet-500/50 dark:bg-violet-400/40"
+                style={{ height: `${Math.max(4, pct)}%` }}
               />
             </div>
             <span className="text-[10px] text-gray-500 dark:text-zinc-400 text-center leading-tight">
@@ -341,7 +334,7 @@ function ModelShareTimelineChart({ data, modelFamilyFn, priorCount }: { data: Mo
                     height={segH}
                     rx={fi === allFamilies.length - 1 || (allFamilies.slice(fi + 1).every(fam => (s.values[fam] ?? 0) === 0)) ? 3 : 0}
                     fill={PALETTE[fi % PALETTE.length]}
-                    opacity={0.75}
+                    opacity={0.65}
                   />
                 )
               })}
@@ -566,11 +559,11 @@ export default function InsightsPage() {
 
         {/* Summary stats */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-          <StatCard value={stats.total} label="Total prompts" color="#8b5cf6" />
-          <StatCard value={imageCount} label="Image prompts" color="#ec4899" />
-          <StatCard value={videoCount} label="Video prompts" color="#6366f1" />
-          <StatCard value={`${refPct}%`} label="Use references" sub={`${stats.withReference ?? 0} prompts`} color="#f97316" />
-          <StatCard value={byModelAggregated.length} label="Distinct models" color="#3b82f6" />
+          <StatCard value={stats.total} label="Total prompts" />
+          <StatCard value={imageCount} label="Image prompts" />
+          <StatCard value={videoCount} label="Video prompts" />
+          <StatCard value={`${refPct}%`} label="Use references" sub={`${stats.withReference ?? 0} prompts`} />
+          <StatCard value={byModelAggregated.length} label="Distinct models" />
         </div>
 
         {/* Prompts over time */}
