@@ -47,6 +47,19 @@ export function modelToFamily(model: string): string {
   return MODEL_FAMILIES.find((f) => f.patterns.some((p) => lower.includes(p)))?.label ?? model
 }
 
+// Model families that are primarily video generators
+const VIDEO_MODEL_FAMILIES = new Set([
+  'Kling', 'Runway', 'Sora', 'Pika', 'Hailuo', 'Luma', 'Veo', 'Wan',
+  'Seedance', 'Nano Banana', 'Higgsfield',
+])
+
+export function modelFamilyMediaType(family: string): 'image' | 'video' | 'other' {
+  if (VIDEO_MODEL_FAMILIES.has(family)) return 'video'
+  // Audio / 3D / LLMs that don't clearly fit
+  if (['ElevenLabs', 'Suno', 'Udio', 'Meshy'].includes(family)) return 'other'
+  return 'image'
+}
+
 export const CATEGORIES: { value: PromptCategory | 'all'; label: string }[] = [
   { value: 'all',                  label: 'All' },
   { value: 'image_person',        label: 'Person' },

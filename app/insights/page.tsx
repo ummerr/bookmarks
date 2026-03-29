@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { modelToFamily } from '@/components/prompts/constants'
+import { modelToFamily, modelFamilyMediaType } from '@/components/prompts/constants'
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -299,7 +299,6 @@ function ModelShareTimelineChart({ data, modelFamilyFn, priorCount }: { data: Mo
   })
 
   const allFamilies = otherTotal(stacked) ? [...topFamilies, 'Other'] : topFamilies
-  const maxTotal = Math.max(...stacked.map((s) => s.total), 1)
 
   const W = 700, H = 240, PX = 48, PY = 16, PB = 36
   const plotW = W - PX * 2
@@ -307,9 +306,22 @@ function ModelShareTimelineChart({ data, modelFamilyFn, priorCount }: { data: Mo
   const barW = Math.min(50, (plotW / months.length) * 0.7)
   const gap = (plotW - barW * months.length) / Math.max(months.length - 1, 1)
 
+  // Y-axis percentage labels
+  const yTicks = [0, 25, 50, 75, 100]
+
   return (
     <div className="w-full overflow-x-auto">
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-[700px]" preserveAspectRatio="xMidYMid meet">
+        {/* Grid lines */}
+        {yTicks.map((pct) => {
+          const y = PY + plotH - (pct / 100) * plotH
+          return (
+            <g key={pct}>
+              <line x1={PX} y1={y} x2={W - PX} y2={y} stroke="currentColor" className="text-black/[0.06] dark:text-white/[0.06]" />
+              <text x={PX - 8} y={y + 3} textAnchor="end" className="fill-gray-400 dark:fill-zinc-500" style={{ fontSize: '10px' }}>{pct}%</text>
+            </g>
+          )
+        })}
         {stacked.map((s, mi) => {
           const barX = PX + mi * (barW + gap)
           let yOffset = PY + plotH
@@ -317,8 +329,8 @@ function ModelShareTimelineChart({ data, modelFamilyFn, priorCount }: { data: Mo
             <g key={s.month}>
               {allFamilies.map((f, fi) => {
                 const v = s.values[f] ?? 0
-                if (v === 0) return null
-                const segH = (v / maxTotal) * plotH
+                if (v === 0 || s.total === 0) return null
+                const segH = (v / s.total) * plotH
                 yOffset -= segH
                 return (
                   <rect
@@ -480,12 +492,38 @@ export default function InsightsPage() {
     }
   }, [stats, sixMonthCutoff])
 
+  // Split models by media type
+  const { imageModels, videoModels } = useMemo(() => {
+    if (!byModelAggregated.length) return { imageModels: [], videoModels: [] }
+    return {
+      imageModels: byModelAggregated.filter((m) => modelFamilyMediaType(m.label) === 'image'),
+      videoModels: byModelAggregated.filter((m) => modelFamilyMediaType(m.label) === 'video'),
+    }
+  }, [byModelAggregated])
+
+  // Split model timeline by media type
+  const { imageModelTimeline, videoModelTimeline } = useMemo(() => {
+    if (!recentModelTimeline.length) return { imageModelTimeline: [], videoModelTimeline: [] }
+    return {
+      imageModelTimeline: recentModelTimeline.filter((d) => modelFamilyMediaType(modelToFamily(d.model)) === 'image'),
+      videoModelTimeline: recentModelTimeline.filter((d) => modelFamilyMediaType(modelToFamily(d.model)) === 'video'),
+    }
+  }, [recentModelTimeline])
+
+  // Split categories by media type
+  const imageCategories = useMemo(() =>
+    stats?.byCategory?.filter((c) => c.label.startsWith('image_')) ?? []
+  , [stats])
+  const videoCategories = useMemo(() =>
+    stats?.byCategory?.filter((c) => c.label.startsWith('video_')) ?? []
+  , [stats])
+
   const imageCount = useMemo(() =>
-    stats?.byCategory?.filter((c) => c.label.startsWith('image_')).reduce((s, c) => s + c.value, 0) ?? 0
-  , [stats])
+    imageCategories.reduce((s, c) => s + c.value, 0)
+  , [imageCategories])
   const videoCount = useMemo(() =>
-    stats?.byCategory?.filter((c) => c.label.startsWith('video_')).reduce((s, c) => s + c.value, 0) ?? 0
-  , [stats])
+    videoCategories.reduce((s, c) => s + c.value, 0)
+  , [videoCategories])
   const refPct = stats?.total ? Math.round(((stats.withReference ?? 0) / stats.total) * 100) : 0
 
   if (loading) {
@@ -542,26 +580,45 @@ export default function InsightsPage() {
           </Section>
         )}
 
-        {/* Model share over time */}
-        {recentModelTimeline.length > 0 && (
-          <Section title="Model Share by Month" description="How model popularity is shifting over the last 6 months — which tools creators are adopting.">
-            <ModelShareTimelineChart data={recentModelTimeline} modelFamilyFn={modelToFamily} priorCount={modelTimelinePriorCount} />
+        {/* Image model share over time */}
+        {imageModelTimeline.length > 0 && (
+          <Section title="Image Model Share by Month" description="How image model preferences are shifting month to month.">
+            <ModelShareTimelineChart data={imageModelTimeline} modelFamilyFn={modelToFamily} priorCount={modelTimelinePriorCount} />
           </Section>
         )}
 
-        {/* Technique distribution */}
-        {(stats.byCategory?.length ?? 0) > 0 && (
-          <Section title="Techniques" description="Prompt count by generation technique.">
-            <DonutChart
-              data={stats.byCategory.filter((c) => c.label.startsWith('image_') || c.label.startsWith('video_'))}
-            />
+        {/* Video model share over time */}
+        {videoModelTimeline.length > 0 && (
+          <Section title="Video Model Share by Month" description="How video model preferences are shifting month to month.">
+            <ModelShareTimelineChart data={videoModelTimeline} modelFamilyFn={modelToFamily} />
           </Section>
         )}
 
-        {/* Model share */}
-        {byModelAggregated.length > 0 && (
-          <Section title="Model Share" description="Which AI models appear most often in viral prompts.">
-            <HorizontalBarChart data={byModelAggregated.slice(0, 15)} />
+        {/* Image techniques */}
+        {imageCategories.length > 0 && (
+          <Section title="Image Techniques" description="Prompt count by image generation technique.">
+            <DonutChart data={imageCategories} />
+          </Section>
+        )}
+
+        {/* Video techniques */}
+        {videoCategories.length > 0 && (
+          <Section title="Video Techniques" description="Prompt count by video generation technique.">
+            <DonutChart data={videoCategories} />
+          </Section>
+        )}
+
+        {/* Image model share */}
+        {imageModels.length > 0 && (
+          <Section title="Image Models" description="Which image models appear most often in viral prompts.">
+            <HorizontalBarChart data={imageModels.slice(0, 12)} />
+          </Section>
+        )}
+
+        {/* Video model share */}
+        {videoModels.length > 0 && (
+          <Section title="Video Models" description="Which video models appear most often in viral prompts.">
+            <HorizontalBarChart data={videoModels.slice(0, 12)} />
           </Section>
         )}
 
