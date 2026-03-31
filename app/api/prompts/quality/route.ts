@@ -1,10 +1,5 @@
 import { NextResponse } from 'next/server'
-import postgres from 'postgres'
-
-let _sql: ReturnType<typeof postgres> | undefined
-function getSql() {
-  return (_sql ??= postgres(process.env.DATABASE_URL!, { ssl: 'require', connect_timeout: 8, prepare: false }))
-}
+import { getSql } from '@/lib/db'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function safe<T>(promise: PromiseLike<T[]>, fallback: T[]): Promise<T[]> {
@@ -32,23 +27,20 @@ export async function GET() {
   try {
     const sql = getSql()
 
-    // Run ALL queries in parallel - single round-trip batch
+    // Run queries in parallel — 10 queries (merged from 13)
     const [
       countsRow,
       tooShort,
       noExtract,
-      dupes,
-      dupeStats,
+      dupesWithStats,
       sameAsTweet,
       confidenceBuckets,
       lowConf,
       lengthBuckets,
       foreignLang,
-      overlaps,
       sourceRows,
-      sourceStats,
     ] = await Promise.all([
-      // ── 1. All counts + total in ONE query ─────────────────────────
+      // ── 1. All counts + overlap flag distribution in ONE query ─────
       safe(sql<{
         total: string
         short_count: string
@@ -59,6 +51,13 @@ export async function GET() {
         no_media_count: string
         foreign_lang_count: string
         any_flag_count: string
+        flags_1: string
+        flags_2: string
+        flags_3: string
+        flags_4: string
+        flags_5: string
+        flags_6: string
+        unique_sources: string
       }[]>`
         SELECT
           COUNT(*) as total,
@@ -76,12 +75,63 @@ export async function GET() {
             OR detected_model IS NULL OR detected_model = ''
             OR confidence < 0.5
             OR media_urls IS NULL OR media_urls::text = '[]' OR media_urls::text = 'null'
-          ) as any_flag_count
+          ) as any_flag_count,
+          COUNT(*) FILTER (WHERE (
+            (CASE WHEN extracted_prompt IS NULL THEN 1 ELSE 0 END)
+            + (CASE WHEN extracted_prompt IS NOT NULL AND LENGTH(extracted_prompt) < 20 THEN 1 ELSE 0 END)
+            + (CASE WHEN prompt_category IS NULL THEN 1 ELSE 0 END)
+            + (CASE WHEN detected_model IS NULL OR detected_model = '' THEN 1 ELSE 0 END)
+            + (CASE WHEN confidence < 0.5 THEN 1 ELSE 0 END)
+            + (CASE WHEN media_urls IS NULL OR media_urls::text = '[]' OR media_urls::text = 'null' THEN 1 ELSE 0 END)
+          ) = 1) as flags_1,
+          COUNT(*) FILTER (WHERE (
+            (CASE WHEN extracted_prompt IS NULL THEN 1 ELSE 0 END)
+            + (CASE WHEN extracted_prompt IS NOT NULL AND LENGTH(extracted_prompt) < 20 THEN 1 ELSE 0 END)
+            + (CASE WHEN prompt_category IS NULL THEN 1 ELSE 0 END)
+            + (CASE WHEN detected_model IS NULL OR detected_model = '' THEN 1 ELSE 0 END)
+            + (CASE WHEN confidence < 0.5 THEN 1 ELSE 0 END)
+            + (CASE WHEN media_urls IS NULL OR media_urls::text = '[]' OR media_urls::text = 'null' THEN 1 ELSE 0 END)
+          ) = 2) as flags_2,
+          COUNT(*) FILTER (WHERE (
+            (CASE WHEN extracted_prompt IS NULL THEN 1 ELSE 0 END)
+            + (CASE WHEN extracted_prompt IS NOT NULL AND LENGTH(extracted_prompt) < 20 THEN 1 ELSE 0 END)
+            + (CASE WHEN prompt_category IS NULL THEN 1 ELSE 0 END)
+            + (CASE WHEN detected_model IS NULL OR detected_model = '' THEN 1 ELSE 0 END)
+            + (CASE WHEN confidence < 0.5 THEN 1 ELSE 0 END)
+            + (CASE WHEN media_urls IS NULL OR media_urls::text = '[]' OR media_urls::text = 'null' THEN 1 ELSE 0 END)
+          ) = 3) as flags_3,
+          COUNT(*) FILTER (WHERE (
+            (CASE WHEN extracted_prompt IS NULL THEN 1 ELSE 0 END)
+            + (CASE WHEN extracted_prompt IS NOT NULL AND LENGTH(extracted_prompt) < 20 THEN 1 ELSE 0 END)
+            + (CASE WHEN prompt_category IS NULL THEN 1 ELSE 0 END)
+            + (CASE WHEN detected_model IS NULL OR detected_model = '' THEN 1 ELSE 0 END)
+            + (CASE WHEN confidence < 0.5 THEN 1 ELSE 0 END)
+            + (CASE WHEN media_urls IS NULL OR media_urls::text = '[]' OR media_urls::text = 'null' THEN 1 ELSE 0 END)
+          ) = 4) as flags_4,
+          COUNT(*) FILTER (WHERE (
+            (CASE WHEN extracted_prompt IS NULL THEN 1 ELSE 0 END)
+            + (CASE WHEN extracted_prompt IS NOT NULL AND LENGTH(extracted_prompt) < 20 THEN 1 ELSE 0 END)
+            + (CASE WHEN prompt_category IS NULL THEN 1 ELSE 0 END)
+            + (CASE WHEN detected_model IS NULL OR detected_model = '' THEN 1 ELSE 0 END)
+            + (CASE WHEN confidence < 0.5 THEN 1 ELSE 0 END)
+            + (CASE WHEN media_urls IS NULL OR media_urls::text = '[]' OR media_urls::text = 'null' THEN 1 ELSE 0 END)
+          ) = 5) as flags_5,
+          COUNT(*) FILTER (WHERE (
+            (CASE WHEN extracted_prompt IS NULL THEN 1 ELSE 0 END)
+            + (CASE WHEN extracted_prompt IS NOT NULL AND LENGTH(extracted_prompt) < 20 THEN 1 ELSE 0 END)
+            + (CASE WHEN prompt_category IS NULL THEN 1 ELSE 0 END)
+            + (CASE WHEN detected_model IS NULL OR detected_model = '' THEN 1 ELSE 0 END)
+            + (CASE WHEN confidence < 0.5 THEN 1 ELSE 0 END)
+            + (CASE WHEN media_urls IS NULL OR media_urls::text = '[]' OR media_urls::text = 'null' THEN 1 ELSE 0 END)
+          ) = 6) as flags_6,
+          COUNT(DISTINCT author_handle) as unique_sources
         FROM bookmarks
         WHERE category = 'prompts'
       `, [{
         total: '0', short_count: '0', no_extract_count: '0', no_cat_count: '0',
-        no_model_count: '0', same_count: '0', no_media_count: '0', foreign_lang_count: '0', any_flag_count: '0',
+        no_model_count: '0', same_count: '0', no_media_count: '0', foreign_lang_count: '0',
+        any_flag_count: '0', flags_1: '0', flags_2: '0', flags_3: '0',
+        flags_4: '0', flags_5: '0', flags_6: '0', unique_sources: '0',
       }]),
 
       // ── 2. Too short examples ──────────────────────────────────────
@@ -107,32 +157,24 @@ export async function GET() {
         LIMIT 30
       `, []),
 
-      // ── 4. Duplicate prompts (top 20) ──────────────────────────────
-      safe(sql<{ extracted_prompt: string; dupe_count: string }[]>`
-        SELECT extracted_prompt, COUNT(*) as dupe_count
-        FROM bookmarks
-        WHERE category = 'prompts' AND extracted_prompt IS NOT NULL
-        GROUP BY extracted_prompt
-        HAVING COUNT(*) > 1
-        ORDER BY COUNT(*) DESC
-        LIMIT 20
-      `, []),
-
-      // ── 5. Duplicate stats (unique prompts + removable rows) ───────
-      safe(sql<{ total_dupes: string; dupe_rows: string }[]>`
-        SELECT
-          COUNT(*) as total_dupes,
-          COALESCE(SUM(cnt - 1)::int, 0) as dupe_rows
-        FROM (
-          SELECT COUNT(*) as cnt
+      // ── 4. Duplicate prompts (top 20) + stats via window functions ─
+      safe(sql<{ extracted_prompt: string; dupe_count: string; total_dupes: string; dupe_rows: string }[]>`
+        WITH dupes AS (
+          SELECT extracted_prompt, COUNT(*) as dupe_count
           FROM bookmarks
           WHERE category = 'prompts' AND extracted_prompt IS NOT NULL
           GROUP BY extracted_prompt
           HAVING COUNT(*) > 1
-        ) sub
-      `, [{ total_dupes: '0', dupe_rows: '0' }]),
+        )
+        SELECT extracted_prompt, dupe_count,
+          COUNT(*) OVER() as total_dupes,
+          SUM(dupe_count - 1) OVER() as dupe_rows
+        FROM dupes
+        ORDER BY dupe_count DESC
+        LIMIT 20
+      `, []),
 
-      // ── 6. Same-as-tweet examples ─────────────────────────────────
+      // ── 5. Same-as-tweet examples ─────────────────────────────────
       safe(sql<(FlagResult & { prompt_length: number })[]>`
         SELECT id, tweet_id, author_handle, extracted_prompt, tweet_text,
                detected_model, prompt_category, confidence, tweet_url,
@@ -145,7 +187,7 @@ export async function GET() {
         LIMIT 30
       `, []),
 
-      // ── 7. Confidence distribution ─────────────────────────────────
+      // ── 6. Confidence distribution ─────────────────────────────────
       safe(sql<{ bucket: string; n: string }[]>`
         SELECT
           CASE
@@ -162,7 +204,7 @@ export async function GET() {
         ORDER BY bucket
       `, []),
 
-      // ── 8. Low confidence examples ─────────────────────────────────
+      // ── 7. Low confidence examples ─────────────────────────────────
       safe(sql<FlagResult[]>`
         SELECT id, tweet_id, author_handle, extracted_prompt, tweet_text,
                detected_model, prompt_category, confidence, tweet_url
@@ -172,7 +214,7 @@ export async function GET() {
         LIMIT 30
       `, []),
 
-      // ── 9. Prompt length distribution ──────────────────────────────
+      // ── 8. Prompt length distribution ──────────────────────────────
       safe(sql<{ bucket: string; n: string }[]>`
         SELECT
           CASE
@@ -192,7 +234,7 @@ export async function GET() {
         ORDER BY MIN(LENGTH(COALESCE(extracted_prompt, '')))
       `, []),
 
-      // ── 10. Foreign language (CJK) examples ──────────────────────────
+      // ── 9. Foreign language (CJK) examples ──────────────────────────
       safe(sql<FlagResult[]>`
         SELECT id, tweet_id, author_handle, extracted_prompt, tweet_text,
                detected_model, prompt_category, confidence, tweet_url
@@ -203,26 +245,7 @@ export async function GET() {
         LIMIT 30
       `, []),
 
-      // ── 11. Overlap: rows by flag count ────────────────────────────
-      safe(sql<{ flags: string; n: string }[]>`
-        SELECT flags, COUNT(*) as n FROM (
-          SELECT id,
-            (CASE WHEN extracted_prompt IS NULL THEN 1 ELSE 0 END)
-            + (CASE WHEN extracted_prompt IS NOT NULL AND LENGTH(extracted_prompt) < 20 THEN 1 ELSE 0 END)
-            + (CASE WHEN prompt_category IS NULL THEN 1 ELSE 0 END)
-            + (CASE WHEN detected_model IS NULL OR detected_model = '' THEN 1 ELSE 0 END)
-            + (CASE WHEN confidence < 0.5 THEN 1 ELSE 0 END)
-            + (CASE WHEN media_urls IS NULL OR media_urls::text = '[]' OR media_urls::text = 'null' THEN 1 ELSE 0 END)
-            as flags
-          FROM bookmarks
-          WHERE category = 'prompts'
-        ) sub
-        WHERE flags > 0
-        GROUP BY flags
-        ORDER BY flags
-      `, []),
-
-      // ── 12. Top sources by count ──────────────────────────────────
+      // ── 10. Top sources + concentration (window functions) ─────────
       safe(sql<{ author_handle: string; n: string; avg_confidence: string; categories: string }[]>`
         SELECT author_handle, COUNT(*) as n,
           ROUND(AVG(confidence)::numeric, 2) as avg_confidence,
@@ -233,20 +256,17 @@ export async function GET() {
         ORDER BY n DESC
         LIMIT 50
       `, []),
-
-      // ── 13. Source concentration stats ────────────────────────────
-      safe(sql<{ unique_sources: string; total: string }[]>`
-        SELECT
-          COUNT(DISTINCT author_handle) as unique_sources,
-          COUNT(*) as total
-        FROM bookmarks
-        WHERE category = 'prompts'
-      `, [{ unique_sources: '0', total: '0' }]),
     ])
 
     const counts = countsRow[0]
-    const ds = dupeStats[0]
-    const ss = sourceStats[0]
+    const firstDupe = dupesWithStats[0]
+    const totalDupes = firstDupe ? Number(firstDupe.total_dupes) : 0
+    const dupeRows = firstDupe ? Number(firstDupe.dupe_rows) || 0 : 0
+
+    // Build overlap distribution from flags_N fields in counts query
+    const overlapByFlags = [1, 2, 3, 4, 5, 6]
+      .map(n => ({ flags: n, count: Number(counts[`flags_${n}` as keyof typeof counts]) }))
+      .filter(o => o.count > 0)
 
     return NextResponse.json({
       total: Number(counts.total),
@@ -271,9 +291,9 @@ export async function GET() {
         },
         duplicates: {
           label: 'Exact duplicate prompts',
-          unique_prompts_with_dupes: Number(ds.total_dupes),
-          removable_rows: Number(ds.dupe_rows) || 0,
-          examples: dupes.map((d) => ({
+          unique_prompts_with_dupes: totalDupes,
+          removable_rows: dupeRows,
+          examples: dupesWithStats.map((d) => ({
             prompt: d.extracted_prompt.slice(0, 120),
             count: Number(d.dupe_count),
           })),
@@ -302,12 +322,12 @@ export async function GET() {
         prompt_length: lengthBuckets.map((b) => ({ bucket: b.bucket, count: Number(b.n) })),
       },
       overlap: {
-        by_flag_count: overlaps.map((o) => ({ flags: Number(o.flags), count: Number(o.n) })),
+        by_flag_count: overlapByFlags,
         any_flag: Number(counts.any_flag_count),
       },
       sources: {
-        unique_count: Number(ss.unique_sources),
-        total: Number(ss.total),
+        unique_count: Number(counts.unique_sources),
+        total: Number(counts.total),
         top: sourceRows.map(r => ({
           handle: r.author_handle,
           count: Number(r.n),
