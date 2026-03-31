@@ -142,6 +142,8 @@ function StrategyCard({ id, strategy, total, onRefresh }: { id: string; strategy
                         {ex.prompt_category ? <span className="text-gray-400 dark:text-zinc-500">{String(ex.prompt_category)}</span> : null}
                         {'prompt_length' in ex ? <span className="text-gray-400 dark:text-zinc-500 font-mono">{String(ex.prompt_length)} chars</span> : null}
                         {'confidence' in ex ? <span className="text-gray-400 dark:text-zinc-500 font-mono">conf {Number(ex.confidence).toFixed(2)}</span> : null}
+                        {'flag_reason' in ex ? <span className="text-red-400 dark:text-red-400 font-medium">{String(ex.flag_reason).replace(/_/g, ' ')}</span> : null}
+                        {'flag_note' in ex && ex.flag_note ? <span className="text-gray-400 dark:text-zinc-500 italic">&quot;{String(ex.flag_note)}&quot;</span> : null}
                       </div>
                     </div>
                     {ex.tweet_url ? (
@@ -197,6 +199,7 @@ export default function QualityPage() {
   }
 
   const strategyOrder = [
+    'user_reported',
     'too_short', 'no_extraction', 'no_category', 'no_model',
     'duplicates', 'same_as_tweet', 'low_confidence', 'no_media', 'foreign_language',
   ]

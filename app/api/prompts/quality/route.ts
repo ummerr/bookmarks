@@ -38,6 +38,7 @@ export async function GET() {
       lowConf,
       lengthBuckets,
       foreignLang,
+      userReported,
       sourceRows,
     ] = await Promise.all([
       // ── 1. All counts + overlap flag distribution in ONE query ─────
@@ -57,6 +58,7 @@ export async function GET() {
         flags_4: string
         flags_5: string
         flags_6: string
+        user_reported_count: string
         unique_sources: string
       }[]>`
         SELECT
@@ -68,6 +70,7 @@ export async function GET() {
           COUNT(*) FILTER (WHERE extracted_prompt IS NOT NULL AND extracted_prompt = tweet_text) as same_count,
           COUNT(*) FILTER (WHERE media_urls IS NULL OR media_urls::text = '[]' OR media_urls::text = 'null') as no_media_count,
           COUNT(*) FILTER (WHERE extracted_prompt ~ '[\u4e00-\u9fff\u3400-\u4dbf]') as foreign_lang_count,
+          COUNT(*) FILTER (WHERE user_flag IS NOT NULL) as user_reported_count,
           COUNT(*) FILTER (WHERE
             extracted_prompt IS NULL
             OR (extracted_prompt IS NOT NULL AND LENGTH(extracted_prompt) < 20)
@@ -131,7 +134,7 @@ export async function GET() {
         total: '0', short_count: '0', no_extract_count: '0', no_cat_count: '0',
         no_model_count: '0', same_count: '0', no_media_count: '0', foreign_lang_count: '0',
         any_flag_count: '0', flags_1: '0', flags_2: '0', flags_3: '0',
-        flags_4: '0', flags_5: '0', flags_6: '0', unique_sources: '0',
+        flags_4: '0', flags_5: '0', flags_6: '0', user_reported_count: '0', unique_sources: '0',
       }]),
 
       // ── 2. Too short examples ──────────────────────────────────────
@@ -245,7 +248,18 @@ export async function GET() {
         LIMIT 30
       `, []),
 
-      // ── 10. Top sources + concentration (window functions) ─────────
+      // ── 10. User-reported prompts ─────────────────────────────────
+      safe(sql<(FlagResult & { user_flag: string; user_flag_note: string | null })[]>`
+        SELECT id, tweet_id, author_handle, extracted_prompt, tweet_text,
+               detected_model, prompt_category, confidence, tweet_url,
+               user_flag, user_flag_note
+        FROM bookmarks
+        WHERE category = 'prompts' AND user_flag IS NOT NULL
+        ORDER BY updated_at DESC
+        LIMIT 50
+      `, []),
+
+      // ── 11. Top sources + concentration (window functions) ─────────
       safe(sql<{ author_handle: string; n: string; avg_confidence: string; categories: string }[]>`
         SELECT author_handle, COUNT(*) as n,
           ROUND(AVG(confidence)::numeric, 2) as avg_confidence,
@@ -316,6 +330,15 @@ export async function GET() {
           label: 'Foreign language (CJK)',
           count: Number(counts.foreign_lang_count),
           examples: foreignLang,
+        },
+        user_reported: {
+          label: 'User reported',
+          count: Number(counts.user_reported_count),
+          examples: userReported.map(r => ({
+            ...r,
+            flag_reason: r.user_flag,
+            flag_note: r.user_flag_note,
+          })),
         },
       },
       distributions: {

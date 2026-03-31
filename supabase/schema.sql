@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS bookmarks (
   art_styles        JSONB NOT NULL DEFAULT '[]',
   bookmarked_at     TEXT,
   source            TEXT NOT NULL DEFAULT 'twitter',
+  user_flag         TEXT,
+  user_flag_note    TEXT,
   created_at        TEXT NOT NULL DEFAULT (NOW()::TEXT),
   updated_at        TEXT NOT NULL DEFAULT (NOW()::TEXT)
 );
@@ -37,3 +39,13 @@ CREATE INDEX IF NOT EXISTS idx_bm_category      ON bookmarks(category);
 CREATE INDEX IF NOT EXISTS idx_bm_author        ON bookmarks(author_handle);
 CREATE INDEX IF NOT EXISTS idx_bm_bookmarked_at ON bookmarks(bookmarked_at DESC);
 CREATE INDEX IF NOT EXISTS idx_bm_confidence    ON bookmarks(confidence DESC);
+
+-- Performance indexes: prompt filtering, pending items
+CREATE INDEX IF NOT EXISTS idx_bm_prompt_category   ON bookmarks(prompt_category) WHERE category = 'prompts';
+CREATE INDEX IF NOT EXISTS idx_bm_prompts_compound  ON bookmarks(category, prompt_category, bookmarked_at DESC) WHERE category = 'prompts';
+CREATE INDEX IF NOT EXISTS idx_bm_pending           ON bookmarks(bookmarked_at ASC) WHERE confidence = 0;
+
+-- Optional: enable pg_trgm for faster ILIKE search (run once if not yet enabled)
+-- CREATE EXTENSION IF NOT EXISTS pg_trgm;
+-- CREATE INDEX IF NOT EXISTS idx_bm_search_text ON bookmarks USING gin(tweet_text gin_trgm_ops);
+-- CREATE INDEX IF NOT EXISTS idx_bm_search_author ON bookmarks USING gin(author_handle gin_trgm_ops);

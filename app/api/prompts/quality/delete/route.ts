@@ -1,10 +1,5 @@
 import { NextResponse } from 'next/server'
-import postgres from 'postgres'
-
-let _sql: ReturnType<typeof postgres> | undefined
-function getSql() {
-  return (_sql ??= postgres(process.env.DATABASE_URL!, { ssl: 'require', connect_timeout: 8, prepare: false }))
-}
+import { getSql } from '@/lib/db'
 
 const STRATEGY_CLAUSES: Record<string, string> = {
   too_short: `category = 'prompts' AND extracted_prompt IS NOT NULL AND LENGTH(extracted_prompt) < 20`,
@@ -15,6 +10,7 @@ const STRATEGY_CLAUSES: Record<string, string> = {
   low_confidence: `category = 'prompts' AND confidence < 0.5`,
   no_media: `category = 'prompts' AND (media_urls IS NULL OR media_urls::text = '[]' OR media_urls::text = 'null')`,
   foreign_language: `category = 'prompts' AND extracted_prompt ~ '[\u4e00-\u9fff\u3400-\u4dbf]'`,
+  user_reported: `category = 'prompts' AND user_flag IS NOT NULL`,
 }
 
 export async function POST(request: Request) {
