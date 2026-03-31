@@ -380,6 +380,77 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── Methodology ─────────────────────────────────────────────── */}
+      <section className="max-w-4xl mx-auto px-5 pb-20">
+        <h2 className="font-serif text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-3">
+          How it&apos;s built
+        </h2>
+        <p className="text-gray-500 dark:text-zinc-400 mb-8 max-w-2xl">
+          No crowdworkers. No GPT-generated prompts. Every entry traces back to a real post by a real practitioner.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            {
+              step: '01',
+              title: 'Collect',
+              desc: 'Viral image and video generation posts are sourced from X. Only posts with high engagement pass the filter — likes, reposts, and replies act as a quality signal.',
+              icon: (
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5a17.92 17.92 0 01-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+                </svg>
+              ),
+            },
+            {
+              step: '02',
+              title: 'Extract',
+              desc: 'Claude strips social framing ("check out this image I made!") to isolate the raw generation prompt. The model, technique, and reference type are detected automatically.',
+              icon: (
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21a48.25 48.25 0 01-8.135-.687c-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+                </svg>
+              ),
+            },
+            {
+              step: '03',
+              title: 'Label',
+              desc: 'Each prompt is classified across 5 dimensions: category, visual theme, art style, reference requirements, and model family. Every label links back to its source post.',
+              icon: (
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" />
+                </svg>
+              ),
+            },
+          ].map((s) => (
+            <div
+              key={s.step}
+              className="rounded-2xl border border-black/[0.06] dark:border-white/[0.06] bg-white/40 dark:bg-white/[0.02] p-6"
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/10 text-violet-600 dark:text-violet-400">
+                  {s.icon}
+                </span>
+                <div>
+                  <span className="text-[10px] font-mono font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">{s.step}</span>
+                  <h3 className="text-base font-semibold text-gray-900 dark:text-white leading-tight">{s.title}</h3>
+                </div>
+              </div>
+              <p className="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">{s.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 text-right">
+          <Link
+            href="/datacard"
+            className="text-sm text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300 transition-colors"
+          >
+            Full methodology &rarr;
+          </Link>
+        </div>
+      </section>
+
       {/* ── Image vs Video ────────────────────────────────────────────── */}
       <section className="max-w-4xl mx-auto px-5 pb-20">
         <h2 className="font-serif text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-3">
