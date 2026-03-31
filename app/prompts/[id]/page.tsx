@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getBookmarkById } from '@/lib/db'
+import CopyShareButtons from './CopyShareButtons'
 
 const CATEGORY_LABELS: Record<string, string> = {
   image_t2i: 'Text to Image',
@@ -109,6 +110,9 @@ export default async function PromptPage({ params }: { params: Promise<{ id: str
         <pre className="whitespace-pre-wrap break-words text-sm text-gray-700 dark:text-zinc-100 font-mono leading-relaxed bg-black/[0.03] dark:bg-white/[0.03] rounded-xl p-5 border border-black/[0.06] dark:border-white/6">
           {prompt}
         </pre>
+
+        {/* Actions */}
+        <CopyShareButtons prompt={prompt} id={id} />
 
         {/* Source */}
         <div className="flex items-center justify-between gap-4">

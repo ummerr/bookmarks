@@ -171,7 +171,9 @@ function RandomPageInner() {
   }
 
   async function shareLink() {
-    await navigator.clipboard.writeText(window.location.href)
+    const id = prompt?.id
+    const url = id ? `${window.location.origin}/prompts/${id}` : window.location.href
+    await navigator.clipboard.writeText(url)
     setShared(true)
     setTimeout(() => setShared(false), 2000)
   }
