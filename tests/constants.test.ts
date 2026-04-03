@@ -23,7 +23,7 @@ describe('modelToFamily', () => {
     ['ChatGPT', 'ChatGPT'],
     ['GPT-4 Vision', 'ChatGPT'],
     ['Claude', 'Claude'],
-    ['Gemini Pro', 'Gemini'],
+    ['Gemini Pro', 'Nano Banana'],
     ['ElevenLabs', 'ElevenLabs'],
     ['Suno v4', 'Suno'],
   ]

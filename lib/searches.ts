@@ -148,7 +148,7 @@ export const SEARCHES: SearchQuery[] = [
   // ── Image: JSON prompts (new trend) ─────────────────────────────────────
   {
     label: 'JSON-structured prompts',
-    description: 'Full JSON config prompt shares (Gemini, Nano Banana Pro style)',
+    description: 'Full JSON config prompt shares (Nano Banana style)',
     query: '("prompt" OR "settings") ("json" OR "parameters" OR "cfg" OR "steps") filter:images min_faves:10',
     category: 'image',
   },
@@ -243,7 +243,7 @@ export const CREATORS: CreatorAccount[] = [
   { handle: 'bri_guy_ai', name: 'Bri Guy', description: 'Portrait gen prompts, weekly curated zines', focus: 'image' },
   { handle: 'craftian_keskin', name: 'Craftian', description: 'Midjourney dark fantasy style explorations', focus: 'image' },
   { handle: 'Arminn_Ai', name: 'Armin', description: 'Regular prompt drops with high-impact results', focus: 'image' },
-  { handle: 'Sheldon056', name: 'Sheldon', description: 'Cinematic Nano Banana Pro / photorealistic prompts', focus: 'image' },
+  { handle: 'Sheldon056', name: 'Sheldon', description: 'Cinematic Nano Banana / photorealistic prompts', focus: 'image' },
   { handle: 'rovvmut_', name: 'Rovvmut', description: 'Portraits and videos with detailed JSON prompts', focus: 'image' },
   { handle: 'SimplyAnnisa', name: 'Annisa', description: 'Ultra-realistic portraits, cozy vibes, precise prompts', focus: 'image' },
   { handle: 'lexx_aura', name: 'Lexx', description: 'Photorealistic fashion/lifestyle with JSON prompts', focus: 'image' },

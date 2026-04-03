@@ -63,7 +63,7 @@ describe('normaliseModel', () => {
     ['chatgpt', 'ChatGPT'],
     ['gpt-4', 'ChatGPT'],
     ['claude', 'Claude'],
-    ['gemini', 'Gemini'],
+    ['gemini', 'Nano Banana'],
     // 3D
     ['meshy', 'Meshy'],
     ['tripo3d', 'Tripo3D'],
@@ -80,6 +80,17 @@ describe('normaliseModel', () => {
 
   it('trims whitespace', () => {
     expect(normaliseModel('  flux  ')).toBe('Flux')
+  })
+
+  it('maps gemini to Veo for video categories', () => {
+    expect(normaliseModel('gemini', 'video_t2v')).toBe('Veo')
+    expect(normaliseModel('gemini', 'video_i2v')).toBe('Veo')
+    expect(normaliseModel('nano banana', 'video_r2v')).toBe('Veo')
+  })
+
+  it('maps gemini to Nano Banana for non-video categories', () => {
+    expect(normaliseModel('gemini', 'image_t2i')).toBe('Nano Banana')
+    expect(normaliseModel('gemini')).toBe('Nano Banana')
   })
 
   it('passes unknown model through trimmed', () => {

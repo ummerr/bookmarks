@@ -83,19 +83,24 @@ const MODEL_ALIASES: Record<string, string> = {
   'openai':            'ChatGPT',
   // Claude
   'claude':            'Claude',
-  // Gemini
-  'gemini':            'Gemini',
-  'google gemini':     'Gemini',
+  // Nano Banana (Gemini image gen)
+  'gemini':            'Nano Banana',
+  'google gemini':     'Nano Banana',
+  'nano banana':       'Nano Banana',
+  'nano banana pro':   'Nano Banana',
   // Meshy / 3D
   'meshy':             'Meshy',
   'tripo3d':           'Tripo3D',
   'tripo':             'Tripo3D',
 }
 
-export function normaliseModel(raw: string | null): string | null {
+export function normaliseModel(raw: string | null, category?: string): string | null {
   if (!raw) return null
   const key = raw.toLowerCase().trim()
-  return MODEL_ALIASES[key] ?? raw.trim()
+  const resolved = MODEL_ALIASES[key] ?? raw.trim()
+  // Nano Banana is an image model — for video prompts, default to Veo (Google's video model)
+  if (resolved === 'Nano Banana' && category?.startsWith('video_')) return 'Veo'
+  return resolved
 }
 
 // ── Pre-processing ─────────────────────────────────────────────────────────
@@ -377,18 +382,21 @@ export async function classifyPromptBatch(
       })
 
   return toMap
-    .map(({ r, id }) => ({
-      id,
-      prompt_category: VALID_PROMPT_CATEGORIES.has(r.prompt_category) ? r.prompt_category : 'other',
-      extracted_prompt: r.extracted_prompt ?? null,
-      detected_model: normaliseModel(r.detected_model),
-      prompt_themes: Array.isArray(r.prompt_themes)
-        ? r.prompt_themes.filter((t: string) => VALID_THEMES.has(t as PromptTheme))
-        : [],
-      art_styles: Array.isArray(r.art_styles)
-        ? r.art_styles.filter((s: string) => VALID_ART_STYLES.has(s as ArtStyle))
-        : [],
-      requires_reference: typeof r.requires_reference === 'boolean' ? r.requires_reference : null,
-      reference_type: VALID_REF_TYPES.has(r.reference_type) ? r.reference_type : null,
-    }))
+    .map(({ r, id }) => {
+      const category = VALID_PROMPT_CATEGORIES.has(r.prompt_category) ? r.prompt_category : 'other'
+      return {
+        id,
+        prompt_category: category,
+        extracted_prompt: r.extracted_prompt ?? null,
+        detected_model: normaliseModel(r.detected_model, category),
+        prompt_themes: Array.isArray(r.prompt_themes)
+          ? r.prompt_themes.filter((t: string) => VALID_THEMES.has(t as PromptTheme))
+          : [],
+        art_styles: Array.isArray(r.art_styles)
+          ? r.art_styles.filter((s: string) => VALID_ART_STYLES.has(s as ArtStyle))
+          : [],
+        requires_reference: typeof r.requires_reference === 'boolean' ? r.requires_reference : null,
+        reference_type: VALID_REF_TYPES.has(r.reference_type) ? r.reference_type : null,
+      }
+    })
 }

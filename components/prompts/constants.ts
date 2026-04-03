@@ -31,14 +31,13 @@ export const MODEL_FAMILIES: { label: string; patterns: string[] }[] = [
   { label: 'Veo',              patterns: ['veo'] },
   { label: 'Wan',              patterns: ['wan'] },
   { label: 'Seedance',        patterns: ['seedance'] },
-  { label: 'Nano Banana',     patterns: ['nano banana'] },
   { label: 'Higgsfield',      patterns: ['higgsfield'] },
   { label: 'ElevenLabs',       patterns: ['elevenlabs'] },
   { label: 'Suno',             patterns: ['suno'] },
   { label: 'Udio',             patterns: ['udio'] },
   { label: 'ChatGPT',          patterns: ['chatgpt', 'gpt-4', 'gpt4'] },
   { label: 'Claude',           patterns: ['claude'] },
-  { label: 'Gemini',           patterns: ['gemini'] },
+  { label: 'Nano Banana',      patterns: ['nano banana', 'gemini'] },
   { label: 'Meshy',            patterns: ['meshy'] },
 ]
 
@@ -50,7 +49,7 @@ export function modelToFamily(model: string): string {
 // Model families that are primarily video generators
 const VIDEO_MODEL_FAMILIES = new Set([
   'Kling', 'Runway', 'Sora', 'Pika', 'Hailuo', 'Luma', 'Veo', 'Wan',
-  'Seedance', 'Nano Banana', 'Higgsfield',
+  'Seedance', 'Higgsfield',
 ])
 
 export function modelFamilyMediaType(family: string): 'image' | 'video' | 'other' {

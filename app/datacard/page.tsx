@@ -183,7 +183,7 @@ export default function DatacardPage() {
       .catch(() => setLoading(false))
   }, [])
 
-  // Merge model variants into families (e.g. "Nano Banana Pro" + "Nano Banana 2" → "Nano Banana")
+  // Merge model variants into families (e.g. "Gemini 3 Pro" + "Gemini Flash" → "Gemini")
   const byModelAggregated = useMemo(() => {
     if (!stats?.byModel) return []
     const map = new Map<string, number>()
