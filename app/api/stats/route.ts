@@ -1,10 +1,5 @@
 import { NextResponse } from 'next/server'
-import postgres from 'postgres'
-
-let _sql: ReturnType<typeof postgres> | undefined
-function getSql() {
-  return (_sql ??= postgres(process.env.DATABASE_URL!, { ssl: 'require', connect_timeout: 5 }))
-}
+import { getSql } from '@/lib/db'
 
 // Run a query with a fallback - if it fails or times out, return the fallback as a plain array
 async function safe<T extends Record<string, unknown>>(promise: Promise<T[]>, fallback: T[]): Promise<T[]> {
@@ -87,6 +82,7 @@ export async function GET() {
       `, []),
     ])
 
+    const headers = { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' }
     return NextResponse.json({
       total: Number(totalRow[0]?.total ?? 0),
       withReference: Number(refRow[0]?.ref_count ?? 0),
@@ -97,7 +93,7 @@ export async function GET() {
       byTheme: themeRows.map((r) => ({ label: r.theme, value: Number(r.n) })),
       timeline: timelineRows.map((r) => ({ month: r.month, value: Number(r.n) })),
       modelTimeline: modelTimelineRows.map((r) => ({ month: r.month, model: r.detected_model, value: Number(r.n) })),
-    })
+    }, { headers })
   } catch (err) {
     console.error('[/api/stats]', err)
     // Return empty but valid response shape - never 500

@@ -1,12 +1,7 @@
 import { NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
-import postgres from 'postgres'
 import { withRetry } from '@/lib/classifier'
-
-let _sql: ReturnType<typeof postgres> | undefined
-function getSql() {
-  return (_sql ??= postgres(process.env.DATABASE_URL!, { ssl: 'require' }))
-}
+import { getSql } from '@/lib/db'
 
 const VALID_THEMES = [
   'person', 'cinematic', 'landscape', 'architecture', 'scifi',
@@ -87,24 +82,23 @@ export async function POST(req: Request) {
 
     const results = ((toolUse.input as { results?: { id: string; prompt_themes: string[] }[] }).results ?? [])
 
-    let tagged = 0
     const errors: string[] = []
 
-    for (let i = 0; i < results.length; i++) {
-      const r = results[i]
+    const updateResults = await Promise.allSettled(results.map((r, i) => {
       const row = rows.find((b) => b.id === String(r.id)) ?? rows[i]
-      if (!row) continue
+      if (!row) return Promise.resolve(null)
       const themes = (r.prompt_themes ?? []).filter((t) => VALID_THEMES_SET.has(t))
-      try {
-        await sql`
-          UPDATE bookmarks
-          SET prompt_themes = ${JSON.stringify(themes)}::jsonb, updated_at = NOW()::TEXT
-          WHERE id = ${row.id}
-        `
-        tagged++
-      } catch (err) {
-        errors.push(`id ${row.id}: ${String(err)}`)
-      }
+      return sql`
+        UPDATE bookmarks
+        SET prompt_themes = ${JSON.stringify(themes)}::jsonb, updated_at = NOW()::TEXT
+        WHERE id = ${row.id}
+      `
+    }))
+
+    let tagged = 0
+    for (const result of updateResults) {
+      if (result.status === 'fulfilled' && result.value !== null) tagged++
+      else if (result.status === 'rejected') errors.push(String(result.reason))
     }
 
     return NextResponse.json({ tagged, batchTotal: rows.length, errors })

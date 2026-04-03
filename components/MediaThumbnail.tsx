@@ -1,14 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, memo } from 'react'
 
-export default function MediaThumbnail({ url, size = 20 }: { url: string; size?: number }) {
+export default memo(function MediaThumbnail({ url, size = 20 }: { url: string; size?: number }) {
   const [hovered, setHovered] = useState(false)
   const px = size * 4 // Tailwind unit → px (h-20 = 80px, h-24 = 96px)
 
   return (
     <div
-      className="relative shrink-0"
+      className="relative shrink-0 group"
       style={{ width: px, height: px }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -33,4 +33,4 @@ export default function MediaThumbnail({ url, size = 20 }: { url: string; size?:
       )}
     </div>
   )
-}
+})

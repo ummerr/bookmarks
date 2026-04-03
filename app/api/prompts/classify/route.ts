@@ -28,8 +28,8 @@ export async function POST(req: NextRequest) {
 
     try {
       const results = await classifyPromptBatch(prompts)
-      for (const r of results) {
-        await updatePromptExtraction(r.id, {
+      await Promise.all(results.map(r =>
+        updatePromptExtraction(r.id, {
           prompt_category: r.prompt_category,
           extracted_prompt: r.extracted_prompt,
           detected_model: r.detected_model,
@@ -38,8 +38,8 @@ export async function POST(req: NextRequest) {
           requires_reference: r.requires_reference,
           reference_type: r.reference_type,
         })
-        classified++
-      }
+      ))
+      classified = results.length
     } catch (err) {
       const msg = `Batch: ${String(err)}`
       console.error('[PROMPTS/CLASSIFY]', msg)

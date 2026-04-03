@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import postgres from 'postgres'
-
-let _sql: ReturnType<typeof postgres> | undefined
-function getSql() {
-  return (_sql ??= postgres(process.env.DATABASE_URL!, { ssl: 'require', prepare: false }))
-}
+import { getSql } from '@/lib/db'
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
