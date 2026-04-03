@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 
 export async function GET() {
   const refs = await getReferences()
+  const headers = { 'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=1200' }
   return NextResponse.json({
     references: refs.map(r => ({
       id: r.id,
@@ -13,5 +14,5 @@ export async function GET() {
       artStyles: r.art_styles,
       extractedPrompt: r.extracted_prompt,
     })),
-  })
+  }, { headers })
 }
