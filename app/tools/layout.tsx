@@ -4,10 +4,11 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const TABS = [
-  { href: '/tools',          label: 'Admin' },
-  { href: '/tools/searches', label: 'Discovery' },
-  { href: '/tools/quality',  label: 'Quality' },
-  { href: '/tools/review',   label: 'Reviewer' },
+  { href: '/tools',                  label: 'Admin' },
+  { href: '/tools/searches',         label: 'Discovery' },
+  { href: '/tools/quality',          label: 'Quality' },
+  { href: '/tools/review',           label: 'Reviewer' },
+  { href: '/tools/image-to-prompt',  label: 'Image\u2009\u2192\u2009Prompt' },
 ]
 
 export default function ToolsLayout({ children }: { children: React.ReactNode }) {
