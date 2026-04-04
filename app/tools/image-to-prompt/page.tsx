@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react'
 
-const TARGET_MODELS = ['Midjourney', 'DALL-E', 'Imagen', 'Flux', 'Stable Diffusion'] as const
+const TARGET_MODELS = ['Nano Banana', 'Midjourney', 'ChatGPT Image', 'Grok Imagine'] as const
 type TargetModel = (typeof TARGET_MODELS)[number]
 
 const BREAKDOWN_LABELS: Record<string, string> = {
@@ -22,17 +22,145 @@ interface PromptResult {
   breakdown: Record<string, string>
 }
 
+// ── History ──────────────────────────────────────────────────────────────────
+
+type HistoryEntry = {
+  id: string
+  targetModel: TargetModel
+  result: PromptResult
+  thumbnail: string // small data-URL
+  timestamp: number
+}
+
+const STORAGE_KEY = 'img2prompt_history'
+const MAX_HISTORY = 20
+
+function loadHistory(): HistoryEntry[] {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')
+  } catch {
+    return []
+  }
+}
+
+function saveHistory(entries: HistoryEntry[]) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries.slice(0, MAX_HISTORY)))
+}
+
+function timeAgo(ts: number): string {
+  const s = Math.floor((Date.now() - ts) / 1000)
+  if (s < 60) return 'just now'
+  if (s < 3600) return `${Math.floor(s / 60)}m ago`
+  if (s < 86400) return `${Math.floor(s / 3600)}h ago`
+  return `${Math.floor(s / 86400)}d ago`
+}
+
+async function makeThumbnail(file: File): Promise<string> {
+  const bitmap = await createImageBitmap(file)
+  const size = 80
+  const scale = Math.min(size / bitmap.width, size / bitmap.height)
+  const w = Math.round(bitmap.width * scale)
+  const h = Math.round(bitmap.height * scale)
+  const canvas = new OffscreenCanvas(w, h)
+  const ctx = canvas.getContext('2d')!
+  ctx.drawImage(bitmap, 0, 0, w, h)
+  bitmap.close()
+  const blob = await canvas.convertToBlob({ type: 'image/jpeg', quality: 0.6 })
+  return new Promise((resolve) => {
+    const reader = new FileReader()
+    reader.onloadend = () => resolve(reader.result as string)
+    reader.readAsDataURL(blob)
+  })
+}
+
+// ── History panel ────────────────────────────────────────────────────────────
+
+function HistoryPanel({
+  entries,
+  activeId,
+  onSelect,
+  onDelete,
+  onClear,
+}: {
+  entries: HistoryEntry[]
+  activeId: string | null
+  onSelect: (e: HistoryEntry) => void
+  onDelete: (id: string) => void
+  onClear: () => void
+}) {
+  if (entries.length === 0) return null
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-600">
+          History
+        </p>
+        <button
+          onClick={onClear}
+          className="text-[11px] text-gray-400 dark:text-zinc-600 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+        >
+          Clear all
+        </button>
+      </div>
+      <div className="flex flex-col gap-1">
+        {entries.map(entry => (
+          <div
+            key={entry.id}
+            className={`group flex items-center gap-3 rounded-lg px-3 py-2 cursor-pointer transition-colors ${
+              activeId === entry.id
+                ? 'bg-gray-900/5 dark:bg-white/5 border border-gray-900/10 dark:border-white/10'
+                : 'hover:bg-black/[0.03] dark:hover:bg-white/[0.03] border border-transparent'
+            }`}
+            onClick={() => onSelect(entry)}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={entry.thumbnail}
+              alt=""
+              className="w-10 h-10 rounded-md object-cover shrink-0 border border-black/[0.06] dark:border-white/6"
+            />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-gray-700 dark:text-zinc-300 truncate">
+                {entry.result.prompt_fragment.slice(0, 80)}
+              </p>
+              <p className="text-[11px] text-gray-400 dark:text-zinc-600 mt-0.5">
+                {entry.targetModel} · {timeAgo(entry.timestamp)}
+              </p>
+            </div>
+            <button
+              onClick={e => { e.stopPropagation(); onDelete(entry.id) }}
+              className="shrink-0 opacity-0 group-hover:opacity-100 text-gray-300 dark:text-zinc-700 hover:text-red-500 dark:hover:text-red-400 transition-all text-base leading-none"
+              aria-label="Delete"
+            >
+              ×
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ── Page ─────────────────────────────────────────────────────────────────────
+
 export default function ImageToPromptPage() {
   const [image, setImage] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
-  const [targetModel, setTargetModel] = useState<TargetModel>('Midjourney')
+  const [targetModel, setTargetModel] = useState<TargetModel>('Nano Banana')
   const [result, setResult] = useState<PromptResult | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [breakdownOpen, setBreakdownOpen] = useState(false)
   const [dragOver, setDragOver] = useState(false)
+  const [history, setHistory] = useState<HistoryEntry[]>([])
+  const [activeId, setActiveId] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    setHistory(loadHistory())
+  }, [])
 
   // Handle paste from clipboard
   useEffect(() => {
@@ -58,6 +186,7 @@ export default function ImageToPromptPage() {
     setResult(null)
     setError(null)
     setBreakdownOpen(false)
+    setActiveId(null)
     const url = URL.createObjectURL(file)
     setPreview(url)
   }
@@ -77,10 +206,8 @@ export default function ImageToPromptPage() {
   const onDragLeave = useCallback(() => setDragOver(false), [])
 
   async function compressImage(file: File): Promise<Blob> {
-    // Vercel Hobby has a 4.5MB request body limit.
-    // Resize large images client-side to stay safely under it.
     const MAX_DIMENSION = 2048
-    const TARGET_SIZE = 3.5 * 1024 * 1024 // 3.5MB leaves room for form overhead
+    const TARGET_SIZE = 3.5 * 1024 * 1024
 
     if (file.size <= TARGET_SIZE) return file
 
@@ -94,7 +221,6 @@ export default function ImageToPromptPage() {
     ctx.drawImage(bitmap, 0, 0, w, h)
     bitmap.close()
 
-    // Try quality levels until under target size
     for (const quality of [0.85, 0.7, 0.5]) {
       const blob = await canvas.convertToBlob({ type: 'image/jpeg', quality })
       if (blob.size <= TARGET_SIZE) return blob
@@ -108,6 +234,7 @@ export default function ImageToPromptPage() {
     setError(null)
     setResult(null)
     setCopied(false)
+    setActiveId(null)
 
     try {
       const compressed = await compressImage(image)
@@ -132,7 +259,22 @@ export default function ImageToPromptPage() {
       if (data.error) {
         setError(data.error as string)
       } else {
-        setResult(data as unknown as PromptResult)
+        const promptResult = data as unknown as PromptResult
+        setResult(promptResult)
+
+        // Auto-save to history
+        const thumbnail = await makeThumbnail(image)
+        const entry: HistoryEntry = {
+          id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+          targetModel,
+          result: promptResult,
+          thumbnail,
+          timestamp: Date.now(),
+        }
+        const next = [entry, ...history].slice(0, MAX_HISTORY)
+        setHistory(next)
+        setActiveId(entry.id)
+        saveHistory(next)
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Request failed')
@@ -154,7 +296,32 @@ export default function ImageToPromptPage() {
     setResult(null)
     setError(null)
     setBreakdownOpen(false)
+    setActiveId(null)
     if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  function loadEntry(entry: HistoryEntry) {
+    setResult(entry.result)
+    setTargetModel(entry.targetModel)
+    setPreview(entry.thumbnail)
+    setImage(null)
+    setActiveId(entry.id)
+    setError(null)
+    setBreakdownOpen(false)
+    setCopied(false)
+  }
+
+  function deleteEntry(id: string) {
+    const next = history.filter(e => e.id !== id)
+    setHistory(next)
+    saveHistory(next)
+    if (activeId === id) setActiveId(null)
+  }
+
+  function clearHistory() {
+    setHistory([])
+    saveHistory([])
+    setActiveId(null)
   }
 
   return (
@@ -219,6 +386,7 @@ export default function ImageToPromptPage() {
         </div>
       ) : (
         <div className="relative rounded-xl overflow-hidden border border-black/[0.08] dark:border-white/8 bg-black/[0.02] dark:bg-white/[0.02]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={preview} alt="Uploaded preview" className="w-full max-h-[400px] object-contain" />
           <button
             onClick={reset}
@@ -264,7 +432,7 @@ export default function ImageToPromptPage() {
               </span>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => { setResult(null); setError(null); setCopied(false) }}
+                  onClick={() => { setResult(null); setError(null); setCopied(false); setActiveId(null) }}
                   className="rounded-lg px-2.5 py-1 text-xs font-medium text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
                 >
                   Re-analyze
@@ -321,6 +489,15 @@ export default function ImageToPromptPage() {
           </div>
         </div>
       )}
+
+      {/* History */}
+      <HistoryPanel
+        entries={history}
+        activeId={activeId}
+        onSelect={loadEntry}
+        onDelete={deleteEntry}
+        onClear={clearHistory}
+      />
     </div>
   )
 }
