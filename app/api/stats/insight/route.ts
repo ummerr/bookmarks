@@ -6,13 +6,14 @@ export async function GET() {
     const sql = getSql()
 
     // Compare camera motion language across video models
+    // Use SUM(CASE) instead of FILTER and ILIKE instead of regex for postgres.js compatibility
     const [cameraRows, videoModelRows] = await Promise.all([
       sql<{ detected_model: string; camera_count: string; total: string }[]>`
         SELECT
           detected_model,
-          COUNT(*) FILTER (
-            WHERE extracted_prompt ~* '(camera|pan|tilt|dolly|tracking|zoom|crane|gimbal|orbit|aerial|drone|steadicam|handheld|pov|close.?up|wide.?shot|medium.?shot)'
-          ) as camera_count,
+          SUM(CASE WHEN
+            LOWER(extracted_prompt) SIMILAR TO '%(camera|pan |panning|tilt|dolly|tracking shot|zoom|crane|gimbal|orbit|aerial|drone|steadicam|handheld|pov |close up|closeup|wide shot|medium shot)%'
+          THEN 1 ELSE 0 END) as camera_count,
           COUNT(*) as total
         FROM bookmarks
         WHERE category = 'prompts'
