@@ -76,6 +76,32 @@ export default function ImageToPromptPage() {
 
   const onDragLeave = useCallback(() => setDragOver(false), [])
 
+  async function compressImage(file: File): Promise<Blob> {
+    // Vercel Hobby has a 4.5MB request body limit.
+    // Resize large images client-side to stay safely under it.
+    const MAX_DIMENSION = 2048
+    const TARGET_SIZE = 3.5 * 1024 * 1024 // 3.5MB leaves room for form overhead
+
+    if (file.size <= TARGET_SIZE) return file
+
+    const bitmap = await createImageBitmap(file)
+    const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height))
+    const w = Math.round(bitmap.width * scale)
+    const h = Math.round(bitmap.height * scale)
+
+    const canvas = new OffscreenCanvas(w, h)
+    const ctx = canvas.getContext('2d')!
+    ctx.drawImage(bitmap, 0, 0, w, h)
+    bitmap.close()
+
+    // Try quality levels until under target size
+    for (const quality of [0.85, 0.7, 0.5]) {
+      const blob = await canvas.convertToBlob({ type: 'image/jpeg', quality })
+      if (blob.size <= TARGET_SIZE) return blob
+    }
+    return canvas.convertToBlob({ type: 'image/jpeg', quality: 0.4 })
+  }
+
   async function analyze() {
     if (!image) return
     setLoading(true)
@@ -84,8 +110,9 @@ export default function ImageToPromptPage() {
     setCopied(false)
 
     try {
+      const compressed = await compressImage(image)
       const formData = new FormData()
-      formData.append('image', image)
+      formData.append('image', compressed, image.name)
       formData.append('targetModel', targetModel)
 
       const res = await fetch('/api/tools/image-to-prompt', {
@@ -93,11 +120,19 @@ export default function ImageToPromptPage() {
         body: formData,
       })
 
-      const data = await res.json()
+      const text = await res.text()
+      let data: Record<string, unknown>
+      try {
+        data = JSON.parse(text)
+      } catch {
+        setError(res.status === 413 ? 'Image too large. Try a smaller file.' : `Server error (${res.status})`)
+        return
+      }
+
       if (data.error) {
-        setError(data.error)
+        setError(data.error as string)
       } else {
-        setResult(data)
+        setResult(data as unknown as PromptResult)
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Request failed')
