@@ -8,7 +8,8 @@ import ThemeToggle from './ThemeToggle'
 const LINKS = [
   { href: '/prompts',             label: 'Prompts', showCount: true },
   { href: '/insights',             label: 'Insights' },
-  { href: '/datacard',            label: 'Datacard' },
+  { href: '/dataset',             label: 'Dataset' },
+  { href: '/methodology',         label: 'Methodology' },
   { href: '/random',              label: 'Random' },
   { href: '/tools',               label: 'Tools', secret: true },
 ]

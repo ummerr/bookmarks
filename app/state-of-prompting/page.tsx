@@ -312,10 +312,20 @@ export default function StateOfPromptingPage() {
               The best creators stopped writing longer prompts - they started uploading better references. Here's what the data says about where prompting is headed.
             </p>
           </div>
-          <div className="flex items-center justify-between gap-4 pt-2 border-t border-black/[0.06] dark:border-white/6">
-            <p className="text-xs text-gray-400 dark:text-zinc-500">
-              Industry data from public research and product announcements. Arena rankings manually sourced from the <a href="https://artificialanalysis.ai" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">Artificial Analysis</a> arena tool (Mar 2026).
-              Dataset insights from <Link href="/prompts" className="font-medium text-gray-600 dark:text-zinc-300 hover:underline">ummerr/prompts</Link>.
+          <div className="flex flex-col gap-2 pt-3 border-t border-black/[0.06] dark:border-white/6">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-violet-500 dark:text-violet-400">Data source</span>
+              <Link href="/dataset" className="text-xs font-medium text-gray-600 dark:text-zinc-300 hover:underline">
+                prompts.ummerr.com/dataset
+              </Link>
+              <span className="text-[10px] text-gray-300 dark:text-zinc-600">|</span>
+              <Link href="/methodology" className="text-xs text-gray-400 dark:text-zinc-500 hover:underline">
+                Methodology
+              </Link>
+            </div>
+            <p className="text-[11px] text-gray-400 dark:text-zinc-500 leading-relaxed">
+              All prompt analysis and statistics in this report are drawn from the <Link href="/dataset" className="text-violet-600 dark:text-violet-400 hover:underline">ummerr/prompts dataset</Link> — a classified collection of real-world generative AI prompts.
+              Industry data from public research and product announcements. Arena rankings from <a href="https://artificialanalysis.ai" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">Artificial Analysis</a> (Mar 2026).
             </p>
           </div>
         </div>
@@ -930,7 +940,7 @@ enters. Warm golden lighting.`}</pre>
                 )}
 
                 <p className="text-xs text-gray-400 dark:text-zinc-500">
-                  Live data from <Link href="/insights" className="text-violet-600 dark:text-violet-400 hover:underline">Insights</Link>. Full methodology on the <Link href="/datacard" className="text-violet-600 dark:text-violet-400 hover:underline">Datacard</Link>. <Link href="/prompts" className="text-violet-600 dark:text-violet-400 hover:underline">Browse all prompts →</Link>
+                  Live data from <Link href="/insights" className="text-violet-600 dark:text-violet-400 hover:underline">Insights</Link>. Full methodology on the <Link href="/methodology" className="text-violet-600 dark:text-violet-400 hover:underline">Methodology</Link> page. <Link href="/prompts" className="text-violet-600 dark:text-violet-400 hover:underline">Browse all prompts →</Link>
                 </p>
               </div>
             </Section>
@@ -1044,7 +1054,7 @@ enters. Warm golden lighting.`}</pre>
                 </div>
 
                 <p className="text-xs text-gray-400 dark:text-zinc-500">
-                  Live data from <Link href="/prompts" className="text-violet-600 dark:text-violet-400 hover:underline">the dataset</Link>. Realness framework adapted from T2VEval (Qi et al., 2025). &ldquo;Forgiving&rdquo; = themes where unrealistic output is aesthetically acceptable. &ldquo;Demanding&rdquo; = themes where viewers expect physical/anatomical accuracy.
+                  Live data from <Link href="/dataset" className="text-violet-600 dark:text-violet-400 hover:underline">the dataset</Link>. Realness framework adapted from T2VEval (Qi et al., 2025). &ldquo;Forgiving&rdquo; = themes where unrealistic output is aesthetically acceptable. &ldquo;Demanding&rdquo; = themes where viewers expect physical/anatomical accuracy.
                 </p>
               </div>
             </Section>

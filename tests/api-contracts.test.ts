@@ -76,7 +76,7 @@ describe('/api/stats response contract', () => {
 
   const consumers = [
     { name: 'insights', path: 'app/insights/page.tsx' },
-    { name: 'datacard', path: 'app/datacard/page.tsx' },
+    { name: 'dataset', path: 'app/dataset/page.tsx' },
     { name: 'state-of-prompting', path: 'app/state-of-prompting/page.tsx' },
   ]
 

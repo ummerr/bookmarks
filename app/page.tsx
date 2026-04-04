@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { modelToFamily } from '@/components/prompts/constants'
 
-// ── Benchmark data (condensed from datacard) ────────────────────────────────
+// ── Related datasets (context table) ─────────────────────────────────────────
 
 function getBenchmarks(liveTotal: number) {
   return [
@@ -280,6 +280,8 @@ export default function LandingPage() {
   const [mediaBreakdown, setMediaBreakdown] = useState<MediaBreakdown[]>([])
   const [techniques, setTechniques] = useState<TechniqueBreakdown[]>([])
   const [topModels, setTopModels] = useState<ModelCount[]>([])
+  const [cameraInsight, setCameraInsight] = useState<{ model: string; pct: number; total: number }[]>([])
+  const [avgPromptLength, setAvgPromptLength] = useState<{ model: string; avgLength: number }[]>([])
 
   useEffect(() => {
     fetch('/api/stats')
@@ -315,6 +317,14 @@ export default function LandingPage() {
         setStats((s) => ({ ...s, loaded: true }))
       })
 
+    fetch('/api/stats/insight')
+      .then((r) => { if (!r.ok) throw new Error(r.statusText); return r.json() })
+      .then((data) => {
+        if (data.cameraMotion?.length) setCameraInsight(data.cameraMotion.slice(0, 5))
+        if (data.promptLength?.length) setAvgPromptLength(data.promptLength.slice(0, 5))
+      })
+      .catch(() => {})
+
   }, [])
 
   return (
@@ -325,14 +335,15 @@ export default function LandingPage() {
 
         <div className="relative max-w-4xl mx-auto px-5 pt-24 pb-16 md:pt-32 md:pb-20 text-center">
           <h1 className="font-serif text-4xl md:text-6xl font-medium tracking-tight text-gray-900 dark:text-white leading-[1.1]">
-            The first engagement-weighted<br className="hidden md:block" /> prompt benchmark
+            How people actually prompt<br className="hidden md:block" /> generative AI
           </h1>
           <p className="mt-6 max-w-2xl mx-auto text-lg md:text-xl text-gray-500 dark:text-zinc-400 leading-relaxed">
-            Image and video generation prompts sourced from viral posts on X.
-            Every entry is organic - a real prompt that real practitioners shared and countless others copied.
+            {stats.loaded && stats.total > 0 ? `${stats.total.toLocaleString()}+` : '1,000+'} real
+            prompts from viral posts on X — classified by model, technique, theme, and reference type.
+            Every entry traces back to a practitioner who shipped something worth sharing.
           </p>
           <p className="mt-3 text-base text-gray-400 dark:text-zinc-500">
-            Labelled by model, technique, theme and reference type.  Zero synthetic prompts. Zero crowdworkers.
+            A prompt observatory. Zero synthetic data. Zero crowdworkers. Just the organic distribution of how people talk to image and video models.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -379,6 +390,82 @@ export default function LandingPage() {
           ))}
         </div>
       </section>
+
+      {/* ── Insight callout ─────────────────────────────────────────── */}
+      {stats.loaded && stats.total > 0 && (
+        <section className="max-w-4xl mx-auto px-5 pb-20">
+          <h2 className="font-serif text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-3">
+            From the data
+          </h2>
+          <p className="text-gray-500 dark:text-zinc-400 mb-8 max-w-2xl">
+            Live queries against the dataset.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Camera motion comparison across video models */}
+            {cameraInsight.length >= 2 && (
+              <div className="rounded-2xl border border-black/[0.06] dark:border-white/[0.06] bg-white/40 dark:bg-white/[0.02] p-6 md:p-8">
+                <span className="text-[10px] font-mono font-bold text-violet-500 dark:text-violet-400 uppercase tracking-widest">
+                  Camera direction in video prompts
+                </span>
+                <div className="mt-4 flex flex-col gap-2">
+                  {cameraInsight.map((m) => (
+                    <div key={m.model} className="flex items-center gap-3">
+                      <span className="text-xs font-medium text-gray-700 dark:text-zinc-300 w-28 truncate text-right shrink-0">{m.model}</span>
+                      <div className="flex-1 h-5 bg-black/[0.03] dark:bg-white/[0.03] rounded-md overflow-hidden">
+                        <div
+                          className="h-full rounded-md bg-violet-500/20 dark:bg-violet-400/20 border-l-[3px] border-violet-500 dark:border-violet-400 transition-all duration-700"
+                          style={{ width: `${Math.max(4, m.pct)}%` }}
+                        />
+                      </div>
+                      <span className="text-xs font-mono text-gray-500 dark:text-zinc-400 w-10 shrink-0">{m.pct}%</span>
+                      <span className="text-[10px] font-mono text-gray-300 dark:text-zinc-600 w-12 shrink-0">n={m.total}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-4 text-xs text-gray-400 dark:text-zinc-500 leading-relaxed">
+                  Share of video prompts that specify camera movement (pan, dolly, tracking, etc.) by model.
+                </p>
+                <Link href="/insights" className="mt-2 inline-block text-xs text-violet-500 dark:text-violet-400 hover:underline">
+                  More in Insights &rarr;
+                </Link>
+              </div>
+            )}
+            {/* Reference usage + prompt length */}
+            <div className="flex flex-col gap-4">
+              {stats.withReference > 0 && (
+                <div className="rounded-2xl border border-black/[0.06] dark:border-white/[0.06] bg-white/40 dark:bg-white/[0.02] p-6">
+                  <div className="flex items-baseline gap-3">
+                    <span className="font-mono text-3xl font-bold text-gray-900 dark:text-white tabular-nums">
+                      {Math.round((stats.withReference / stats.total) * 100)}%
+                    </span>
+                    <span className="text-sm text-gray-500 dark:text-zinc-400">use reference images</span>
+                  </div>
+                  <p className="mt-2 text-xs text-gray-400 dark:text-zinc-500 leading-relaxed">
+                    Pure text prompting is the minority workflow. Most practitioners now upload a face, a style frame, or a composition sketch alongside their prompt.
+                  </p>
+                </div>
+              )}
+              {avgPromptLength.length >= 2 && (() => {
+                const longest = avgPromptLength[0]
+                const shortest = avgPromptLength[avgPromptLength.length - 1]
+                return (
+                  <div className="rounded-2xl border border-black/[0.06] dark:border-white/[0.06] bg-white/40 dark:bg-white/[0.02] p-6">
+                    <div className="flex items-baseline gap-3">
+                      <span className="font-mono text-3xl font-bold text-gray-900 dark:text-white tabular-nums">
+                        {longest.avgLength}
+                      </span>
+                      <span className="text-sm text-gray-500 dark:text-zinc-400">chars avg</span>
+                    </div>
+                    <p className="mt-2 text-xs text-gray-400 dark:text-zinc-500 leading-relaxed">
+                      {longest.model} video prompts average {longest.avgLength} characters — {Math.round(longest.avgLength / shortest.avgLength)}x longer than {shortest.model} ({shortest.avgLength} chars).
+                    </p>
+                  </div>
+                )
+              })()}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── Methodology ─────────────────────────────────────────────── */}
       <section className="max-w-4xl mx-auto px-5 pb-20">
@@ -443,7 +530,7 @@ export default function LandingPage() {
 
         <div className="mt-6 text-right">
           <Link
-            href="/datacard"
+            href="/methodology"
             className="text-sm text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300 transition-colors"
           >
             Full methodology &rarr;
@@ -503,14 +590,14 @@ export default function LandingPage() {
         <FeaturedPromptCard />
       </section>
 
-      {/* ── Benchmark comparison ──────────────────────────────────────── */}
+      {/* ── Related datasets ────────────────────────────────────────── */}
       <section className="max-w-4xl mx-auto px-5 pb-20">
         <h2 className="font-serif text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-3">
-          How this compares
+          Related prompt datasets
         </h2>
         <p className="text-gray-500 dark:text-zinc-400 mb-8 max-w-2xl">
-          Most prompt benchmarks use synthetic or crowdsourced prompts with no engagement signal.
-          This dataset captures what real practitioners actually share.
+          Several prompt datasets exist for evaluating generative AI models.
+          This collection serves a different purpose — documenting organic practitioner behavior rather than providing evaluation prompts.
         </p>
         <div className="overflow-x-auto rounded-2xl border border-black/[0.06] dark:border-white/[0.06]">
           <table className="w-full text-sm">
@@ -530,22 +617,20 @@ export default function LandingPage() {
                   key={b.name}
                   className={`border-b border-black/[0.04] dark:border-white/[0.04] last:border-0 ${
                     b.highlight
-                      ? 'bg-emerald-500/[0.04] dark:bg-emerald-400/[0.04]'
+                      ? 'bg-violet-500/[0.03] dark:bg-violet-400/[0.03]'
                       : ''
                   }`}
                 >
-                  <td className={`px-5 py-3 whitespace-nowrap ${b.highlight ? 'font-bold text-emerald-600 dark:text-emerald-400' : 'text-gray-600 dark:text-zinc-300'}`}>
-                    {b.name}
+                  <td className={`px-5 py-3 whitespace-nowrap ${b.highlight ? 'font-medium text-gray-900 dark:text-white' : 'text-gray-600 dark:text-zinc-300'}`}>
+                    {b.name}{b.highlight && <span className="ml-1.5 text-[10px] text-violet-500 dark:text-violet-400 font-normal">(this dataset)</span>}
                   </td>
-                  <td className={`px-5 py-3 font-mono text-xs ${b.highlight ? 'font-bold text-emerald-600 dark:text-emerald-400' : 'text-gray-600 dark:text-zinc-300'}`}>{b.size}</td>
-                  <td className={`px-5 py-3 whitespace-nowrap ${b.highlight ? 'font-bold' : 'text-gray-600 dark:text-zinc-300'}`}>
-                    {b.highlight
-                      ? <><span className="text-emerald-600 dark:text-emerald-400">Organic / </span><span className="text-emerald-600 dark:text-emerald-400">In-the-Wild</span></>
-                      : b.source}
+                  <td className={`px-5 py-3 font-mono text-xs ${b.highlight ? 'font-medium text-gray-900 dark:text-white' : 'text-gray-600 dark:text-zinc-300'}`}>{b.size}</td>
+                  <td className={`px-5 py-3 whitespace-nowrap ${b.highlight ? 'font-medium text-gray-900 dark:text-white' : 'text-gray-600 dark:text-zinc-300'}`}>
+                    {b.source}
                   </td>
-                  <td className={`px-5 py-3 whitespace-nowrap ${b.highlight ? 'font-bold text-emerald-600 dark:text-emerald-400' : 'text-gray-600 dark:text-zinc-300'}`}>{b.modality}</td>
-                  <td className={`px-5 py-3 whitespace-nowrap ${b.highlight ? 'font-bold text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-zinc-500'}`}>{b.engagement}</td>
-                  <td className={`px-5 py-3 font-mono text-xs whitespace-nowrap ${b.highlight ? 'font-bold text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-zinc-500'}`}>{b.curated}</td>
+                  <td className={`px-5 py-3 whitespace-nowrap ${b.highlight ? 'font-medium text-gray-900 dark:text-white' : 'text-gray-600 dark:text-zinc-300'}`}>{b.modality}</td>
+                  <td className={`px-5 py-3 whitespace-nowrap ${b.highlight ? 'font-medium text-gray-900 dark:text-white' : 'text-gray-400 dark:text-zinc-500'}`}>{b.engagement}</td>
+                  <td className={`px-5 py-3 font-mono text-xs whitespace-nowrap ${b.highlight ? 'font-medium text-gray-900 dark:text-white' : 'text-gray-400 dark:text-zinc-500'}`}>{b.curated}</td>
                 </tr>
               ))}
             </tbody>
@@ -553,7 +638,7 @@ export default function LandingPage() {
         </div>
         <div className="mt-4 text-right">
           <Link
-            href="/datacard"
+            href="/dataset"
             className="text-sm text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300 transition-colors"
           >
             Full dataset documentation &rarr;

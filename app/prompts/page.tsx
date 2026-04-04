@@ -247,7 +247,7 @@ function PromptsPageInner() {
                   The Most Shared AI Prompts on X
                 </h1>
                 <p className="text-[11px] text-gray-500 dark:text-white/40 leading-relaxed">
-                  A corpus of organic, in-the-wild generative AI prompts sourced from high-engagement posts on X/Twitter - covering image and video generation. Unlike synthetic benchmarks, every entry reflects a real practitioner decision: what to generate, how to phrase it, and which model to use.
+                  A corpus of organic, in-the-wild generative AI prompts sourced from high-engagement posts on X/Twitter — covering image and video generation. Every entry reflects a real practitioner decision: what to generate, how to phrase it, and which model to use.
                 </p>
                 <div className="flex flex-wrap gap-1">
                   {['CC BY 4.0', 'Multi-Modal', 'In-the-Wild', 'Engagement-Filtered'].map((tag) => (

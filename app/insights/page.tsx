@@ -624,7 +624,7 @@ export default function InsightsPage() {
           </p>
           <div className="mt-4 flex gap-3">
             <Link href="/prompts" className="text-sm text-violet-600 dark:text-violet-400 hover:underline">Browse prompts &rarr;</Link>
-            <Link href="/datacard" className="text-sm text-gray-400 dark:text-zinc-500 hover:underline">Datacard</Link>
+            <Link href="/dataset" className="text-sm text-gray-400 dark:text-zinc-500 hover:underline">Dataset</Link>
           </div>
         </div>
 
