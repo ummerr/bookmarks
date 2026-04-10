@@ -23,6 +23,8 @@ export function detectMultiShot(text: string): boolean {
   if ((text.match(/\bclip\s*\d+/gi) ?? []).length >= 2) return true
   // Ordinal shot labels: "first shot", "second shot"
   if ((text.match(/\b(first|second|third|fourth)\s+shot\b/gi) ?? []).length >= 2) return true
+  // Explicit multi-shot / multi-scene keywords
+  if (/\bmulti[-\s]?(shot|scene|clip|cut)\b/i.test(text)) return true
   return false
 }
 
@@ -307,7 +309,7 @@ export async function getRandomPrompt(opts: {
     conditions.push(`detected_model = $${params.length}`)
   }
   if (opts.multi_shot) {
-    conditions.push(`COALESCE(extracted_prompt, tweet_text) ~* 'shot\\s*\\d+.*shot\\s*\\d+|cut\\s*\\d+.*cut\\s*\\d+'`)
+    conditions.push(`COALESCE(extracted_prompt, tweet_text) ~* '(shot\\s*\\d+.*shot\\s*\\d+|cut\\s*\\d+.*cut\\s*\\d+|scene\\s*\\d+.*scene\\s*\\d+|clip\\s*\\d+.*clip\\s*\\d+|\\[\\d+s[^]]*\\].*\\[\\d+s|multi[- ]?(shot|scene|clip|cut))'`)
   }
 
   const rows = await getSql().unsafe(
@@ -443,6 +445,46 @@ export async function getThreadHeaderCandidates(): Promise<ThreadHeaderCandidate
       ? JSON.parse(r.thread_tweets)
       : (r.thread_tweets as { tweet_id: string; tweet_text: string }[]) ?? [],
   }))
+}
+
+// ── Prompts missing media ────────────────────────────────────────────────
+
+export async function getPromptsWithoutMedia(limit = 50, offset = 0): Promise<{
+  prompts: { id: string; tweet_text: string; extracted_prompt: string | null; author_handle: string; tweet_url: string; detected_model: string | null; prompt_category: string | null }[]
+  total: number
+}> {
+  const [{ n }] = await getSql()<{ n: string }[]>`
+    SELECT COUNT(*) as n FROM bookmarks
+    WHERE category = 'prompts' AND (media_urls IS NULL OR media_urls = '[]'::jsonb)
+  `
+  const rows = await getSql()<Record<string, unknown>[]>`
+    SELECT id, tweet_text, extracted_prompt, author_handle, tweet_url, detected_model, prompt_category
+    FROM bookmarks
+    WHERE category = 'prompts' AND (media_urls IS NULL OR media_urls = '[]'::jsonb)
+    ORDER BY bookmarked_at DESC NULLS LAST, created_at DESC
+    LIMIT ${limit} OFFSET ${offset}
+  `
+  return {
+    prompts: rows.map(r => ({
+      id: r.id as string,
+      tweet_text: r.tweet_text as string,
+      extracted_prompt: (r.extracted_prompt as string | null) ?? null,
+      author_handle: r.author_handle as string,
+      tweet_url: r.tweet_url as string,
+      detected_model: (r.detected_model as string | null) ?? null,
+      prompt_category: (r.prompt_category as string | null) ?? null,
+    })),
+    total: Number(n),
+  }
+}
+
+export async function addMediaToPrompt(id: string, url: string): Promise<void> {
+  await getSql()`
+    UPDATE bookmarks
+    SET media_urls = media_urls || ${JSON.stringify([url])}::jsonb,
+        updated_at = NOW()::TEXT
+    WHERE id = ${id}
+  `
 }
 
 // ── Studio ────────────────────────────────────────────────────────────────

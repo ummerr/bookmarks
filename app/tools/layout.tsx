@@ -7,7 +7,7 @@ const TABS = [
   { href: '/tools',                  label: 'Admin' },
   { href: '/tools/searches',         label: 'Discovery' },
   { href: '/tools/quality',          label: 'Quality' },
-  { href: '/tools/review',           label: 'Reviewer' },
+  { href: '/tools/add-media',         label: 'Add Media' },
   { href: '/tools/image-to-prompt',  label: 'Image\u2009\u2192\u2009Prompt' },
 ]
 
