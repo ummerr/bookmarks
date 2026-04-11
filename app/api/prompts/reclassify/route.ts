@@ -41,6 +41,7 @@ export async function POST(req: Request) {
           art_styles: r.art_styles,
           requires_reference: r.requires_reference,
           reference_type: r.reference_type,
+          is_multi_shot: r.is_multi_shot,
         })
         classified++
       }

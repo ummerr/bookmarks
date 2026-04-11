@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS bookmarks (
 -- ALTER TABLE bookmarks ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'twitter';
 -- ALTER TABLE bookmarks ADD COLUMN IF NOT EXISTS art_styles JSONB NOT NULL DEFAULT '[]';
 -- ALTER TABLE bookmarks ADD COLUMN IF NOT EXISTS media_alt_texts JSONB NOT NULL DEFAULT '[]';
+-- ALTER TABLE bookmarks ADD COLUMN IF NOT EXISTS is_multi_shot_llm BOOLEAN;
 
 CREATE INDEX IF NOT EXISTS idx_bm_category      ON bookmarks(category);
 CREATE INDEX IF NOT EXISTS idx_bm_author        ON bookmarks(author_handle);

@@ -92,8 +92,8 @@ export function toBookmark(row: Record<string, any>): Bookmark {
     detected_model: row.detected_model ?? null,
     requires_reference: row.requires_reference ?? null,
     reference_type: row.reference_type ?? null,
-    is_multi_shot: detectMultiShot(extracted_prompt ?? tweet_text),
-    multi_shot_duration: detectMultiShot(extracted_prompt ?? tweet_text) ? extractMultiShotDuration(extracted_prompt ?? tweet_text) : null,
+    is_multi_shot: detectMultiShot(extracted_prompt ?? tweet_text) || row.is_multi_shot_llm === true,
+    multi_shot_duration: (detectMultiShot(extracted_prompt ?? tweet_text) || row.is_multi_shot_llm === true) ? extractMultiShotDuration(extracted_prompt ?? tweet_text) : null,
     source: (row.source as 'twitter' | 'manual' | 'reddit') ?? 'twitter',
   } as Bookmark
 }
@@ -573,6 +573,7 @@ export async function updatePromptExtraction(
     requires_reference: boolean | null
     reference_type: ReferenceType | null
     art_styles: ArtStyle[]
+    is_multi_shot?: boolean | null
   }
 ): Promise<void> {
   await getSql()`
@@ -584,6 +585,7 @@ export async function updatePromptExtraction(
         requires_reference = ${data.requires_reference ?? null},
         reference_type = ${data.reference_type ?? null},
         art_styles = ${JSON.stringify(data.art_styles ?? [])}::jsonb,
+        is_multi_shot_llm = ${data.is_multi_shot ?? null},
         updated_at = NOW()::TEXT
     WHERE id = ${id}
   `

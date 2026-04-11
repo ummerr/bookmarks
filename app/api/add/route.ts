@@ -24,6 +24,7 @@ export async function POST(req: Request) {
         art_styles: result.art_styles,
         requires_reference: result.requires_reference,
         reference_type: result.reference_type,
+        is_multi_shot: result.is_multi_shot,
       })
       return NextResponse.json({ ...bookmark, ...result })
     } catch {

@@ -276,6 +276,15 @@ reference_type (when requires_reference=true, else null):
 - scene_background: Reference provides a background/environment (scene plates, background refs)
 Disambiguation: --cref → face_person. --sref → style_artwork. IP-Adapter → subject_object (unless context clearly indicates face or style). ControlNet → pose_structure.
 
+MULTI-SHOT: is_multi_shot=true if the prompt describes multiple sequential shots, scenes, or clips in a video. Look for:
+- Explicit shot/scene/clip numbering ("Shot 1... Shot 2...", "Scene 1... Scene 2...")
+- Timestamp segments ("[0s-3s]... [3s-6s]...")
+- Narrative shot descriptions ("Camera opens on X, then cuts to Y, finally we see Z")
+- Separator-based formats (shots divided by ---, ///, or similar delimiters)
+- Duration-based structure ("5 second intro... 5 second main... 3 second outro")
+- Any prompt that describes a sequence of distinct visual moments meant to be rendered as separate shots
+Set false for single-shot prompts or non-video. null for non-visual categories.
+
 detected_model: Canonical tool name ("Midjourney", "Flux", "Runway" etc.) or null.
 extracted_prompt: Clean prompt only - strip social text, hashtags, engagement bait. Keep technical syntax (--ar, --v, cfg). null if no prompt found.
 id: Copy exactly from input.`
@@ -329,8 +338,9 @@ const EXTRACT_TOOL: Anthropic.Tool = {
             art_styles:         { type: 'array', items: { type: 'string', enum: [...VALID_ART_STYLES_LIST] }, maxItems: 3 },
             requires_reference: { type: ['boolean', 'null'] },
             reference_type:     { type: ['string', 'null'], enum: [...VALID_REF_TYPES_LIST, null] },
+            is_multi_shot:      { type: ['boolean', 'null'], description: 'true if prompt describes multiple sequential shots/scenes/clips' },
           },
-          required: ['id', 'prompt_category', 'detected_model', 'extracted_prompt', 'prompt_themes', 'art_styles', 'requires_reference', 'reference_type'],
+          required: ['id', 'prompt_category', 'detected_model', 'extracted_prompt', 'prompt_themes', 'art_styles', 'requires_reference', 'reference_type', 'is_multi_shot'],
         },
       },
     },
@@ -349,6 +359,7 @@ export async function classifyPromptBatch(
   art_styles: ArtStyle[]
   requires_reference: boolean | null
   reference_type: ReferenceType | null
+  is_multi_shot: boolean | null
 }[]> {
   const client = getClient()
 
@@ -435,6 +446,7 @@ export async function classifyPromptBatch(
           : [],
         requires_reference,
         reference_type,
+        is_multi_shot: typeof r.is_multi_shot === 'boolean' ? r.is_multi_shot : null,
       }
     })
 }
