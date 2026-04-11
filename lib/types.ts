@@ -91,6 +91,7 @@ export interface Bookmark {
   reference_type: ReferenceType | null
   art_styles: ArtStyle[]
   is_multi_shot: boolean
+  multi_shot_duration: number | null
   bookmarked_at: string | null
   source: 'twitter' | 'manual' | 'reddit'
   created_at: string

@@ -221,37 +221,60 @@ export async function classifyBatch(
 
 const PROMPT_SYSTEM = `Classify and extract AI prompts from tweets.
 
-CATEGORIES (pick one):
+STEP 1 — CHECK FOR REFERENCE SIGNALS FIRST:
+Before choosing a category, check if the prompt contains ANY of these reference signals. If ANY signal is found, the category MUST be image_r2i (for images) or video_r2v (for video) — do NOT use image_person, image_t2i, or other subject categories when a reference is needed.
 
-CRITICAL RULE - reference-based categories take priority:
-If the prompt contains ANY of these reference signals, classify as image_r2i (for images) or video_r2v (for video) - these OVERRIDE subject-based categories like image_person or image_t2i:
-- Bracketed placeholders: [SUBJECT], [YOUR IMAGE], [REFERENCE], [UPLOADED IMAGE], [SOURCE IMAGE], [INPUT]
-- Midjourney reference flags: --sref (style reference), --cref (character reference)
-- Workflow keywords: IP-Adapter, ControlNet, face swap, img2img, style transfer, reference-to-image
-- Explicit instructions to "upload", "attach", or "use your image/photo" as input
+Reference signals (any ONE of these means requires_reference=true):
+- Bracketed placeholders: [SUBJECT], [YOUR IMAGE], [REFERENCE], [UPLOADED IMAGE], [SOURCE IMAGE], [INPUT], [YOUR PHOTO], [FACE], [LOGO]
+- Midjourney flags: --sref (style ref), --cref (character ref), --iw (image weight)
+- Workflow tools: IP-Adapter, ControlNet, face swap, img2img, style transfer, reference-to-image, InstantID, PhotoMaker, PuLID, ADetailer
+- ComfyUI / pipeline signals: "ComfyUI", "workflow", "Load Image node", "KSampler", "denoise", "denoising strength", "init image", "input image"
+- Character consistency: "consistent character", "same character across", "character sheet", "maintain the look", "keep the same face", "match the reference"
+- Explicit instructions: "upload", "attach", "use your image/photo", "use this as a starting point", "based on this image", "from this reference", "use the attached"
+- Multi-step pipelines: "first generate... then use", "take the output and", "feed into"
 
-Image:
-- image_r2i: Reference-to-image - prompt requires a user-supplied reference image (bracketed placeholders, IP-Adapter, ControlNet, face swap, img2img, style transfer). USE THIS whenever the prompt cannot work without an input image.
-- image_i2i: Image-to-image - direct transformation of an existing image (upscale, restyle, inpaint, outpaint)
-- image_person: People/characters/faces as main focus - purely text-driven, NO reference image needed
+STEP 2 — IF NO REFERENCE SIGNAL, pick a subject-based category:
+
+Image (text-only, no reference needed):
+- image_person: People/characters/faces as main focus, purely text-driven
 - image_advertisement: Product photography, commercial/brand imagery, e-commerce, fashion flats
 - image_collage: Mood boards, grid layouts, multi-panel compositions
-- image_t2i: All other text-to-image (landscapes, abstract, sci-fi, animals, food, concept art). Default for image prompts with no reference requirement.
+- image_t2i: All other text-to-image (landscapes, abstract, sci-fi, animals, food, concept art). Default for image prompts with no reference.
+
+Image (reference required — from Step 1):
+- image_r2i: Prompt requires a user-supplied reference image. USE THIS whenever the prompt cannot work without an input image.
+- image_i2i: Direct transformation of an existing image (upscale, restyle, inpaint, outpaint)
 
 Video:
-- video_r2v: Reference-to-video - a reference/uploaded image guides the video (character consistency, scene reference, NOT direct animation). Use for bracketed placeholders or --sref/--cref in video prompts.
-- video_i2v: Image-to-video - directly animating or extending a specific still image
+- video_r2v: A reference/uploaded image guides the video (character consistency, scene reference, NOT direct animation)
+- video_i2v: Directly animating or extending a specific still image
 - video_t2v: Text-to-video, prompt only (Veo, Kling, Runway, Pika, Hailuo, Luma, Wan, Aurora/Grok)
 - video_v2v: Video-to-video (restyle, motion transfer, lip sync)
 
 Other: audio (music/voice/SFX), threed (3D models/scenes)
 Text: system_prompt, writing, coding, analysis, other
 
+EXAMPLES:
+- "A woman in a red dress walking through a garden, golden hour" → image_person (text-only, no reference)
+- "Use [YOUR PHOTO] as reference. A woman in a red dress in a garden" → image_r2i (bracketed placeholder = reference)
+- "ComfyUI workflow: Load Image → IP-Adapter → KSampler, portrait style" → image_r2i (workflow = reference)
+- "--cref [face URL] a warrior in armor" → image_r2i, reference_type=face_person
+- "--sref [style URL] minimalist landscape" → image_r2i, reference_type=style_artwork
+
 THEMES (image/video only, else []): 1-3 from: person, cinematic, landscape, architecture, scifi, fantasy, abstract, fashion, product, horror
 ART STYLES (image/video only, else []): 0-3 from: photorealistic, anime, illustration, oil_painting, watercolor, digital_art, sketch, pixel_art, 3d_render, concept_art, comic_book, minimalist, surrealist, impressionist, cinematic_photo, neon_noir, vintage, flat_design
 
-REFERENCE: requires_reference=true if prompt needs user-supplied input image. false if text-only. null for non-visual. Set requires_reference=true for ALL image_r2i, image_i2i, video_r2v, and video_i2v prompts.
-reference_type (if true): face_person, style_artwork, subject_object, pose_structure, scene_background
+REFERENCE:
+requires_reference=true if prompt needs user-supplied input image. false if text-only. null for non-visual.
+RULE: requires_reference MUST be true for ALL image_r2i, image_i2i, video_r2v, and video_i2v prompts. If category is one of these, requires_reference=true always.
+
+reference_type (when requires_reference=true, else null):
+- face_person: Reference provides a face/likeness to maintain (headshots, selfies, --cref with a face, InstantID, PuLID)
+- style_artwork: Reference provides a visual style to emulate (--sref, style transfer, color palette, artistic direction)
+- subject_object: Reference provides a specific object/product to include (product photos, logos, specific items)
+- pose_structure: Reference provides pose/composition guidance (ControlNet depth/pose, skeleton refs, OpenPose)
+- scene_background: Reference provides a background/environment (scene plates, background refs)
+Disambiguation: --cref → face_person. --sref → style_artwork. IP-Adapter → subject_object (unless context clearly indicates face or style). ControlNet → pose_structure.
 
 detected_model: Canonical tool name ("Midjourney", "Flux", "Runway" etc.) or null.
 extracted_prompt: Clean prompt only - strip social text, hashtags, engagement bait. Keep technical syntax (--ar, --v, cfg). null if no prompt found.
@@ -345,7 +368,7 @@ export async function classifyPromptBatch(
 
   const message = await withRetry(() =>
     client.messages.create({
-      model: 'claude-haiku-4-5-20251001',
+      model: 'claude-sonnet-4-5-20241022',
       max_tokens: 4096,
       system: PROMPT_SYSTEM,
       tools: [EXTRACT_TOOL],
@@ -381,9 +404,24 @@ export async function classifyPromptBatch(
         return { r, id: prompts[i].id }
       })
 
+  // Post-classification validation: enforce reference consistency
+  const REFERENCE_CATEGORIES = new Set(['image_r2i', 'image_i2i', 'video_r2v', 'video_i2v'])
+
   return toMap
     .map(({ r, id }) => {
       const category = VALID_PROMPT_CATEGORIES.has(r.prompt_category) ? r.prompt_category : 'other'
+      let requires_reference = typeof r.requires_reference === 'boolean' ? r.requires_reference : null
+      let reference_type: ReferenceType | null = VALID_REF_TYPES.has(r.reference_type) ? r.reference_type : null
+
+      // If category implies reference, force requires_reference=true
+      if (REFERENCE_CATEGORIES.has(category) && requires_reference !== true) {
+        requires_reference = true
+      }
+      // If requires_reference but no type, default to subject_object
+      if (requires_reference === true && !reference_type) {
+        reference_type = 'subject_object'
+      }
+
       return {
         id,
         prompt_category: category,
@@ -395,8 +433,8 @@ export async function classifyPromptBatch(
         art_styles: Array.isArray(r.art_styles)
           ? r.art_styles.filter((s: string) => VALID_ART_STYLES.has(s as ArtStyle))
           : [],
-        requires_reference: typeof r.requires_reference === 'boolean' ? r.requires_reference : null,
-        reference_type: VALID_REF_TYPES.has(r.reference_type) ? r.reference_type : null,
+        requires_reference,
+        reference_type,
       }
     })
 }

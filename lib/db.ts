@@ -28,6 +28,45 @@ export function detectMultiShot(text: string): boolean {
   return false
 }
 
+export function extractMultiShotDuration(text: string): number | null {
+  if (!text) return null
+
+  // Range timestamps: [0s-3s], [3s-6s], [6s-10s] → take max end value
+  const ranges = text.match(/\[\d+s-(\d+)s\]/gi)
+  if (ranges && ranges.length >= 2) {
+    let maxEnd = 0
+    for (const r of ranges) {
+      const m = r.match(/\[\d+s-(\d+)s\]/i)
+      if (m) maxEnd = Math.max(maxEnd, parseInt(m[1], 10))
+    }
+    if (maxEnd > 0) return maxEnd
+  }
+
+  // Single timestamps: [0s], [3s], [6s] → take max value
+  const singles = text.match(/\[(\d+)s\]/gi)
+  if (singles && singles.length >= 2) {
+    let maxVal = 0
+    for (const s of singles) {
+      const m = s.match(/\[(\d+)s\]/i)
+      if (m) maxVal = Math.max(maxVal, parseInt(m[1], 10))
+    }
+    if (maxVal > 0) return maxVal
+  }
+
+  // Shot with parenthetical duration: "Shot 1 (3s):", "Shot 2 (3s):"
+  const shotDurations = text.match(/\bshot\s*\d+\s*\((\d+)s\)/gi)
+  if (shotDurations && shotDurations.length >= 2) {
+    let total = 0
+    for (const s of shotDurations) {
+      const m = s.match(/\((\d+)s\)/i)
+      if (m) total += parseInt(m[1], 10)
+    }
+    if (total > 0) return total
+  }
+
+  return null
+}
+
 // Safely coerce a JSONB column to an array - handles string, parsed array, or junk
 export function toArray(val: unknown): unknown[] {
   if (Array.isArray(val)) return val
@@ -54,6 +93,7 @@ export function toBookmark(row: Record<string, any>): Bookmark {
     requires_reference: row.requires_reference ?? null,
     reference_type: row.reference_type ?? null,
     is_multi_shot: detectMultiShot(extracted_prompt ?? tweet_text),
+    multi_shot_duration: detectMultiShot(extracted_prompt ?? tweet_text) ? extractMultiShotDuration(extracted_prompt ?? tweet_text) : null,
     source: (row.source as 'twitter' | 'manual' | 'reddit') ?? 'twitter',
   } as Bookmark
 }

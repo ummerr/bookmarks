@@ -34,6 +34,7 @@ function toRecord(p: Bookmark) {
     requires_reference: p.requires_reference,
     reference_type: p.reference_type,
     is_multi_shot: p.is_multi_shot,
+    multi_shot_duration: p.multi_shot_duration,
     // Media
     media_urls: p.media_urls,
     media_count: p.media_urls.length,
@@ -62,6 +63,7 @@ const SCHEMA = {
   requires_reference:'bool?   - whether prompt requires a reference image/video',
   reference_type:    'enum?   - face_person | style_artwork | subject_object | pose_structure | scene_background',
   is_multi_shot:     'bool    - computed: true if prompt contains multi-shot/scene markers',
+  multi_shot_duration:'int?   - computed: total duration in seconds parsed from shot timestamps (null if not parseable)',
   media_urls:        'array   - URLs to attached images or videos',
   media_count:       'int     - number of attached media items',
   bookmarked_at:     'string? - ISO 8601 timestamp when post was bookmarked',
