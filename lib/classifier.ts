@@ -94,13 +94,27 @@ const MODEL_ALIASES: Record<string, string> = {
   'tripo':             'Tripo3D',
 }
 
+// Canonical model slugs — the closed set the classifier is allowed to emit.
+// Keep in sync with MODEL_ALIASES values. Adding a new tool means:
+// (1) add alias(es) above, (2) add the canonical name here.
+export const CANONICAL_MODELS = [
+  'Midjourney', 'DALL-E', 'Flux', 'Stable Diffusion', 'Firefly', 'Ideogram', 'Leonardo',
+  'Runway', 'Kling', 'Pika', 'Luma', 'Hailuo', 'Sora', 'Veo', 'Aurora', 'Wan',
+  'Suno', 'Udio', 'ElevenLabs',
+  'ChatGPT', 'Claude', 'Nano Banana',
+  'Meshy', 'Tripo3D',
+] as const
+const CANONICAL_MODEL_SET = new Set<string>(CANONICAL_MODELS)
+
 export function normaliseModel(raw: string | null, category?: string): string | null {
   if (!raw) return null
   const key = raw.toLowerCase().trim()
   const resolved = MODEL_ALIASES[key] ?? raw.trim()
   // Nano Banana is an image model — for video prompts, default to Veo (Google's video model)
   if (resolved === 'Nano Banana' && category?.startsWith('video_')) return 'Veo'
-  return resolved
+  // Closed-enum guarantee: unknown tools fall through to null rather than
+  // leaking raw user text into the facets on the Insights page.
+  return CANONICAL_MODEL_SET.has(resolved) ? resolved : null
 }
 
 // ── Pre-processing ─────────────────────────────────────────────────────────
@@ -123,15 +137,15 @@ function getClient() {
   return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 }
 
-export async function withRetry<T>(fn: () => Promise<T>, retries = 3, delayMs = 5000): Promise<T> {
+export async function withRetry<T>(fn: () => Promise<T>, retries = 1, delayMs = 800): Promise<T> {
   try {
     return await fn()
   } catch (err: unknown) {
     if (retries <= 0) throw err
-    // Back off longer for rate limit errors
+    // Don't retry rate limits inline — Vercel Hobby has a 10s budget. Bubble up so the client loop can back off.
     const isRateLimit = err instanceof Error && (err.message.includes('rate_limit') || err.message.includes('429') || (err as { status?: number }).status === 429)
-    const wait = isRateLimit ? 60000 : delayMs
-    await new Promise((r) => setTimeout(r, wait))
+    if (isRateLimit) throw err
+    await new Promise((r) => setTimeout(r, delayMs))
     return withRetry(fn, retries - 1, delayMs * 2)
   }
 }
@@ -198,7 +212,10 @@ export async function classifyBatch(
 
   const toolUse = message.content.find((b) => b.type === 'tool_use')
   if (!toolUse || toolUse.type !== 'tool_use') {
-    throw new Error(`No tool_use block in response. stop_reason=${message.stop_reason}`)
+    // Don't throw — one bad batch shouldn't kill the whole request on Vercel Hobby.
+    // The client loop will see missing rows and re-queue them on the next tick.
+    console.warn(`[classifyBatch] No tool_use block. stop_reason=${message.stop_reason}, batch size=${bookmarks.length}`)
+    return []
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -285,13 +302,18 @@ MULTI-SHOT: is_multi_shot=true if the prompt describes multiple sequential shots
 - Any prompt that describes a sequence of distinct visual moments meant to be rendered as separate shots
 Set false for single-shot prompts or non-video. null for non-visual categories.
 
-detected_model: Canonical tool name ("Midjourney", "Flux", "Runway" etc.) or null.
+detected_model: MUST be exactly one of the canonical names below, or null. Do not invent names or emit raw user text — if the tool isn't on this list, return null.
+Canonical models: Midjourney, DALL-E, Flux, Stable Diffusion, Firefly, Ideogram, Leonardo, Runway, Kling, Pika, Luma, Hailuo, Sora, Veo, Aurora, Wan, Suno, Udio, ElevenLabs, ChatGPT, Claude, Nano Banana, Meshy, Tripo3D.
 extracted_prompt: Clean prompt only - strip social text, hashtags, engagement bait. Keep technical syntax (--ar, --v, cfg). null if no prompt found.
 id: Copy exactly from input.`
 
+// Note: image_character_ref and image_inpainting are legacy categories that still
+// exist in `PromptCategory` for displaying historical rows, but are intentionally
+// omitted from the classifier's output enum — the system prompt no longer teaches
+// them, and new prompts should map to image_r2i / image_i2i instead.
 const VALID_PROMPT_CATEGORIES_LIST = [
   'image_person', 'image_advertisement', 'image_collage',
-  'image_t2i', 'image_i2i', 'image_r2i', 'image_character_ref', 'image_inpainting',
+  'image_t2i', 'image_i2i', 'image_r2i',
   'video_t2v', 'video_i2v', 'video_r2v', 'video_v2v',
   'audio', 'threed',
   'system_prompt', 'writing', 'coding', 'analysis', 'other',
@@ -332,7 +354,7 @@ const EXTRACT_TOOL: Anthropic.Tool = {
           properties: {
             id:                 { type: 'string', description: 'Copy the id field from the input item exactly' },
             prompt_category:    { type: 'string', enum: [...VALID_PROMPT_CATEGORIES_LIST] },
-            detected_model:     { type: ['string', 'null'] },
+            detected_model:     { type: ['string', 'null'], enum: [...CANONICAL_MODELS, null] },
             extracted_prompt:   { type: ['string', 'null'] },
             prompt_themes:      { type: 'array', items: { type: 'string', enum: [...VALID_THEMES_LIST] }, maxItems: 3 },
             art_styles:         { type: 'array', items: { type: 'string', enum: [...VALID_ART_STYLES_LIST] }, maxItems: 3 },
@@ -390,7 +412,8 @@ export async function classifyPromptBatch(
 
   const toolUse = message.content.find((b) => b.type === 'tool_use')
   if (!toolUse || toolUse.type !== 'tool_use') {
-    throw new Error(`No tool_use block in response. stop_reason=${message.stop_reason}`)
+    console.warn(`[classifyPromptBatch] No tool_use block. stop_reason=${message.stop_reason}, batch size=${prompts.length}`)
+    return []
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

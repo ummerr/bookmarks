@@ -46,8 +46,13 @@ describe('PromptCategory sync', () => {
     expect(classifierValues.length).toBeGreaterThan(0)
   })
 
-  it('every PromptCategory in types.ts is in VALID_PROMPT_CATEGORIES_LIST', () => {
-    const missing = typeValues.filter(v => !classifierValues.includes(v))
+  // types.ts is a superset of the classifier output enum: it retains legacy
+  // categories (image_character_ref, image_inpainting) so historical rows can
+  // still render in the UI, even though the classifier no longer emits them.
+  const LEGACY_DISPLAY_ONLY = new Set(['image_character_ref', 'image_inpainting'])
+
+  it('every PromptCategory in types.ts is in VALID_PROMPT_CATEGORIES_LIST (except legacy display-only)', () => {
+    const missing = typeValues.filter(v => !classifierValues.includes(v) && !LEGACY_DISPLAY_ONLY.has(v))
     expect(missing, `types.ts has [${missing.join(', ')}] not in classifier validation`).toEqual([])
   })
 

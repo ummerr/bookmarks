@@ -87,14 +87,14 @@ describe('classifyBatch', () => {
     expect(result[0].tweet_id).toBe('t1')
   })
 
-  it('throws when no tool_use block in response', async () => {
+  it('returns [] when no tool_use block (client loop re-queues the batch)', async () => {
     mockCreate.mockResolvedValue({
       stop_reason: 'end_turn',
       content: [{ type: 'text', text: 'I cannot classify these.' }],
     })
 
-    await expect(classifyBatch([{ tweet_id: 't1', tweet_text: 'test' }]))
-      .rejects.toThrow('No tool_use block')
+    const result = await classifyBatch([{ tweet_id: 't1', tweet_text: 'test' }])
+    expect(result).toEqual([])
   })
 
   it('handles empty results array', async () => {
@@ -234,7 +234,7 @@ describe('classifyPromptBatch', () => {
     expect(result[0].prompt_category).toBe('other')
   })
 
-  it('invalidates unknown reference_type', async () => {
+  it('invalidates unknown reference_type and defaults to subject_object when category requires a reference', async () => {
     mockCreate.mockResolvedValue(promptToolUseResponse({
       results: [{
         id: '1',
@@ -251,7 +251,9 @@ describe('classifyPromptBatch', () => {
     const result = await classifyPromptBatch([
       { id: 'uuid-1', tweet_text: 'test', thread_tweets: [] },
     ])
-    expect(result[0].reference_type).toBeNull()
+    // UNKNOWN_REF is dropped, and because category is image_r2i (reference required),
+    // post-validation fills in 'subject_object' rather than leaving it null.
+    expect(result[0].reference_type).toBe('subject_object')
   })
 
   it('uses positional fallback when no IDs match', async () => {

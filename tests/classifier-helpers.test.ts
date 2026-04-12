@@ -93,9 +93,9 @@ describe('normaliseModel', () => {
     expect(normaliseModel('gemini')).toBe('Nano Banana')
   })
 
-  it('passes unknown model through trimmed', () => {
-    expect(normaliseModel('SomeNewModel')).toBe('SomeNewModel')
-    expect(normaliseModel('  NewModel  ')).toBe('NewModel')
+  it('returns null for unknown models (closed enum)', () => {
+    expect(normaliseModel('SomeNewModel')).toBeNull()
+    expect(normaliseModel('  NewModel  ')).toBeNull()
   })
 })
 
