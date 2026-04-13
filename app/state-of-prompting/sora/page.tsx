@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import ShareArticleButton from './ShareArticleButton'
 
 const TITLE = 'Why Sora Shut Down - State of Prompting'
 const DESCRIPTION =
@@ -8,17 +9,20 @@ const DESCRIPTION =
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
+  alternates: { canonical: '/state-of-prompting/sora' },
   openGraph: {
     title: TITLE,
     description: DESCRIPTION,
     url: 'https://prompts.ummerr.com/state-of-prompting/sora',
     siteName: 'prompts.ummerr.com',
     type: 'article',
+    images: [{ url: 'https://prompts.ummerr.com/state-of-prompting/sora/opengraph-image', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
     title: TITLE,
     description: DESCRIPTION,
+    images: [{ url: 'https://prompts.ummerr.com/state-of-prompting/sora/opengraph-image', width: 1200, height: 630 }],
   },
 }
 
@@ -53,9 +57,12 @@ export default function SoraPage() {
 
         {/* Title */}
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-            Why Sora Shut Down
-          </h1>
+          <div className="flex items-start justify-between gap-4">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
+              Why Sora Shut Down
+            </h1>
+            <ShareArticleButton />
+          </div>
           <p className="text-sm text-gray-500 dark:text-zinc-400 mt-2 leading-relaxed max-w-xl">
             On March 24, 2026 &mdash; six months after its public launch &mdash; OpenAI announced the full shutdown of Sora: the consumer app, ChatGPT video generation, and the API. All of it.
           </p>

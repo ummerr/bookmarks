@@ -4,17 +4,20 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Methodology — prompts.ummerr.com',
   description: 'How the ummerr/prompts dataset is sourced, classified, and maintained. Selection criteria, classification schema, and tiered Claude pipeline.',
+  alternates: { canonical: '/methodology' },
   openGraph: {
     title: 'Methodology — prompts.ummerr.com',
     description: 'How the ummerr/prompts dataset is sourced, classified, and maintained. Selection criteria, classification schema, and tiered Claude pipeline.',
     url: 'https://prompts.ummerr.com/methodology',
     siteName: 'prompts.ummerr.com',
     type: 'website',
+    images: [{ url: 'https://prompts.ummerr.com/methodology/opengraph-image', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Methodology — prompts.ummerr.com',
     description: 'How the ummerr/prompts dataset is sourced, classified, and maintained.',
+    images: [{ url: 'https://prompts.ummerr.com/methodology/opengraph-image', width: 1200, height: 630 }],
   },
 }
 

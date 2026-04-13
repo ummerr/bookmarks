@@ -14,19 +14,21 @@ const DESCRIPTION =
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
+  metadataBase: new URL('https://prompts.ummerr.com'),
+  alternates: { canonical: '/' },
   openGraph: {
     title: TITLE,
     description: DESCRIPTION,
     url: 'https://prompts.ummerr.com',
     siteName: 'prompts.ummerr.com',
     type: 'website',
-    images: [{ url: 'https://prompts.ummerr.com/opengraph-image', width: 1200, height: 630 }],
+    images: [{ url: 'https://prompts.ummerr.com/opengraph-image', width: 1200, height: 630, alt: TITLE }],
   },
   twitter: {
     card: 'summary_large_image',
     title: TITLE,
     description: DESCRIPTION,
-    images: ['https://prompts.ummerr.com/opengraph-image'],
+    images: [{ url: 'https://prompts.ummerr.com/opengraph-image', width: 1200, height: 630, alt: TITLE }],
   },
 }
 

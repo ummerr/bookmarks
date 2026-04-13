@@ -307,6 +307,16 @@ export async function getBookmarkById(id: string): Promise<Bookmark | null> {
   return rows.length ? toBookmark(rows[0]) : null
 }
 
+export async function listPromptIds(): Promise<{ id: string; updated_at: Date | null }[]> {
+  const rows = await getSql()<{ id: string; updated_at: Date | null }[]>`
+    SELECT id, COALESCE(bookmarked_at, created_at) AS updated_at
+    FROM bookmarks
+    WHERE category = 'prompts'
+    ORDER BY id
+  `
+  return rows.map((r) => ({ id: r.id, updated_at: r.updated_at ?? null }))
+}
+
 export async function getPrompts(promptCategory?: PromptCategory | 'all'): Promise<Bookmark[]> {
   const rows = promptCategory && promptCategory !== 'all'
     ? await getSql()<Record<string, unknown>[]>`
