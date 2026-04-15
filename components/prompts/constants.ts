@@ -75,6 +75,61 @@ export const CATEGORIES: { value: PromptCategory | 'all'; label: string }[] = [
   { value: 'video_v2v',           label: 'V2V' },
 ]
 
+// Subject: "what is it about?" — unifies category-based subjects (image_person/ad/collage)
+// with theme-based subjects (person/landscape/architecture/fashion/product).
+// A subject matches if either the prompt_category or prompt_themes reference it.
+export const SUBJECTS = [
+  { value: 'person',        label: 'Person',       category: 'image_person',        theme: 'person' },
+  { value: 'landscape',     label: 'Landscape',    theme: 'landscape' },
+  { value: 'architecture',  label: 'Architecture', theme: 'architecture' },
+  { value: 'fashion',       label: 'Fashion',      theme: 'fashion' },
+  { value: 'product',       label: 'Product',      theme: 'product' },
+  { value: 'advertisement', label: 'Ad',           category: 'image_advertisement' },
+  { value: 'collage',       label: 'Collage',      category: 'image_collage' },
+] as const satisfies readonly {
+  value: string
+  label: string
+  category?: PromptCategory
+  theme?: PromptTheme
+}[]
+
+export type SubjectValue = typeof SUBJECTS[number]['value']
+
+export const SUBJECT_COLORS: Record<SubjectValue, string> = {
+  person:        'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:border-blue-800/50',
+  landscape:     'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-800/40',
+  architecture:  'bg-stone-100 text-stone-600 border-stone-200 dark:bg-stone-800/60 dark:text-stone-300 dark:border-stone-700/40',
+  fashion:       'bg-pink-100 text-pink-700 border-pink-200 dark:bg-pink-900/40 dark:text-pink-300 dark:border-pink-800/40',
+  product:       'bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-900/40 dark:text-indigo-300 dark:border-indigo-800/40',
+  advertisement: 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/50 dark:text-amber-300 dark:border-amber-800/50',
+  collage:       'bg-fuchsia-100 text-fuchsia-700 border-fuchsia-200 dark:bg-fuchsia-900/50 dark:text-fuchsia-300 dark:border-fuchsia-800/50',
+}
+
+// Style: "what should it look like?" — pure aesthetic themes, no subject overlap.
+export const STYLES: { value: PromptTheme; label: string; color: string }[] = [
+  { value: 'cinematic', label: 'Cinematic', color: 'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/40 dark:text-yellow-300 dark:border-yellow-800/40' },
+  { value: 'scifi',     label: 'Sci-fi',    color: 'bg-cyan-100 text-cyan-700 border-cyan-200 dark:bg-cyan-900/40 dark:text-cyan-300 dark:border-cyan-800/40' },
+  { value: 'fantasy',   label: 'Fantasy',   color: 'bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/40 dark:text-purple-300 dark:border-purple-800/40' },
+  { value: 'abstract',  label: 'Abstract',  color: 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-800/40' },
+  { value: 'horror',    label: 'Horror',    color: 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/40 dark:text-red-300 dark:border-red-800/40' },
+]
+
+// Technique: "how is the prompt built?" — workflow categories, per modality.
+export const IMAGE_TECHNIQUES: { value: PromptCategory; label: string }[] = [
+  { value: 'image_t2i',           label: 'Text → Image' },
+  { value: 'image_i2i',           label: 'Image → Image' },
+  { value: 'image_r2i',           label: 'Reference → Image' },
+  { value: 'image_character_ref', label: 'Character Ref' },
+  { value: 'image_inpainting',    label: 'Inpainting' },
+]
+
+export const VIDEO_TECHNIQUES: { value: PromptCategory; label: string }[] = [
+  { value: 'video_t2v', label: 'Text → Video' },
+  { value: 'video_i2v', label: 'Image → Video' },
+  { value: 'video_r2v', label: 'Reference → Video' },
+  { value: 'video_v2v', label: 'Video → Video' },
+]
+
 export const THEMES: { value: PromptTheme; label: string }[] = [
   { value: 'person',       label: 'Person' },
   { value: 'cinematic',    label: 'Cinematic' },

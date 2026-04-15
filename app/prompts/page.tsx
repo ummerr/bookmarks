@@ -7,15 +7,86 @@ import PromptCard from '@/components/prompts/PromptCard'
 import { useDebounce } from '@/components/prompts/useDebounce'
 import {
   MEDIA_TYPE_CATEGORIES,
-  MODEL_FAMILIES,
-  CATEGORIES,
-  THEMES,
-  THEME_COLORS,
   CATEGORY_COLORS,
+  SUBJECTS,
+  SUBJECT_COLORS,
+  STYLES,
+  IMAGE_TECHNIQUES,
+  VIDEO_TECHNIQUES,
   categoryLabel,
   modelToFamily,
   type MediaType,
+  type SubjectValue,
 } from '@/components/prompts/constants'
+
+// Map legacy URL params (?type=image_person, ?theme=person) onto the new facets.
+function legacyToSubject(type: string | null, theme: string | null): SubjectValue | 'all' {
+  const subs = SUBJECTS as readonly { value: SubjectValue; category?: string; theme?: string }[]
+  if (type) {
+    const s = subs.find((x) => x.category === type)
+    if (s) return s.value
+  }
+  if (theme) {
+    const s = subs.find((x) => x.theme === theme)
+    if (s) return s.value
+  }
+  return 'all'
+}
+function legacyToStyle(theme: string | null): PromptTheme | 'all' {
+  if (!theme) return 'all'
+  return STYLES.find((s) => s.value === theme)?.value ?? 'all'
+}
+function legacyToTechnique(type: string | null): PromptCategory | 'all' {
+  if (!type) return 'all'
+  const all = [...IMAGE_TECHNIQUES, ...VIDEO_TECHNIQUES]
+  return all.find((t) => t.value === type)?.value ?? 'all'
+}
+
+function FilterRow({
+  label,
+  children,
+  scroll,
+  wrap,
+}: {
+  label: string
+  children: React.ReactNode
+  scroll?: boolean
+  wrap?: boolean
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-16">{label}</span>
+      <div className={`flex items-center gap-1.5 ${scroll ? 'overflow-x-auto pb-0.5 scrollbar-none' : wrap ? 'flex-wrap' : ''}`}>
+        {children}
+      </div>
+    </div>
+  )
+}
+
+function Chip({
+  active,
+  onClick,
+  activeColor,
+  children,
+}: {
+  active: boolean
+  onClick: () => void
+  activeColor?: string
+  children: React.ReactNode
+}) {
+  const activeClass = activeColor
+    ? `${activeColor} font-medium`
+    : 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
+  const idleClass = 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
+  return (
+    <button
+      onClick={onClick}
+      className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${active ? activeClass : idleClass}`}
+    >
+      {children}
+    </button>
+  )
+}
 
 function CopyLinkButton() {
   const [copied, setCopied] = useState(false)
@@ -51,14 +122,23 @@ function PromptsPageInner() {
     const m = searchParams.get('media')
     return (m === 'image' || m === 'video') ? m : 'all'
   })
-  const [activeCategory, setActiveCategory] = useState<PromptCategory | 'all' | 'uncategorized'>(
-    (searchParams.get('type') as PromptCategory | 'all' | 'uncategorized') || 'all'
+  const [activeSubject, setActiveSubject] = useState<SubjectValue | 'all'>(
+    () => (searchParams.get('subject') as SubjectValue | null) ?? legacyToSubject(searchParams.get('type'), searchParams.get('theme'))
   )
-  const [activeTheme, setActiveTheme] = useState<PromptTheme | 'all'>(
-    (searchParams.get('theme') as PromptTheme | 'all') || 'all'
+  const [activeStyle, setActiveStyle] = useState<PromptTheme | 'all'>(
+    () => (searchParams.get('style') as PromptTheme | null) ?? legacyToStyle(searchParams.get('theme'))
+  )
+  const [activeTechnique, setActiveTechnique] = useState<PromptCategory | 'all'>(
+    () => (searchParams.get('technique') as PromptCategory | null) ?? legacyToTechnique(searchParams.get('type'))
   )
   const [activeModel, setActiveModel] = useState<string>(searchParams.get('model') || 'all')
   const [activeMultiShot, setActiveMultiShot] = useState(searchParams.get('multi_shot') === 'true')
+  const [activeLength, setActiveLength] = useState<'all' | 'short' | 'medium' | 'long' | 'epic'>(
+    (searchParams.get('length') as 'all' | 'short' | 'medium' | 'long' | 'epic') || 'all'
+  )
+  const [activeDateRange, setActiveDateRange] = useState<'all' | '7d' | '30d' | '90d'>(
+    (searchParams.get('range') as 'all' | '7d' | '30d' | '90d') || 'all'
+  )
   const [search, setSearch] = useState(searchParams.get('q') || '')
   const debouncedSearch = useDebounce(search, 300)
   const [sortBy, setSortBy] = useState<'date' | 'model' | 'length'>(
@@ -67,68 +147,95 @@ function PromptsPageInner() {
   const [loading, setLoading] = useState(true)
   const [showAllModels, setShowAllModels] = useState(false)
   const [showAdvanced, setShowAdvanced] = useState(
-    (!!searchParams.get('theme') && searchParams.get('theme') !== 'all') ||
-    (!!searchParams.get('model') && searchParams.get('model') !== 'all')
+    activeTechnique !== 'all' ||
+    activeMultiShot ||
+    (!!searchParams.get('length') && searchParams.get('length') !== 'all') ||
+    (!!searchParams.get('range') && searchParams.get('range') !== 'all')
   )
 
   // Scroll to top when filters change (not search - that would be jarring while typing)
   useEffect(() => {
     resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-  }, [activeMediaType, activeCategory, activeTheme, activeModel, activeMultiShot, sortBy])
+  }, [activeMediaType, activeSubject, activeStyle, activeTechnique, activeModel, activeMultiShot, activeLength, activeDateRange, sortBy])
 
   // Sync filters to URL
   useEffect(() => {
     const params = new URLSearchParams()
     if (debouncedSearch) params.set('q', debouncedSearch)
     if (activeMediaType !== 'all') params.set('media', activeMediaType)
-    if (activeCategory !== 'all') params.set('type', activeCategory)
-    if (activeTheme !== 'all') params.set('theme', activeTheme)
+    if (activeSubject !== 'all') params.set('subject', activeSubject)
+    if (activeStyle !== 'all') params.set('style', activeStyle)
+    if (activeTechnique !== 'all') params.set('technique', activeTechnique)
     if (activeModel !== 'all') params.set('model', activeModel)
     if (activeMultiShot) params.set('multi_shot', 'true')
+    if (activeLength !== 'all') params.set('length', activeLength)
+    if (activeDateRange !== 'all') params.set('range', activeDateRange)
     if (sortBy !== 'date') params.set('sort', sortBy)
     const qs = params.toString()
     router.replace(`${pathname}${qs ? `?${qs}` : ''}`, { scroll: false })
-  }, [debouncedSearch, activeMediaType, activeCategory, activeTheme, activeModel, activeMultiShot, sortBy]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [debouncedSearch, activeMediaType, activeSubject, activeStyle, activeTechnique, activeModel, activeMultiShot, activeLength, activeDateRange, sortBy]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  async function fetchPrompts(cat: PromptCategory | 'all' | 'uncategorized') {
-    setLoading(true)
-    try {
-      const params = cat !== 'all' && cat !== 'uncategorized' ? `?prompt_category=${cat}` : ''
-      const res = await fetch(`/api/prompts${params}`)
-      if (res.ok) {
-        const data = await res.json()
-        if (Array.isArray(data)) setAllPrompts(data)
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      setLoading(true)
+      try {
+        const res = await fetch('/api/prompts')
+        if (res.ok) {
+          const data = await res.json()
+          if (!cancelled && Array.isArray(data)) setAllPrompts(data)
+        }
+      } catch {
+        // keep existing
       }
-    } catch {
-      // Network error - keep existing data
-    }
-    setLoading(false)
+      if (!cancelled) setLoading(false)
+    })()
+    return () => { cancelled = true }
+  }, [])
+
+  function subjectMatches(p: Bookmark, s: typeof SUBJECTS[number]): boolean {
+    const sx = s as { category?: PromptCategory; theme?: PromptTheme }
+    if (sx.category && p.prompt_category === sx.category) return true
+    if (sx.theme && p.prompt_themes?.includes(sx.theme)) return true
+    return false
   }
 
-  useEffect(() => { fetchPrompts(activeCategory) }, [activeCategory])
+  // Prompts narrowed by modality only — the base for all facet counts, so chip
+  // counts reflect "what you'd get if you clicked this next" regardless of other
+  // active facets.
+  const mediaScoped = useMemo(() => {
+    if (activeMediaType === 'all') return allPrompts
+    const allowed = new Set(MEDIA_TYPE_CATEGORIES[activeMediaType])
+    return allPrompts.filter((p) => p.prompt_category && allowed.has(p.prompt_category))
+  }, [allPrompts, activeMediaType])
 
-  // Counts by prompt category
-  const categoryCounts = useMemo(() => {
+  const subjectCounts = useMemo(() => {
     const counts: Record<string, number> = {}
-    for (const p of allPrompts) {
-      if (p.prompt_category) counts[p.prompt_category] = (counts[p.prompt_category] ?? 0) + 1
+    for (const s of SUBJECTS) {
+      counts[s.value] = mediaScoped.filter((p) => subjectMatches(p, s)).length
     }
     return counts
-  }, [allPrompts])
+  }, [mediaScoped])
 
-  // Counts by theme
-  const themeCounts = useMemo(() => {
+  const styleCounts = useMemo(() => {
     const counts: Record<string, number> = {}
-    for (const p of allPrompts) {
+    for (const p of mediaScoped) {
       for (const t of p.prompt_themes ?? []) counts[t] = (counts[t] ?? 0) + 1
     }
     return counts
-  }, [allPrompts])
+  }, [mediaScoped])
 
-  // Compute distinct model families with counts from fetched data
+  const techniqueCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    for (const p of mediaScoped) {
+      if (p.prompt_category) counts[p.prompt_category] = (counts[p.prompt_category] ?? 0) + 1
+    }
+    return counts
+  }, [mediaScoped])
+
   const availableModels = useMemo(() => {
     const counts: Record<string, number> = {}
-    for (const p of allPrompts) {
+    for (const p of mediaScoped) {
       if (!p.detected_model) continue
       const family = modelToFamily(p.detected_model)
       counts[family] = (counts[family] ?? 0) + 1
@@ -137,38 +244,54 @@ function PromptsPageInner() {
       .filter(([, count]) => count >= 10)
       .sort(([, a], [, b]) => b - a)
       .map(([label, count]) => ({ label, count }))
-  }, [allPrompts])
+  }, [mediaScoped])
 
-  const uncategorizedCount = useMemo(() =>
-    allPrompts.filter((p) => !p.prompt_category).length
-  , [allPrompts])
+  const multiShotCount = useMemo(() =>
+    mediaScoped.filter((p) => p.is_multi_shot).length
+  , [mediaScoped])
 
-  const multiShotVideoCount = useMemo(() =>
-    allPrompts.filter((p) => p.is_multi_shot && p.prompt_category?.startsWith('video_')).length
-  , [allPrompts])
+  const techniquesForMedia = activeMediaType === 'video'
+    ? VIDEO_TECHNIQUES
+    : activeMediaType === 'image'
+    ? IMAGE_TECHNIQUES
+    : [...IMAGE_TECHNIQUES, ...VIDEO_TECHNIQUES]
 
-  // Client-side filter by media type, theme, model, debounced search
+  // Client-side filter — composes modality + subject + style + technique + model + extras
   const filtered = useMemo(() => {
-    let result = allPrompts
-    if (activeCategory === 'uncategorized') {
-      result = result.filter((p) => !p.prompt_category)
-    } else {
-      if (activeMediaType !== 'all') {
-        const allowed = new Set(MEDIA_TYPE_CATEGORIES[activeMediaType])
-        result = result.filter((p) => p.prompt_category && allowed.has(p.prompt_category))
-      }
-      if (activeCategory !== 'all') {
-        result = result.filter((p) => p.prompt_category === activeCategory)
-      }
+    let result = mediaScoped
+    if (activeSubject !== 'all') {
+      const s = SUBJECTS.find((x) => x.value === activeSubject)
+      if (s) result = result.filter((p) => subjectMatches(p, s))
     }
-    if (activeTheme !== 'all') {
-      result = result.filter((p) => p.prompt_themes?.includes(activeTheme))
+    if (activeStyle !== 'all') {
+      result = result.filter((p) => p.prompt_themes?.includes(activeStyle))
+    }
+    if (activeTechnique !== 'all') {
+      result = result.filter((p) => p.prompt_category === activeTechnique)
     }
     if (activeModel !== 'all') {
       result = result.filter((p) => p.detected_model && modelToFamily(p.detected_model) === activeModel)
     }
     if (activeMultiShot) {
       result = result.filter((p) => p.is_multi_shot)
+    }
+    if (activeLength !== 'all') {
+      result = result.filter((p) => {
+        const len = (p.extracted_prompt ?? p.tweet_text).length
+        if (activeLength === 'short') return len < 200
+        if (activeLength === 'medium') return len >= 200 && len < 800
+        if (activeLength === 'long') return len >= 800 && len < 2000
+        return len >= 2000
+      })
+    }
+    if (activeDateRange !== 'all') {
+      const days = activeDateRange === '7d' ? 7 : activeDateRange === '30d' ? 30 : 90
+      const cutoff = Date.now() - days * 24 * 60 * 60 * 1000
+      result = result.filter((p) => {
+        const d = p.bookmarked_at ?? p.created_at
+        if (!d) return false
+        return new Date(d).getTime() >= cutoff
+      })
     }
     if (debouncedSearch.trim()) {
       const q = debouncedSearch.toLowerCase()
@@ -197,26 +320,43 @@ function PromptsPageInner() {
       return bDate.localeCompare(aDate)
     })
     return result
-  }, [allPrompts, activeMediaType, activeCategory, activeTheme, activeModel, activeMultiShot, debouncedSearch, sortBy])
+  }, [mediaScoped, activeSubject, activeStyle, activeTechnique, activeModel, activeMultiShot, activeLength, activeDateRange, debouncedSearch, sortBy])
 
   function clearAllFilters() {
     setActiveMediaType('all')
-    setActiveCategory('all')
-    setActiveTheme('all')
+    setActiveSubject('all')
+    setActiveStyle('all')
+    setActiveTechnique('all')
     setActiveModel('all')
     setActiveMultiShot(false)
+    setActiveLength('all')
+    setActiveDateRange('all')
     setSearch('')
     setSortBy('date')
   }
 
+  const LENGTH_LABELS: Record<'short' | 'medium' | 'long' | 'epic', string> = {
+    short: 'Short (<200)',
+    medium: 'Medium (200–800)',
+    long: 'Long (800–2k)',
+    epic: 'Epic (2k+)',
+  }
+  const RANGE_LABELS: Record<'7d' | '30d' | '90d', string> = {
+    '7d': 'Last 7 days',
+    '30d': 'Last 30 days',
+    '90d': 'Last 90 days',
+  }
+
   const activeChips = [
     ...(debouncedSearch.trim() ? [{ label: `"${debouncedSearch}"`, onRemove: () => setSearch('') }] : []),
-    ...(activeMediaType !== 'all' ? [{ label: activeMediaType.charAt(0).toUpperCase() + activeMediaType.slice(1), onRemove: () => { setActiveMediaType('all'); setActiveCategory('all') } }] : []),
-    ...(activeCategory !== 'all' && activeCategory !== 'uncategorized' ? [{ label: categoryLabel(activeCategory), onRemove: () => setActiveCategory('all') }] : []),
-    ...(activeCategory === 'uncategorized' ? [{ label: 'Untagged', onRemove: () => setActiveCategory('all') }] : []),
-    ...(activeTheme !== 'all' ? [{ label: THEMES.find((t) => t.value === activeTheme)?.label ?? activeTheme, onRemove: () => setActiveTheme('all') }] : []),
+    ...(activeMediaType !== 'all' ? [{ label: activeMediaType === 'image' ? 'Image' : 'Video', onRemove: () => setActiveMediaType('all') }] : []),
+    ...(activeSubject !== 'all' ? [{ label: `Subject: ${SUBJECTS.find((s) => s.value === activeSubject)?.label ?? activeSubject}`, onRemove: () => setActiveSubject('all') }] : []),
+    ...(activeStyle !== 'all' ? [{ label: `Style: ${STYLES.find((s) => s.value === activeStyle)?.label ?? activeStyle}`, onRemove: () => setActiveStyle('all') }] : []),
+    ...(activeTechnique !== 'all' ? [{ label: `Technique: ${categoryLabel(activeTechnique)}`, onRemove: () => setActiveTechnique('all') }] : []),
     ...(activeModel !== 'all' ? [{ label: activeModel, onRemove: () => setActiveModel('all') }] : []),
-    ...(activeMultiShot ? [{ label: 'Multishot', onRemove: () => setActiveMultiShot(false) }] : []),
+    ...(activeMultiShot ? [{ label: 'Multi-shot', onRemove: () => setActiveMultiShot(false) }] : []),
+    ...(activeLength !== 'all' ? [{ label: LENGTH_LABELS[activeLength], onRemove: () => setActiveLength('all') }] : []),
+    ...(activeDateRange !== 'all' ? [{ label: RANGE_LABELS[activeDateRange], onRemove: () => setActiveDateRange('all') }] : []),
   ]
 
   return (
@@ -287,7 +427,7 @@ function PromptsPageInner() {
               <div className="grid grid-cols-2 gap-1.5">
                 {[
                   { value: loading ? '-' : allPrompts.length.toLocaleString(), label: 'Prompts', sub: 'sourced from X' },
-                  { value: loading ? '-' : Object.keys(categoryCounts).length.toString(), label: 'Techniques', sub: 'image + video' },
+                  { value: loading ? '-' : Object.keys(techniqueCounts).length.toString(), label: 'Techniques', sub: 'image + video' },
                   { value: loading ? '-' : availableModels.length.toString() + '+', label: 'AI models', sub: 'every major one' },
                   { value: '0%', label: 'Synthetic', sub: 'hand curated' },
                 ].map((s) => (
@@ -378,111 +518,83 @@ function PromptsPageInner() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col gap-2 border border-black/[0.06] dark:border-white/6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] px-4 py-3">
+        <div className="flex flex-col gap-2.5 border border-black/[0.06] dark:border-white/6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] px-4 py-3">
 
-          {/* Row: Modality - Image / Video */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">Modality</span>
-            <div className="flex items-center gap-1.5">
-              {(['image', 'video'] as const).map((mt) => (
-                <button
-                  key={mt}
-                  onClick={() => {
-                    const next = activeMediaType === mt ? 'all' : mt
-                    setActiveMediaType(next)
-                    setActiveCategory('all')
-                    setActiveMultiShot(false)
-                  }}
-                  className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                    activeMediaType === mt
-                      ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
-                      : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                  }`}
-                >
-                  {mt === 'image' ? '🖼️ Image' : '🎬 Video'}
-                </button>
-              ))}
-            </div>
-          </div>
+          {/* Row: Modality */}
+          <FilterRow label="Modality">
+            {(['image', 'video'] as const).map((mt) => (
+              <Chip
+                key={mt}
+                active={activeMediaType === mt}
+                onClick={() => setActiveMediaType(activeMediaType === mt ? 'all' : mt)}
+              >
+                {mt === 'image' ? '🖼️ Image' : '🎬 Video'}
+              </Chip>
+            ))}
+          </FilterRow>
 
-          {/* Row: Image subcategories */}
-          {activeMediaType === 'image' && (
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">Type</span>
-              <div className="flex items-center gap-1.5">
-                <button
-                  onClick={() => setActiveCategory('all')}
-                  className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                    activeCategory === 'all'
-                      ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
-                      : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                  }`}
-                >
-                  All
-                </button>
-                {(['image_person', 'image_advertisement', 'image_collage'] as const).filter((c) => (categoryCounts[c] ?? 0) >= 10).map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setActiveCategory(cat)}
-                    className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                      activeCategory === cat
-                        ? `${CATEGORY_COLORS[cat]} font-medium`
-                        : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                    }`}
+          {/* Row: Subject — what is it about? */}
+          {SUBJECTS.some((s) => (subjectCounts[s.value] ?? 0) >= 10) && (
+            <FilterRow label="Subject">
+              <Chip active={activeSubject === 'all'} onClick={() => setActiveSubject('all')}>All</Chip>
+              {[...SUBJECTS]
+                .filter((s) => (subjectCounts[s.value] ?? 0) >= 10)
+                .sort((a, b) => (subjectCounts[b.value] ?? 0) - (subjectCounts[a.value] ?? 0))
+                .map((s) => (
+                  <Chip
+                    key={s.value}
+                    active={activeSubject === s.value}
+                    activeColor={SUBJECT_COLORS[s.value]}
+                    onClick={() => setActiveSubject(activeSubject === s.value ? 'all' : s.value)}
                   >
-                    {categoryLabel(cat)}<span className="opacity-50"> {categoryCounts[cat]}</span>
-                  </button>
+                    {s.label}<span className="opacity-50"> {subjectCounts[s.value]}</span>
+                  </Chip>
                 ))}
-              </div>
-            </div>
+            </FilterRow>
           )}
 
-          {/* Row: Video subcategories */}
-          {activeMediaType === 'video' && (
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">Type</span>
-              <div className="flex items-center gap-1.5">
-                <button
-                  onClick={() => { setActiveCategory('all'); setActiveMultiShot(false) }}
-                  className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                    activeCategory === 'all' && !activeMultiShot
-                      ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
-                      : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                  }`}
-                >
-                  All
-                </button>
-                {(['video_t2v', 'video_i2v', 'video_r2v'] as const).filter((c) => (categoryCounts[c] ?? 0) >= 10).map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => { setActiveCategory(cat); setActiveMultiShot(false) }}
-                    className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                      activeCategory === cat && !activeMultiShot
-                        ? `${CATEGORY_COLORS[cat]} font-medium`
-                        : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                    }`}
+          {/* Row: Style — what should it look like? */}
+          {STYLES.some((s) => (styleCounts[s.value] ?? 0) >= 10) && (
+            <FilterRow label="Style">
+              <Chip active={activeStyle === 'all'} onClick={() => setActiveStyle('all')}>All</Chip>
+              {STYLES
+                .filter((s) => (styleCounts[s.value] ?? 0) >= 10)
+                .sort((a, b) => (styleCounts[b.value] ?? 0) - (styleCounts[a.value] ?? 0))
+                .map((s) => (
+                  <Chip
+                    key={s.value}
+                    active={activeStyle === s.value}
+                    activeColor={s.color}
+                    onClick={() => setActiveStyle(activeStyle === s.value ? 'all' : s.value)}
                   >
-                    {categoryLabel(cat)}<span className="opacity-50"> {categoryCounts[cat]}</span>
-                  </button>
+                    {s.label}<span className="opacity-50"> {styleCounts[s.value]}</span>
+                  </Chip>
                 ))}
-                {multiShotVideoCount >= 10 && (
-                  <button
-                    onClick={() => {
-                      const next = !activeMultiShot
-                      setActiveMultiShot(next)
-                      if (next) setActiveCategory('all')
-                    }}
-                    className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                      activeMultiShot
-                        ? 'bg-emerald-100 text-emerald-700 border-emerald-200 font-medium dark:bg-emerald-900/50 dark:text-emerald-300 dark:border-emerald-800/50'
-                        : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                    }`}
-                  >
-                    Multishot<span className="opacity-50"> {multiShotVideoCount}</span>
-                  </button>
-                )}
-              </div>
-            </div>
+            </FilterRow>
+          )}
+
+          {/* Row: Model */}
+          {availableModels.length > 0 && (
+            <FilterRow label="Model" scroll>
+              <Chip active={activeModel === 'all'} onClick={() => setActiveModel('all')}>All</Chip>
+              {(showAllModels ? availableModels : availableModels.slice(0, 8)).map(({ label, count }) => (
+                <Chip
+                  key={label}
+                  active={activeModel === label}
+                  onClick={() => setActiveModel(activeModel === label ? 'all' : label)}
+                >
+                  {label}<span className="opacity-50"> {count}</span>
+                </Chip>
+              ))}
+              {availableModels.length > 8 && (
+                <button
+                  onClick={() => setShowAllModels((v) => !v)}
+                  className="shrink-0 rounded-full border border-black/[0.08] dark:border-white/8 px-2.5 py-1 text-xs text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15 transition-all"
+                >
+                  {showAllModels ? 'less ↑' : `+${availableModels.length - 8} more`}
+                </button>
+              )}
+            </FilterRow>
           )}
 
           {/* Advanced toggle */}
@@ -495,125 +607,67 @@ function PromptsPageInner() {
 
           {/* Advanced section */}
           {showAdvanced && (
-            <div className="flex flex-col gap-2 pt-2 border-t border-black/[0.06] dark:border-white/6">
+            <div className="flex flex-col gap-2.5 pt-2 border-t border-black/[0.06] dark:border-white/6">
 
-              {/* Extra image types */}
-              {activeMediaType === 'image' && (['image_t2i', 'image_i2i', 'image_character_ref', 'image_inpainting'] as const).some((c) => (categoryCounts[c] ?? 0) >= 10) && (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">More</span>
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    {(['image_t2i', 'image_i2i', 'image_character_ref', 'image_inpainting'] as const).filter((c) => (categoryCounts[c] ?? 0) >= 10).map((cat) => (
-                      <button
-                        key={cat}
-                        onClick={() => setActiveCategory(cat)}
-                        className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                          activeCategory === cat
-                            ? `${CATEGORY_COLORS[cat]} font-medium`
-                            : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                        }`}
-                      >
-                        {categoryLabel(cat)}<span className="opacity-50"> {categoryCounts[cat]}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Extra video types */}
-              {activeMediaType === 'video' && (categoryCounts['video_v2v'] ?? 0) >= 10 && (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">More</span>
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      onClick={() => { setActiveCategory('video_v2v'); setActiveMultiShot(false) }}
-                      className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                        activeCategory === 'video_v2v' && !activeMultiShot
-                          ? `${CATEGORY_COLORS['video_v2v']} font-medium`
-                          : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                      }`}
-                    >
-                      {categoryLabel('video_v2v')}<span className="opacity-50"> {categoryCounts['video_v2v']}</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-
-
-              {/* Theme */}
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">Theme</span>
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
-                  <button
-                    onClick={() => setActiveTheme('all')}
-                    className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                      activeTheme === 'all'
-                        ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
-                        : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                    }`}
-                  >
-                    All
-                  </button>
-                  {[...THEMES]
-                    .filter((t) => (themeCounts[t.value] ?? 0) >= 10)
-                    .sort((a, b) => (themeCounts[b.value] ?? 0) - (themeCounts[a.value] ?? 0))
+              {/* Technique — how is the prompt built? */}
+              {techniquesForMedia.some((t) => (techniqueCounts[t.value] ?? 0) >= 10) && (
+                <FilterRow label="Technique">
+                  <Chip active={activeTechnique === 'all'} onClick={() => setActiveTechnique('all')}>All</Chip>
+                  {techniquesForMedia
+                    .filter((t) => (techniqueCounts[t.value] ?? 0) >= 10)
                     .map((t) => (
-                      <button
+                      <Chip
                         key={t.value}
-                        onClick={() => setActiveTheme(t.value)}
-                        className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                          activeTheme === t.value
-                            ? `${THEME_COLORS[t.value]} font-medium`
-                            : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                        }`}
+                        active={activeTechnique === t.value}
+                        activeColor={CATEGORY_COLORS[t.value]}
+                        onClick={() => setActiveTechnique(activeTechnique === t.value ? 'all' : t.value)}
                       >
-                        {t.label}<span className="opacity-50"> {themeCounts[t.value]}</span>
-                      </button>
+                        {t.label}<span className="opacity-50"> {techniqueCounts[t.value]}</span>
+                      </Chip>
                     ))}
-                </div>
-              </div>
-
-              {/* Model */}
-              {availableModels.length > 0 && (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400 dark:text-zinc-600 shrink-0 w-14">Model</span>
-                  <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
-                    <button
-                      onClick={() => setActiveModel('all')}
-                      className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                        activeModel === 'all'
-                          ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
-                          : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                      }`}
-                    >
-                      All
-                    </button>
-                    {(showAllModels ? availableModels : availableModels.slice(0, 8)).map(({ label, count }) => (
-                      <button
-                        key={label}
-                        onClick={() => setActiveModel(label)}
-                        className={`shrink-0 rounded-full border px-2.5 py-1 text-xs transition-all ${
-                          activeModel === label
-                            ? 'bg-black/8 text-gray-900 border-black/[0.2] font-medium dark:bg-white/12 dark:text-white dark:border-white/25'
-                            : 'border-black/[0.08] text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:border-white/8 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15'
-                        }`}
-                      >
-                        {label}<span className="opacity-50"> {count}</span>
-                      </button>
-                    ))}
-                    {availableModels.length > 8 && (
-                      <button
-                        onClick={() => setShowAllModels((v) => !v)}
-                        className="shrink-0 rounded-full border border-black/[0.08] dark:border-white/8 px-2.5 py-1 text-xs text-gray-400 hover:text-gray-700 hover:border-black/[0.15] dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:border-white/15 transition-all"
-                      >
-                        {showAllModels ? 'less ↑' : `+${availableModels.length - 8} more`}
-                      </button>
-                    )}
-                  </div>
-                </div>
+                </FilterRow>
               )}
+
+              {/* Extras: multi-shot + length + date */}
+              <FilterRow label="Extras" wrap>
+                {multiShotCount >= 10 && (
+                  <Chip
+                    active={activeMultiShot}
+                    activeColor="bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/50 dark:text-emerald-300 dark:border-emerald-800/50"
+                    onClick={() => setActiveMultiShot(!activeMultiShot)}
+                  >
+                    Multi-shot<span className="opacity-50"> {multiShotCount}</span>
+                  </Chip>
+                )}
+                <span className="text-[10px] text-gray-300 dark:text-zinc-700 px-1">·</span>
+                <span className="text-[10px] text-gray-400 dark:text-zinc-600">Length</span>
+                <Chip active={activeLength === 'all'} onClick={() => setActiveLength('all')}>Any</Chip>
+                {(['short', 'medium', 'long', 'epic'] as const).map((len) => (
+                  <Chip
+                    key={len}
+                    active={activeLength === len}
+                    onClick={() => setActiveLength(activeLength === len ? 'all' : len)}
+                  >
+                    {LENGTH_LABELS[len]}
+                  </Chip>
+                ))}
+                <span className="text-[10px] text-gray-300 dark:text-zinc-700 px-1">·</span>
+                <span className="text-[10px] text-gray-400 dark:text-zinc-600">Date</span>
+                <Chip active={activeDateRange === 'all'} onClick={() => setActiveDateRange('all')}>All time</Chip>
+                {(['7d', '30d', '90d'] as const).map((r) => (
+                  <Chip
+                    key={r}
+                    active={activeDateRange === r}
+                    onClick={() => setActiveDateRange(activeDateRange === r ? 'all' : r)}
+                  >
+                    {RANGE_LABELS[r]}
+                  </Chip>
+                ))}
+              </FilterRow>
             </div>
           )}
         </div>
+
 
         {/* Active filter chips */}
         {activeChips.length > 0 && (
