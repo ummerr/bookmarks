@@ -420,7 +420,7 @@ export async function getPromptsByIds(ids: string[]): Promise<Pick<Bookmark, 'id
   if (!ids.length) return []
   const rows = await getSql()<Record<string, unknown>[]>`
     SELECT id, tweet_id, tweet_text, thread_tweets, media_alt_texts FROM bookmarks
-    WHERE category = 'prompts' AND id = ANY(${ids}::uuid[])
+    WHERE category = 'prompts' AND id::text = ANY(${ids})
   `
   return rows.map(toPromptRow)
 }
