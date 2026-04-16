@@ -416,6 +416,15 @@ export async function getAllPromptsForReclassify(limit = 500, offset = 0): Promi
   return rows.map(toPromptRow)
 }
 
+export async function getPromptsByIds(ids: string[]): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text' | 'thread_tweets' | 'media_alt_texts'>[]> {
+  if (!ids.length) return []
+  const rows = await getSql()<Record<string, unknown>[]>`
+    SELECT id, tweet_id, tweet_text, thread_tweets, media_alt_texts FROM bookmarks
+    WHERE category = 'prompts' AND id = ANY(${ids}::uuid[])
+  `
+  return rows.map(toPromptRow)
+}
+
 export async function getUnclassifiedPrompts(limit = 50, offset = 0): Promise<Pick<Bookmark, 'id' | 'tweet_id' | 'tweet_text' | 'thread_tweets' | 'media_alt_texts'>[]> {
   const rows = await getSql()<Record<string, unknown>[]>`
     SELECT id, tweet_id, tweet_text, thread_tweets, media_alt_texts FROM bookmarks

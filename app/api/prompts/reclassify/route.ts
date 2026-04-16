@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getAllPromptsForReclassify, updatePromptExtraction, countAllPrompts } from '@/lib/db'
+import { getAllPromptsForReclassify, getPromptsByIds, updatePromptExtraction, countAllPrompts } from '@/lib/db'
 import { classifyPromptBatch } from '@/lib/classifier'
 
 // Single batch per request - stays under Vercel Hobby 10s timeout.
@@ -20,8 +20,11 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => ({}))
     const limit: number = Math.min(body.limit ?? BATCH_SIZE, BATCH_SIZE)
     const offset: number = body.offset ?? 0
+    const ids: string[] | undefined = Array.isArray(body.ids) ? body.ids.slice(0, BATCH_SIZE) : undefined
 
-    const prompts = await getAllPromptsForReclassify(limit, offset)
+    const prompts = ids
+      ? await getPromptsByIds(ids)
+      : await getAllPromptsForReclassify(limit, offset)
 
     if (prompts.length === 0) {
       return NextResponse.json({ classified: 0, batchTotal: 0, errors: [] })
