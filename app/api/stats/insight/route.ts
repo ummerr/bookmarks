@@ -7,7 +7,7 @@ export async function GET() {
 
     // Compare camera motion language across video models
     // Use SUM(CASE) instead of FILTER and ILIKE instead of regex for postgres.js compatibility
-    const [cameraRows, videoModelRows] = await Promise.all([
+    const [cameraRows, videoModelRows, multiShotRows] = await Promise.all([
       sql<{ detected_model: string; camera_count: string; total: string }[]>`
         SELECT
           detected_model,
@@ -39,6 +39,23 @@ export async function GET() {
         HAVING COUNT(*) >= 10
         ORDER BY avg_len DESC
       `,
+      sql<{ multi: string; total: string }[]>`
+        SELECT
+          SUM(CASE WHEN
+            is_multi_shot_llm = true
+            OR regexp_count(extracted_prompt, '\\[\\d+s(-\\d+s)?\\]', 1, 'i') >= 2
+            OR regexp_count(extracted_prompt, '\\yshot\\s*\\d+', 1, 'i') >= 2
+            OR regexp_count(extracted_prompt, '\\ycut\\s*\\d+', 1, 'i') >= 2
+            OR regexp_count(extracted_prompt, '\\yscene\\s*\\d+', 1, 'i') >= 2
+            OR regexp_count(extracted_prompt, '\\yclip\\s*\\d+', 1, 'i') >= 2
+            OR extracted_prompt ~* '\\ymulti[-\\s]?(shot|scene|clip|cut)\\y'
+          THEN 1 ELSE 0 END) as multi,
+          COUNT(*) as total
+        FROM bookmarks
+        WHERE category = 'prompts'
+          AND prompt_category LIKE 'video_%'
+          AND extracted_prompt IS NOT NULL
+      `,
     ])
 
     const cameraMotion = cameraRows.map((r) => ({
@@ -53,10 +70,19 @@ export async function GET() {
       avgLength: Number(r.avg_len),
     }))
 
+    const msRow = multiShotRows[0]
+    const msTotal = Number(msRow?.total ?? 0)
+    const msMulti = Number(msRow?.multi ?? 0)
+    const multiShot = {
+      total: msTotal,
+      multi: msMulti,
+      pct: msTotal > 0 ? Math.round((msMulti / msTotal) * 100) : 0,
+    }
+
     const headers = { 'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=1200' }
-    return NextResponse.json({ cameraMotion, promptLength }, { headers })
+    return NextResponse.json({ cameraMotion, promptLength, multiShot }, { headers })
   } catch (err) {
     console.error('[/api/stats/insight]', err)
-    return NextResponse.json({ cameraMotion: [], promptLength: [] })
+    return NextResponse.json({ cameraMotion: [], promptLength: [], multiShot: null })
   }
 }

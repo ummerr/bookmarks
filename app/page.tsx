@@ -281,7 +281,7 @@ export default function LandingPage() {
   const [techniques, setTechniques] = useState<TechniqueBreakdown[]>([])
   const [topModels, setTopModels] = useState<ModelCount[]>([])
   const [cameraInsight, setCameraInsight] = useState<{ model: string; pct: number; total: number }[]>([])
-  const [avgPromptLength, setAvgPromptLength] = useState<{ model: string; avgLength: number }[]>([])
+  const [multiShot, setMultiShot] = useState<{ pct: number; multi: number; total: number } | null>(null)
 
   useEffect(() => {
     fetch('/api/stats')
@@ -321,7 +321,7 @@ export default function LandingPage() {
       .then((r) => { if (!r.ok) throw new Error(r.statusText); return r.json() })
       .then((data) => {
         if (data.cameraMotion?.length) setCameraInsight(data.cameraMotion.slice(0, 5))
-        if (data.promptLength?.length) setAvgPromptLength(data.promptLength.slice(0, 5))
+        if (data.multiShot && data.multiShot.total > 0) setMultiShot(data.multiShot)
       })
       .catch(() => {})
 
@@ -441,27 +441,23 @@ export default function LandingPage() {
                     <span className="text-sm text-gray-500 dark:text-zinc-400">use reference images</span>
                   </div>
                   <p className="mt-2 text-xs text-gray-400 dark:text-zinc-500 leading-relaxed">
-                    Pure text prompting is the minority workflow. Most practitioners now upload a face, a style frame, or a composition sketch alongside their prompt.
+                    One in four practitioners uploads a face, a style frame, or a composition sketch alongside their prompt — the rest rely on pure text.
                   </p>
                 </div>
               )}
-              {avgPromptLength.length >= 2 && (() => {
-                const longest = avgPromptLength[0]
-                const shortest = avgPromptLength[avgPromptLength.length - 1]
-                return (
-                  <div className="rounded-2xl border border-black/[0.06] dark:border-white/[0.06] bg-white/40 dark:bg-white/[0.02] p-6">
-                    <div className="flex items-baseline gap-3">
-                      <span className="font-mono text-3xl font-bold text-gray-900 dark:text-white tabular-nums">
-                        {longest.avgLength}
-                      </span>
-                      <span className="text-sm text-gray-500 dark:text-zinc-400">chars avg</span>
-                    </div>
-                    <p className="mt-2 text-xs text-gray-400 dark:text-zinc-500 leading-relaxed">
-                      {longest.model} video prompts average {longest.avgLength} characters — {Math.round(longest.avgLength / shortest.avgLength)}x longer than {shortest.model} ({shortest.avgLength} chars).
-                    </p>
+              {multiShot && (
+                <div className="rounded-2xl border border-black/[0.06] dark:border-white/[0.06] bg-white/40 dark:bg-white/[0.02] p-6">
+                  <div className="flex items-baseline gap-3">
+                    <span className="font-mono text-3xl font-bold text-gray-900 dark:text-white tabular-nums">
+                      {multiShot.pct}%
+                    </span>
+                    <span className="text-sm text-gray-500 dark:text-zinc-400">are multi-shot</span>
                   </div>
-                )
-              })()}
+                  <p className="mt-2 text-xs text-gray-400 dark:text-zinc-500 leading-relaxed">
+                    Of video prompts collected since March 2026, {multiShot.multi.toLocaleString()} of {multiShot.total.toLocaleString()} stitch together multiple shots or scenes — a pattern Seedance and Kling popularized with bracketed timestamp syntax.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </section>
