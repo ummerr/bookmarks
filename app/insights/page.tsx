@@ -21,6 +21,14 @@ interface StatsData {
   modelTimeline: ModelTimelinePoint[]
 }
 
+interface RefPipeline {
+  totalVideo: number
+  withAnySource: number
+  pct: number
+  bySource: LabelValue[]
+  topPairings: { source: string; videoModel: string; count: number }[]
+}
+
 // ── Chart components ────────────────────────────────────────────────────────
 
 // Muted analogous palette — violet / indigo / slate tones
@@ -442,6 +450,34 @@ function otherTotal(stacked: { values: Record<string, number> }[]): boolean {
   return stacked.some((s) => (s.values['Other'] ?? 0) > 0)
 }
 
+function PipelinePairings({ pairings }: { pairings: { source: string; videoModel: string; count: number }[] }) {
+  if (pairings.length === 0) return null
+  const max = pairings[0].count
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      {pairings.map((p) => (
+        <div key={`${p.source}-${p.videoModel}`} className="flex items-center gap-3 text-xs">
+          <div className="flex items-center gap-2 w-64 shrink-0 justify-end">
+            <span className="font-medium text-gray-700 dark:text-zinc-200 truncate">{p.source}</span>
+            <svg className="h-3 w-3 text-gray-300 dark:text-zinc-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+            <span className="font-medium text-gray-700 dark:text-zinc-200 truncate">{p.videoModel}</span>
+          </div>
+          <div className="flex-1 h-5 bg-black/[0.03] dark:bg-white/[0.03] rounded-md overflow-hidden">
+            <div
+              className="h-full rounded-md bg-violet-500/20 dark:bg-violet-400/20 border-l-[3px] border-violet-500 dark:border-violet-400 transition-all duration-500"
+              style={{ width: `${Math.max(6, (p.count / max) * 100)}%` }}
+            />
+          </div>
+          <span className="font-mono text-gray-400 dark:text-zinc-500 w-8 text-right shrink-0">{p.count}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function formatMonth(ym: string): string {
   const [y, m] = ym.split('-')
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -508,6 +544,7 @@ function Section({ title, description, children }: { title: string; description?
 
 export default function InsightsPage() {
   const [stats, setStats] = useState<StatsData | null>(null)
+  const [refPipeline, setRefPipeline] = useState<RefPipeline | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -515,6 +552,11 @@ export default function InsightsPage() {
       .then((r) => { if (!r.ok) throw new Error(r.statusText); return r.json() })
       .then((d) => { if (d.total != null) setStats(d); setLoading(false) })
       .catch(() => setLoading(false))
+
+    fetch('/api/stats/insight')
+      .then((r) => { if (!r.ok) throw new Error(r.statusText); return r.json() })
+      .then((d) => { if (d.refPipeline) setRefPipeline(d.refPipeline) })
+      .catch(() => {})
   }, [])
 
   const byModelAggregated = useMemo(() => {
@@ -683,6 +725,55 @@ export default function InsightsPage() {
         {videoModels.length > 0 && (
           <Section title="Video Models" description="Which video models appear most often in viral prompts.">
             <HorizontalBarChart data={videoModels.slice(0, 12)} />
+          </Section>
+        )}
+
+        {/* Image → Video pipelines */}
+        {refPipeline && refPipeline.totalVideo > 0 && refPipeline.withAnySource > 0 && (
+          <Section
+            title="Image → Video Pipelines"
+            description="How often viral video prompts reveal their starting frame — by naming the image model that produced it. Signal is pulled from the prompt, tweet body, and thread replies."
+          >
+            <div className="flex flex-col gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <StatCard
+                  value={`${refPipeline.pct}%`}
+                  label="Describe their pipeline"
+                  sub={`${refPipeline.withAnySource} of ${refPipeline.totalVideo} video prompts`}
+                />
+                <StatCard
+                  value={refPipeline.bySource[0]?.value ?? 0}
+                  label={`Cite ${refPipeline.bySource[0]?.label ?? 'an image model'}`}
+                  sub="Most-cited upstream image model"
+                />
+                <StatCard
+                  value={refPipeline.bySource.length}
+                  label="Distinct image sources"
+                  sub="Image-gen models named in video prompts"
+                />
+              </div>
+
+              {refPipeline.bySource.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-700 dark:text-zinc-300 mb-3">
+                    Image models cited inside video prompts
+                  </h3>
+                  <HorizontalBarChart data={refPipeline.bySource} />
+                </div>
+              )}
+
+              {refPipeline.topPairings.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1">
+                    Top pairings
+                  </h3>
+                  <p className="text-xs text-gray-500 dark:text-zinc-400 mb-3">
+                    Which image model feeds which video model, based on co-mentions in the same post. Pairs with fewer than 2 prompts are hidden.
+                  </p>
+                  <PipelinePairings pairings={refPipeline.topPairings} />
+                </div>
+              )}
+            </div>
           </Section>
         )}
 
