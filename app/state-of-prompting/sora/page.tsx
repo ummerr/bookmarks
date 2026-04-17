@@ -40,6 +40,7 @@ const TIMELINE = [
   { date: 'Jan 2026', event: 'Internal teams describe GPU strain \u2014 "the chips are melting"', severity: 2 },
   { date: 'Mar 2026', event: '$1B Disney partnership collapses; Disney notified 30 minutes after a joint planning meeting', severity: 3 },
   { date: 'Mar 24, 2026', event: 'OpenAI announces full Sora shutdown \u2014 app, API, and ChatGPT video; team redirected to robotics world simulation', severity: 3 },
+  { date: 'Apr 26, 2026', event: 'Sora consumer app and ChatGPT video go offline. API follows September 24, 2026', severity: 3 },
 ]
 
 export default function SoraPage() {
@@ -64,7 +65,7 @@ export default function SoraPage() {
             <ShareArticleButton />
           </div>
           <p className="text-sm text-gray-500 dark:text-zinc-400 mt-2 leading-relaxed max-w-xl">
-            On March 24, 2026 &mdash; six months after its public launch &mdash; OpenAI announced the full shutdown of Sora: the consumer app, ChatGPT video generation, and the API. All of it.
+            On April 26, 2026, Sora went dark. The consumer app and ChatGPT video generation stopped; the API follows September 24. OpenAI announced the full shutdown on March 24 &mdash; six months after launch.
           </p>
         </div>
 

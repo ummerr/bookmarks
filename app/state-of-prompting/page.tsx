@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 
 interface LabelValue { label: string; value: number }
+interface MonthModel { month: string; model: string; value: number }
 interface StatsData {
   total: number
   withReference: number
@@ -11,6 +12,7 @@ interface StatsData {
   byModel: LabelValue[]
   byTheme?: LabelValue[]
   byPromptLength: LabelValue[]
+  modelTimeline?: MonthModel[]
 }
 
 interface PromptExample {
@@ -42,11 +44,13 @@ const CATEGORY_LABELS: Record<string, string> = {
 }
 
 const NAV_SECTIONS = [
+  { id: 'april-dispatches',   label: 'April Dispatches' },
   { id: 'findings',            label: 'Key Findings' },
   { id: 'references',         label: 'The Reference Shift' },
   { id: 'prompt-engineering', label: 'Context Engineering' },
   { id: 'practitioners',      label: 'Takeaways' },
   { id: 'video',              label: 'Video Prompting' },
+  { id: 'seedance',           label: 'Seedance Takeover' },
   { id: 'multishot',          label: 'Multi-Shot' },
   { id: 'multimodal',         label: 'Multimodal' },
   { id: 'from-the-data',      label: 'From the Dataset' },
@@ -233,6 +237,7 @@ export default function StateOfPromptingPage() {
     fetchPrompt('reference', 'group=image')
     fetchPrompt('video', 'group=video')
     fetchPrompt('multishot', 'multi_shot=true')
+    fetchPrompt('seedance', 'model=Seedance')
     fetchPrompt('featured1', 'category=image_t2i')
     fetchPrompt('featured2', 'group=video')
     fetchPrompt('featured3', 'category=image_r2i')
@@ -252,6 +257,52 @@ export default function StateOfPromptingPage() {
     const total = stats.byPromptLength.reduce((s, d) => s + d.value, 0)
     const long = stats.byPromptLength.filter((d) => d.label === 'long' || d.label === 'very_long').reduce((s, d) => s + d.value, 0)
     return total ? Math.round((long / total) * 100) : 0
+  }, [stats])
+
+  // Monthly model share (consumed by the "Model share by month" block)
+  const monthlyModelShare = useMemo(() => {
+    const rows = stats?.modelTimeline ?? []
+    if (!rows.length) return null
+
+    const byMonth = new Map<string, { total: number; models: Map<string, number> }>()
+    for (const r of rows) {
+      const bucket = byMonth.get(r.month) ?? { total: 0, models: new Map<string, number>() }
+      bucket.models.set(r.model, (bucket.models.get(r.model) ?? 0) + r.value)
+      bucket.total += r.value
+      byMonth.set(r.month, bucket)
+    }
+
+    const months = [...byMonth.keys()].sort().slice(-5)
+    if (!months.length) return null
+
+    const modelTotals = new Map<string, number>()
+    for (const m of months) {
+      for (const [model, count] of byMonth.get(m)!.models) {
+        modelTotals.set(model, (modelTotals.get(model) ?? 0) + count)
+      }
+    }
+    const topModels = [...modelTotals.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8)
+      .map(([model]) => model)
+
+    const series = topModels.map((model) => ({
+      model,
+      total: modelTotals.get(model) ?? 0,
+      months: months.map((m) => {
+        const b = byMonth.get(m)!
+        const count = b.models.get(model) ?? 0
+        return { month: m, count, pct: b.total ? (count / b.total) * 100 : 0 }
+      }),
+    }))
+
+    const seedance = series.find((s) => s.model.toLowerCase() === 'seedance')
+    const seedanceArc = seedance ? seedance.months.map((c) => ({ month: c.month, pct: c.pct })) : null
+    const seedanceMoM = seedanceArc && seedanceArc.length >= 2
+      ? seedanceArc[seedanceArc.length - 1].pct - seedanceArc[seedanceArc.length - 2].pct
+      : null
+
+    return { months, series, seedanceArc, seedanceMoM }
   }, [stats])
 
   // Realness gap analysis: classify themes by how forgiving they are
@@ -301,15 +352,15 @@ export default function StateOfPromptingPage() {
         {/* Hero */}
         <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-6 md:p-8 flex flex-col gap-5 mb-10">
           <div className="flex flex-wrap gap-2 items-center">
-            <Badge color="#1DA1F2">Q1 2026</Badge>
+            <Badge color="#10b981">Q2 2026</Badge>
             <Badge color="#8b5cf6">Video & Image AI</Badge>
             <Badge color="#f97316">Prompting Research</Badge>
           </div>
           <div>
-            <h1 className="font-serif text-3xl md:text-4xl text-gray-900 dark:text-white tracking-tight">References are the new Template</h1>
-            <p className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-gray-400 dark:text-zinc-500">State of Prompting · Mar 2026</p>
+            <h1 className="font-serif text-3xl md:text-4xl text-gray-900 dark:text-white tracking-tight">Seedance ate the feed</h1>
+            <p className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-gray-400 dark:text-zinc-500">State of Prompting · Apr 2026</p>
             <p className="mt-3 text-[15px] text-gray-500 dark:text-zinc-400 leading-[1.7] max-w-2xl">
-              The best creators stopped writing longer prompts - they started uploading better references. Here's what the data says about where prompting is headed.
+              Seedance landed in Runway, CapCut, and Flova inside a single April week. Sora went dark on April 26. Veo 4 arrived with 4K and storyboarding. Here&rsquo;s what changed for practitioners - and what the data says about where prompting is headed.
             </p>
           </div>
           <div className="flex flex-col gap-2 pt-3 border-t border-black/[0.06] dark:border-white/6">
@@ -325,7 +376,7 @@ export default function StateOfPromptingPage() {
             </div>
             <p className="text-[11px] text-gray-400 dark:text-zinc-500 leading-relaxed">
               All prompt analysis and statistics in this report are drawn from the <Link href="/dataset" className="text-violet-600 dark:text-violet-400 hover:underline">ummerr/prompts dataset</Link> — a classified collection of real-world generative AI prompts.
-              Industry data from public research and product announcements. Arena rankings from <a href="https://artificialanalysis.ai" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">Artificial Analysis</a> (Mar 2026).
+              Industry data from public research and product announcements. Arena rankings from <a href="https://artificialanalysis.ai" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">Artificial Analysis</a> (Apr 2026).
             </p>
           </div>
         </div>
@@ -335,6 +386,54 @@ export default function StateOfPromptingPage() {
 
           {/* Main content */}
           <div className="flex-1 min-w-0 flex flex-col gap-10">
+
+            <Section title="April Dispatches" id="april-dispatches">
+              <p className="text-[14px] text-gray-500 dark:text-zinc-400 leading-relaxed -mt-2">
+                Four things changed the landscape this month. Everything below is downstream.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <FindingCard
+                  number="01"
+                  color="#10b981"
+                  title="Seedance 2.0 lands on Runway (Apr 12)"
+                  body={"Runway added Seedance 2.0 with an Unlimited plan ($76–95/mo). Combined with CapCut's 100-country rollout and the Flova integration (Apr 5), it put Seedance inside the tools creators already had open. Distribution, not model quality, became the decisive variable."}
+                  sources={[
+                    { label: 'Runway · Seedance help', url: 'https://help.runwayml.com/hc/en-us/articles/50488490233363-Creating-with-Seedance-2-0' },
+                    { label: 'No Film School', url: 'https://nofilmschool.com/runway-seedance-2-0' },
+                    { label: 'MindStudio', url: 'https://www.mindstudio.ai/blog/seedance-2-runway-unlimited-plan-review' },
+                  ]}
+                />
+                <FindingCard
+                  number="02"
+                  color="#ef4444"
+                  title="Sora went dark (Apr 26)"
+                  body={"OpenAI's Sora consumer app and ChatGPT video generation went offline on April 26. The API follows September 24. The only non-Google model in the T2V top 5 for most of 2026 - and the first major consumer video model to get fully deprecated. See the full post-mortem below."}
+                  sources={[
+                    { label: 'OpenAI · Sora discontinuation', url: 'https://help.openai.com/en/articles/20001152-what-to-know-about-the-sora-discontinuation' },
+                    { label: '/state-of-prompting/sora', url: '/state-of-prompting/sora' },
+                  ]}
+                />
+                <FindingCard
+                  number="03"
+                  color="#1DA1F2"
+                  title="Veo 4 launched"
+                  body={"Google's Veo 4 shipped in April - 4K, 30-second clips, storyboarding, and zero-shot avatar creation with dramatically improved character consistency. Not yet in the Arena rankings, but the ceiling on T2V just moved again. Veo 3.1 currently dominates the leaderboard; watch the next cycle."}
+                  sources={[
+                    { label: 'Veo 4 release notes', url: 'https://www.veo3ai.io/blog/veo-4-release-everything-you-need-to-know-2026' },
+                  ]}
+                />
+                <FindingCard
+                  number="04"
+                  color="#f59e0b"
+                  title="Hollywood vs Seedance"
+                  body={"A viral two-line-prompt clip of \"Tom Cruise\" fighting \"Brad Pitt\" hit 1.2M+ views on X. The MPA sent ByteDance a cease-and-desist; Netflix, Warner, Disney, Paramount, and Sony followed individually. The legal cloud is the price of going viral - creators did not slow down."}
+                  sources={[
+                    { label: 'Variety · MPA response', url: 'https://variety.com/2026/film/news/motion-picture-association-ai-seedance-bytedance-tom-cruise-1236661753/' },
+                    { label: 'Hollywood Reporter · cease-and-desist', url: 'https://www.hollywoodreporter.com/business/business-news/mpa-cease-and-desist-bytedance-seedance-2-0-1236510957/' },
+                  ]}
+                />
+              </div>
+            </Section>
 
             <Section title="Key Findings" id="findings">
               <div className="flex flex-col gap-3">
@@ -373,6 +472,16 @@ export default function StateOfPromptingPage() {
                   body="'Gimbal tracking shot, rear suspension compressing on impact' beats 'cinematic car scene' every time. The prompts that work describe physics: camera movement, forces on objects, cause and effect."
                   sources={[
                     { label: 'How to Actually Control Next-Gen Video AI - Medium', url: 'https://medium.com/@creativeaininja/how-to-actually-control-next-gen-video-ai-runway-kling-veo-and-sora-prompting-strategies-92ef0055658b' },
+                  ]}
+                />
+                <FindingCard
+                  number="05"
+                  color="#10b981"
+                  title="Distribution beat model quality in April"
+                  body={"Seedance did not top the T2V arena - Veo 3.1 still holds the top four slots. Seedance won April by appearing inside Runway, CapCut, and Flova in the same week. The model creators reach for is the one their tool already supports."}
+                  sources={[
+                    { label: 'Runway · Seedance', url: 'https://runwayml.com/product/seedance' },
+                    { label: 'ByteDance 100-country rollout', url: 'https://the-decoder.com/bytedance-rolls-out-seedance-2-0-to-100-countries-but-keeps-the-us-off-the-list/' },
                   ]}
                 />
               </div>
@@ -616,6 +725,56 @@ export default function StateOfPromptingPage() {
               </div>
             </Section>
 
+            <Section title="Seedance Takeover" id="seedance">
+              <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
+                <p>
+                  The breakout model of Q1 became the default layer of Q2. Seedance 2.0 launched in February with a unified audio-video architecture; it went viral almost immediately - the <a href="https://variety.com/2026/film/news/motion-picture-association-ai-seedance-bytedance-tom-cruise-1236661753/" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">two-line-prompt clip of &ldquo;Tom Cruise&rdquo; vs &ldquo;Brad Pitt&rdquo; on a rooftop</a> crossed 1.2M views on X within days and triggered an MPA cease-and-desist. What made April different was distribution: <a href="https://help.runwayml.com/hc/en-us/articles/50488490233363-Creating-with-Seedance-2-0" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">Runway added Seedance 2.0 with an Unlimited plan on April 12</a>, Flova shipped its integration April 5, and <a href="https://the-decoder.com/bytedance-rolls-out-seedance-2-0-to-100-countries-but-keeps-the-us-off-the-list/" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">CapCut began rolling it out across 100+ countries</a>.
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {[
+                    { label: 'Distribution', desc: 'Runway Unlimited, CapCut global, Flova. The model showed up inside the tools creators already had open.', color: '#10b981' },
+                    { label: 'Prompt syntax', desc: 'Native multi-shot via [0s], [5s] timestamp blocks and Shot switch markers - one prompt, an edited sequence out.', color: '#8b5cf6' },
+                    { label: 'Legal cloud', desc: 'MPA cease-and-desist; Netflix, Warner, Disney, Paramount, Sony with individual letters. Unresolved, not slowing.', color: '#f59e0b' },
+                  ].map((r) => (
+                    <div key={r.label} className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4 flex flex-col gap-1.5">
+                      <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: r.color }}>{r.label}</span>
+                      <p className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">{r.desc}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <Insight
+                  quote="Seedance 2.0 is now on Runway as the viral AI model continues its takeover."
+                  source="No Film School · Apr 12, 2026"
+                  sourceUrl="https://nofilmschool.com/runway-seedance-2-0"
+                  color="#10b981"
+                />
+
+                <RealPrompt
+                  prompt={prompts.seedance}
+                  loading={promptLoading.seedance}
+                  label="A real Seedance prompt from the dataset"
+                  onShuffle={() => fetchPrompt('seedance', 'model=Seedance')}
+                />
+
+                <div className="rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/30 p-4">
+                  <p className="text-sm text-emerald-800 dark:text-emerald-200 leading-relaxed">
+                    <span className="font-semibold">Why it matters for your prompts.</span> If you still write single-shot prose prompts, you&rsquo;re leaving Seedance&rsquo;s best feature on the floor. Structure the prompt as timestamped shots with a shared constants block up top (character, location, color grade), then let each block handle camera, action, and audio. The Multi-Shot section below has the full grammar.
+                  </p>
+                </div>
+
+                <div className="pt-1">
+                  <Link
+                    href="/state-of-prompting/seedance"
+                    className="text-sm font-medium text-violet-600 dark:text-violet-400 hover:underline"
+                  >
+                    Read the full Seedance story &rarr;
+                  </Link>
+                </div>
+              </div>
+            </Section>
+
             <Section title="Multi-Shot Prompting" id="multishot">
               <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <p>
@@ -824,6 +983,81 @@ enters. Warm golden lighting.`}</pre>
                       </div>
                     )}
 
+                    {/* Monthly model share — backs the Seedance thesis with the dataset */}
+                    {monthlyModelShare && monthlyModelShare.series.length > 0 && (
+                      <div className="rounded-xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-4">
+                        <div className="flex items-start justify-between mb-1 gap-3">
+                          <h4 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500">Model share by month</h4>
+                          <span className="text-[10px] font-mono text-gray-300 dark:text-zinc-600 shrink-0">last {monthlyModelShare.months.length} months</span>
+                        </div>
+                        <p className="text-xs text-gray-500 dark:text-zinc-400 mb-3">Share of classified prompts each month. This is the dataset backing the Seedance thesis &mdash; the trajectory in the rightmost column is April.</p>
+                        <div className="overflow-x-auto -mx-1 px-1">
+                          <div className="min-w-[520px]">
+                            {/* Header */}
+                            <div className="grid gap-2 text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 pb-2 border-b border-black/[0.06] dark:border-white/6" style={{ gridTemplateColumns: `12px 7rem repeat(${monthlyModelShare.months.length}, minmax(0, 1fr))` }}>
+                              <span />
+                              <span>Model</span>
+                              {monthlyModelShare.months.map((m) => (
+                                <span key={m} className="text-right font-mono normal-case tracking-normal">{m}</span>
+                              ))}
+                            </div>
+                            {/* Rows */}
+                            {monthlyModelShare.series.map((row, i) => {
+                              const isSeedance = row.model.toLowerCase() === 'seedance'
+                              const rowColor = isSeedance ? '#10b981' : '#8b5cf6'
+                              return (
+                                <div
+                                  key={row.model}
+                                  className={`grid gap-2 items-center py-1.5 text-[11px] ${isSeedance ? 'bg-emerald-500/[0.04] dark:bg-emerald-500/[0.08] -mx-1 px-1 rounded' : ''}`}
+                                  style={{ gridTemplateColumns: `12px 7rem repeat(${monthlyModelShare.months.length}, minmax(0, 1fr))` }}
+                                >
+                                  <span className="font-mono text-gray-400 dark:text-zinc-500 text-right">{i + 1}</span>
+                                  <span className={`font-medium truncate ${isSeedance ? 'font-semibold' : ''}`} style={{ color: isSeedance ? rowColor : undefined }}>{row.model}</span>
+                                  {row.months.map((cell) => {
+                                    const barPct = Math.max(4, Math.min(100, cell.pct * 2.2))
+                                    return (
+                                      <div key={cell.month} className="flex items-center gap-1.5 justify-end">
+                                        <div className="flex-1 h-3 bg-black/[0.03] dark:bg-white/[0.03] rounded overflow-hidden">
+                                          <div
+                                            className="h-full rounded"
+                                            style={{ width: `${barPct}%`, backgroundColor: `${rowColor}25`, borderRight: `2px solid ${rowColor}` }}
+                                          />
+                                        </div>
+                                        <span className="font-mono text-gray-500 dark:text-zinc-400 w-7 text-right tabular-nums shrink-0">
+                                          {cell.pct >= 1 ? `${cell.pct.toFixed(0)}%` : cell.pct > 0 ? '<1%' : '—'}
+                                        </span>
+                                      </div>
+                                    )
+                                  })}
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+                        {monthlyModelShare.seedanceArc && monthlyModelShare.seedanceArc.length >= 2 && (
+                          <div className="mt-3 pt-3 border-t border-black/[0.06] dark:border-white/6 flex flex-wrap items-center gap-2 text-xs">
+                            <span className="text-[11px] font-semibold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Seedance arc</span>
+                            <div className="flex items-center gap-1.5 font-mono text-gray-500 dark:text-zinc-400">
+                              {monthlyModelShare.seedanceArc.map((p, idx, arr) => (
+                                <span key={p.month} className="flex items-center gap-1.5">
+                                  <span className="text-[11px] text-gray-400 dark:text-zinc-500">{p.month.slice(-2)}</span>
+                                  <span className="text-[11px] text-gray-700 dark:text-zinc-300 font-semibold">{p.pct >= 1 ? `${p.pct.toFixed(0)}%` : p.pct > 0 ? '<1%' : '0%'}</span>
+                                  {idx < arr.length - 1 && <span className="text-gray-300 dark:text-zinc-600">&rarr;</span>}
+                                </span>
+                              ))}
+                            </div>
+                            {monthlyModelShare.seedanceMoM != null && (
+                              <span
+                                className={`text-[11px] font-mono font-semibold px-1.5 py-0.5 rounded ${monthlyModelShare.seedanceMoM >= 0 ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10' : 'text-red-500 bg-red-500/10'}`}
+                              >
+                                {monthlyModelShare.seedanceMoM >= 0 ? '+' : ''}{monthlyModelShare.seedanceMoM.toFixed(1)}pp MoM
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     {/* Synthesis - one-line observations */}
                     <div className="rounded-xl border border-black/[0.06] dark:border-white/[0.06] bg-white dark:bg-[#111] p-4 flex flex-col gap-2">
                       <h4 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400 dark:text-zinc-500">What the numbers say</h4>
@@ -836,6 +1070,13 @@ enters. Warm golden lighting.`}</pre>
                           : 'Short, specific prompts outperform verbose ones. Models fill gaps better than they parse walls of text.'}</p>
                         {topThemes.length >= 3 && (
                           <p>→ <span className="font-medium">Top themes: {topThemes.slice(0, 3).map((t) => t.label).join(', ')}.</span> The aesthetic distribution is heavily skewed - a few styles dominate viral engagement.</p>
+                        )}
+                        {monthlyModelShare?.seedanceMoM != null && (
+                          <p>→ <span className="font-medium">Seedance share moved {monthlyModelShare.seedanceMoM >= 0 ? '+' : ''}{monthlyModelShare.seedanceMoM.toFixed(1)}pp MoM.</span> {monthlyModelShare.seedanceMoM >= 3
+                            ? 'The distribution story (Runway, CapCut, Flova) is showing up in the dataset, not just the news cycle.'
+                            : monthlyModelShare.seedanceMoM >= 0
+                              ? 'Still rising, but less aggressively than the headlines suggest - distribution rolled out late in the month.'
+                              : 'Down MoM despite the headlines - either the sample is lagging or the hype outpaced adoption.'}</p>
                         )}
                         <p>→ <span className="font-medium">What tops the arena ≠ what goes viral.</span> Accessibility, speed, and community familiarity drive sharing as much as raw output quality.</p>
                       </div>
@@ -966,7 +1207,7 @@ enters. Warm golden lighting.`}</pre>
             <Section title="Why Sora Shut Down" id="sora">
               <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <p>
-                  On March 24, 2026 - six months after its public launch - OpenAI announced the full shutdown of Sora: the consumer app, ChatGPT video generation, and the API. All of it. At its peak, Sora 2 was the only non-Google model in the T2V top 5 (ELO 1,367), but the economics were never close to working.
+                  On April 26, 2026, Sora went dark - the consumer app and ChatGPT video generation both went offline; the API follows September 24. OpenAI had announced the full shutdown on March 24, six months after launch. At its peak Sora 2 was the only non-Google model in the T2V top 5 (ELO 1,367), but the economics were never close to working.
                 </p>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -995,6 +1236,7 @@ enters. Warm golden lighting.`}</pre>
                         { date: 'Late 2025', event: 'OpenAI introduces paywall: $4 for 10 generations. Altman concedes "there is no ad model that can support the cost" of meme-making at scale', severity: 2, sourceUrl: 'https://www.remio.ai/post/the-real-sora-cost-openai-s-5-billion-ai-video-problem' },
                         { date: 'Early 2026', event: 'Usage declines as free limits are slashed; competitors (Veo, Kling, Seedance) rapidly close the quality gap', severity: 2 },
                         { date: 'Mar 24, 2026', event: 'OpenAI announces full Sora shutdown - app, API, and ChatGPT video generation. All of it.', severity: 3, sourceUrl: 'https://x.com/soraofficialapp' },
+                        { date: 'Apr 26, 2026', event: 'Sora consumer app and ChatGPT video go offline. API follows September 24, 2026.', severity: 3, sourceUrl: 'https://help.openai.com/en/articles/20001152-what-to-know-about-the-sora-discontinuation' },
                       ].map(({ date, event, severity, sourceUrl }) => {
                         const dotColor = severity === 0 ? 'bg-amber-400' : severity === 1 ? 'bg-orange-400' : severity === 2 ? 'bg-red-400' : 'bg-red-600'
                         const isTerminal = severity === 3
@@ -1056,6 +1298,15 @@ enters. Warm golden lighting.`}</pre>
                   { label: 'Kling 3.0 Multi-Shot Prompting Guide - fal.ai', url: 'https://blog.fal.ai/kling-3-0-prompting-guide/' },
                   { label: 'Timeline Prompting with Seedance 2.0 - MindStudio', url: 'https://www.mindstudio.ai/blog/timeline-prompting-seedance-2-cinematic-ai-video' },
                   { label: 'Timestamp Prompting Guide - Artlist', url: 'https://artlist.io/blog/timestamp-prompting/' },
+                  { label: 'Seedance 2.0 on Runway - Runway Help Center (Apr 12, 2026)', url: 'https://help.runwayml.com/hc/en-us/articles/50488490233363-Creating-with-Seedance-2-0' },
+                  { label: 'Seedance 2.0 is Now on Runway - No Film School', url: 'https://nofilmschool.com/runway-seedance-2-0' },
+                  { label: 'Seedance 2.0 Runway Unlimited Plan Review - MindStudio', url: 'https://www.mindstudio.ai/blog/seedance-2-runway-unlimited-plan-review' },
+                  { label: 'ByteDance Rolls Out Seedance 2.0 to 100+ Countries - the-decoder', url: 'https://the-decoder.com/bytedance-rolls-out-seedance-2-0-to-100-countries-but-keeps-the-us-off-the-list/' },
+                  { label: 'MPA Denounces Massive Infringement on Seedance 2.0 - Variety', url: 'https://variety.com/2026/film/news/motion-picture-association-ai-seedance-bytedance-tom-cruise-1236661753/' },
+                  { label: 'MPA Cease-and-Desist to ByteDance - Hollywood Reporter', url: 'https://www.hollywoodreporter.com/business/business-news/mpa-cease-and-desist-bytedance-seedance-2-0-1236510957/' },
+                  { label: 'MPA Pushes ByteDance to Curb Seedance 2.0 Infringement - Variety', url: 'https://variety.com/2026/film/news/motion-picture-association-bytedance-seedance-letter-1236668577/' },
+                  { label: 'Veo 4 Release - Everything You Need to Know (April 2026)', url: 'https://www.veo3ai.io/blog/veo-4-release-everything-you-need-to-know-2026' },
+                  { label: 'What to Know About the Sora Discontinuation - OpenAI Help', url: 'https://help.openai.com/en/articles/20001152-what-to-know-about-the-sora-discontinuation' },
                 ].map((s) => (
                   <a
                     key={s.url}
