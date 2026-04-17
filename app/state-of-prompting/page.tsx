@@ -360,7 +360,7 @@ export default function StateOfPromptingPage() {
             <h1 className="font-serif text-3xl md:text-4xl text-gray-900 dark:text-white tracking-tight">Seedance ate the feed</h1>
             <p className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-gray-400 dark:text-zinc-500">State of Prompting · Apr 2026</p>
             <p className="mt-3 text-[15px] text-gray-500 dark:text-zinc-400 leading-[1.7] max-w-2xl">
-              Seedance landed in Runway, CapCut, and Flova inside a single April week. Sora went dark on April 26. Veo 4 arrived with 4K and storyboarding. Here&rsquo;s what changed for practitioners - and what the data says about where prompting is headed.
+              Seedance landed in Runway, CapCut, and Flova inside a single April week. Sora went dark on April 26. Here&rsquo;s what changed for practitioners - and what the data says about where prompting is headed.
             </p>
           </div>
           <div className="flex flex-col gap-2 pt-3 border-t border-black/[0.06] dark:border-white/6">
@@ -415,15 +415,6 @@ export default function StateOfPromptingPage() {
                 />
                 <FindingCard
                   number="03"
-                  color="#1DA1F2"
-                  title="Veo 4 launched"
-                  body={"Google's Veo 4 shipped in April - 4K, 30-second clips, storyboarding, and zero-shot avatar creation with dramatically improved character consistency. Not yet in the Arena rankings, but the ceiling on T2V just moved again. Veo 3.1 currently dominates the leaderboard; watch the next cycle."}
-                  sources={[
-                    { label: 'Veo 4 release notes', url: 'https://www.veo3ai.io/blog/veo-4-release-everything-you-need-to-know-2026' },
-                  ]}
-                />
-                <FindingCard
-                  number="04"
                   color="#f59e0b"
                   title="Hollywood vs Seedance"
                   body={"A viral two-line-prompt clip of \"Tom Cruise\" fighting \"Brad Pitt\" hit 1.2M+ views on X. The MPA sent ByteDance a cease-and-desist; Netflix, Warner, Disney, Paramount, and Sony followed individually. The legal cloud is the price of going viral - creators did not slow down."}
@@ -1305,7 +1296,6 @@ enters. Warm golden lighting.`}</pre>
                   { label: 'MPA Denounces Massive Infringement on Seedance 2.0 - Variety', url: 'https://variety.com/2026/film/news/motion-picture-association-ai-seedance-bytedance-tom-cruise-1236661753/' },
                   { label: 'MPA Cease-and-Desist to ByteDance - Hollywood Reporter', url: 'https://www.hollywoodreporter.com/business/business-news/mpa-cease-and-desist-bytedance-seedance-2-0-1236510957/' },
                   { label: 'MPA Pushes ByteDance to Curb Seedance 2.0 Infringement - Variety', url: 'https://variety.com/2026/film/news/motion-picture-association-bytedance-seedance-letter-1236668577/' },
-                  { label: 'Veo 4 Release - Everything You Need to Know (April 2026)', url: 'https://www.veo3ai.io/blog/veo-4-release-everything-you-need-to-know-2026' },
                   { label: 'What to Know About the Sora Discontinuation - OpenAI Help', url: 'https://help.openai.com/en/articles/20001152-what-to-know-about-the-sora-discontinuation' },
                 ].map((s) => (
                   <a
