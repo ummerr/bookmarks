@@ -39,7 +39,6 @@ const TIMELINE = [
   { date: 'Feb 2026', event: 'MPA sends a cease-and-desist to ByteDance\u2019s Culver City office, citing \u201Cmassive-scale\u201D copyright infringement', severity: 2, sourceUrl: 'https://www.hollywoodreporter.com/business/business-news/mpa-cease-and-desist-bytedance-seedance-2-0-1236510957/' },
   { date: 'Feb\u2013Mar 2026', event: 'Netflix, Warner Bros., Disney, Paramount, and Sony follow with individual legal threats to ByteDance', severity: 2, sourceUrl: 'https://variety.com/2026/film/news/motion-picture-association-bytedance-seedance-letter-1236668577/' },
   { date: 'Mar 2026', event: 'Seedance 1.5 Pro tops both the T2V and I2V leaderboards on Artificial Analysis', severity: 1, sourceUrl: 'https://artificialanalysis.ai/text-to-video/arena' },
-  { date: 'Apr 5, 2026', event: 'Flova ships a Seedance 2.0 integration - the first major US-facing distribution partner', severity: 0 },
   { date: 'Apr 12, 2026', event: 'Seedance 2.0 lands on Runway with an Unlimited plan ($76\u201395/mo). \u201CThe viral AI model continues its takeover.\u201D', severity: 0, sourceUrl: 'https://www.mindstudio.ai/blog/seedance-2-runway-unlimited-plan-review' },
   { date: 'Apr 2026', event: 'CapCut rolls Seedance 2.0 out across 100+ countries - starting with Indonesia, Philippines, Thailand, Vietnam, Malaysia, Brazil, Mexico', severity: 0, sourceUrl: 'https://the-decoder.com/bytedance-rolls-out-seedance-2-0-to-100-countries-but-keeps-the-us-off-the-list/' },
 ]
@@ -66,7 +65,7 @@ export default function SeedancePage() {
             <ShareArticleButton />
           </div>
           <p className="text-sm text-gray-500 dark:text-zinc-400 mt-2 leading-relaxed max-w-xl">
-            In April 2026, Seedance 2.0 went from breakout model to default video layer. A viral clip lit the fuse in February &mdash; Runway, CapCut, and Flova detonated it in April.
+            In April 2026, Seedance 2.0 went from breakout model to default video layer. A viral clip lit the fuse in February &mdash; Runway and CapCut detonated it in April.
           </p>
         </div>
 
@@ -82,7 +81,7 @@ export default function SeedancePage() {
 
         {/* Context */}
         <p className="text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
-          The fastest way to win AI video in 2026 was not to top the leaderboard &mdash; Google already does that. It was to appear inside the tools creators already have open. In a single April week, Seedance 2.0 showed up in Runway, CapCut, and Flova. That&rsquo;s the story.
+          The fastest way to win AI video in 2026 was not to top the leaderboard &mdash; Google already does that. It was to appear inside the tools creators already have open. In a single April week, Seedance 2.0 showed up inside Runway and in CapCut&rsquo;s 100-country rollout. That&rsquo;s the story.
         </p>
 
         {/* Timeline */}
@@ -130,7 +129,7 @@ with a warm smile. Warm golden lighting.`}</pre>
         {/* The lesson */}
         <div className="rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/30 p-4">
           <p className="text-sm text-emerald-800 dark:text-emerald-200 leading-relaxed">
-            <span className="font-semibold">The lesson.</span> Distribution beat benchmarks. The model that dominated April wasn&rsquo;t the one with the highest T2V ELO &mdash; it was the one that showed up inside Runway, CapCut, and Flova in the same month. The legal cloud is real (five studios, MPA cease-and-desist, ongoing training-data fight), but creators voted with the tools in front of them.
+            <span className="font-semibold">The lesson.</span> Distribution beat benchmarks. The model that dominated April wasn&rsquo;t the one with the highest T2V ELO &mdash; it was the one that showed up inside Runway and CapCut in the same month. The legal cloud is real (five studios, MPA cease-and-desist, ongoing training-data fight), but creators voted with the tools in front of them.
           </p>
         </div>
 

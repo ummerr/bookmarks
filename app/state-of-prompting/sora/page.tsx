@@ -4,7 +4,7 @@ import ShareArticleButton from './ShareArticleButton'
 
 const TITLE = 'Why Sora Shut Down - State of Prompting'
 const DESCRIPTION =
-  'On March 24, 2026, OpenAI shut down Sora entirely - app, API, and ChatGPT video. $15M/day inference costs, $2.1M lifetime revenue, 1% retention. Here\'s how it unraveled.'
+  'OpenAI announced the full Sora shutdown on March 24, 2026. The consumer app goes offline April 26; the API follows September 24. At an estimated $15M/day in inference costs, the economics never worked. Here\'s how it unraveled.'
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -65,7 +65,7 @@ export default function SoraPage() {
             <ShareArticleButton />
           </div>
           <p className="text-sm text-gray-500 dark:text-zinc-400 mt-2 leading-relaxed max-w-xl">
-            On April 26, 2026, Sora went dark. The consumer app and ChatGPT video generation stopped; the API follows September 24. OpenAI announced the full shutdown on March 24 &mdash; six months after launch.
+            On April 26, 2026, Sora goes dark. The consumer app and ChatGPT video generation shut down; the API follows September 24. OpenAI announced the full shutdown on March 24 &mdash; six months after launch.
           </p>
         </div>
 
@@ -81,7 +81,7 @@ export default function SoraPage() {
 
         {/* Context */}
         <p className="text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
-          At its peak, Sora 2 was the only non-Google model in the T2V top 5 (ELO 1,367), but the economics were never close to working.
+          At its peak, Sora 2 was the only non-Google model in the T2V top 5, but the economics were never close to working.
         </p>
 
         {/* Timeline */}

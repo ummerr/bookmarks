@@ -360,7 +360,7 @@ export default function StateOfPromptingPage() {
             <h1 className="font-serif text-3xl md:text-4xl text-gray-900 dark:text-white tracking-tight">Seedance ate the feed</h1>
             <p className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-gray-400 dark:text-zinc-500">State of Prompting · Apr 2026</p>
             <p className="mt-3 text-[15px] text-gray-500 dark:text-zinc-400 leading-[1.7] max-w-2xl">
-              Seedance landed in Runway, CapCut, and Flova inside a single April week. Sora went dark on April 26. Veo 4 arrived with 4K and storyboarding. Here&rsquo;s what changed for practitioners - and what the data says about where prompting is headed.
+              Seedance landed inside Runway and CapCut in the same April week. Sora is set to go dark on April 26. Here&rsquo;s what changed for practitioners - and what the data says about where prompting is headed.
             </p>
           </div>
           <div className="flex flex-col gap-2 pt-3 border-t border-black/[0.06] dark:border-white/6">
@@ -389,14 +389,14 @@ export default function StateOfPromptingPage() {
 
             <Section title="April Dispatches" id="april-dispatches">
               <p className="text-[14px] text-gray-500 dark:text-zinc-400 leading-relaxed -mt-2">
-                Four things changed the landscape this month. Everything below is downstream.
+                Three things changed the landscape this month. Everything below is downstream.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <FindingCard
                   number="01"
                   color="#10b981"
                   title="Seedance 2.0 lands on Runway (Apr 12)"
-                  body={"Runway added Seedance 2.0 with an Unlimited plan ($76–95/mo). Combined with CapCut's 100-country rollout and the Flova integration (Apr 5), it put Seedance inside the tools creators already had open. Distribution, not model quality, became the decisive variable."}
+                  body={"Runway added Seedance 2.0 with an Unlimited plan ($76–95/mo). Combined with CapCut's 100-country rollout, it put Seedance inside the tools creators already had open. Distribution, not model quality, became the decisive variable."}
                   sources={[
                     { label: 'Runway · Seedance help', url: 'https://help.runwayml.com/hc/en-us/articles/50488490233363-Creating-with-Seedance-2-0' },
                     { label: 'No Film School', url: 'https://nofilmschool.com/runway-seedance-2-0' },
@@ -406,8 +406,8 @@ export default function StateOfPromptingPage() {
                 <FindingCard
                   number="02"
                   color="#ef4444"
-                  title="Sora went dark (Apr 26)"
-                  body={"OpenAI's Sora consumer app and ChatGPT video generation went offline on April 26. The API follows September 24. The only non-Google model in the T2V top 5 for most of 2026 - and the first major consumer video model to get fully deprecated. See the full post-mortem below."}
+                  title="Sora is shutting down (Apr 26)"
+                  body={"OpenAI's Sora consumer app and ChatGPT video generation go offline on April 26, with the API following September 24. The only non-Google model in the T2V top 5 for most of 2026 - and the first major consumer video model to be fully deprecated. See the full post-mortem below."}
                   sources={[
                     { label: 'OpenAI · Sora discontinuation', url: 'https://help.openai.com/en/articles/20001152-what-to-know-about-the-sora-discontinuation' },
                     { label: '/state-of-prompting/sora', url: '/state-of-prompting/sora' },
@@ -415,15 +415,6 @@ export default function StateOfPromptingPage() {
                 />
                 <FindingCard
                   number="03"
-                  color="#1DA1F2"
-                  title="Veo 4 launched"
-                  body={"Google's Veo 4 shipped in April - 4K, 30-second clips, storyboarding, and zero-shot avatar creation with dramatically improved character consistency. Not yet in the Arena rankings, but the ceiling on T2V just moved again. Veo 3.1 currently dominates the leaderboard; watch the next cycle."}
-                  sources={[
-                    { label: 'Veo 4 release notes', url: 'https://www.veo3ai.io/blog/veo-4-release-everything-you-need-to-know-2026' },
-                  ]}
-                />
-                <FindingCard
-                  number="04"
                   color="#f59e0b"
                   title="Hollywood vs Seedance"
                   body={"A viral two-line-prompt clip of \"Tom Cruise\" fighting \"Brad Pitt\" hit 1.2M+ views on X. The MPA sent ByteDance a cease-and-desist; Netflix, Warner, Disney, Paramount, and Sony followed individually. The legal cloud is the price of going viral - creators did not slow down."}
@@ -449,8 +440,8 @@ export default function StateOfPromptingPage() {
                 <FindingCard
                   number="02"
                   color="#8b5cf6"
-                  title="Prompt engineering as a discipline is over"
-                  body="'Prompt Engineer' ranked second-to-last in new AI roles companies plan to hire. Andrej Karpathy named the successor: context engineering - what information the AI sees matters more than how you phrase the request."
+                  title="Prompt engineering is giving way to context engineering"
+                  body="Andrej Karpathy named the successor: context engineering - what information the AI sees matters more than how you phrase the request. Trade press has been calling time on 'prompt engineer' as a job title for over a year, and the discipline's centre of gravity has moved from clever phrasing to what you feed the model."
                   sources={[
                     { label: 'Prompt Engineering Is Dead - IEEE Spectrum', url: 'https://spectrum.ieee.org/prompt-engineering-is-dead' },
                     { label: 'Prompt Engineering Jobs Are Obsolete - Salesforce Ben', url: 'https://www.salesforceben.com/prompt-engineering-jobs-are-obsolete-in-2025-heres-why/' },
@@ -469,7 +460,7 @@ export default function StateOfPromptingPage() {
                   number="04"
                   color="#f59e0b"
                   title="The best video prompts describe forces, not aesthetics"
-                  body="'Gimbal tracking shot, rear suspension compressing on impact' beats 'cinematic car scene' every time. The prompts that work describe physics: camera movement, forces on objects, cause and effect."
+                  body="'Gimbal tracking shot, rear suspension compressing on impact' tends to beat 'cinematic car scene'. The prompts that work describe physics: camera movement, forces on objects, cause and effect."
                   sources={[
                     { label: 'How to Actually Control Next-Gen Video AI - Medium', url: 'https://medium.com/@creativeaininja/how-to-actually-control-next-gen-video-ai-runway-kling-veo-and-sora-prompting-strategies-92ef0055658b' },
                   ]}
@@ -478,7 +469,7 @@ export default function StateOfPromptingPage() {
                   number="05"
                   color="#10b981"
                   title="Distribution beat model quality in April"
-                  body={"Seedance did not top the T2V arena - Veo 3.1 still holds the top four slots. Seedance won April by appearing inside Runway, CapCut, and Flova in the same week. The model creators reach for is the one their tool already supports."}
+                  body={"Seedance did not top the T2V arena - Veo 3.1 still leads it. Seedance won April by appearing inside Runway and CapCut in the same week. The model creators reach for is the one their tool already supports."}
                   sources={[
                     { label: 'Runway · Seedance', url: 'https://runwayml.com/product/seedance' },
                     { label: 'ByteDance 100-country rollout', url: 'https://the-decoder.com/bytedance-rolls-out-seedance-2-0-to-100-countries-but-keeps-the-us-off-the-list/' },
@@ -496,7 +487,7 @@ export default function StateOfPromptingPage() {
                   Midjourney introduced <code className="text-xs bg-black/[0.05] dark:bg-white/[0.05] px-1 py-0.5 rounded">--sref</code> (style reference) and <code className="text-xs bg-black/[0.05] dark:bg-white/[0.05] px-1 py-0.5 rounded">--cref</code> (character reference). Runway, Kling, and Veo made image-to-video a core feature. Creators stopped describing their characters and started uploading character sheets. Style boards replaced style adjectives.
                 </p>
                 <p>
-                  The reason is obvious once you see it: <span className="font-medium text-gray-900 dark:text-white">a photo of a face contains more information than any sentence describing one.</span> Text descriptions lose detail. Reference images don't.
+                  The reason is straightforward: <span className="font-medium text-gray-900 dark:text-white">a photo of a face carries more identity information than any sentence describing one.</span> References preserve subject-specific detail that prose simply cannot encode.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
                   {[
@@ -631,7 +622,7 @@ export default function StateOfPromptingPage() {
                     {
                       model: 'Veo 3.1',
                       personality: 'T2V Arena #1',
-                      desc: "Google's Veo 3.1 dominates the T2V arena - holding the top 5 spots in various configurations. Native audio generation, 1080p output, and deep integration with Google infrastructure. Works best with structured, ingredient-list prompts and reference images.",
+                      desc: "Google's Veo 3.1 leads the T2V arena on Artificial Analysis (as of Apr 2026), with Google variants sweeping the top of the leaderboard. Native audio generation, 1080p output, and deep integration with Google infrastructure. Works best with structured, ingredient-list prompts and reference images.",
                       strategy: 'Lead with subject and shot type. Upload reference images instead of describing them. Use labelled sections for dialogue and sound effects. Provide a start frame and end frame and it fills in the motion.',
                       color: '#1DA1F2',
                       sourceUrl: 'https://aimlapi.com/blog/google-veo-3-1',
@@ -647,7 +638,7 @@ export default function StateOfPromptingPage() {
                     {
                       model: 'Grok Imagine Video',
                       personality: 'I2V Arena #1',
-                      desc: "Built on Aurora's autoregressive architecture. #1 on the I2V arena (ELO 1,404) and #1 on Video Edit (ELO 1,259). Generates up to 15 seconds in ~17 seconds. Supports video extension and iterative chat editing - refine with natural language rather than rewriting.",
+                      desc: "xAI's video model. Leads the I2V and Video Edit arenas on Artificial Analysis (as of Apr 2026). Generates clips up to 15 seconds. Supports video extension and iterative chat editing - refine with natural language rather than rewriting.",
                       strategy: 'Use comma-separated ingredient prompts rather than prose. Feed a reference image to anchor style and subject. Use iterative chat refinement rather than rewriting from scratch.',
                       color: '#9333ea',
                       sourceUrl: 'https://artificialanalysis.ai/text-to-video/arena',
@@ -655,7 +646,7 @@ export default function StateOfPromptingPage() {
                     {
                       model: 'Kling',
                       personality: 'Multi-Shot Pioneer',
-                      desc: 'The model that pioneered storyboard-mode prompting - up to 6 distinct camera cuts from a single prompt. KlingAI holds #2 and #3 on the Video Edit arena (O3 Pro at 1,248, O1 Pro at 1,208). Native lip-sync, speaker attribution, and the most granular shot-by-shot control of any current model.',
+                      desc: 'The model that pioneered storyboard-mode prompting - up to 6 distinct camera cuts from a single prompt. KlingAI variants sit near the top of the Video Edit arena (as of Apr 2026). Native lip-sync, speaker attribution, and the most granular shot-by-shot control of any current model.',
                       strategy: 'Use Custom Storyboard mode for full control. Structure each shot as: Scene → Characters → Action → Camera → Audio. Label dialogue per speaker. Give it as many reference files as you have.',
                       color: '#ec4899',
                       sourceUrl: 'https://cybernews.com/ai-tools/kling-ai-review/',
@@ -663,7 +654,7 @@ export default function StateOfPromptingPage() {
                     {
                       model: 'Gemini Image',
                       personality: 'T2I & Edit Arena #1',
-                      desc: "Google's Gemini models dominate both the T2I arena (#1 at 1,265) and Image Edit (#2–#4). The Flash variant leads T2I; the Pro variant leads editing. Native multimodal understanding means it handles text-in-image and complex compositions better than dedicated image models.",
+                      desc: "Google's Gemini models lead the T2I arena and rank near the top of Image Edit (Artificial Analysis, as of Apr 2026). The Flash variant leads T2I; the Pro variant leads editing. Native multimodal understanding means it handles text-in-image and complex compositions better than dedicated image models.",
                       strategy: 'Be explicit about text placement, composition, and style. For edits, describe what to change conversationally - it understands context from the source image.',
                       color: '#f97316',
                       sourceUrl: 'https://artificialanalysis.ai/text-to-image/arena',
@@ -671,7 +662,7 @@ export default function StateOfPromptingPage() {
                     {
                       model: '🪦 Sora 2',
                       personality: 'Fully Deprecated Mar 2026',
-                      desc: 'OpenAI is shutting down both the Sora consumer app and API. At its peak, Sora 2 was the only non-Google model in the T2V top 5 (ELO 1,367) - but at ~$1.30 per 10-second clip and ~11.3M videos/day, the $5.4B annualized burn rate was never sustainable.',
+                      desc: 'OpenAI is shutting down both the Sora consumer app and API. At its peak, Sora 2 was the only non-Google model in the T2V top 5 - but at ~$1.30 per 10-second clip and ~11.3M videos/day, the $5.4B annualized burn rate was never sustainable.',
                       strategy: 'Migrate to Veo 3.1 (T2V #1) or Kling 3.0 for video generation. No Sora endpoint will remain available.',
                       color: '#6b7280',
                       sourceUrl: 'https://www.remio.ai/post/the-real-sora-cost-openai-s-5-billion-ai-video-problem',
@@ -728,12 +719,12 @@ export default function StateOfPromptingPage() {
             <Section title="Seedance Takeover" id="seedance">
               <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <p>
-                  The breakout model of Q1 became the default layer of Q2. Seedance 2.0 launched in February with a unified audio-video architecture; it went viral almost immediately - the <a href="https://variety.com/2026/film/news/motion-picture-association-ai-seedance-bytedance-tom-cruise-1236661753/" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">two-line-prompt clip of &ldquo;Tom Cruise&rdquo; vs &ldquo;Brad Pitt&rdquo; on a rooftop</a> crossed 1.2M views on X within days and triggered an MPA cease-and-desist. What made April different was distribution: <a href="https://help.runwayml.com/hc/en-us/articles/50488490233363-Creating-with-Seedance-2-0" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">Runway added Seedance 2.0 with an Unlimited plan on April 12</a>, Flova shipped its integration April 5, and <a href="https://the-decoder.com/bytedance-rolls-out-seedance-2-0-to-100-countries-but-keeps-the-us-off-the-list/" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">CapCut began rolling it out across 100+ countries</a>.
+                  The breakout model of Q1 became the default layer of Q2. Seedance 2.0 launched in February with a unified audio-video architecture; it went viral almost immediately - the <a href="https://variety.com/2026/film/news/motion-picture-association-ai-seedance-bytedance-tom-cruise-1236661753/" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">two-line-prompt clip of &ldquo;Tom Cruise&rdquo; vs &ldquo;Brad Pitt&rdquo; on a rooftop</a> went viral on X within days and triggered an MPA cease-and-desist. What made April different was distribution: <a href="https://help.runwayml.com/hc/en-us/articles/50488490233363-Creating-with-Seedance-2-0" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">Runway added Seedance 2.0 with an Unlimited plan on April 12</a>, and <a href="https://the-decoder.com/bytedance-rolls-out-seedance-2-0-to-100-countries-but-keeps-the-us-off-the-list/" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">CapCut began rolling it out across 100+ countries</a>.
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   {[
-                    { label: 'Distribution', desc: 'Runway Unlimited, CapCut global, Flova. The model showed up inside the tools creators already had open.', color: '#10b981' },
+                    { label: 'Distribution', desc: 'Runway Unlimited and CapCut global rollout. The model showed up inside the tools creators already had open.', color: '#10b981' },
                     { label: 'Prompt syntax', desc: 'Native multi-shot via [0s], [5s] timestamp blocks and Shot switch markers - one prompt, an edited sequence out.', color: '#8b5cf6' },
                     { label: 'Legal cloud', desc: 'MPA cease-and-desist; Netflix, Warner, Disney, Paramount, Sony with individual letters. Unresolved, not slowing.', color: '#f59e0b' },
                   ].map((r) => (
@@ -781,7 +772,7 @@ export default function StateOfPromptingPage() {
                   Single-shot AI video is B-roll. Multi-shot AI video is an edited scene. <a href="https://blog.fal.ai/kling-3-0-prompting-guide/" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">Kling 3.0's February 2026 launch</a> popularized the technique - and it's now the standard for anything with narrative structure.
                 </p>
                 <p>
-                  Multi-shot prompting describes two or more distinct camera cuts in a single prompt. The model generates them as a coherent sequence - same characters, consistent environment, natural transitions. The underlying research (<a href="https://arxiv.org/html/2512.03041" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">Kuaishou's MultiShotMaster, CVPR 2026</a>) modified how the model handles position embeddings to deliberately break continuity at shot boundaries while keeping character identity stable across them.
+                  Multi-shot prompting describes two or more distinct camera cuts in a single prompt. The model generates them as a coherent sequence - same characters, consistent environment, natural transitions. The underlying research (<a href="https://arxiv.org/html/2512.03041" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:underline">Kuaishou's MultiShotMaster, arXiv 2512.03041</a>) modified how the model handles position embeddings to deliberately break continuity at shot boundaries while keeping character identity stable across them.
                 </p>
                 <div className="rounded-xl border border-black/[0.08] dark:border-white/8 overflow-hidden">
                   <div className="grid grid-cols-1 sm:grid-cols-2">
@@ -907,7 +898,7 @@ enters. Warm golden lighting.`}</pre>
                   Text-only prompts leave most of the available control unused. The tools that accept reference images, audio clips, and video deliver substantially better results when you use those inputs.
                 </p>
                 <p className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">
-                  <span className="font-semibold text-purple-600 dark:text-purple-400">Aurora (xAI)</span> is the outlier - autoregressive (not diffusion), renders named real people (others refuse), and supports iterative chat editing. Prompt with comma-separated ingredients, not prose.
+                  <span className="font-semibold text-purple-600 dark:text-purple-400">Aurora (xAI)</span> is the outlier - renders named real people where other tools refuse, and supports iterative chat editing. Prompt with comma-separated ingredients, not prose.
                 </p>
               </div>
             </Section>
@@ -1073,7 +1064,7 @@ enters. Warm golden lighting.`}</pre>
                         )}
                         {monthlyModelShare?.seedanceMoM != null && (
                           <p>→ <span className="font-medium">Seedance share moved {monthlyModelShare.seedanceMoM >= 0 ? '+' : ''}{monthlyModelShare.seedanceMoM.toFixed(1)}pp MoM.</span> {monthlyModelShare.seedanceMoM >= 3
-                            ? 'The distribution story (Runway, CapCut, Flova) is showing up in the dataset, not just the news cycle.'
+                            ? 'The distribution story (Runway, CapCut) is showing up in the dataset, not just the news cycle.'
                             : monthlyModelShare.seedanceMoM >= 0
                               ? 'Still rising, but less aggressively than the headlines suggest - distribution rolled out late in the month.'
                               : 'Down MoM despite the headlines - either the sample is lagging or the hype outpaced adoption.'}</p>
@@ -1093,21 +1084,15 @@ enters. Warm golden lighting.`}</pre>
             <Section title="The Realness Gap" id="realness-gap">
               <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <p>
-                  Look at which themes go viral and a pattern emerges: <span className="font-medium text-gray-800 dark:text-zinc-100">creators disproportionately prompt for styles where realism doesn&rsquo;t matter.</span> Abstract, fantasy, sci-fi, and horror dominate - themes where broken physics and uncanny anatomy are aesthetically acceptable, or even desirable.
+                  Look at which themes go viral and a pattern shows up: <span className="font-medium text-gray-800 dark:text-zinc-100">stylized work &mdash; abstract, fantasy, sci-fi, horror &mdash; is overrepresented</span> relative to realism-demanding themes like portraits, landscapes, and product shots. One reading is that stylized themes forgive the physics and anatomy errors current models still make; another is that stylized content is simply more shareable. The data shows the skew, not the cause.
                 </p>
 
                 <p>
-                  T2VEval (Qi et al., 2025) explains why. They decompose video quality into four dimensions - text fidelity, realness, technical quality, and overall impression - and find that <span className="font-medium text-gray-800 dark:text-zinc-100">realness is the hardest dimension for current models.</span> The output can be high-resolution and prompt-faithful, but still look wrong because the physics or anatomy violates cognitive expectations.
+                  A plausible explanation: <span className="font-medium text-gray-800 dark:text-zinc-100">realness is the hardest dimension for current models.</span> Output can be high-resolution and prompt-faithful, but still look wrong when physics or anatomy violates cognitive expectations - and viewers flinch at the same moment whether it&rsquo;s a face, a car, or a hand.
                 </p>
 
-                <Insight
-                  quote="The primary challenge faced by current T2V models lies in accurately understanding and representing the objective laws of the real world, including physical principles and cognitive commonsense knowledge."
-                  source="T2VEval — Qi et al., 2025"
-                  color="#ef4444"
-                />
-
                 <p>
-                  Our data shows the community response: <span className="font-medium text-gray-800 dark:text-zinc-100">practitioners unconsciously prompt around model weaknesses.</span> They&rsquo;ve learned to avoid themes where realism is demanded - realistic portraits, architectural renders, product shots - and lean into themes where &ldquo;realness&rdquo; is forgiving.
+                  Our data is consistent with the hypothesis that <span className="font-medium text-gray-800 dark:text-zinc-100">practitioners gravitate toward themes where current models look best</span> - leaning into stylized work and away from realistic portraits, architectural renders, and product shots. It&rsquo;s suggestive, not causal: the dataset tracks viral posts, and stylized content has always been disproportionately shareable.
                 </p>
 
                 {realnessData && (
@@ -1199,7 +1184,7 @@ enters. Warm golden lighting.`}</pre>
                 </div>
 
                 <p className="text-xs text-gray-400 dark:text-zinc-500">
-                  Live data from <Link href="/dataset" className="text-violet-600 dark:text-violet-400 hover:underline">the dataset</Link>. Realness framework adapted from T2VEval (Qi et al., 2025). &ldquo;Forgiving&rdquo; = themes where unrealistic output is aesthetically acceptable. &ldquo;Demanding&rdquo; = themes where viewers expect physical/anatomical accuracy.
+                  Live data from <Link href="/dataset" className="text-violet-600 dark:text-violet-400 hover:underline">the dataset</Link>. The &ldquo;forgiving&rdquo; vs &ldquo;demanding&rdquo; theme classification is our own, not a standard framework. &ldquo;Forgiving&rdquo; = themes where unrealistic output is aesthetically acceptable. &ldquo;Demanding&rdquo; = themes where viewers expect physical/anatomical accuracy.
                 </p>
               </div>
             </Section>
@@ -1207,7 +1192,7 @@ enters. Warm golden lighting.`}</pre>
             <Section title="Why Sora Shut Down" id="sora">
               <div className="flex flex-col gap-4 text-[15px] text-gray-600 dark:text-zinc-300 leading-[1.75]">
                 <p>
-                  On April 26, 2026, Sora went dark - the consumer app and ChatGPT video generation both went offline; the API follows September 24. OpenAI had announced the full shutdown on March 24, six months after launch. At its peak Sora 2 was the only non-Google model in the T2V top 5 (ELO 1,367), but the economics were never close to working.
+                  On April 26, 2026, Sora goes dark - the consumer app and ChatGPT video generation both shut down; the API follows September 24. OpenAI announced the full shutdown on March 24, six months after launch. At its peak Sora 2 was the only non-Google model in the T2V top 5, but the economics were never close to working.
                 </p>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -1289,10 +1274,7 @@ enters. Warm golden lighting.`}</pre>
                   { label: 'Seedance 2.0 vs Veo 3.1: Which Is Best? - SitePoint', url: 'https://www.sitepoint.com/seedance-2-0-vs-veo-3-1-which-is-best-for-ai-video-creators/' },
                   { label: 'Seedance 2.0 Complete Guide - WaveSpeedAI', url: 'https://wavespeed.ai/blog/posts/seedance-2-0-complete-guide-multimodal-video-creation/' },
                   { label: 'Artificial Analysis Text-to-Video Arena', url: 'https://artificialanalysis.ai/text-to-video/arena' },
-                  { label: 'Artificial Analysis Image-to-Video Arena', url: 'https://artificialanalysis.ai/text-to-video/arena' },
                   { label: 'Artificial Analysis Text-to-Image Arena', url: 'https://artificialanalysis.ai/text-to-image/arena' },
-                  { label: 'Artificial Analysis Image Edit Arena', url: 'https://artificialanalysis.ai/text-to-image/arena' },
-                  { label: 'Artificial Analysis Video Edit Arena', url: 'https://artificialanalysis.ai/text-to-video/arena' },
                   { label: 'MultiShotMaster (Kuaishou / Kling Research) - arXiv:2512.03041', url: 'https://arxiv.org/html/2512.03041' },
                   { label: 'VideoGen-of-Thought - arXiv:2503.15138', url: 'https://arxiv.org/abs/2503.15138' },
                   { label: 'Kling 3.0 Multi-Shot Prompting Guide - fal.ai', url: 'https://blog.fal.ai/kling-3-0-prompting-guide/' },
@@ -1305,7 +1287,6 @@ enters. Warm golden lighting.`}</pre>
                   { label: 'MPA Denounces Massive Infringement on Seedance 2.0 - Variety', url: 'https://variety.com/2026/film/news/motion-picture-association-ai-seedance-bytedance-tom-cruise-1236661753/' },
                   { label: 'MPA Cease-and-Desist to ByteDance - Hollywood Reporter', url: 'https://www.hollywoodreporter.com/business/business-news/mpa-cease-and-desist-bytedance-seedance-2-0-1236510957/' },
                   { label: 'MPA Pushes ByteDance to Curb Seedance 2.0 Infringement - Variety', url: 'https://variety.com/2026/film/news/motion-picture-association-bytedance-seedance-letter-1236668577/' },
-                  { label: 'Veo 4 Release - Everything You Need to Know (April 2026)', url: 'https://www.veo3ai.io/blog/veo-4-release-everything-you-need-to-know-2026' },
                   { label: 'What to Know About the Sora Discontinuation - OpenAI Help', url: 'https://help.openai.com/en/articles/20001152-what-to-know-about-the-sora-discontinuation' },
                 ].map((s) => (
                   <a
