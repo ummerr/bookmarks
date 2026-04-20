@@ -93,13 +93,53 @@ function toCsv(rows: Row[]): string {
   return [header, ...body].join('\n')
 }
 
+// ── Research variant: PII-stripped JSONL ───────────────
+// Strips tweet_text, author_handle, author_name, media_urls for X/Twitter ToS
+// and GDPR compliance. Researchers rehydrate original posts via tweet_id.
+
+function toResearchRecord(p: Bookmark) {
+  return {
+    id: p.id,
+    tweet_id: p.tweet_id,
+    tweet_url: p.tweet_url,
+    source: p.source,
+    category: p.category,
+    prompt_category: p.prompt_category,
+    extracted_prompt: p.extracted_prompt,
+    detected_model: p.detected_model,
+    prompt_themes: p.prompt_themes,
+    art_styles: p.art_styles,
+    requires_reference: p.requires_reference,
+    reference_type: p.reference_type,
+    is_thread: p.is_thread,
+    confidence: p.confidence,
+    rationale: p.rationale,
+    user_notes: p.user_notes,
+    bookmarked_at: p.bookmarked_at,
+    created_at: p.created_at,
+    updated_at: p.updated_at,
+  }
+}
+
 // ── Route handler ──────────────────────────────────────
 
 export async function GET(req: NextRequest) {
   const format = req.nextUrl.searchParams.get('format') ?? 'json'
+  const variant = req.nextUrl.searchParams.get('variant')
   const prompts = await getPrompts('all')
-  const rows = prompts.map(toRecord)
   const ts = new Date().toISOString().slice(0, 10)
+
+  if (variant === 'research') {
+    const jsonl = prompts.map((p) => JSON.stringify(toResearchRecord(p))).join('\n')
+    return new NextResponse(jsonl, {
+      headers: {
+        'Content-Type': 'application/x-ndjson; charset=utf-8',
+        'Content-Disposition': `attachment; filename="ummerr-prompts-research-${ts}.jsonl"`,
+      },
+    })
+  }
+
+  const rows = prompts.map(toRecord)
 
   if (format === 'csv') {
     return new NextResponse(toCsv(rows), {

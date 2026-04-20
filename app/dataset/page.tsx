@@ -242,21 +242,35 @@ export default function DatacardPage() {
             <Tag color="#3b82f6">engagement-filtered</Tag>
           </div>
 
-          <div className="flex items-center gap-3 pt-4 border-t border-black/[0.06] dark:border-white/6 flex-wrap">
-            {[
-              { format: 'jsonl', label: 'JSONL' },
-              { format: 'csv',   label: 'CSV' },
-              { format: 'json',  label: 'JSON' },
-            ].map(({ format, label }) => (
+          <div className="flex flex-col gap-3 pt-4 border-t border-black/[0.06] dark:border-white/6">
+            <div className="flex items-center gap-3 flex-wrap">
+              {[
+                { format: 'jsonl', label: 'JSONL' },
+                { format: 'csv',   label: 'CSV' },
+                { format: 'json',  label: 'JSON' },
+              ].map(({ format, label }) => (
+                <a
+                  key={format}
+                  href={`/api/prompts/download?format=${format}`}
+                  className="rounded-lg bg-black/[0.05] dark:bg-white/[0.05] px-4 py-2 text-xs font-medium text-gray-700 dark:text-zinc-300 hover:bg-black/[0.08] dark:hover:bg-white/[0.08] transition-colors"
+                >
+                  Download {label}
+                </a>
+              ))}
+              <span className="text-[11px] text-gray-400 dark:text-zinc-600">CC BY 4.0 - cite as ummerr/prompts</span>
+            </div>
+            <div className="flex flex-col gap-1.5">
               <a
-                key={format}
-                href={`/api/prompts/download?format=${format}`}
-                className="rounded-lg bg-black/[0.05] dark:bg-white/[0.05] px-4 py-2 text-xs font-medium text-gray-700 dark:text-zinc-300 hover:bg-black/[0.08] dark:hover:bg-white/[0.08] transition-colors"
+                href="/api/prompts/download?format=jsonl&variant=research"
+                className="self-start rounded-lg border border-black/[0.12] dark:border-white/[0.12] bg-transparent px-4 py-2 text-xs font-medium text-gray-600 dark:text-zinc-400 hover:bg-black/[0.03] dark:hover:bg-white/[0.03] transition-colors"
               >
-                Download {label}
+                Download Research Export (JSONL)
               </a>
-            ))}
-            <span className="text-[11px] text-gray-400 dark:text-zinc-600">CC BY 4.0 - cite as ummerr/prompts</span>
+              <span className="text-[11px] text-gray-400 dark:text-zinc-600 leading-relaxed max-w-xl">
+                Strips author PII and raw post text for X/Twitter ToS and GDPR compliance.
+                Researchers can rehydrate original posts via tweet_id.
+              </span>
+            </div>
           </div>
         </div>
 
