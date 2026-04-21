@@ -1,6 +1,7 @@
 import postgres from 'postgres'
 import { randomUUID } from 'crypto'
 import type { ArtStyle, Bookmark, BookmarkInsert, Category, CategoryCounts, PromptCategory, PromptTheme, ReferenceType } from './types'
+import { DATASET_SLICES, type DatasetSlice } from './datasetSlices'
 
 // Lazy init - prevents build-time failure when Next.js collects page data
 // prepare: false for Supabase transaction pooler compatibility
@@ -329,6 +330,17 @@ export async function getPrompts(promptCategory?: PromptCategory | 'all'): Promi
         WHERE category = 'prompts'
         ORDER BY bookmarked_at DESC NULLS LAST, created_at DESC
       `
+  return rows.map(toBookmark)
+}
+
+export async function getPromptsBySlice(slice: DatasetSlice): Promise<Bookmark[]> {
+  const meta = DATASET_SLICES[slice]
+  const rows = await getSql().unsafe(
+    `SELECT * FROM bookmarks
+     WHERE category = 'prompts' AND (${meta.predicate})
+     ORDER BY bookmarked_at DESC NULLS LAST, created_at DESC`,
+    []
+  ) as Record<string, unknown>[]
   return rows.map(toBookmark)
 }
 

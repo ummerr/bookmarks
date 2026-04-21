@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPrompts } from '@/lib/db'
+import { getPrompts, getPromptsBySlice } from '@/lib/db'
+import { DATASET_SLICES, isDatasetSlice } from '@/lib/datasetSlices'
 import type { Bookmark } from '@/lib/types'
 
 // Fields included in every export format
@@ -126,15 +127,29 @@ function toResearchRecord(p: Bookmark) {
 export async function GET(req: NextRequest) {
   const format = req.nextUrl.searchParams.get('format') ?? 'json'
   const variant = req.nextUrl.searchParams.get('variant')
-  const prompts = await getPrompts('all')
+  const sliceParam = req.nextUrl.searchParams.get('slice')
+  const slice = sliceParam && isDatasetSlice(sliceParam) ? sliceParam : null
+
+  if (sliceParam && !slice) {
+    return new NextResponse(
+      `Unknown slice "${sliceParam}". Valid values: t2i, r2i, t2v, r2v.`,
+      { status: 400 },
+    )
+  }
+
+  const prompts = slice
+    ? await getPromptsBySlice(slice)
+    : await getPrompts('all')
   const ts = new Date().toISOString().slice(0, 10)
+  const sliceMeta = slice ? DATASET_SLICES[slice] : null
+  const nameStem = sliceMeta ? `ummerr-prompts-${sliceMeta.key}` : 'ummerr-prompts'
 
   if (variant === 'research') {
     const jsonl = prompts.map((p) => JSON.stringify(toResearchRecord(p))).join('\n')
     return new NextResponse(jsonl, {
       headers: {
         'Content-Type': 'application/x-ndjson; charset=utf-8',
-        'Content-Disposition': `attachment; filename="ummerr-prompts-research-${ts}.jsonl"`,
+        'Content-Disposition': `attachment; filename="${nameStem}-research-${ts}.jsonl"`,
       },
     })
   }
@@ -145,7 +160,7 @@ export async function GET(req: NextRequest) {
     return new NextResponse(toCsv(rows), {
       headers: {
         'Content-Type': 'text/csv; charset=utf-8',
-        'Content-Disposition': `attachment; filename="ummerr-prompts-${ts}.csv"`,
+        'Content-Disposition': `attachment; filename="${nameStem}-${ts}.csv"`,
       },
     })
   }
@@ -155,7 +170,7 @@ export async function GET(req: NextRequest) {
     return new NextResponse(jsonl, {
       headers: {
         'Content-Type': 'application/x-ndjson; charset=utf-8',
-        'Content-Disposition': `attachment; filename="ummerr-prompts-${ts}.jsonl"`,
+        'Content-Disposition': `attachment; filename="${nameStem}-${ts}.jsonl"`,
       },
     })
   }
@@ -163,13 +178,18 @@ export async function GET(req: NextRequest) {
   // JSON - metadata envelope with schema
   const payload = {
     meta: {
-      name: 'ummerr/prompts',
+      name: sliceMeta ? `ummerr/prompts [${sliceMeta.shortLabel}]` : 'ummerr/prompts',
       version: '1.0',
       license: 'CC BY 4.0',
       cite_as: 'ummerr/prompts',
       exported_at: new Date().toISOString(),
       record_count: rows.length,
-      description: 'Organic, in-the-wild generative AI prompts sourced from high-engagement posts on X/Twitter.',
+      description: sliceMeta
+        ? `${sliceMeta.longLabel} slice of ummerr/prompts. ${sliceMeta.description}`
+        : 'Organic, in-the-wild generative AI prompts sourced from high-engagement posts on X/Twitter.',
+      slice: sliceMeta?.key ?? null,
+      slice_label: sliceMeta?.longLabel ?? null,
+      slice_rule: sliceMeta?.rule ?? null,
       schema: SCHEMA,
     },
     data: rows,
@@ -178,7 +198,7 @@ export async function GET(req: NextRequest) {
   return new NextResponse(JSON.stringify(payload), {
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
-      'Content-Disposition': `attachment; filename="ummerr-prompts-${ts}.json"`,
+      'Content-Disposition': `attachment; filename="${nameStem}-${ts}.json"`,
     },
   })
 }
