@@ -2,24 +2,12 @@
 
 import { useEffect, useState } from 'react'
 
-const STORAGE_KEY = 'fake-404-dismissed'
 const CORNER_SIZE = 48
 
 export default function FakeNotFound() {
   const [dismissed, setDismissed] = useState(false)
-  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
-    try {
-      if (localStorage.getItem(STORAGE_KEY) === 'true') {
-        setDismissed(true)
-      }
-    } catch {}
-  }, [])
-
-  useEffect(() => {
-    if (!mounted) return
     if (!dismissed) {
       const prev = document.body.style.overflow
       document.body.style.overflow = 'hidden'
@@ -27,12 +15,9 @@ export default function FakeNotFound() {
         document.body.style.overflow = prev
       }
     }
-  }, [mounted, dismissed])
+  }, [dismissed])
 
   function dismiss() {
-    try {
-      localStorage.setItem(STORAGE_KEY, 'true')
-    } catch {}
     setDismissed(true)
   }
 

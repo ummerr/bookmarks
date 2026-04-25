@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter, Instrument_Serif, JetBrains_Mono } from 'next/font/google'
 import Nav from '@/components/Nav'
-import SiteGate from '@/components/SiteGate'
 import FakeNotFound from '@/components/FakeNotFound'
 import './globals.css'
 
@@ -41,11 +40,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Prevent FOUC: read localStorage and apply dark class before paint */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.classList.add('dark')}catch(e){}try{if(localStorage.getItem('site-unlocked')==='true'){var s=document.createElement('style');s.textContent='.site-gate{display:none!important}';document.head.appendChild(s)}}catch(e){}try{if(localStorage.getItem('fake-404-dismissed')==='true'){var s2=document.createElement('style');s2.textContent='.fake-404{display:none!important}';document.head.appendChild(s2)}}catch(e){}`,
+            __html: `try{var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.classList.add('dark')}catch(e){}`,
           }}
         />
         <FakeNotFound />
-        <SiteGate />
         <Nav />
         {children}
         <footer className="border-t border-black/[0.06] dark:border-white/[0.06] mt-8">
