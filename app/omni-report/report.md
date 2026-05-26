@@ -9,21 +9,37 @@
 
 ## Executive Summary
 
-**1. The broader web is mixed-to-skeptical — not "strongly positive."** Across HN, Reddit, YouTube reviewers, X, analysts, and non-English press, the consensus is measured-to-negative. The only surface reading strongly positive is the curated 32-tweet bookmark set — a selection-bias artifact.
+### 1. The broader web is mixed-to-skeptical — not "strongly positive."
 
-**2. The one universal finding: editing > generation.** Conversational, multi-turn *editing* (object swap/removal, relight, restyle, scene change while preserving continuity) is the genuine differentiator and a category competitors barely offer. Raw text-to-video *generation* quality is widely judged to trail the field. Corroborated across all nine clusters and confirmed by every structured head-to-head.
+Across HN, Reddit, YouTube reviewers, X, analysts, and non-English press, the consensus is measured-to-negative. The only surface reading strongly positive is the curated 32-tweet bookmark set — a selection-bias artifact.
 
-**3. Raw quality trails Seedance 2.0** (often Kling 3.0, even free Sora 2). The cleanest same-prompt test (Curious Refuge) scored it **Seedance 3, Omni 1**. As of May 24, **Omni is on zero public video leaderboards** (verified live on Artificial Analysis *and* arena.ai/LMArena) — it can't even enter, because blind-vote arenas require the not-yet-shipped API. The boards are led by Seedance 2.0 / HappyHorse-1.0, with Google's *own* Veo 3.1 ~#3.
+### 2. The one universal finding: editing > generation.
 
-**4. Two big negatives the bookmark sample missed:** (a) a large **usage-limit/pricing backlash** (the dominant Reddit conversation — multiple 1,500–2,000+ upvote threads), and (b) a launch-week **over-censorship bug**: false-positive prompt rejections that Google VP Josh Woodward acknowledged ("this shouldn't be happening," bug `b/515000564`) — **still unresolved**, with fresh reports dated May 22.
+Conversational, multi-turn *editing* (object swap/removal, relight, restyle, scene change while preserving continuity) is the genuine differentiator and a category competitors barely offer. Raw text-to-video *generation* quality is widely judged to trail the field. Corroborated across all nine clusters and confirmed by every structured head-to-head.
 
-**5. Negativity is broad and multi-voiced — not one account.** The bookmark report's negatives all came from a single filmmaker (@JSFILMZ0412). The open web shows critics across X, dozens of named HN commenters, filmmaker reviewers (Curious Refuge), structured testers (JXP, Mateo SF), high-upvote Reddit threads, and Japanese/Chinese hands-on reviews.
+### 3. Raw quality trails Seedance 2.0 (often Kling 3.0, even free Sora 2).
 
-**6. Distribution, not quality, is Google's actual bet.** Free in YouTube Shorts/Create (billions of users) + native Gemini reasoning + conversational editing. "Nano Banana for video." The most concrete strategic move is **Asset Studio** (Google Marketing Live) — Omni-powered ad-asset generation, read by trade press as Google moving to "eat the ad stack."
+The cleanest same-prompt test (Curious Refuge) scored it **Seedance 3, Omni 1**. As of May 24, **Omni is on zero public video leaderboards** (verified live on Artificial Analysis *and* arena.ai/LMArena) — it can't even enter, because blind-vote arenas require the not-yet-shipped API. The boards are led by Seedance 2.0 / HappyHorse-1.0, with Google's *own* Veo 3.1 ~#3.
 
-**7. The "physics world model" claim is disputed — and, technically, oversold.** Independent testers documented violations (energy-gaining marble, morphing Jenga bricks, backwards trebuchet, ~15° collision drift, floaty "zero-gravity" basketball). Simulation-expert critics read the failure modes as **learned motion statistics, not enforced physical law.** The widely-repeated "Genie + Veo + Nano Banana fusion" architecture is **secondary-press extrapolation, not a first-party disclosure** — Google's model card says only "transformer-based, native multimodal."
+### 4. Two big negatives the bookmark sample missed.
 
-**8. Region matters more than the English web suggests.** The **EU is gated** (personal-video input + custom avatars blocked on regulatory grounds; France + Germany confirm); **China is geofenced** (VPN/mirror needed). Japanese reviewers report Omni renders Japanese text *better than Seedance* — a CJK nuance absent from English coverage.
+(a) A large **usage-limit/pricing backlash** (the dominant Reddit conversation — multiple 1,500–2,000+ upvote threads), and (b) a launch-week **over-censorship bug**: false-positive prompt rejections that Google VP Josh Woodward acknowledged ("this shouldn't be happening," bug `b/515000564`) — **still unresolved**, with fresh reports dated May 22.
+
+### 5. Negativity is broad and multi-voiced — not one account.
+
+The bookmark report's negatives all came from a single filmmaker (@JSFILMZ0412). The open web shows critics across X, dozens of named HN commenters, filmmaker reviewers (Curious Refuge), structured testers (JXP, Mateo SF), high-upvote Reddit threads, and Japanese/Chinese hands-on reviews.
+
+### 6. Distribution, not quality, is Google's actual bet.
+
+Free in YouTube Shorts/Create (billions of users) + native Gemini reasoning + conversational editing. "Nano Banana for video." The most concrete strategic move is **Asset Studio** (Google Marketing Live) — Omni-powered ad-asset generation, read by trade press as Google moving to "eat the ad stack."
+
+### 7. The "physics world model" claim is disputed — and, technically, oversold.
+
+Independent testers documented violations (energy-gaining marble, morphing Jenga bricks, backwards trebuchet, ~15° collision drift, floaty "zero-gravity" basketball). Simulation-expert critics read the failure modes as **learned motion statistics, not enforced physical law.** The widely-repeated "Genie + Veo + Nano Banana fusion" architecture is **secondary-press extrapolation, not a first-party disclosure** — Google's model card says only "transformer-based, native multimodal."
+
+### 8. Region matters more than the English web suggests.
+
+The **EU is gated** (personal-video input + custom avatars blocked on regulatory grounds; France + Germany confirm); **China is geofenced** (VPN/mirror needed). Japanese reviewers report Omni renders Japanese text *better than Seedance* — a CJK nuance absent from English coverage.
 
 ---
 
@@ -269,21 +285,37 @@ A four-agent pass read Reddit directly via `.json` endpoints. What it adds beyon
 
 ## Open Questions / What to Watch
 
-**1. First leaderboard placement** once the API enables arena voting (~weeks) — turns "trails Seedance" from qualitative into measured.
+### 1. First leaderboard placement
 
-**2. API + pricing** ("coming weeks," no per-second economics yet) — brings a different evaluator class.
+Once the API enables arena voting (~weeks) — turns "trails Seedance" from qualitative into measured.
 
-**3. Over-censorship bug fix** and whether the prompt-rejection backlash recedes (still open May 22).
+### 2. API + pricing
 
-**4. Scope of the limit increase** (Antigravity-only vs all paid tiers) — genuinely disputed; watch for clarification.
+"Coming weeks," no per-second economics yet — brings a different evaluator class.
 
-**5. Omni Pro** (teased, no date) — the variant expected to close the raw-quality gap.
+### 3. Over-censorship bug fix
 
-**6. EU feature ungating** — whether personal-video input/avatars arrive in Europe, and when.
+Whether the prompt-rejection backlash recedes (still open May 22).
 
-**7. Google's deferred evals** — whether T2VA/I2VA/R2VA/editing benchmarks are apples-to-apples vs competitors or self-defined.
+### 4. Scope of the limit increase
 
-**8. SynthID video robustness** under adversarial re-encoding/re-diffusion — currently untested externally.
+Antigravity-only vs all paid tiers — genuinely disputed; watch for clarification.
+
+### 5. Omni Pro
+
+Teased, no date — the variant expected to close the raw-quality gap.
+
+### 6. EU feature ungating
+
+Whether personal-video input/avatars arrive in Europe, and when.
+
+### 7. Google's deferred evals
+
+Whether T2VA/I2VA/R2VA/editing benchmarks are apples-to-apples vs competitors or self-defined.
+
+### 8. SynthID video robustness
+
+Under adversarial re-encoding/re-diffusion — currently untested externally.
 
 ---
 

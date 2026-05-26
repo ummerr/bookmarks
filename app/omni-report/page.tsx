@@ -34,10 +34,12 @@ const headings = [...bodyMd.matchAll(/^##\s+(.+)$/gm)].map((m) => {
   return { text, id: slugify(text) }
 })
 let h = 0
-const bodyHtml = (marked.parse(bodyMd, { gfm: true, async: false }) as string).replace(
-  /<h2>/g,
-  () => `<h2 id="${headings[h++]?.id ?? ''}">`,
-)
+const bodyHtml = (marked.parse(bodyMd, { gfm: true, async: false }) as string)
+  .replace(/<h2>/g, () => `<h2 id="${headings[h++]?.id ?? ''}">`)
+  // Wrap tables in a horizontally-scrollable container so the table itself can
+  // keep its native table formatting context (proper column sizing, borders).
+  .replace(/<table>/g, '<div class="omni-table-wrap"><table>')
+  .replace(/<\/table>/g, '</table></div>')
 
 const META_CHIPS = ['79 curated tweets', '13 web-research reads', '9 source clusters', 'May 25, 2026']
 

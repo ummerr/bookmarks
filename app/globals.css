@@ -54,3 +54,122 @@ body {
 .dark *::-webkit-scrollbar-thumb {
   background: #333;
 }
+
+/* ── Unlisted Omni report (markdown rendered via marked) ─────────────────── */
+.omni-frontmeta { color: #6b7280; line-height: 1.65; }
+.omni-frontmeta p { margin: 0; }
+.omni-frontmeta strong { color: #374151; font-weight: 600; }
+.omni-frontmeta a { color: #7c3aed; text-decoration: none; }
+.omni-frontmeta code { font-family: var(--font-mono), monospace; font-size: 0.85em; }
+.dark .omni-frontmeta { color: #a1a1aa; }
+.dark .omni-frontmeta strong { color: #e4e4e7; }
+.dark .omni-frontmeta a { color: #a78bfa; }
+
+.omni-report { line-height: 1.75; font-size: 0.975rem; color: #27272a; }
+.omni-report > :first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.omni-report h2 {
+  scroll-margin-top: 4.5rem;
+  font-family: var(--font-serif);
+  font-size: 1.7rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin: 2.75rem 0 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+.omni-report h3 {
+  scroll-margin-top: 4.5rem;
+  font-size: 1.25rem;
+  font-weight: 650;
+  letter-spacing: -0.005em;
+  margin: 2rem 0 0.6rem;
+  color: #18181b;
+}
+.omni-report p { margin: 0.85rem 0; }
+.omni-report a {
+  color: #7c3aed;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: rgba(124, 58, 237, 0.35);
+  word-break: break-word;
+}
+.omni-report a:hover { text-decoration-color: #7c3aed; }
+.omni-report strong { font-weight: 650; color: #111827; }
+.omni-report em { font-style: italic; }
+.omni-report ul { list-style: disc; padding-left: 1.4rem; margin: 0.85rem 0; }
+.omni-report ol { list-style: decimal; padding-left: 1.5rem; margin: 0.85rem 0; }
+.omni-report li { margin: 0.35rem 0; }
+.omni-report li::marker { color: #a1a1aa; }
+.omni-report blockquote {
+  margin: 1rem 0;
+  padding: 0.7rem 1.1rem;
+  border-left: 3px solid #8b5cf6;
+  background: rgba(139, 92, 246, 0.05);
+  border-radius: 0 0.5rem 0.5rem 0;
+  color: #3f3f46;
+  font-style: italic;
+}
+.omni-report blockquote p { margin: 0.2rem 0; }
+.omni-report code {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.82em;
+  background: rgba(0, 0, 0, 0.055);
+  padding: 0.12em 0.4em;
+  border-radius: 5px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+/* h2 top borders act as the section dividers; drop the markdown rules */
+.omni-report hr { display: none; }
+.omni-report .omni-table-wrap {
+  margin: 1.25rem 0;
+  overflow-x: auto;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  border-radius: 0.6rem;
+}
+.omni-report table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+.omni-report thead { background: rgba(0, 0, 0, 0.05); }
+.omni-report th,
+.omni-report td {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0.55rem 0.95rem;
+  text-align: left;
+  vertical-align: top;
+}
+.omni-report th {
+  font-weight: 600;
+  white-space: nowrap;
+  color: #18181b;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.omni-report tbody tr:nth-child(even) { background: rgba(0, 0, 0, 0.03); }
+.omni-report tbody tr:hover { background: rgba(124, 58, 237, 0.05); }
+.omni-report tbody tr:last-child td { border-bottom: 0; }
+.omni-report td:last-child,
+.omni-report th:last-child { border-right: 0; }
+
+.dark .omni-report { color: #d4d4d8; }
+.dark .omni-report h2 { border-color: rgba(255, 255, 255, 0.1); color: #fafafa; }
+.dark .omni-report h3 { color: #f4f4f5; }
+.dark .omni-report strong { color: #fafafa; }
+.dark .omni-report a { color: #a78bfa; text-decoration-color: rgba(167, 139, 250, 0.4); }
+.dark .omni-report a:hover { text-decoration-color: #a78bfa; }
+.dark .omni-report blockquote { background: rgba(139, 92, 246, 0.1); border-color: #a78bfa; color: #d4d4d8; }
+.dark .omni-report code { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.06); }
+.dark .omni-report .omni-table-wrap { border-color: rgba(255, 255, 255, 0.18); }
+.dark .omni-report thead { background: rgba(255, 255, 255, 0.07); }
+.dark .omni-report th,
+.dark .omni-report td {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+  border-right-color: rgba(255, 255, 255, 0.14);
+}
+.dark .omni-report th { color: #fafafa; }
+.dark .omni-report tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.04); }
+.dark .omni-report tbody tr:hover { background: rgba(167, 139, 250, 0.1); }
