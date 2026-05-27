@@ -9,45 +9,29 @@
 
 ## Executive Summary
 
-### 1. The broader web is still mixed-to-skeptical — but the editing reframe has hardened.
+### 1. The editing reframe won.
 
-Across HN, Reddit, YouTube reviewers, X, analysts, and non-English press, the consensus is measured. The bookmark corpus (now 98 tweets) reads 66% positive — rosier than the broad web (Reddit + r/Bard + HN are still cancel-heavy). But every surface now agrees on *why* Omni is good: conversational, multi-turn editing.
+"Nano Banana for video" is now the universal frame — it landed independently in r/singularity, r/comfyui, r/VEO3, r/Bard, and r/PromptEngineering inside one week. A single May 25 rebound thread — *"The Strength of Gemini Omni is in video manipulation"* (r/singularity, **3,557↑**, 344 comments) — outscored every launch-day post combined. The curated corpus climbed 45% → 67% positive in five days; sentiment now sits at **66% positive, +57 net**.
 
-### 2. The "Omni is Nano Banana for video" frame is now universal.
+### 2. But raw quality still trails Seedance — and Omni is on zero leaderboards.
 
-By May 25, the tagline that emerged in scattered tweets on May 20–22 had crystallized across r/singularity, r/comfyui, r/VEO3, r/Bard, and r/PromptEngineering independently. A single rebound thread on May 25 — *"The Strength of Gemini Omni is in video manipulation"* (r/singularity, **3,557↑**, 344 comments) — drove ~86% of that day's Reddit Omni-related upvotes and is the most-upvoted Omni post of the entire 9-day window, eclipsing every launch-day post. The prior rev-5 "engagement is fading" thesis was premature: there was **one large rebound on May 25, then re-fade** by May 27.
+Artificial Analysis and LMArena re-verified empty in both T2V and I2V on 2026-05-27. Kling 3.0 Pro just displaced Veo 3.1 at #3 on Artificial Analysis. Every same-prompt structured test (Curious Refuge, JXP, Mateo SF, MindStudio, r/AIGenArt) lands Seedance ahead on raw quality, motion, and physics. Blind-vote arenas can't even score Omni — they need the unshipped API.
 
-### 3. Raw quality still trails Seedance 2.0 — and the structured tests got more specific.
+### 3. Three open wounds, all unfixed as of today.
 
-The cleanest same-prompt tests (Curious Refuge, r/seedance2pro side-by-sides) continue to score Seedance ahead. As of 2026-05-27, **Omni is on zero public video leaderboards** (re-verified live: Artificial Analysis T2V + I2V, arena.ai/LMArena T2V + I2V) — it still can't enter, because blind-vote arenas require the not-yet-shipped API. The boards are led by Seedance 2.0 / HappyHorse-1.0; **Kling 3.0 Omni 1080p Pro has now displaced Veo 3.1 at #3** on Artificial Analysis T2V (note: "Kling 3.0 Omni" is ByteDance/Kuaishou's product line, *not* Google's). The most rigorous community test of the week — r/AIGenArt's "I Spent a Day Testing the 'World Model' Claim" — concluded Omni is *"a superb cinematographer with a weak memory,"* failing object continuity (a hero ship morphed between exterior cuts) where Kling 3.0 Pro and Seedance 2.0 held.
+**Quota:** ~3,400 upvotes across cancel threads; Pichai's May 23 "progress soon" promise hasn't landed. **Censorship bug `b/515000564`:** fresh user report dated **2026-05-27** — *"a video of me with the request to make me wear an astronaut suit gets rejected as 'against our policies.'"* **API:** still "in the coming weeks," no Vertex ship window. The wounds compound — rejected prompts still burn the 5-hour quota, and the absent API blocks blind-vote leaderboard entry.
 
-### 4. The quota/pricing backlash is still the dominant Reddit story — and it got worse.
+### 4. Distribution is the bet — but pros haven't shown up.
 
-Pichai's May 23 "you will see us make progress on usage limits very soon" promise has **not landed** as of May 27. Fresh same-day cancellation threads continue to land — r/GeminiAI *"15 prompts in 14 hours. used to be 100. cancelling."* (1tot09j, **272↑**, May 27) — and the limit-fix that *did* ship was Antigravity-only (mocked in r/Bard as "FROM 2 PROMPTS TO 6, GROUND BREAKING"). The aggregate upvote count on the dozen biggest limit/cancel threads is roughly **3,400** — comparable to the single biggest Omni hype post, but spread across the active user base with cancel language in half. A new 1,363-upvote thread, *"Gemini just leaked its system prompt by mistake"* (r/GeminiAI, May 23), is the public anchor for the over-censorship complaint.
+r/filmmakers, r/editors, r/VideoEditing, r/NewTubers, r/PartneredYoutube: **zero Omni threads, eight days post-launch.** The "first real AI video editor" frame has won enthusiast subs, not professional adoption. Asset Studio's "eats the ad stack" thesis is the real strategic bet — but no named brand campaign has landed yet.
 
-### 5. The over-censorship bug is still open — fresh reports on the day of this report.
+### 5. The "world model" claim is the biggest credibility risk.
 
-The Google AI Developer Forum thread for bug `b/515000564` has a new reply dated **2026-05-27** (today): *"Same issue here. A video of me, taken on my phone, with the request to make me wear an astronaut suit gets rejected as 'against our policies'."* No official fix has shipped. Refusal symptoms are now intertwined with the quota story because rejected prompts still burn the 5-hour budget.
+Energy-gaining marbles, morphing Jenga bricks, backwards trebuchets, ~15° collision drift — documented by independent testers across HN, X, YouTube, and r/AIGenArt. Simulation-literate critics read these as **learned motion statistics, not enforced physical law**; Google's own model card hedges to "intuitive understanding." The verdict that landed clean and stuck: *"a superb cinematographer with a weak memory."*
 
-### 6. The API has not shipped.
+### 6. Region matters more than the English web suggests.
 
-Google's blog post still reads "in the coming weeks, we'll also be rolling it out to developers and enterprise customers via APIs." No Vertex AI or public Gemini Omni API ship in the past 72 hours that I can find. Community workarounds still route through async REST polling on AI Studio, fal, OpenRouter, AtlasCloud — none with openai-chat-completions compatibility.
-
-### 7. Negativity remains broad and multi-voiced — not one account.
-
-The 32-tweet bookmark snapshot's "all negatives = one filmmaker" issue is fully resolved. Critics span X (across regions and languages), dozens of named HN commenters, filmmaker reviewers (Curious Refuge), structured testers (JXP, Mateo SF, MindStudio, AtlasCloud, r/AIGenArt), three-digit-upvote Reddit threads in r/GeminiAI / r/Bard / r/seedance2pro / r/SoraAi, and Japanese/Chinese hands-on reviews.
-
-### 8. Distribution, not quality, is still Google's bet — but pro adoption hasn't started.
-
-Free in YouTube Shorts/Create (billions of users) + native Gemini reasoning + conversational editing. Asset Studio (Google Marketing Live) is read by trade press as Google moving to "eat the ad stack." But r/filmmakers, r/editors, r/VideoEditing, r/NewTubers, r/PartneredYoutube still return **zero** Omni threads (eight days post-launch) — the "first real AI video editor" framing has won enthusiast hearts and not pro adoption.
-
-### 9. The "physics world model" claim is contested — failure modes are now specific.
-
-Independent testers continue to document violations (energy-gaining marble, morphing Jenga bricks, backwards trebuchet, ~15° collision drift). Simulation-expert critics read these as **learned motion statistics, not enforced physical law.** New this window: r/GeminiAI *"two weeks of omni flash multi-turn editing"* (1tn3qdv) proposed a clean rule — *"omni flash multi-turn editing holds when the new object's motion class matches the original. Swap within a class, you get compositing. Swap across classes, you get regeneration."* (Car→bear in a rally clip held; car→helicopter regenerated.) The "Spiderweb test in Omni" (r/GeminiAI, 216↑, May 26) is the meme-anchor.
-
-### 10. Region matters more than the English web suggests.
-
-The **EU is still gated** (personal-video input + custom avatars blocked on regulatory grounds; the broader "Gemini in EU is trash now" thread (1tkrnp0, **323↑/121c**) cataloged successful UK consumer-protection refund claims). **China is still geofenced.** Japanese reviewers' "Omni renders Japanese text better than Seedance" finding survives. State-level video-to-video gating in some US states remains.
+**EU:** personal-video input and custom avatars blocked on regulatory grounds (FR + DE confirm). **China:** geofenced. **Japan:** Omni renders Japanese on-screen text *better than Seedance* — a real CJK advantage absent from English-language coverage. State-level video-to-video gating in some US states remains.
 
 ---
 
