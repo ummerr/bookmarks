@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, Instrument_Serif, JetBrains_Mono } from 'next/font/google'
 import Nav from '@/components/Nav'
+import SiteGate from '@/components/SiteGate'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: `try{var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.classList.add('dark')}catch(e){}`,
           }}
         />
+        <SiteGate />
         <Nav />
         {children}
         <footer className="border-t border-black/[0.06] dark:border-white/[0.06] mt-8">
