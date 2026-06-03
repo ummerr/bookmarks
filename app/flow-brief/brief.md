@@ -125,6 +125,7 @@ When Omni refuses, creators don't argue — they switch tools. The over-restrict
 - *"It would've been much better to show a proper error instead of a generic 'I can't generate that idea. Bla bla bla…'"* — [@ai_for_success](https://x.com/ai_for_success/status/2059694713545146823) (the opaque refusal turned out to be silent region-gating, not a content block)
 - The highest-upvote censorship anchor on Reddit: the May 23 *"Gemini just leaked its system prompt by mistake"* thread, where commenters picked apart how heavy-handed the safety rules are. — [r/GeminiAI · 1,363↑](https://www.reddit.com/r/GeminiAI/comments/1tlq6er/)
 - *"Gemini in EU is trash now"* — personal-video input and avatars blocked on EU data/AI-regulation grounds; the thread catalogs the stripped features. — [r/GeminiAI · 323↑](https://www.reddit.com/r/GeminiAI/comments/1tkrnp0/)
+- *"The coolest feature of Gemini Omni is video editing — but in France we're only allowed the 'simple' generation."* — [@julien_ducerf](https://x.com/julien_ducerf/status/2059557166248329473) (translated from FR)
 - *"It keeps changing my characters into Caucasians"* — V2V style-transfer overriding the source faces, a likeness/bias failure that compounds the rejection friction. — [@JSFILMZ0412](https://x.com/JSFILMZ0412/status/2057198309329043582)
 
 ---
