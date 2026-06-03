@@ -8,7 +8,7 @@
 
 ## TL;DR
 
-- Reception is strongly positive: **69% positive, +81 net** across 132 posts, and **Flow specifically runs hotter at 75% positive.**
+- Reception is strongly positive: **91 of 132 posts are positive (69%)** and only **10 are negative**. Flow specifically runs hotter, at **75% positive.**
 - The story is editing, not generation. "Nano Banana for video" is the consensus frame, and about 45% of all posts are editing praise. From-scratch generation still trails Seedance 2.0.
 - Flow is the winning surface. The app layer (in-platform editing, Agent, the new Character feature) is what draws the delight. Flow's own complaints stay narrow: the 10-second clip cap and regional gating.
 - The loudest gripes belong to other Google surfaces, not Flow. The quota and cancellation backlash is about the **Gemini app**, and the missing public **API** is a separate developer product. Flow's experience is largely praised.
@@ -33,8 +33,8 @@
 | | Week 1 (May 19 to 27) | Week 2 (May 28 to Jun 2) |
 |---|---|---|
 | Posts | 117 | 15 |
-| % positive | 69% | 67% |
-| Net sentiment | +72 | +9 |
+| Positive | 81 (69%) | 10 (67%) |
+| Negative | 9 | 1 |
 | Dominant theme | Launch discovery: "this is magic / Nano Banana for video," and the editing reframe lands | Monetization and how-to; the Character feature; consensus holds |
 
 **Read:** the launch wave dominates the corpus (117 of 132 posts), but sentiment didn't decay after the spike. Week 2 keeps the editing-praise consensus and adds creator-earnings content, with no second-week backlash.

@@ -30,8 +30,8 @@ const metaHtml = marked.parse(metaMd, { gfm: true, breaks: true, async: false })
 // Hero stat tiles, derived from the June-3 refreshed corpus (132 relevant posts).
 const heroStats = [
   { value: '132', label: 'curated posts' },
-  { value: '69%', label: 'positive' },
-  { value: '+81', label: 'net sentiment' },
+  { value: '91', label: 'positive' },
+  { value: '10', label: 'negative' },
   { value: '75%', label: 'positive on Flow' },
 ]
 
