@@ -554,6 +554,18 @@ body {
   color: var(--omni-ink-mute);
   text-align: right;
 }
+.omni-report .quote-attr a { text-decoration: none; }
+.omni-report .quote-attr a.tweet-handle {
+  color: var(--omni-violet);
+  font-weight: 500;
+}
+.omni-report .quote-attr a.tweet-handle:hover { text-decoration: underline; }
+.omni-report .quote-attr a.tweet-link {
+  margin-left: 0.5rem;
+  color: var(--omni-ink-faint);
+  white-space: nowrap;
+}
+.omni-report .quote-attr a.tweet-link:hover { color: var(--omni-violet); }
 
 /* Inline code */
 .omni-report code {

@@ -241,7 +241,11 @@ processed = processed.replace(
 // 5. Split blockquote paragraphs at every "— @handle, date" attribution boundary.
 // Marked merges consecutive ">" lines into a single <p> with literal "\n" separators;
 // we cleave each line into <p>quote</p><footer>— attribution</footer> pairs.
-const QUOTE_LINE = /^([\s\S]+?)\s+[—–-]+\s+(@[A-Za-z0-9_]+(?:\s*\([A-Z]{2,3}\))?(?:[,\s].+)?)$/
+// The attribution may start with a plain "@handle" OR a markdown link rendered to
+// "<a href=…>@handle</a>" — in the linked case we tag the handle anchor and append a
+// "View on X ↗" permalink so highlighted tweets click through to x.com.
+const QUOTE_LINE =
+  /^([\s\S]+?)\s+[—–]\s+((?:<a\s+href="[^"]*"[^>]*>)?@[A-Za-z0-9_]+[\s\S]*)$/
 processed = processed.replace(/<blockquote>([\s\S]*?)<\/blockquote>/g, (_, inner) => {
   const transformed = inner.replace(/<p>([\s\S]*?)<\/p>/g, (match: string, paraInner: string) => {
     const lines = paraInner.split(/\n+/).map((l: string) => l.trim()).filter(Boolean)
@@ -249,7 +253,18 @@ processed = processed.replace(/<blockquote>([\s\S]*?)<\/blockquote>/g, (_, inner
     for (const line of lines) {
       const m = line.match(QUOTE_LINE)
       if (!m) return match // not a tweet-quote paragraph; leave untouched
-      parsed.push({ body: m[1].trim(), attr: `— ${m[2].trim()}` })
+      let attr = m[2].trim()
+      // If the handle is a link, style the anchor + add an explicit permalink button.
+      const hrefMatch = attr.match(/<a\s+href="([^"]+)"[^>]*>/)
+      let viewLink = ''
+      if (hrefMatch) {
+        attr = attr.replace(
+          /<a\s+href="([^"]+)"([^>]*)>/,
+          '<a href="$1" class="tweet-handle" target="_blank" rel="noopener"$2>',
+        )
+        viewLink = ` <a class="tweet-link" href="${hrefMatch[1]}" target="_blank" rel="noopener">View on X ↗</a>`
+      }
+      parsed.push({ body: m[1].trim(), attr: `— ${attr}${viewLink}` })
     }
     if (parsed.length === 0) return match
     return parsed
