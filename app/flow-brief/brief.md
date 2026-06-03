@@ -36,7 +36,7 @@
 - **The 10-second clip cap looks weak for 2026** (Seedance ships 15s, Sora 2 Pro 25s).
   - *"The 10 second limit makes it useless to take advantage of Seedance V2 videos… Hopefully Omni Pro will have at least 20 seconds of output."* — [@IamEmily2050](https://x.com/IamEmily2050/status/2058467243575665124)
 - **Over-restriction and weak audio.** Harmless prompts and likeness uploads get rejected; audio is the other soft spot.
-  - *"Gemini just leaked its system prompt by mistake"* (the over-censorship anchor) — [r/GeminiAI · 1,363↑](https://www.reddit.com/r/GeminiAI/comments/1tlq6er/); *"No background ambience, the characters sound monotone… Sora 2 was magical."* — [r/SoraAi · 75↑](https://www.reddit.com/r/SoraAi/comments/1tmrzjk/)
+  - *"Six things you can do with this new AI video model: 1. Get rejected for looking too much like a celebrity. 2. Get rejected for using a bad word… 6. Delete Gemini and switch back to Kling."* — [@bitcloud](https://x.com/bitcloud/status/2059811317897400484) (over-censorship bug `b/515000564`, acknowledged by VP Josh Woodward, still open as of June 3); *"No background ambience, the characters sound monotone… Sora 2 was magical."* — [r/SoraAi · 75↑](https://www.reddit.com/r/SoraAi/comments/1tmrzjk/)
 - **Pros haven't shown up:** zero Omni threads in r/filmmakers, r/editors, r/VideoEditing, r/NewTubers, or r/PartneredYoutube. The "first real AI video editor" line won enthusiasts, not professional adoption.
 - **Regional gating:** no video editing in India yet; EU personal-video input and avatars still blocked.
   - *"After having no success with the video editing feature… I found out that it's currently not supported in India 😑"* — [@ai_for_success](https://x.com/ai_for_success/status/2059694713545146823)
