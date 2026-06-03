@@ -9,7 +9,6 @@
 ## TL;DR
 
 - **Strongly positive:** 91 of 132 posts positive (69%), 10 negative. Flow runs hotter at **75%**.
-  - *"Editing video with our Omni model 🤯 Here are 10 creative examples that caught my eye in the last 24 hours…"* — [@joshwoodward](https://x.com/joshwoodward/status/2060443086208282704) (Google)
 - **Editing, not generation, is the story.** "Nano Banana for video" is consensus across tweets and Reddit; ~45% of posts praise editing. Raw generation still trails Seedance 2.0.
   - *"Seedance is for generating videos from scratch. Google Omni is for editing videos that already exist."* — [@arb_terminal](https://x.com/arb_terminal/status/2057507210679275559)
 - **Flow is the winning surface.** In-platform editing, Agent, and the new Character feature drive the delight.
