@@ -116,6 +116,11 @@ A wider pull from the scored corpus, clustered by what people were actually sayi
 - *"Testing V2V style transfer… maybe I'm not using it right, but it keeps changing my characters into Caucasians."* — [@JSFILMZ0412](https://x.com/JSFILMZ0412/status/2057198309329043582)
 - *"This '3 videos per day' limit is killing my momentum on experimenting."* — [@AIWarper](https://x.com/AIWarper/status/2057913399196238085)
 
+### Safety filters bite too hard
+
+- *"Google Omni is amazing. Here's six things you can do with this incredible new AI video model: 1. Get rejected for looking too much like a celebrity. 2. Get rejected for using a bad word… 5. Get rejected for using it on professional IP you're literally being paid to make by the owners of that IP. 6. Delete Gemini and switch back to Kling."* — [@bitcloud](https://x.com/bitcloud/status/2059811317897400484)
+- *"Omni video editing instantly rejects harmless prompts in Flow and the Gemini app."* — [Google AI Dev Forum · over-censorship bug `b/515000564`](https://discuss.ai.google.dev/t/omni-video-editing-instantly-rejects-harmless-prompts-in-flow-and-gemini-app/147152) (acknowledged by VP Josh Woodward; still open as of June 3)
+
 ---
 
 *Method: 132 scored tweets (May 19 to Jun 2; 134 pulled, 2 off-topic excluded), re-pulled live and scored in one pass with no paid API; a first-hand Reddit deep-dive (~140 threads, late-May, refreshed June 3); HN and head-to-head tests. Companion: full report at `/omni-report`. The tweet corpus skews positive, so the more critical Reddit and HN read is weighted alongside it.*
