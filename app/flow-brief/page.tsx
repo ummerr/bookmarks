@@ -9,8 +9,8 @@ export const dynamic = 'force-static'
 
 // Unlisted: keep it out of search indexes (also absent from nav + sitemap).
 export const metadata: Metadata = {
-  title: 'Flow + Omni — Reception Snapshot',
-  description: 'Internal one-page snapshot: Google Flow + Omni reception — TL;DR, wins, losses, and week-by-week.',
+  title: 'Flow + Omni: Reception Snapshot',
+  description: 'Internal one-page snapshot of Google Flow + Omni reception: TL;DR, wins, losses, and a week-by-week read.',
   robots: { index: false, follow: false },
 }
 
@@ -22,12 +22,12 @@ const front = sep === -1 ? '' : raw.slice(0, sep)
 const bodyMd = sep === -1 ? raw : raw.slice(sep + 5)
 
 const titleMatch = front.match(/^#\s+(.+)$/m)
-const fullTitle = titleMatch ? titleMatch[1].trim() : 'Flow + Omni — Reception Snapshot'
+const fullTitle = titleMatch ? titleMatch[1].trim() : 'Flow + Omni: Reception Snapshot'
 
 const metaMd = front.replace(/^#\s+.+$/m, '').trim()
 const metaHtml = marked.parse(metaMd, { gfm: true, breaks: true, async: false }) as string
 
-// Hero stat tiles — derived from the June-3 refreshed corpus (132 relevant posts).
+// Hero stat tiles, derived from the June-3 refreshed corpus (132 relevant posts).
 const heroStats = [
   { value: '132', label: 'curated posts' },
   { value: '69%', label: 'positive' },

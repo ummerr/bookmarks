@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-// One-click copy of the brief's raw markdown — paste straight into a Google Doc,
+// One-click copy of the brief's raw markdown so it pastes straight into a Google Doc,
 // Slack, email, etc. Falls back to a hidden textarea + execCommand on older browsers.
 export default function CopyMarkdownButton({ markdown }: { markdown: string }) {
   const [copied, setCopied] = useState(false)
@@ -24,7 +24,7 @@ export default function CopyMarkdownButton({ markdown }: { markdown: string }) {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      // Clipboard blocked (e.g. insecure context) — leave UI unchanged.
+      // Clipboard blocked (e.g. insecure context), so leave the UI unchanged.
     }
   }
 
