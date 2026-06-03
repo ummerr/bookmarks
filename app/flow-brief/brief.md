@@ -2,7 +2,7 @@
 
 **Date:** June 3, 2026 · **Status:** Internal / unlisted · **Window:** May 19 to Jun 2, 2026
 
-**What this is:** a quick read on how **Google Flow** and the **Omni** video model landed across X since the I/O launch (May 19 to Jun 2). It's based on 132 curated posts, re-scored in one consistent pass.
+**What this is:** a quick read on how **Google Flow** and the **Omni** video model landed since the I/O launch (May 19 to Jun 2). It draws on a 132-post tweet corpus (re-scored in one consistent pass) plus a first-hand Reddit deep-dive of about 140 threads, Hacker News, and structured head-to-head tests.
 
 ---
 
@@ -13,6 +13,7 @@
 - Flow is the winning surface. The app layer (in-platform editing, Agent, the new Character feature) is what draws the delight. Flow's own complaints stay narrow: the 10-second clip cap and regional gating.
 - The loudest gripes belong to other Google surfaces, not Flow. The quota and cancellation backlash is about the **Gemini app**, and the missing public **API** is a separate developer product. Flow's experience is largely praised.
 - Sentiment stayed strong as the launch buzz settled (no backlash decay). The conversation just shifted from "this is magic" to monetization and how-to.
+- The tweets are the rosy cut. Reddit and HN run more critical: working pros still haven't adopted it, and structured tests confirm the raw-quality gap (see *Beyond the tweets*).
 
 ## Wins
 
@@ -46,6 +47,18 @@
 - Not a Flow problem, it's the Gemini app. The loud quota and cancellation backlash (cancel threads, "switch to Claude") is about the **Gemini app's** post-I/O usage limits, which is a different surface from Flow. Google adjusted those limits on May 28 (doubled Ultra Omni generations, stopped charging for failed generations). Flow's own quota grumbles are narrow by comparison.
 - Not a Flow product, it's the API. The public Vertex **API** is a separate developer product and is still unshipped. It only touches Flow indirectly: without it, Omni can't enter blind-vote leaderboards, so "trails Seedance" stays unrebutted.
 
+## Beyond the tweets: Reddit and the open web
+
+The tweet corpus is the optimistic cut (curated creator bookmarks, skews positive). A first-hand read of about 140 Reddit threads, plus Hacker News and structured head-to-head tests, runs more critical and surfaces issues the tweets underweight:
+
+- **Flow's own subreddit skews to complaints, not demos.** r/GoogleFlow's recent posts are mostly quota-lockout and "unusual activity" ban gripes ("you really cannot generate anything anymore"), not Omni showcases.
+- **Working pros still haven't shown up.** Zero Omni threads in r/filmmakers, r/editors, r/VideoEditing, r/NewTubers, or r/PartneredYoutube through the window. The "first real AI video editor" framing won enthusiasts, not professional adoption.
+- **The Gemini-app quota revolt is loud here.** Roughly 3,400 upvotes across cancel threads ("Google Broke Gemini," "had to cancel and switch to Claude"). It hits the Gemini app, not Flow, but it colors the whole Gemini brand.
+- **Structured tests harden the quality gap.** r/AIGenArt's world-model test ("a superb cinematographer with a weak memory," morphing hero ships, failed object tracking) and an r/comfyui run where a local model beat Omni back the "trails Seedance on raw generation" read with more than vibes. Hacker News piles on with physics critiques.
+- **Audio and likeness are real soft spots.** r/SoraAi calls Omni's audio "missing personality... AI voices from 2-3 years ago," and r/Seedance_AI threads show creators hitting face-upload refusals and moving to Chinese models or CapCut with looser limits.
+
+*Sourcing note: this Reddit and open-web read is a first-hand late-May deep-dive, refreshed June 3 where the open web moved. The pro-sub silence and the quality findings carry forward unchanged.*
+
 ---
 
-*Method: 132 curated X posts (May 19 to Jun 2, 2026; 134 pulled, 2 off-topic excluded), re-pulled from the live bookmark corpus and re-scored in one consistent pass with no paid API, plus a June-3 open-web freshness sweep. Companion: the full Omni reaction report at `/omni-report`. The corpus is creator-curated and skews positive versus the broad web, but the directional findings corroborate across both reads.*
+*Method: a 132-post tweet corpus (May 19 to Jun 2, 2026; 134 pulled, 2 off-topic excluded), re-pulled from the live bookmark corpus and re-scored in one consistent pass with no paid API; a first-hand Reddit deep-dive of about 140 threads; Hacker News and structured head-to-head tests; and a June-3 open-web freshness sweep. Companion: the full Omni reaction report at `/omni-report`. The tweet corpus is creator-curated and skews positive, so the brief weights the more critical Reddit and HN read alongside it; the directional findings corroborate across sources.*
