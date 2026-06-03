@@ -1,6 +1,6 @@
 # Flow + Omni — Exec Brief
 
-**For:** Josh Woodward · **Date:** June 3, 2026 · **Status:** Internal / unlisted
+**Audience:** Flow / Gemini leadership · **Date:** June 3, 2026 · **Status:** Internal / unlisted
 
 **The one line:** Flow won the "video editor" framing and is the best-loved surface for Omni — sentiment is strongly positive and held flat into week 2 — but a missing API, an open over-censorship bug, and only-partially-healed quota trust are capping the win.
 
@@ -28,7 +28,7 @@
 
 ## What's working
 
-- **The editing reframe is the moat — and it stuck.** Launch-day "weaker than Seedance" disappointment flipped within days to "it's not a generator, it's an *editor*." *"On est sur le nano banana de la vidéo… le comparer à seedance était une grossière erreur de jugement"* (@sat0oshi). You amplified this yourself on May 29 — and the corpus agrees.
+- **The editing reframe is the moat — and it stuck.** Launch-day "weaker than Seedance" disappointment flipped within days to "it's not a generator, it's an *editor*." *"On est sur le nano banana de la vidéo… le comparer à seedance était une grossière erreur de jugement"* (@sat0oshi). Google's own product leads leaned into the editing framing publicly on May 29 — and the corpus agrees.
 - **Flow is the hero surface.** Flow-named posts run 75% positive vs 69% overall. The new **Character feature** — register a *personality*, not just a look — is landing internationally (JP, ES, AR): *"一貫性の対象が見た目 → 所作 → 人格へと深層化"* / "consistency deepens from appearance → behavior → persona" (@kenichiota0711, May 28).
 - **A creator-economy flywheel is forming.** Week-2 posts shifted from "this is magic" to monetization and how-to: *"printing $9,400/month"* (@shmidtqq), *"$14,200 from 15-second videos"* (@Lummox_eth) — all routing through Flow + Omni. Early proof of the distribution thesis.
 

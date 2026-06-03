@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { marked } from 'marked'
 import type { Metadata } from 'next'
+import CopyMarkdownButton from './CopyMarkdownButton'
 
 // Render at build time only; this is a static, unlisted page.
 export const dynamic = 'force-static'
@@ -34,7 +35,7 @@ const heroStats = [
   { value: '75%', label: 'positive on Flow' },
 ]
 
-const eyebrowText = 'UNLISTED · JUN 3, 2026 · FOR JOSH WOODWARD'
+const eyebrowText = 'UNLISTED · JUN 3, 2026 · INTERNAL BRIEF'
 
 // ── Heading metadata + HTML post-processing ──────────────────────────────────
 const slugify = (s: string) =>
@@ -94,6 +95,11 @@ export default function FlowBriefPage() {
             ))}
           </div>
 
+          <div className="omni-copy-row">
+            <CopyMarkdownButton markdown={raw} />
+            <span className="omni-copy-hint">Paste straight into a Google Doc, Slack, or email</span>
+          </div>
+
           <div
             className="omni-frontmeta mt-8 text-sm"
             dangerouslySetInnerHTML={{ __html: metaHtml }}
@@ -109,7 +115,7 @@ export default function FlowBriefPage() {
         />
 
         <footer className="omni-recap">
-          <p className="omni-eyebrow">END · JUN 3, 2026 · FOR JOSH WOODWARD</p>
+          <p className="omni-eyebrow">END · JUN 3, 2026 · INTERNAL BRIEF</p>
           <p className="omni-recap-line"><strong>Companion:</strong> full Omni reaction report at /omni-report</p>
         </footer>
       </div>

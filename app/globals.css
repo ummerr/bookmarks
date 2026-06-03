@@ -192,6 +192,40 @@ body {
   color: var(--omni-ink-mute);
 }
 
+/* Copy-as-markdown control */
+.omni-copy-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.5rem 0 0;
+}
+.omni-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.1rem;
+  border: 1px solid var(--omni-rule);
+  border-radius: 999px;
+  background: var(--omni-paper);
+  color: var(--omni-ink);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.05s ease;
+}
+.omni-copy-btn:hover { border-color: var(--omni-violet); background: var(--omni-paper-warm); }
+.omni-copy-btn:active { transform: translateY(1px); }
+.omni-copy-ico { font-size: 0.95rem; line-height: 1; color: var(--omni-violet); }
+.omni-copy-hint {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  color: var(--omni-ink-mute);
+}
+
 /* Sparkline */
 .omni-spark-wrap { margin: 1.75rem 0 0; }
 .omni-spark-caption {
