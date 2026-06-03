@@ -113,13 +113,18 @@ A wider pull from the scored corpus, clustered by what people were actually sayi
 - *"Put it side-by-side with Seedance 2.0… it's not even a fair fight."* — [@JSFILMZ0412](https://x.com/JSFILMZ0412/status/2056864860240011411)
 - *"Google has all of YouTube to train on, unlimited compute, top talent — still Gemini Omni is nowhere close."* — [@shiri_shh](https://x.com/shiri_shh/status/2057112500609699900)
 - *"Olympic Diving Test — Seedance 2.0 also wins this test."* — [@Ratul_AI](https://x.com/Ratul_AI/status/2056969972556222690)
-- *"Testing V2V style transfer… maybe I'm not using it right, but it keeps changing my characters into Caucasians."* — [@JSFILMZ0412](https://x.com/JSFILMZ0412/status/2057198309329043582)
 - *"This '3 videos per day' limit is killing my momentum on experimenting."* — [@AIWarper](https://x.com/AIWarper/status/2057913399196238085)
 
-### Safety filters bite too hard
+### The filter complaints — the grievance creators keep hitting
+
+When Omni refuses, creators don't argue — they switch tools. The over-restriction bug `b/515000564` (harmless prompts, real faces, and even licensed IP getting rejected) was acknowledged by VP Josh Woodward and **still open as of June 3**, and it's the one wound that routes paying users straight to competitors.
 
 - *"Google Omni is amazing. Here's six things you can do with this incredible new AI video model: 1. Get rejected for looking too much like a celebrity. 2. Get rejected for using a bad word… 5. Get rejected for using it on professional IP you're literally being paid to make by the owners of that IP. 6. Delete Gemini and switch back to Kling."* — [@bitcloud](https://x.com/bitcloud/status/2059811317897400484)
 - *"Omni video editing instantly rejects harmless prompts in Flow and the Gemini app."* — [Google AI Dev Forum · over-censorship bug `b/515000564`](https://discuss.ai.google.dev/t/omni-video-editing-instantly-rejects-harmless-prompts-in-flow-and-gemini-app/147152) (acknowledged by VP Josh Woodward; still open as of June 3)
+- *"It would've been much better to show a proper error instead of a generic 'I can't generate that idea. Bla bla bla…'"* — [@ai_for_success](https://x.com/ai_for_success/status/2059694713545146823) (the opaque refusal turned out to be silent region-gating, not a content block)
+- The highest-upvote censorship anchor on Reddit: the May 23 *"Gemini just leaked its system prompt by mistake"* thread, where commenters picked apart how heavy-handed the safety rules are. — [r/GeminiAI · 1,363↑](https://www.reddit.com/r/GeminiAI/comments/1tlq6er/)
+- *"Gemini in EU is trash now"* — personal-video input and avatars blocked on EU data/AI-regulation grounds; the thread catalogs the stripped features. — [r/GeminiAI · 323↑](https://www.reddit.com/r/GeminiAI/comments/1tkrnp0/)
+- *"It keeps changing my characters into Caucasians"* — V2V style-transfer overriding the source faces, a likeness/bias failure that compounds the rejection friction. — [@JSFILMZ0412](https://x.com/JSFILMZ0412/status/2057198309329043582)
 
 ---
 
