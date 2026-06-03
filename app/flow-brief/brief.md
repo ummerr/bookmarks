@@ -33,12 +33,13 @@
 
 | | Launch (May 19) | Reaction (May 20 to 26) | Landing (May 27 to Jun 2) |
 |---|---|---|---|
-| Posts | 13 | 93 | 26 |
+| Tweets | 13 | 93 | 26 |
 | Positive | 10 (77%) | 62 (67%) | 19 (73%) |
 | Negative | 2 | 6 | 2 |
-| Story | I/O day: first demos and first skepticism land together | The wave: the editing reframe spreads | Settles into monetization, how-to, and Character; consensus holds |
+| Reddit | Skepticism memes ("can't make someone do a backflip") | "Editing is the moat" rebound: 3,557 upvotes | Gemini-app quota threads dominate; pro subs stay silent |
+| Story | I/O day: demos and skepticism land together | The wave: the editing reframe spreads | Monetization, how-to, and Character; consensus holds |
 
-**No backlash decay.** Volume peaks in Reaction (93 of 132 posts); sentiment holds as the buzz settles.
+**No backlash decay.** Both surfaces peak in Reaction (tweet volume and Reddit's "editing is the moat" rebound); sentiment holds as the buzz settles.
 
 ## Flow-specific
 
