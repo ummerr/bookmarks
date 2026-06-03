@@ -9,23 +9,24 @@
 ## TL;DR
 
 - **Strongly positive:** 91 of 132 posts positive (69%), 10 negative. Flow runs hotter at **75%**.
-- **Editing, not generation, is the story.** "Nano Banana for video" is consensus; ~45% of posts praise editing. Raw generation still trails Seedance 2.0.
+- **Editing, not generation, is the story.** "Nano Banana for video" is consensus across tweets and Reddit; ~45% of posts praise editing. Raw generation still trails Seedance 2.0.
 - **Flow is the winning surface.** In-platform editing, Agent, and the new Character feature drive the delight.
-- **The loud gripes aren't Flow's.** Quota rage is the Gemini app; the missing public API is a separate product.
-- **Reddit and HN run harsher than the tweets:** pros haven't adopted it, and head-to-head tests confirm the raw-quality gap.
+- **The loud gripes aren't Flow's.** Quota rage lives on the Gemini app (~3,400 Reddit upvotes); the missing public API is a separate product.
+- **The harder read is in the craft subs:** working pros haven't shown up, and head-to-head tests confirm the raw-quality gap.
 
 ## Wins
 
-- **The editing reframe stuck.** Day-one "weaker than Seedance" flipped to "it's an editor, not a generator" within days.
+- **The editing reframe stuck, on every surface.** Day-one "weaker than Seedance" flipped to "it's an editor, not a generator" within days, and Reddit crowned it: r/singularity's "editing is the moat" thread hit 3,557 upvotes.
 - **Flow beats the bare model:** 75% positive across 48 Flow posts vs 69% overall.
 - **Character is the freshest hook:** register a personality, not just a look. Already landing in JP, ES, and AR.
 - **A creator-economy flywheel is forming:** monetization and how-to posts ("$9,400/month," "$14,200 from 15-second clips").
 
 ## Losses
 
-- **Raw generation trails Seedance 2.0** on quality, motion, and physics. Omni is on zero public leaderboards.
+- **Raw generation trails Seedance 2.0** on quality, motion, and physics, and the head-to-heads back it: r/AIGenArt's world-model test ("a superb cinematographer with a weak memory"), a local model beating Omni on r/comfyui, HN physics critiques. Still on zero public leaderboards.
 - **The 10-second clip cap looks weak for 2026** (Seedance ships 15s, Sora 2 Pro 25s).
-- **Over-restriction:** harmless prompts get rejected, pushing some users to Kling.
+- **Over-restriction:** harmless prompts get rejected, and likeness refusals push creators to Chinese tools (r/Seedance_AI). Audio is the other soft spot: "AI voices from 2-3 years ago" (r/SoraAi).
+- **Pros haven't shown up:** zero Omni threads in r/filmmakers, r/editors, r/VideoEditing, r/NewTubers, or r/PartneredYoutube. The "first real AI video editor" line won enthusiasts, not professional adoption.
 - **Regional gating:** no video editing in India yet; EU personal-video input and avatars still blocked.
 
 ## Launch, Reaction, Landing
@@ -43,17 +44,7 @@
 
 - **Flow outperforms the model alone:** 75% vs 69% positive. Complaints hit the model (10s cap, generation quality), not the app.
 - **Standout features:** in-platform editing, Flow Agent (edits that preserve motion, audio, and character), and Character (personality plus consistency).
-- **Blamed on Flow, but not Flow's:** Gemini-app quota limits (adjusted May 28) and the unshipped public API (a separate product).
-
-## Beyond the tweets
-
-The tweet corpus skews positive. Reddit, HN, and structured tests run harsher:
-
-- **r/GoogleFlow is mostly complaints** (quota lockouts, "unusual activity" bans), not demos.
-- **Pros are absent:** zero Omni threads in r/filmmakers, r/editors, r/VideoEditing, r/NewTubers, or r/PartneredYoutube.
-- **The Gemini-app quota revolt:** ~3,400 upvotes across cancel threads. Hits the app, not Flow, but dents the Gemini brand.
-- **Tests confirm the quality gap:** r/AIGenArt's world-model test ("a superb cinematographer with a weak memory"), a local model beating Omni on r/comfyui, HN physics critiques.
-- **Soft spots:** weak audio ("AI voices from 2-3 years ago") and likeness refusals pushing creators to Chinese tools.
+- **Blamed on Flow, but not Flow's:** the Gemini-app quota limits (adjusted May 28, ~3,400 Reddit upvotes of cancel threads) and the unshipped public API. Even r/GoogleFlow's own traffic skews to quota-lockout and ban complaints, not Omni demos.
 
 ---
 
