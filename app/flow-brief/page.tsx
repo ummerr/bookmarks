@@ -9,8 +9,8 @@ export const dynamic = 'force-static'
 
 // Unlisted: keep it out of search indexes (also absent from nav + sitemap).
 export const metadata: Metadata = {
-  title: 'Flow + Omni — Exec Brief',
-  description: 'Internal one-page brief: Google Flow + Gemini Omni reception, wins, wounds, and product asks.',
+  title: 'Flow + Omni — Reception Snapshot',
+  description: 'Internal one-page snapshot: Google Flow + Omni reception — TL;DR, wins, losses, and week-by-week.',
   robots: { index: false, follow: false },
 }
 
@@ -22,7 +22,7 @@ const front = sep === -1 ? '' : raw.slice(0, sep)
 const bodyMd = sep === -1 ? raw : raw.slice(sep + 5)
 
 const titleMatch = front.match(/^#\s+(.+)$/m)
-const fullTitle = titleMatch ? titleMatch[1].trim() : 'Flow + Omni — Exec Brief'
+const fullTitle = titleMatch ? titleMatch[1].trim() : 'Flow + Omni — Reception Snapshot'
 
 const metaMd = front.replace(/^#\s+.+$/m, '').trim()
 const metaHtml = marked.parse(metaMd, { gfm: true, breaks: true, async: false }) as string
@@ -35,7 +35,7 @@ const heroStats = [
   { value: '75%', label: 'positive on Flow' },
 ]
 
-const eyebrowText = 'UNLISTED · JUN 3, 2026 · INTERNAL BRIEF'
+const eyebrowText = 'UNLISTED · JUN 3, 2026 · RECEPTION SNAPSHOT'
 
 // ── Heading metadata + HTML post-processing ──────────────────────────────────
 const slugify = (s: string) =>
@@ -115,7 +115,7 @@ export default function FlowBriefPage() {
         />
 
         <footer className="omni-recap">
-          <p className="omni-eyebrow">END · JUN 3, 2026 · INTERNAL BRIEF</p>
+          <p className="omni-eyebrow">END · JUN 3, 2026 · RECEPTION SNAPSHOT</p>
           <p className="omni-recap-line"><strong>Companion:</strong> full Omni reaction report at /omni-report</p>
         </footer>
       </div>
