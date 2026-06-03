@@ -2,7 +2,7 @@
 
 **Date:** June 3, 2026 · **Status:** Internal / unlisted · **Window:** May 19 to Jun 2, 2026
 
-**Sources:** 132 scored tweets, ~140 first-hand Reddit threads, Hacker News, and structured head-to-head tests.
+**Sources:** 132 scored tweets, ~140 first-hand Reddit threads (extended first-hand through June 2), Hacker News, and structured head-to-head tests.
 
 ---
 
@@ -37,7 +37,8 @@
   - *"The 10 second limit makes it useless to take advantage of Seedance V2 videos… Hopefully Omni Pro will have at least 20 seconds of output."* — [@IamEmily2050](https://x.com/IamEmily2050/status/2058467243575665124)
 - **Over-restriction and weak audio.** Harmless prompts and likeness uploads get rejected; audio is the other soft spot.
   - *"Six things you can do with this new AI video model: 1. Get rejected for looking too much like a celebrity. 2. Get rejected for using a bad word… 6. Delete Gemini and switch back to Kling."* — [@bitcloud](https://x.com/bitcloud/status/2059811317897400484) (over-censorship bug `b/515000564`, acknowledged by VP Josh Woodward, still open as of June 3); *"No background ambience, the characters sound monotone… Sora 2 was magical."* — [r/SoraAi · 75↑](https://www.reddit.com/r/SoraAi/comments/1tmrzjk/)
-- **Pros haven't shown up:** zero Omni threads in r/filmmakers, r/editors, r/VideoEditing, r/NewTubers, or r/PartneredYoutube. The "first real AI video editor" line won enthusiasts, not professional adoption.
+- **Watermark friction is the new June gripe.** Omni-Flash's forced SynthID/C2PA watermark sits mid-frame and can't be cropped; the window's first how-to artifact is a removal tool (r/GeminiAI, Jun 2).
+- **Pros haven't shown up:** zero Omni threads in r/filmmakers, r/editors, r/VideoEditing, r/NewTubers, or r/PartneredYoutube (re-confirmed first-hand through Jun 2). The "first real AI video editor" line won enthusiasts, not professional adoption.
 - **Regional gating:** no video editing in India yet; EU personal-video input and avatars still blocked.
   - *"After having no success with the video editing feature… I found out that it's currently not supported in India 😑"* — [@ai_for_success](https://x.com/ai_for_success/status/2059694713545146823)
 
@@ -48,10 +49,10 @@
 | Tweets | 13 | 93 | 26 |
 | Positive | 10 (77%) | 62 (67%) | 19 (73%) |
 | Negative | 2 | 6 | 2 |
-| Reddit | Skepticism memes ("can't make someone do a backflip") | "Editing is the moat" rebound: 3,557 upvotes | Gemini-app quota threads dominate; pro subs stay silent |
+| Reddit | 9 posts, 40↑: launch skepticism ("can't make someone do a backflip") | 247 posts, 6,903↑: the "editing is the moat" rebound (3,557↑) | 30 posts, 2,717↑: a May 28 "underrated" aftershock (2,334↑), then a flat tail; watermark is the new gripe |
 | Story | I/O day: demos and skepticism land together | The wave: the editing reframe spreads | Monetization, how-to, and Character; consensus holds |
 
-**No backlash decay.** Both surfaces peak in Reaction (tweet volume and Reddit's ["editing is the moat" rebound](https://www.reddit.com/r/singularity/comments/1tniqkb/), 3,557↑); sentiment holds as the buzz settles.
+**No backlash decay.** Tweet volume peaks in Reaction, and so does Reddit (the ["editing is the moat" rebound](https://www.reddit.com/r/singularity/comments/1tniqkb/), 3,557↑), with a smaller pro-Omni aftershock on May 28 ("Google omni is underrated," 2,334↑). June Reddit is a quiet tail; watermark complaints are the one new vector, confirmed first-hand through Jun 2.
 
 ## Flow-specific
 
@@ -128,4 +129,4 @@ When Omni refuses, creators don't argue — they switch tools. The over-restrict
 
 ---
 
-*Method: 132 scored tweets (May 19 to Jun 2; 134 pulled, 2 off-topic excluded), re-pulled live and scored in one pass with no paid API; a first-hand Reddit deep-dive (~140 threads, late-May, refreshed June 3); HN and head-to-head tests. Companion: full report at `/omni-report`. The tweet corpus skews positive, so the more critical Reddit and HN read is weighted alongside it.*
+*Method: 132 scored tweets (May 19 to Jun 2; 134 pulled, 2 off-topic excluded), re-pulled live and scored in one pass with no paid API; a first-hand Reddit deep-dive (~140 threads in late May, extended first-hand through June 2; the Landing window is a low-volume tail apart from a May 28 aftershock); HN and head-to-head tests. Companion: full report at `/omni-report`. The tweet corpus skews positive, so the more critical Reddit and HN read is weighted alongside it.*
