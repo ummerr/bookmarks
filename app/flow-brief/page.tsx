@@ -10,7 +10,7 @@ export const dynamic = 'force-static'
 // Unlisted: keep it out of search indexes (also absent from nav + sitemap).
 export const metadata: Metadata = {
   title: 'Flow + Omni: Reception Snapshot',
-  description: 'Internal one-page snapshot of Google Flow + Omni reception: TL;DR, wins, losses, and a week-by-week read.',
+  description: 'Internal one-page snapshot of Google Flow + Omni reception: TL;DR, wins, losses, and how it played out from launch to landing.',
   robots: { index: false, follow: false },
 }
 
