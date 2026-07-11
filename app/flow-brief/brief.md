@@ -1,67 +1,64 @@
 # Flow + Omni: Reception Snapshot
 
-**Date:** June 3, 2026 · **Status:** Internal / unlisted · **Window:** May 19 to Jun 2, 2026
+**Date:** July 11, 2026 · **Status:** Internal / unlisted · **Window:** May 19 – Jul 11, 2026
 
-**Sources:** 132 scored tweets, ~140 first-hand Reddit threads (extended first-hand through June 2), Hacker News, and structured head-to-head tests.
+**Sources:** 199 scored tweets, first-hand Reddit (launch wave + a June 3 → July 10 refresh with real upvote scores), the June-30 API launch, blind-vote leaderboards, and structured head-to-head tests.
 
 ---
 
 ## TL;DR
 
-- **Strongly positive:** 91 of 132 posts positive (69%), 10 negative. Flow runs hotter at **75%**.
-- **Editing, not generation, is the story.** "Nano Banana for video" is consensus across tweets and Reddit; ~45% of posts praise editing. Raw generation still trails Seedance 2.0.
+- **Strongly positive, and it rose:** 146 of 199 posts positive (73%), 16 negative. Sentiment climbed across the arc — **72% (launch) → 76% (mid-June tail) → 81% (post-API)**. No second-wave backlash; a developer-driven second wind instead.
+- **Two of three "open wounds" closed since June.** The **public API shipped June 30** ($0.10/sec 720p), and **Omni entered blind-vote arenas** — #1–#2, tied with Seedance 2.0 at the top. The one still open: the over-censorship bug.
+- **Editing, not generation, is still the story.** "Nano Banana for video" is unshaken; the June 30 viral thread (r/singularity, 887↑) is *still* the editing-moat argument. Raw generation still trails Seedance — and the gap widened when **Seedance 2.5 shipped July 3 with 30-second clips** vs Omni's 10s.
   - *"Seedance is for generating videos from scratch. Google Omni is for editing videos that already exist."* — [@arb_terminal](https://x.com/arb_terminal/status/2057507210679275559)
-- **Flow is the winning surface.** In-platform editing, Agent, and the new Character feature drive the delight.
-  - *"IMO it is the 'Nano Banana' of video. Also Google Flow is much better."* — [@bennash](https://x.com/bennash/status/2057830298222501983)
-- **The loud gripes aren't Flow's.** Quota rage lives on the Gemini app (~3,400 Reddit upvotes); the missing public API is a separate product.
-  - *"Google Broke Gemini"* — [r/GeminiAI · 454↑](https://www.reddit.com/r/GeminiAI/comments/1tl1l5q/)
-- **The harder read is in the craft subs:** working pros haven't shown up, and head-to-head tests confirm the raw-quality gap.
-  - *"A superb cinematographer with a weak memory."* — [r/AIGenArt · "World Model" test](https://www.reddit.com/r/AIGenArt/comments/1tm940y/)
+- **Flow flipped from hero to workhorse.** It ran *hotter* than the corpus in June (75%); now it runs slightly *cooler* (71% vs 73%) as the reliability complaints moved onto it and its post-volume jumped ~10×.
+- **Monetization is now the fastest-growing theme.** Bigger, more operational earnings claims — $19.4k/mo, $20k — routing through Flow + Omni.
+  - *"I made $20k with a TikTok account, a VA and Google Omni… 2 hours a day."* — [@pounddz](https://x.com/pounddz/status/2071360446855360773)
+- **The loud gripes rotated.** Watermark rage **cooled** (Ultra ships watermark-free); the new churn is a **"unusual activity" false-positive lockout wave** on Flow (BBB/FTC complaints filed). Censorship persists unfixed.
 
 ## Wins
 
-- **The editing reframe stuck, on every surface.** Day-one "weaker than Seedance" flipped to "it's an editor, not a generator" within days, and Reddit crowned it: r/singularity's "editing is the moat" thread hit 3,557 upvotes.
-  - *"Its strength is in editing/modifying existing media. Nano banana is much better at editing than at generating completely new stuff as well."* — [r/singularity · "The Strength of Gemini Omni is in video manipulation" · 3,557↑ (top reply 479↑)](https://www.reddit.com/r/singularity/comments/1tniqkb/)
-- **Flow beats the bare model:** 75% positive across 48 Flow posts vs 69% overall.
-  - *"Google Flow is now powered by Gemini Omni… the new Agent feature. It keeps the movement, audio and character intact whilst making edits in your scene."* — [@jerrod_lew](https://x.com/jerrod_lew/status/2059243368706957733)
-- **Character is the freshest hook:** register a personality, not just a look. Already landing in JP, ES, and AR.
-  - *"Flow's Character feature — consistency deepens from appearance → behavior → persona."* — [@kenichiota0711](https://x.com/kenichiota0711/status/2059787131888017799) (JP); echoed *"Same character. Same voice. Consistent across completely different scenes."* — [@Dheepanratnam](https://x.com/Dheepanratnam/status/2057719129918915007)
-- **A creator-economy flywheel is forming:** monetization and how-to posts.
-  - *"This guy is printing $9,400/month by transforming raw footage into studio-grade VFX in real-time."* — [@shmidtqq](https://x.com/shmidtqq/status/2061456413436547471); *"He earned $14,200 from 15-second videos, spending just 10 minutes a day at Google Labs."* — [@Lummox_eth](https://x.com/Lummox_eth/status/2061415752633078211)
+- **The editing reframe didn't just hold — it got a second wind.** Day-one "weaker than Seedance" flipped to "it's an editor, not a generator," Reddit crowned it (r/singularity's "editing is the moat," 3,557↑), and eight weeks later the **June 30 API launch re-ran the same argument to 887↑**.
+  - *"Its strength is in editing/modifying existing media. Nano banana is much better at editing than at generating completely new stuff as well."* — [r/singularity · "The Strength of Gemini Omni is in video manipulation" · 3,557↑](https://www.reddit.com/r/singularity/comments/1tniqkb/)
+- **The API shipped — the single biggest unlock.** `gemini-omni-flash-preview` launched **June 30** at $0.10/sec of 720p output. It ended the developer block *and* the leaderboard drought.
+- **Omni entered the leaderboards, at the top.** arena.ai ranks it **#2 on Image-to-Video (1469), a hair behind Seedance 2.0 (1474) and ahead of every Kling**; it was announced **#1 in the Video Arena** (both T2V and I2V) on June 11, and a separate Design Arena ranks it #1 (Elo 1404). *(Caveat: some critics call the arena.ai board "paid benchmarks"; Omni is absent from Artificial Analysis's own boards.)*
+- **Character is a durable Flow hook.** Register a personality, not just a look — still a lead talking point in July, now fed by Nano Banana 2 inside the Flow Agent.
+  - *"Google Flow Just Solved AI's Biggest Problem — Lock Characters, Voices & Avatars."* — [@chrisdadiva](https://x.com/chrisdadiva/status/2075112724510527776)
+- **A creator-economy flywheel is compounding.** Monetization doubled to the fastest-growing theme, with operational claims and full ad pipelines.
+  - *"How to Turn a 10-Second Phone Clip Into $19,400 This Month."* — [@ridark_eth](https://x.com/ridark_eth/status/2068082146019836216)
 
 ## Losses
 
-- **Raw generation trails Seedance 2.0** on quality, motion, and physics, and the head-to-heads back it: r/AIGenArt's world-model test, a local model beating Omni on r/comfyui, HN physics critiques. Still on zero public leaderboards.
-  - *"A superb cinematographer with a weak memory."* — [r/AIGenArt · "World Model" test](https://www.reddit.com/r/AIGenArt/comments/1tm940y/); *"Every model beats Omni."* — [r/comfyui · LTX 2.3 same-prompt · 146↑](https://www.reddit.com/r/comfyui/comments/1tk0h1g/)
-- **The 10-second clip cap looks weak for 2026** (Seedance ships 15s, Sora 2 Pro 25s).
-  - *"The 10 second limit makes it useless to take advantage of Seedance V2 videos… Hopefully Omni Pro will have at least 20 seconds of output."* — [@IamEmily2050](https://x.com/IamEmily2050/status/2058467243575665124)
-- **Over-restriction and weak audio.** Harmless prompts and likeness uploads get rejected; audio is the other soft spot.
-  - *"Six things you can do with this new AI video model: 1. Get rejected for looking too much like a celebrity. 2. Get rejected for using a bad word… 6. Delete Gemini and switch back to Kling."* — [@bitcloud](https://x.com/bitcloud/status/2059811317897400484) (over-censorship bug `b/515000564`, acknowledged by VP Josh Woodward, still open as of June 3); *"No background ambience, the characters sound monotone… Sora 2 was magical."* — [r/SoraAi · 75↑](https://www.reddit.com/r/SoraAi/comments/1tmrzjk/)
-- **Watermark friction is the new June gripe.** Omni-Flash's forced SynthID/C2PA watermark sits mid-frame and can't be cropped; the window's first how-to artifact is a removal tool (r/GeminiAI, Jun 2).
-- **Pros haven't shown up:** zero Omni threads in r/filmmakers, r/editors, r/VideoEditing, r/NewTubers, or r/PartneredYoutube (re-confirmed first-hand through Jun 2). The "first real AI video editor" line won enthusiasts, not professional adoption.
-- **Regional gating:** no video editing in India yet; EU personal-video input and avatars still blocked.
-  - *"After having no success with the video editing feature… I found out that it's currently not supported in India 😑"* — [@ai_for_success](https://x.com/ai_for_success/status/2059694713545146823)
+- **Raw generation still trails Seedance 2.0** on quality, motion, and physics, and the head-to-heads back it: r/AIGenArt's world-model test, HN physics critiques, same-prompt shootouts. The blind-vote leaderboard shows Omni *competitive* on aggregate preference even while losing raw-generation tests — it narrows the gap, it doesn't erase it.
+  - *"A superb cinematographer with a weak memory."* — [r/AIGenArt · "World Model" test](https://www.reddit.com/r/AIGenArt/comments/1tm940y/)
+- **The clip-length gap WIDENED.** Omni held at 10s while **Seedance 2.5 (July 3) claims native 30-second single-pass clips** (up from 15s), and **Omni Pro still hasn't shipped**.
+  - *"The 10 second limit makes it useless to take advantage of Seedance V2 videos… Hopefully Omni Pro will have at least 20 seconds."* — [@IamEmily2050](https://x.com/IamEmily2050/status/2058467243575665124)
+- **Over-restriction is the one unhealed wound.** Harmless prompts and likeness uploads still get rejected; bug `b/515000564` remains **open as of July 10**, acknowledged by VP Josh Woodward but unfixed, still routing paying users to Kling.
+  - *"…how many times Gemini Omni falsely flags my video with 'harmful content related to minors'… got flagged for a video of my dog eating broccoli."* — **r/GeminiAI · 24↑, Jun 29**
+- **Trust is the new pressure point.** The quota-nerf rage cooled, but a **"We noticed some unusual activity" false-positive lockout wave** replaced it on Flow, plus post-June-30 update regressions (reference images ignored, "Flow is unusable").
+  - *"Time to cancel subscription i guess, constant 'unusual activity' crap."* — **r/GoogleFlow · 16↑, Jul 4**
+- **Pros still haven't shown up.** Zero Omni/Flow adoption threads in r/filmmakers, r/editors, r/VideoEditing, r/NewTubers, or r/PartneredYoutube through July — the one crack is a paid job ad for "AI-native video editors," i.e. demand, not adoption.
+- **Regional gating persists.** Google's own language is "availability varies by region"; India's video-editing gate and EU avatar/personal-video limits remain the friction, with no Omni-specific ungating found.
 
-## Launch, Reaction, Landing
+## Launch → Tail → API Re-Acceleration
 
-| | Launch (May 19) | Reaction (May 20 to 26) | Landing (May 27 to Jun 2) |
+| | Launch wave (May 19–Jun 2) | Tail (Jun 3–29) | API re-acceleration (Jun 30–Jul 11) |
 |---|---|---|---|
-| Tweets | 13 | 93 | 26 |
-| Positive | 10 (77%) | 62 (67%) | 19 (73%) |
-| Negative | 2 | 6 | 2 |
-| Reddit | 9 posts, 40↑: launch skepticism ("can't make someone do a backflip") | 247 posts, 6,903↑: the "editing is the moat" rebound (3,557↑) | 30 posts, 2,717↑: a May 28 "underrated" aftershock (2,334↑), then a flat tail; watermark is the new gripe |
-| Story | I/O day: demos and skepticism land together | The wave: the editing reframe spreads | Monetization, how-to, and Character; consensus holds |
+| Tweets | 135 | 38 | 26 |
+| Positive | 97 (72%) | 29 (76%) | 21 (81%) |
+| Negative | 11 | 1 | 1 |
+| Reddit | May 25 "editing is the moat" (3,557↑); May 28 "underrated" aftershock (2,334↑) | flat — no on-topic thread above ~25↑ for ~4 weeks | **June 30 API launch re-accelerates: 887↑ editing thread + 241, then 187/346/407 across ten days** |
+| Story | Discovery → the editing reframe | Quiet; watermark gripe cools, "unusual activity" begins | API + leaderboard entry + monetization; a praise-led, developer-driven second wind |
 
-**No backlash decay.** Tweet volume peaks in Reaction, and so does Reddit (the ["editing is the moat" rebound](https://www.reddit.com/r/singularity/comments/1tniqkb/), 3,557↑), with a smaller pro-Omni aftershock on May 28 ("Google omni is underrated," 2,334↑). June Reddit is a quiet tail; watermark complaints are the one new vector, confirmed first-hand through Jun 2.
+**Sentiment rose across the arc.** The feared second-wave backlash never came. Mid-June went genuinely quiet, then the **June 30 public-API launch put Omni back on the timeline** — the first re-acceleration driven by a developer event rather than a consumer demo. Complaint energy didn't vanish; it rotated from watermark/quota to **reliability and trust**.
 
 ## Flow-specific
 
-- **Flow outperforms the model alone:** 75% vs 69% positive. Complaints hit the model (10s cap, generation quality), not the app.
-  - *"IMO it is the 'Nano Banana' of video. Also Google Flow is much better."* — [@bennash](https://x.com/bennash/status/2057830298222501983)
-- **Standout features:** in-platform editing, Flow Agent (edits that preserve motion, audio, and character), and Character (personality plus consistency).
-  - *"Google Flow Agent is the most amazing thing I have seen for a while. I uploaded only 1 selfie, and it generated 16 portrait shots of me at popular London hotspots."* — [@abhishek](https://x.com/abhishek/status/2057030130414043373)
-- **Blamed on Flow, but not Flow's:** the Gemini-app quota limits (adjusted May 28, ~3,400 Reddit upvotes of cancel threads) and the unshipped public API. Even r/GoogleFlow's own traffic skews to quota-lockout and ban complaints, not Omni demos.
-  - *"15 prompts in 14 hours. used to be 100. cancelling."* — [r/GeminiAI · 272↑](https://www.reddit.com/r/GeminiAI/comments/1tot09j/)
+- **Flow went from hero surface to workhorse.** 71% positive (was 75% in June, above the corpus; now just below the 73% overall). As its user base scaled ~10× (r/GoogleFlow post-volume ≈8 → ≈97 threads), the reliability and abuse-detection complaints migrated onto it.
+- **Standout features:** in-platform editing, Flow Agent (edits that preserve motion, audio, character), Character (personality + consistency), and now **Nano Banana 2 wired into the Agent** for multi-angle image generation feeding video.
+  - *"Create a short advert from a single image with Gemini Omni Flash! All within Google Flow… ask the agent to use Nano Banana 2 to create more angles and shots."* — [@jerrod_lew](https://x.com/jerrod_lew/status/2074156026916753759)
+- **Blamed on Flow, but structural:** the "unusual activity" false-positive lockouts and the unshipped-until-June-30 API were product/platform issues, not interface ones. Even r/GoogleFlow's own traffic skews to lockout and reliability complaints, not Omni demos.
 
 ## Verbatims
 
@@ -71,63 +68,36 @@ A wider pull from the scored corpus, clustered by what people were actually sayi
 
 - *"Google Omni is insane at video editing… everyone is comparing it to Seedance and missing the point completely."* — [@Mho_23](https://x.com/Mho_23/status/2057151867927601413)
 - *"The video generation feature of Gemini Omni is not very good, but its video editing capabilities are excellent."* — [@SJinn_Agent](https://x.com/SJinn_Agent/status/2057387115617603990)
-- *"It's insane for editing, but not generating. You can't just let China win so easily."* — [@blueemi99](https://x.com/blueemi99/status/2058226046105756132)
 - *"Seedance 2 = fast one-shot outputs. Gemini Omni = iterative creative control. Same platform, different game."* — [@Bharambe2Kiran](https://x.com/Bharambe2Kiran/status/2057154502504161309)
 - *"Omni is aiming at something else: video you can edit through conversation."* — [@AlexshevPm](https://x.com/AlexshevPm/status/2056904875728892024)
+- *"I was completely wrong about Google Omni… it's the Nano Banana of video, and comparing it to Seedance was a gross error."* — [@sat0oshi](https://x.com/sat0oshi/status/2057045171250811165) (translated from FR)
 
-### A different category, not a Seedance rival
+### The June-30 API re-acceleration
 
-- *"Omni is pretty nuts. It is NOT Seedance… it's quite literally industrial light & magic."* — [@bilawalsidhu](https://x.com/bilawalsidhu/status/2057300479340695960)
-- *"People don't realize why Gemini Omni is different than other video AIs. It is fully multimodal, so it can edit video natively."* — [@emollick](https://x.com/emollick/status/2057874739817808223)
-- *"Omni is Nano Banana but for video. One model reasoning across modalities."* — [@burninganna](https://x.com/burninganna/status/2057904993504821498)
-- *"This is not a T2V model! A lot of people are using it the wrong way or haven't understood what it's actually for."* — [@WolfRiccardo](https://x.com/WolfRiccardo/status/2057918363641459051)
-- *"I was completely wrong about Google Omni. It's not a Seedance 2.0 competitor — it's the Nano Banana of video, and comparing it to Seedance was a gross error."* — [@sat0oshi](https://x.com/sat0oshi/status/2057045171250811165) (translated from FR)
+- *"I tested Gemini Omni on my phone footage… changed a bear into a zombie."* — **r/singularity · 346↑, Jul 6**
+- *"Start building with Nano Banana 2 Lite and Gemini Omni Flash."* — **r/Bard · official launch blog · 52↑, Jun 30**
+- *"Get ready for new flash, omni, alpha etc."* (hype + naming-scheme fatigue) — **r/GeminiAI · 407↑, Jul 10**
 
-### Flow, Agent, and Character carry the delight
+### The leaderboard entry (and the pushback)
 
-- *"In 5 minutes using the new Google Flow Agent and Omni Flash model I wrote a small story… it gave me a storyboard grid which it animated."* — [@michaelrabone](https://x.com/michaelrabone/status/2057009001666101537)
-- *"I tried Flow's new agent mode — it generated 14 storyboard shots in one pass, and the protagonist's face didn't drift. No more pulling frames one at a time."* — [@VincentLogic](https://x.com/VincentLogic/status/2058083768615764372) (translated from ZH)
-- *"The likeness preservation and natural realism coming out of Gemini Omni Flash is absolutely unreal. If Flash is this good, imagine Pro."* — [@babaeizadeh](https://x.com/babaeizadeh/status/2056865310876246522)
-- *"I hate to admit it, but Google Flow AI is honestly one of the best tools for image generation right now."* — [@anna_writes0](https://x.com/anna_writes0/status/2057554657262587959)
-- *"For real, Flow is just amazing, with OMNI in it it's unstoppable."* — [@sat0oshi](https://x.com/sat0oshi/status/2058091301543825609)
-
-### What people actually did with it
-
-- *"Good lord, Google Omni editing of IRL footage is remarkable."* — [@gavinpurcell](https://x.com/gavinpurcell/status/2057962506048721142)
-- *"You're seeing Gemini Omni remove people from a video while keeping coherence. This will be one of the most critical features in short film & movie production."* — [@Chrisgpt](https://x.com/Chrisgpt/status/2057945285981065339)
-- *"You can upload real videos to Omni and ask for edits — changing the action, style, or subject. I asked it to change my hat every time I clap."* — [@venturetwins](https://x.com/venturetwins/status/2056793856843366789)
-- *"Google just made video editing as easy as texting."* — [@CodeByPoonam](https://x.com/CodeByPoonam/status/2058289024306143446)
-- *"You can use Gemini Omni to turn regular videos into 360 'tiny planet' videos."* — [@cfryant](https://x.com/cfryant/status/2057532550470648136)
-- *"Made with Gemini Omni. At this point, if you have a green screen, you can build almost anything. Feels like the VFX market is about to change very fast."* — [@arrakis_ai](https://x.com/arrakis_ai/status/2058095894206267669)
-
-### Pure delight
-
-- *"Gemini Omni is insane."* — [@nicdunz](https://x.com/nicdunz/status/2058190145912799529)
-- *"Omni continues to blow my mind."* — [@samsheffer](https://x.com/samsheffer/status/2059338260078289173)
-- *"Google Omni might be too powerful."* — [@folaoftech](https://x.com/folaoftech/status/2058836721127584043)
-- *"Aight Gemini Omni is actually kind of good."* — [@JasonBotterill](https://x.com/JasonBotterill/status/2058162925286953312)
-- *"This model is so coherent in arts and science at the same time… we are so back."* — [@chetaslua](https://x.com/chetaslua/status/2056790593993584897)
-
-### The skeptics and the friction
-
-- *"Disappointed. Google's Gemini Omni Flash feels even weaker than Seedance 2.0."* — [@lepadphone](https://x.com/lepadphone/status/2056760304386843100)
-- *"Put it side-by-side with Seedance 2.0… it's not even a fair fight."* — [@JSFILMZ0412](https://x.com/JSFILMZ0412/status/2056864860240011411)
-- *"Google has all of YouTube to train on, unlimited compute, top talent — still Gemini Omni is nowhere close."* — [@shiri_shh](https://x.com/shiri_shh/status/2057112500609699900)
-- *"Olympic Diving Test — Seedance 2.0 also wins this test."* — [@Ratul_AI](https://x.com/Ratul_AI/status/2056969972556222690)
-- *"This '3 videos per day' limit is killing my momentum on experimenting."* — [@AIWarper](https://x.com/AIWarper/status/2057913399196238085)
+- *"Gemini Omni Flash is now #1 in the Video Arena (both Text-to-Video and Image-to-Video)! …a massive +158 pt improvement over Veo 3.1."* — [@arena](https://x.com/arena/status/2065112147093545333)
+- *"Arena AI again slaughtering its own credibility with fake paid benchmarks… Seedance 2.0 is miles ahead."* — [@SqueakAlGaib](https://x.com/SqueakAlGaib/status/2065149611267031478)
+- *"Design Arena: Gemini Omni Flash is now 1st overall on Video Arena, Elo 1404, +101 over Seedance 2.0 Mini."* — **r/singularity · 187↑, Jul 2**
 
 ### The filter complaints — the grievance creators keep hitting
 
-When Omni refuses, creators don't argue — they switch tools. The over-restriction bug `b/515000564` (harmless prompts, real faces, and even licensed IP getting rejected) was acknowledged by VP Josh Woodward and **still open as of June 3**, and it's the one wound that routes paying users straight to competitors.
+When Omni refuses, creators don't argue — they switch tools. The over-restriction bug `b/515000564` (harmless prompts, real faces, even licensed IP) was acknowledged by VP Josh Woodward and **remains open as of July 10** — the one wound that routes paying users straight to competitors.
 
-- *"Google Omni is amazing. Here's six things you can do with this incredible new AI video model: 1. Get rejected for looking too much like a celebrity. 2. Get rejected for using a bad word… 5. Get rejected for using it on professional IP you're literally being paid to make by the owners of that IP. 6. Delete Gemini and switch back to Kling."* — [@bitcloud](https://x.com/bitcloud/status/2059811317897400484)
-- *"Omni video editing instantly rejects harmless prompts in Flow and the Gemini app."* — [Google AI Dev Forum · over-censorship bug `b/515000564`](https://discuss.ai.google.dev/t/omni-video-editing-instantly-rejects-harmless-prompts-in-flow-and-gemini-app/147152) (acknowledged by VP Josh Woodward; still open as of June 3)
-- *"It would've been much better to show a proper error instead of a generic 'I can't generate that idea. Bla bla bla…'"* — [@ai_for_success](https://x.com/ai_for_success/status/2059694713545146823) (the opaque refusal turned out to be silent region-gating, not a content block)
-- The highest-upvote censorship anchor on Reddit: the May 23 *"Gemini just leaked its system prompt by mistake"* thread, where commenters picked apart how heavy-handed the safety rules are. — [r/GeminiAI · 1,363↑](https://www.reddit.com/r/GeminiAI/comments/1tlq6er/)
-- *"Gemini in EU is trash now"* — personal-video input and avatars blocked on EU data/AI-regulation grounds; the thread catalogs the stripped features. — [r/GeminiAI · 323↑](https://www.reddit.com/r/GeminiAI/comments/1tkrnp0/)
+- *"Google Omni is amazing. Here's six things you can do: 1. Get rejected for looking too much like a celebrity. 2. Get rejected for using a bad word… 6. Delete Gemini and switch back to Kling."* — [@bitcloud](https://x.com/bitcloud/status/2059811317897400484)
+- *"Omni video editing instantly rejects harmless prompts in Flow and the Gemini app."* — [Google AI Dev Forum · over-censorship bug `b/515000564`](https://discuss.ai.google.dev/t/omni-video-editing-instantly-rejects-harmless-prompts-in-flow-and-gemini-app/147152) (acknowledged by VP Josh Woodward; still open, forum reports continue to July 7)
 - *"The coolest feature of Gemini Omni is video editing — but in France we're only allowed the 'simple' generation."* — [@julien_ducerf](https://x.com/julien_ducerf/status/2059557166248329473) (translated from FR)
-- *"It keeps changing my characters into Caucasians"* — V2V style-transfer overriding the source faces, a likeness/bias failure that compounds the rejection friction. — [@JSFILMZ0412](https://x.com/JSFILMZ0412/status/2057198309329043582)
+
+### The reliability / "unusual activity" wave (the new June–July churn)
+
+- *"Failed — unusual activity… this happens even after 1 image generation."* — **r/GoogleFlow · 21↑, Jul 5** (one user filed BBB/FTC complaints)
+- *"Google Flow has become unusable for me."* — **r/GoogleFlow · 24↑, Jul 2**
+- *"Bug in Reference images of Google Flow Omni Video-to-video after the June 30th update."* — **r/Bard · Jul 2**
 
 ---
 
-*Method: 132 scored tweets (May 19 to Jun 2; 134 pulled, 2 off-topic excluded), re-pulled live and scored in one pass with no paid API; a first-hand Reddit deep-dive (~140 threads in late May, extended first-hand through June 2; the Landing window is a low-volume tail apart from a May 28 aftershock); HN and head-to-head tests. Companion: full report at `/omni-report`. The tweet corpus skews positive, so the more critical Reddit and HN read is weighted alongside it.*
+*Method: 199 scored tweets (May 19 – Jul 11; 202 pulled, 3 off-topic excluded), re-pulled live and scored in one consistent pass under a sharpened, documented rubric — no paid API. First-hand Reddit (launch wave + a June 3 → July 10 refresh harvesting real upvote scores from old.reddit HTML). The Reddit reconnaissance ran on Fable and was re-verified by an Opus control (887↑ editing thread cross-checked at 885 pts). Open-web status (API ship, leaderboard entry, Seedance 2.5) refreshed July 10–11. Companion: full report at `/omni-report`. The tweet corpus skews positive, so the harder Reddit/HN read is weighted alongside it — now partly externally checked by the blind-vote leaderboard entry.*
