@@ -36,14 +36,16 @@ export default function Nav() {
           <span className="text-[#1DA1F2]">✦</span> ummerr
         </Link>
         <div className="flex items-center gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden flex-1">
-          {LINKS.map((l) => (
+          {LINKS.map((l) => {
+            const hideSecret = l.secret && !pathname.startsWith('/prompts') && !pathname.startsWith('/tools')
+            return (
             <Link
               key={l.href}
               href={l.href}
               className={`shrink-0 rounded-lg px-3 py-1.5 text-sm transition-colors ${
-                l.secret
+                hideSecret
                   ? 'text-[#f7f6f3] dark:text-[#0a0a0a] hover:text-[#f7f6f3] dark:hover:text-[#0a0a0a] cursor-default'
-                  : pathname === l.href
+                  : pathname === l.href || pathname.startsWith(l.href + '/')
                   ? 'bg-black/8 text-gray-900 dark:bg-white/10 dark:text-white'
                   : 'text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5'
               }`}
@@ -55,7 +57,8 @@ export default function Nav() {
                 </span>
               )}
             </Link>
-          ))}
+            )
+          })}
         </div>
         <div className="flex items-center gap-1 shrink-0">
           {RIGHT_LINKS.map((l) => (

@@ -161,7 +161,7 @@ export async function withRetry<T>(fn: () => Promise<T>, retries = 1, delayMs = 
 
 // ── Bookmark classification (step 1) ──────────────────────────────────────
 
-const CLASSIFY_SYSTEM = `Classify each tweet into exactly one category.
+export const CLASSIFY_SYSTEM = `Classify each tweet into exactly one category.
 
 Categories:
 - tech_ai_product: Technology, AI/ML, startups, developer tools, product launches, tech industry news
@@ -200,7 +200,8 @@ const CLASSIFY_TOOL: Anthropic.Tool = {
 const VALID_CATEGORIES = new Set<Category>(['tech_ai_product', 'career_productivity', 'prompts', 'uncategorized'])
 
 export async function classifyBatch(
-  bookmarks: Pick<Bookmark, 'tweet_id' | 'tweet_text'>[]
+  bookmarks: Pick<Bookmark, 'tweet_id' | 'tweet_text'>[],
+  opts: { systemPrompt?: string; model?: string } = {}
 ): Promise<ClassificationResult[]> {
   const client = getClient()
   const input = bookmarks.map((b) => ({
@@ -210,9 +211,9 @@ export async function classifyBatch(
 
   const message = await withRetry(() =>
     client.messages.create({
-      model: 'claude-haiku-4-5-20251001',
+      model: opts.model ?? 'claude-haiku-4-5-20251001',
       max_tokens: 2048,
-      system: CLASSIFY_SYSTEM,
+      system: opts.systemPrompt ?? CLASSIFY_SYSTEM,
       tools: [CLASSIFY_TOOL],
       tool_choice: { type: 'tool', name: 'classify_tweets' },
       messages: [{ role: 'user', content: `Classify these tweets:\n${JSON.stringify(input)}` }],
@@ -245,18 +246,18 @@ export async function classifyBatch(
 
 // ── Prompt extraction (step 2) ─────────────────────────────────────────────
 
-const PROMPT_SYSTEM = `Classify and extract AI prompts from tweets.
+export const PROMPT_SYSTEM = `Classify and extract AI prompts from tweets.
 
 STEP 1 — CHECK FOR REFERENCE SIGNALS FIRST:
 Before choosing a category, check if the prompt contains ANY of these reference signals. If ANY signal is found, the category MUST be image_r2i (for images) or video_r2v (for video) — do NOT use image_person, image_t2i, or other subject categories when a reference is needed.
 
 Reference signals (any ONE of these means requires_reference=true):
-- Bracketed placeholders: [SUBJECT], [YOUR IMAGE], [REFERENCE], [UPLOADED IMAGE], [SOURCE IMAGE], [INPUT], [YOUR PHOTO], [FACE], [LOGO]
+- Bracketed placeholders — ANY token in square brackets meant to be filled in counts. Common ones: [SUBJECT], [PERSON], [CHARACTER], [ACTION], [SCENE], [PRODUCT], [NAME], [COLOR], [COLOR1], [SUBJECT1], [SUBJECT2], [YOUR IMAGE], [REFERENCE], [UPLOADED IMAGE], [SOURCE IMAGE], [INPUT], [YOUR PHOTO], [FACE], [LOGO]. If the prompt is written as a fill-in-the-blank TEMPLATE using bracketed tokens, treat it as a reference prompt — the user is expected to supply content (often an image) for those tokens.
 - Midjourney flags: --sref (style ref), --cref (character ref), --iw (image weight)
 - Workflow tools: IP-Adapter, ControlNet, face swap, img2img, style transfer, reference-to-image, InstantID, PhotoMaker, PuLID, ADetailer
 - ComfyUI / pipeline signals: "ComfyUI", "workflow", "Load Image node", "KSampler", "denoise", "denoising strength", "init image", "input image"
 - Character consistency: "consistent character", "same character across", "character sheet", "maintain the look", "keep the same face", "match the reference"
-- Explicit instructions: "upload", "attach", "use your image/photo", "use this as a starting point", "based on this image", "from this reference", "use the attached"
+- Explicit instructions and phrases: "upload", "attach", "uploaded image", "uploaded photo", "uploaded person", "reference image", "reference photo", "reference person", "your reference", "the reference", "use your image/photo", "use this as a starting point", "based on this image", "from this reference", "use the attached", "input image", "source image"
 - Multi-step pipelines: "first generate... then use", "take the output and", "feed into"
 
 STEP 2 — IF NO REFERENCE SIGNAL, pick a subject-based category:
@@ -382,7 +383,8 @@ const EXTRACT_TOOL: Anthropic.Tool = {
 }
 
 export async function classifyPromptBatch(
-  prompts: (Pick<Bookmark, 'id' | 'tweet_text' | 'thread_tweets'> & { media_alt_texts?: (string | null)[] })[]
+  prompts: (Pick<Bookmark, 'id' | 'tweet_text' | 'thread_tweets'> & { media_alt_texts?: (string | null)[] })[],
+  opts: { systemPrompt?: string; model?: string } = {}
 ): Promise<{
   id: string
   prompt_category: PromptCategory
@@ -412,9 +414,9 @@ export async function classifyPromptBatch(
 
   const message = await withRetry(() =>
     client.messages.create({
-      model: 'claude-sonnet-4-5-20250929',
+      model: opts.model ?? 'claude-sonnet-4-5-20250929',
       max_tokens: 4096,
-      system: PROMPT_SYSTEM,
+      system: opts.systemPrompt ?? PROMPT_SYSTEM,
       tools: [EXTRACT_TOOL],
       tool_choice: { type: 'tool', name: 'classify_prompts' },
       messages: [{ role: 'user', content: `Classify and extract:\n${JSON.stringify(input)}` }],
@@ -436,18 +438,16 @@ export async function classifyPromptBatch(
     if (r.id != null) r.id = String(r.id)
   }
 
+  // Strict id matching. No positional fallback: when the model truncates
+  // (stop_reason=max_tokens) or otherwise drops ids, a 1-of-5 result getting
+  // force-attributed to prompts[0] would write wrong classifications. Drop
+  // unmatched results; the caller's re-queue loop will retry missing rows.
   const matched = results.filter((r) => r.id && indexToId.has(r.id))
-  if (matched.length < results.length) {
-    console.warn('[classifyPromptBatch] ID mismatch - sent:', [...indexToId.keys()], '| received:', results.map((r) => r.id))
+  if (matched.length < prompts.length) {
+    console.warn(`[classifyPromptBatch] Undercount — sent ${prompts.length}, matched ${matched.length}, stop_reason=${message.stop_reason}, received ids=${JSON.stringify(results.map((r) => r.id))}`)
   }
 
-  // Positional fallback: if no IDs matched at all, pair results to prompts by order
-  const toMap = matched.length > 0
-    ? matched.map((r) => ({ r, id: indexToId.get(r.id) as string }))
-    : results.slice(0, prompts.length).map((r, i) => {
-        console.warn(`[classifyPromptBatch] Positional fallback for index ${i + 1}`)
-        return { r, id: prompts[i].id }
-      })
+  const toMap = matched.map((r) => ({ r, id: indexToId.get(r.id) as string }))
 
   // Post-classification validation: enforce reference consistency
   const REFERENCE_CATEGORIES = new Set(['image_r2i', 'image_i2i', 'video_r2v', 'video_i2v'])

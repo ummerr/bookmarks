@@ -260,6 +260,133 @@ function TopModelsChart({ models }: { models: ModelCount[] }) {
   )
 }
 
+// ── Live search preview ─────────────────────────────────────────────────────
+
+interface SearchResult {
+  id: string
+  extracted_prompt: string | null
+  tweet_text: string
+  detected_model: string | null
+  prompt_category: string | null
+  author_handle: string
+}
+
+const SUGGESTED_QUERIES = ['cinematic', 'portrait', 'anime', 'cyberpunk', 'Midjourney']
+
+function LiveSearchPreview() {
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState<SearchResult[]>([])
+  const [loading, setLoading] = useState(false)
+  const [searched, setSearched] = useState(false)
+
+  useEffect(() => {
+    const trimmed = query.trim()
+    if (!trimmed) { setResults([]); setSearched(false); return }
+    setLoading(true)
+    const t = setTimeout(() => {
+      fetch(`/api/bookmarks?category=prompts&search=${encodeURIComponent(trimmed)}&sort=relevance&limit=3`)
+        .then((r) => r.json())
+        .then((data) => { setResults(data.bookmarks ?? []); setSearched(true) })
+        .finally(() => setLoading(false))
+    }, 250)
+    return () => clearTimeout(t)
+  }, [query])
+
+  return (
+    <div className="rounded-2xl border border-black/[0.06] dark:border-white/[0.06] bg-white/40 dark:bg-white/[0.02] p-6 md:p-8">
+      <div className="relative">
+        <svg className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search real prompts — try 'cinematic' or 'portrait'..."
+          className="w-full rounded-xl border border-black/[0.08] dark:border-white/[0.08] bg-white/60 dark:bg-white/[0.03] py-3 pl-11 pr-4 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-violet-500/40"
+        />
+      </div>
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        {SUGGESTED_QUERIES.map((s) => (
+          <button
+            key={s}
+            onClick={() => setQuery(s)}
+            className="rounded-full bg-black/[0.04] dark:bg-white/[0.04] px-3 py-1 text-xs text-gray-600 dark:text-zinc-400 hover:bg-violet-500/10 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+          >
+            {s}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-5 min-h-[96px]">
+        {loading && results.length === 0 && (
+          <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-zinc-500">
+            <svg className="h-3.5 w-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+            </svg>
+            Searching…
+          </div>
+        )}
+
+        {!loading && searched && results.length === 0 && query.trim() && (
+          <p className="text-sm text-gray-400 dark:text-zinc-500">
+            No matches for &ldquo;{query}&rdquo;. Try a different term.
+          </p>
+        )}
+
+        {results.length > 0 && (
+          <div className="flex flex-col gap-2">
+            {results.map((r) => {
+              const text = r.extracted_prompt || r.tweet_text
+              const categoryLabel = r.prompt_category && r.prompt_category in TECHNIQUE_LABELS
+                ? TECHNIQUE_LABELS[r.prompt_category].label
+                : null
+              return (
+                <Link
+                  key={r.id}
+                  href={`/prompts/${r.id}`}
+                  className="block rounded-xl border border-black/[0.06] dark:border-white/[0.06] bg-white/60 dark:bg-white/[0.02] p-4 hover:border-violet-500/40 dark:hover:border-violet-400/40 transition-colors"
+                >
+                  <p className="text-sm text-gray-800 dark:text-zinc-200 line-clamp-2 leading-relaxed">
+                    {text}
+                  </p>
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    {r.detected_model && (
+                      <span className="rounded-full bg-violet-500/10 px-2 py-0.5 text-[10px] font-medium text-violet-600 dark:text-violet-400">
+                        {r.detected_model}
+                      </span>
+                    )}
+                    {categoryLabel && (
+                      <span className="rounded-full bg-pink-500/10 px-2 py-0.5 text-[10px] font-medium text-pink-600 dark:text-pink-400">
+                        {categoryLabel}
+                      </span>
+                    )}
+                    <span className="text-[11px] text-gray-400 dark:text-zinc-500">@{r.author_handle}</span>
+                  </div>
+                </Link>
+              )
+            })}
+            <Link
+              href={`/prompts?q=${encodeURIComponent(query)}`}
+              className="mt-1 text-xs text-violet-500 dark:text-violet-400 hover:underline"
+            >
+              See all results in Prompts &rarr;
+            </Link>
+          </div>
+        )}
+
+        {!searched && !query.trim() && !loading && (
+          <p className="text-sm text-gray-400 dark:text-zinc-500">
+            Search by keyword, model, or technique. Every match is a viral post by a real practitioner.
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ── Stats type ──────────────────────────────────────────────────────────────
 
 interface Stats {
@@ -280,8 +407,6 @@ export default function LandingPage() {
   const [mediaBreakdown, setMediaBreakdown] = useState<MediaBreakdown[]>([])
   const [techniques, setTechniques] = useState<TechniqueBreakdown[]>([])
   const [topModels, setTopModels] = useState<ModelCount[]>([])
-  const [cameraInsight, setCameraInsight] = useState<{ model: string; pct: number; total: number }[]>([])
-  const [multiShot, setMultiShot] = useState<{ pct: number; multi: number; total: number } | null>(null)
 
   useEffect(() => {
     fetch('/api/stats')
@@ -316,15 +441,6 @@ export default function LandingPage() {
       .catch(() => {
         setStats((s) => ({ ...s, loaded: true }))
       })
-
-    fetch('/api/stats/insight')
-      .then((r) => { if (!r.ok) throw new Error(r.statusText); return r.json() })
-      .then((data) => {
-        if (data.cameraMotion?.length) setCameraInsight(data.cameraMotion.slice(0, 5))
-        if (data.multiShot && data.multiShot.total > 0) setMultiShot(data.multiShot)
-      })
-      .catch(() => {})
-
   }, [])
 
   return (
@@ -391,77 +507,16 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Insight callout ─────────────────────────────────────────── */}
-      {stats.loaded && stats.total > 0 && (
-        <section className="max-w-4xl mx-auto px-5 pb-20">
-          <h2 className="font-serif text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-3">
-            From the data
-          </h2>
-          <p className="text-gray-500 dark:text-zinc-400 mb-8 max-w-2xl">
-            Live queries against the dataset.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Camera motion comparison across video models */}
-            {cameraInsight.length >= 2 && (
-              <div className="rounded-2xl border border-black/[0.06] dark:border-white/[0.06] bg-white/40 dark:bg-white/[0.02] p-6 md:p-8">
-                <span className="text-[10px] font-mono font-bold text-violet-500 dark:text-violet-400 uppercase tracking-widest">
-                  Camera direction in video prompts
-                </span>
-                <div className="mt-4 flex flex-col gap-2">
-                  {cameraInsight.map((m) => (
-                    <div key={m.model} className="flex items-center gap-3">
-                      <span className="text-xs font-medium text-gray-700 dark:text-zinc-300 w-28 truncate text-right shrink-0">{m.model}</span>
-                      <div className="flex-1 h-5 bg-black/[0.03] dark:bg-white/[0.03] rounded-md overflow-hidden">
-                        <div
-                          className="h-full rounded-md bg-violet-500/20 dark:bg-violet-400/20 border-l-[3px] border-violet-500 dark:border-violet-400 transition-all duration-700"
-                          style={{ width: `${Math.max(4, m.pct)}%` }}
-                        />
-                      </div>
-                      <span className="text-xs font-mono text-gray-500 dark:text-zinc-400 w-10 shrink-0">{m.pct}%</span>
-                      <span className="text-[10px] font-mono text-gray-300 dark:text-zinc-600 w-12 shrink-0">n={m.total}</span>
-                    </div>
-                  ))}
-                </div>
-                <p className="mt-4 text-xs text-gray-400 dark:text-zinc-500 leading-relaxed">
-                  Share of video prompts that specify camera movement (pan, dolly, tracking, etc.) by model.
-                </p>
-                <Link href="/insights" className="mt-2 inline-block text-xs text-violet-500 dark:text-violet-400 hover:underline">
-                  More in Insights &rarr;
-                </Link>
-              </div>
-            )}
-            {/* Reference usage + prompt length */}
-            <div className="flex flex-col gap-4">
-              {stats.withReference > 0 && (
-                <div className="rounded-2xl border border-black/[0.06] dark:border-white/[0.06] bg-white/40 dark:bg-white/[0.02] p-6">
-                  <div className="flex items-baseline gap-3">
-                    <span className="font-mono text-3xl font-bold text-gray-900 dark:text-white tabular-nums">
-                      {Math.round((stats.withReference / stats.total) * 100)}%
-                    </span>
-                    <span className="text-sm text-gray-500 dark:text-zinc-400">use reference images</span>
-                  </div>
-                  <p className="mt-2 text-xs text-gray-400 dark:text-zinc-500 leading-relaxed">
-                    One in four practitioners uploads a face, a style frame, or a composition sketch alongside their prompt — the rest rely on pure text.
-                  </p>
-                </div>
-              )}
-              {multiShot && (
-                <div className="rounded-2xl border border-black/[0.06] dark:border-white/[0.06] bg-white/40 dark:bg-white/[0.02] p-6">
-                  <div className="flex items-baseline gap-3">
-                    <span className="font-mono text-3xl font-bold text-gray-900 dark:text-white tabular-nums">
-                      {multiShot.pct}%
-                    </span>
-                    <span className="text-sm text-gray-500 dark:text-zinc-400">are multi-shot</span>
-                  </div>
-                  <p className="mt-2 text-xs text-gray-400 dark:text-zinc-500 leading-relaxed">
-                    Of video prompts collected since March 2026, {multiShot.multi.toLocaleString()} of {multiShot.total.toLocaleString()} stitch together multiple shots or scenes — a pattern Seedance and Kling popularized with bracketed timestamp syntax.
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-      )}
+      {/* ── Live search ─────────────────────────────────────────────── */}
+      <section className="max-w-4xl mx-auto px-5 pb-20">
+        <h2 className="font-serif text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-3">
+          Search the dataset
+        </h2>
+        <p className="text-gray-500 dark:text-zinc-400 mb-8 max-w-2xl">
+          Every prompt here came from a viral post. Try a keyword and see what shows up.
+        </p>
+        <LiveSearchPreview />
+      </section>
 
       {/* ── Methodology ─────────────────────────────────────────────── */}
       <section className="max-w-4xl mx-auto px-5 pb-20">
