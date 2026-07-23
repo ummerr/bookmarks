@@ -237,10 +237,17 @@ export default function ImageToPromptPage() {
     setActiveId(null)
 
     try {
+      const bitmap = await createImageBitmap(image)
+      const imageWidth = bitmap.width
+      const imageHeight = bitmap.height
+      bitmap.close()
+
       const compressed = await compressImage(image)
       const formData = new FormData()
       formData.append('image', compressed, image.name)
       formData.append('targetModel', targetModel)
+      formData.append('imageWidth', String(imageWidth))
+      formData.append('imageHeight', String(imageHeight))
 
       const res = await fetch('/api/tools/image-to-prompt', {
         method: 'POST',
