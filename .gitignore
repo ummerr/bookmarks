@@ -36,6 +36,12 @@ yarn-error.log*
 # vercel
 .vercel
 
+# backups
+/backups
+
+# sxs evaluation runs (keep evals/README.md, ignore outputs)
+/evals/runs/
+
 # sqlite database
 bookmarks.db
 bookmarks.db-shm
