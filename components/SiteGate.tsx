@@ -8,7 +8,12 @@ const PASSWORD = 'chelsea'
 
 // Paths that stay public (no password required).
 function isPublicPath(pathname: string): boolean {
-  return pathname === '/omni-report' || pathname.startsWith('/omni-report/')
+  return (
+    pathname === '/omni-report' ||
+    pathname.startsWith('/omni-report/') ||
+    pathname === '/market-map' ||
+    pathname.startsWith('/market-map/')
+  )
 }
 
 export default function SiteGate() {

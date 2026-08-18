@@ -20,3 +20,4 @@
 
 ## Auto session log
 - **2026-07-23** — session ended: 24 file(s) dirty, 0 commit(s) unpushed. Last touched: `.gitignore`. <!-- campfire:2026-07-23 -->
+- **2026-08-17** — session ended: 3 file(s) dirty, 0 commit(s) unpushed. Last touched: `components/Nav.tsx`. <!-- campfire:2026-08-17 -->
