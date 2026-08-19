@@ -454,7 +454,8 @@ export default function MarketMapPage() {
                   compounds at 140%+ NRR and HeyGen at break-even, beneath incumbent attention);{' '}
                   <strong>cost-disciplined consumer video</strong> (Kling, PixVerse, Hailuo — the
                   discipline Sora lacked); <strong>media-native infrastructure</strong> (fal — every
-                  model war grows its TAM); and <strong>open-weights and world models</strong> (BFL,
+                  new model widens the serving problem it is paid to solve); and{' '}
+                  <strong>open-weights and world models</strong> (BFL,
                   Lightricks, World Labs — being the neutral standard as media and simulation
                   converge).
                 </p>
@@ -462,9 +463,9 @@ export default function MarketMapPage() {
             </Section>
 
             {/* §09 Economics */}
-            <Section id="economics" title="Economics" eyebrow="§ 09">
+            <Section id="economics" title="Cost Structure & Adoption Signals" eyebrow="§ 09">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <StatTile stat="50–60%" label="Gross margin for apps on third-party models (Bessemer, Feb 2026)" />
+                <StatTile stat="50–60%" label="Revenue kept after model-serving costs — apps on third-party models (Bessemer, Feb 2026)" />
                 <StatTile stat="2–5x" label="Effective cost vs list price once retries are counted" />
                 <StatTile stat="$0.02–0.75" label="Per-second video API price envelope, frontier to challenger" />
                 <StatTile stat="~$400M" label="fal annualized revenue — the orchestration proof point" />
@@ -500,43 +501,28 @@ export default function MarketMapPage() {
                   variance).<Cite id="3" /><Cite id="8" /><Cite id="16" /><Cite id="40" />{' '}
                   Sector funding: AI video alone took $5.6B in 2026 year-to-date, 43% above all of
                   2025 — concentrated in model builders and world models, while thin-wrapper seed
-                  activity visibly cooled.<Cite id="30" />
+                  activity visibly cooled.<Cite id="30" /> How that committed capital compares
+                  with demonstrated adoption, company by company, is charted in the closing
+                  section (Fig. 07).
                 </p>
-                <Figure
-                  id="fig-valuation-multiples"
-                  num={6}
-                  title="Valuation vs revenue, log-log"
-                  takeaway="Dashed guides mark valuation-to-ARR multiples. Most of the club clusters between 10x and 30x; the outliers are the story."
-                  notes={
-                    <p>
-                      Ranges plot at their midpoint. Solid dots are company-stated or audited
-                      figures, half-tone dots third-party estimates, and the dashed hollow dot
-                      (Higgsfield) is claimed and unverified. Meshy sits alone near the 35x line —
-                      priced on world-model optionality, not revenue.<Cite id="33" /> The chart
-                      also can’t plot its most efficient company: HeyGen — $200M ARR on about $74M
-                      raised — has no disclosed valuation.<Cite id="8" />
-                    </p>
-                  }
-                >
-                  <ValuationScatter entries={FINANCIALS} />
-                </Figure>
                 <p>
-                  <strong>Who captures the margin when an app calls someone else’s model?</strong>{' '}
-                  The pools sit at the bottom and at the optimization layer: GPU landlords
-                  (CoreWeave’s $21B Meta expansion), media-native inference (fal’s kernel spread),
-                  and apps that own their model — the four best-margin GenMedia app companies
-                  (ElevenLabs, HeyGen, Synthesia, Midjourney) all serve their own weights. Apps
-                  renting third-party video models run 40–50% of revenue in model COGS and escape
-                  through credit-pricing breakage, retry reduction, and riding a cost curve that
+                  <strong>Where does the money settle when an app calls someone else’s
+                  model?</strong> The durable pools sit at the bottom and at the optimization
+                  layer: GPU landlords (CoreWeave’s $21B Meta expansion), media-native inference
+                  (fal’s kernel spread), and apps that serve their own weights — the four
+                  strongest cost structures among GenMedia app companies (ElevenLabs, HeyGen,
+                  Synthesia, Midjourney) all own their models. Apps renting third-party video
+                  models send 40–50% of revenue back out as model serving cost and escape through
+                  credit-pricing breakage, retry reduction, and riding a cost curve that
                   falls ~10x per 18 months while their credit prices fall slower.<Cite id="36" />{' '}
-                  That last point is under-appreciated: app-layer margins structurally{' '}
+                  That last point is under-appreciated: app-layer cost structures structurally{' '}
                   <em>improve</em> with every quarter of inference deflation.
                 </p>
                 <p>
                   Attractive economics: audio/voice, enterprise avatar video, media inference
                   infrastructure, model-licensing-to-platforms (BFL’s ~$300M of contracts), and
                   compliance/provenance tooling with regulatory forcing functions. Structurally
-                  difficult: consumer free-tier video (Sora’s corpse), thin wrappers, frontier
+                  difficult: consumer free-tier video (Sora’s shutdown), thin wrappers, frontier
                   video labs without distribution, and licensing intermediaries with thin take
                   rates. One threshold worth watching: if per-second video pricing breaks below
                   ~$0.005, programmatic ad video at auction scale becomes economical — and the
@@ -545,13 +531,23 @@ export default function MarketMapPage() {
               </Prose>
             </Section>
 
-            {/* §10 Moats */}
-            <Section id="moats" title="Moats & Commoditization" eyebrow="§ 10">
+            {/* §10 Durability by layer */}
+            <Section id="moats" title="Durability & Commoditization by Layer" eyebrow="§ 10">
+              <Prose>
+                <p>
+                  Layer by layer: which forms of differentiation hold up under model churn, which
+                  architectural levers make them stick, and where the current advantage is likely
+                  to commoditize within a couple of years. The pattern that emerges is consistent
+                  with the rest of the map — positions anchored in accumulated state, enforceable
+                  licenses, or capital-intensive physical infrastructure hold; positions anchored
+                  in model capability alone do not.
+                </p>
+              </Prose>
               <Figure
                 id="fig-moat-matrix"
-                num={7}
-                title="Moats and commoditization risk, layer by layer"
-                takeaway="Where durable moats can still form — and which layers are already commodity. Low risk clusters where courts, capital intensity, or regulation enforce the moat."
+                num={6}
+                title="Durability and commoditization risk, layer by layer"
+                takeaway="Where durable advantages can still form — and which layers are already commodity. Low risk clusters where courts, capital intensity, or regulation enforce the position."
                 notes={
                   <p>
                     Risk is the likelihood that the layer’s current differentiation commoditizes
@@ -579,7 +575,7 @@ export default function MarketMapPage() {
                   travel: Alibaba, BFL, and MiniMax are all gating their newest tiers. Open weights
                   are increasingly a trailing-edge distribution strategy, not a frontier strategy.
                   In <strong>audio</strong>, weights are irrelevant — licensed catalogs are the
-                  moat. In <strong>3D</strong>, open (Hunyuan3D) is genuinely competitive. In{' '}
+                  durable advantage. In <strong>3D</strong>, open (Hunyuan3D) is genuinely competitive. In{' '}
                   <strong>world models</strong>, NVIDIA’s Cosmos 3 is the open anchor, deliberately
                   arming the ecosystem the way Llama armed LLMs.<Cite id="21" />
                 </p>
@@ -620,11 +616,12 @@ export default function MarketMapPage() {
                   verticals</strong> rather than platforms: audio (ElevenLabs, UK/Poland), open
                   image (Black Forest Labs, Germany), enterprise video (Synthesia, UK), aggregation
                   (Magnific, Spain; Runware, UK) — while the EU AI Act makes provenance a
-                  compliance moat for whoever has the machinery.<Cite id="29" />{' '}
+                  compliance advantage for whoever already has the machinery.<Cite id="29" />{' '}
                   <strong>Israel</strong> punches above its weight in open video (Lightricks) and
                   real-time inference (Decart). Regulation is converging on mandatory provenance —
-                  China since September 2025, the EU since August 2026 — a tax on small consumer
-                  apps and a tailwind for watermarking infrastructure.<Cite id="38" />
+                  China since September 2025, the EU since August 2026 — a fixed compliance cost
+                  small consumer apps struggle to carry, and a tailwind for watermarking
+                  infrastructure.<Cite id="38" />
                 </p>
               </Prose>
             </Section>
@@ -664,13 +661,13 @@ export default function MarketMapPage() {
               </ol>
             </Section>
 
-            {/* §14 White space */}
-            <Section id="white-space" title="Winners, Losers & White Space" eyebrow="§ 14">
+            {/* §14 Open problems */}
+            <Section id="white-space" title="Saturated Zones & Open Problems" eyebrow="§ 14">
               <Prose>
                 <p>
-                  <strong>Overcrowded:</strong> consumer text-to-video apps (free platform bundles
-                  cap the ceiling), text-to-image workspaces, 3D asset generation (two capital
-                  leaders will starve the long tail at sub-$1/model pricing), AI presentations (Gamma
+                  <strong>Saturated:</strong> consumer text-to-video apps (free platform bundles
+                  cap the ceiling), text-to-image workspaces, 3D asset generation (the two
+                  best-funded leaders will starve the long tail at sub-$1/model pricing), AI presentations (Gamma
                   won just as Microsoft and Google shipped native equivalents), and ad-creative
                   SaaS (crushed between platform giveaways and synthetic-UGC fatigue — Icon’s
                   pivot from "AI Admaker" to "Human Admaker", followed by a reported March 2026
@@ -686,7 +683,7 @@ export default function MarketMapPage() {
               </Prose>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <ChangeCard tag="White space" tagColor="#10b981" title="Automated media evaluation" body="Quality measurement is still blind human Elo. Agents can't self-evaluate, pipelines can't regression-test. Unsolved because taste resists metrics — but temporal consistency, character permanence, and edit fidelity are measurable. A trusted eval layer becomes the QA gate for every creative agent." />
-                <ChangeCard tag="White space" tagColor="#10b981" title="The vLLM of diffusion" body="No open standard serving engine exists for the heterogeneous media-model zoo; fal and Decart hand-build kernels, and that gap is literally priced at ~$7B (the Decart talks). An open engine + hosted control plane would restructure the inference layer — and halve its margins." />
+                <ChangeCard tag="White space" tagColor="#10b981" title="The vLLM of diffusion" body="No open standard serving engine exists for the heterogeneous media-model zoo; fal and Decart hand-build kernels, and that gap is literally priced at ~$7B (the Decart talks). An open engine + hosted control plane would restructure the inference layer — and compress its pricing overnight." />
                 <ChangeCard tag="White space" tagColor="#10b981" title="Prompt-level rights clearing" body="Likeness detection exists (Loti, Vermillio); a rail that clears identity, style, and catalog rights at generation time does not — despite music proving rights holders will deal. Whoever builds the clearing house collects a small percentage of an enormous base." />
                 <ChangeCard tag="White space" tagColor="#10b981" title="Long-form narrative generation" body="Retry-adjusted economics make minutes-long, character-consistent video 10–100x too expensive; the cost curve is solving seconds, not stories. Models generate inside isolated temporal windows with no global scene memory, so the likely winner is continuity middleware — converting rendered output into reusable 3D/keyframe state enforced across heterogeneous model APIs — combined with draft-then-upscale workflows and retry reduction." />
                 <ChangeCard tag="White space" tagColor="#10b981" title="Provenance that survives distribution" body="Article 50 mandates watermark + metadata, but re-encoding strips both and detection-at-consumption is unbuilt. Compliance demand now exceeds technical capability — a regulatory forcing function with fines attached and no adequate vendor." />
@@ -704,11 +701,11 @@ export default function MarketMapPage() {
             </Section>
 
             {/* §16 Control points */}
-            <Section id="control-points" title="Strategic Control Points, 2030" eyebrow="§ 16">
+            <Section id="control-points" title="Architectural Control Points, 2030" eyebrow="§ 16">
               <Prose>
                 <p>
                   Derived from the research, not assumed: six places where ownership plausibly
-                  produces disproportionate power in 2030.
+                  produces disproportionate leverage in 2030.
                 </p>
               </Prose>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -723,7 +720,7 @@ export default function MarketMapPage() {
               <Prose>
                 <p>
                   <strong>Where the market came from.</strong> Generative media spent 2023 as a
-                  demo, 2024 as a product race, and 2025 as a workflow land-grab. The industry that
+                  demo, 2024 as a product race, and 2025 as a contested workflow build-out. The industry that
                   entered 2026 was still organized around a simple question — whose model makes the
                   best pixels? — and the industry exiting August 2026 has concluded that this was
                   the wrong question. The best pixels changed hands five times in twelve months.
@@ -736,7 +733,7 @@ export default function MarketMapPage() {
                   survive its own inference bill, and its shutdown handed the consumer field to
                   Google and ByteDance. Kling posted a ~$475M filed run-rate and became the
                   industry’s revenue benchmark. Music’s lawsuits became licenses, converting the
-                  industry’s largest legal risk into its most enforceable moat. Every layer of the
+                  industry’s largest legal risk into its most enforceable advantage. Every layer of the
                   stack shipped a creative agent, from Adobe down to fal. And world models pulled in
                   over $3B while quietly leaving entertainment for simulation — the first sign that
                   GenMedia’s frontier technology may ultimately be worth more outside media than
@@ -752,39 +749,44 @@ export default function MarketMapPage() {
                   commoditized. <strong>Where value is migrating:</strong> up from models into
                   agents and state, down from models into inference and compute, and sideways into
                   rights. The model layer itself is the valley: indispensable, expensive, and
-                  structurally the hardest place in the stack to keep margin unless fused to
-                  distribution.
+                  structurally the hardest place in the stack to hold a margin structure unless
+                  fused to distribution.
                 </p>
                 <p>
                   <strong>Who is best positioned.</strong> Google, because it is the only company
                   integrated from silicon to a billion-user creation surface, and it won consumer
                   video by forfeit. ByteDance, for the same integration in the world’s largest
-                  creation funnel. Adobe, which converted from disruption target to toll collector
-                  by selling everyone’s models through governed workflow. ElevenLabs, the cleanest
-                  full-stack modality winner. fal, which owns the layer every model war enriches.
-                  And the licensed-catalog holders — the majors, Suno post-settlement — who own the
-                  only moats that courts actively enforce. The most interesting long shots are the
-                  state-layer startups: Higgsfield, Magnific, and Flora are racing to accumulate
-                  enough creative state to survive the incumbent pincer.
+                  creation funnel. Adobe, which converted from disruption target to the governed
+                  gateway for professional work, selling everyone’s models through its own
+                  surfaces. ElevenLabs, the cleanest full-stack modality winner. fal, which owns
+                  the layer every new model release enriches. And the licensed-catalog holders —
+                  the majors, Suno post-settlement — who hold the only advantages courts actively
+                  enforce. The most interesting open cases are the state-layer startups:
+                  Higgsfield, Magnific, and Flora are racing to accumulate enough creative state
+                  before the incumbents arrive from both sides.
                 </p>
                 <p>
-                  <strong>What the market misunderstands.</strong> Three things. First, it still
-                  prices frontier video labs as if leaderboard position were an asset; it is a
-                  quarterly expense. Second, it treats app-layer margin compression as permanent
-                  when it is cyclical — inference deflation of ~10x per 18 months means today’s
-                  50–60% gross margin apps are tomorrow’s 75% apps, and the market is underpricing
-                  that operating leverage. Third, it reads China as a threat to Western model labs
-                  when the evidence says China is a threat to Western <em>consumer apps</em> — and
-                  simultaneously the supply side that makes Western aggregators and workflow
-                  companies more valuable.
+                  <strong>Where the consensus reading diverges from the evidence.</strong> Three
+                  places, each grounded in the same turnover data. Leaderboard position is still
+                  widely treated as an accumulating asset, but with leadership changing hands in
+                  weeks it behaves like a depreciating one — a recurring engineering expense that
+                  buys temporary placement rather than durable position. App-layer cost
+                  compression is read as permanent when the underlying curve says otherwise:
+                  inference cost falls roughly 10x every 18 months while credit prices fall
+                  slower, so an app that keeps 50–60% of revenue after serving costs today has
+                  structural room to widen toward 75%, not narrow. And China registers as a threat
+                  to Western model labs when the adoption data points elsewhere — Chinese models
+                  pressure Western <em>consumer apps</em> while simultaneously supplying the model
+                  shelf that makes Western aggregators and workflow layers more capable.
                 </p>
                 <p>
                   <strong>The most important unanswered question:</strong> does the creative agent
-                  actually change user behavior? The entire industry bet 2026 on delegation
-                  replacing manipulation, but no retention data yet proves creators want to hand
-                  off the loop rather than hold it. If agents win, the state layer is the biggest
-                  prize in creative software history. If they don’t, 2026’s agent land-grab will
-                  look like 2021’s metaverse pivots — and the canvas owners keep everything. A
+                  actually change user behavior? The entire industry committed 2026 to the
+                  hypothesis that delegation will replace direct manipulation, but no retention
+                  data yet proves creators want to hand off the loop rather than hold it. If
+                  agents win, the state layer is the biggest prize in creative software history.
+                  If they don’t, 2026’s agent build-out will read like 2021’s metaverse pivots —
+                  and the canvas owners keep everything. A
                   second open question sits underneath the first: will spatial world models
                   replace 2D frame rendering before 2D video reaches affordable temporal
                   continuity? If real-time simulation hits cost parity first, the industry skips
@@ -795,8 +797,8 @@ export default function MarketMapPage() {
                   <strong>The stack in 2030, most likely shape:</strong> two or three full-stack
                   distribution giants (Google, ByteDance, possibly Meta) serving casual creation as
                   a free feature; an enterprise workflow duopoly (Adobe, plus whoever wins the
-                  agent race) collecting tolls on professional work; a licensed-content regime
-                  taxing all commercial generation; one or two media-native inference platforms
+                  agent race) collecting a fee on professional work; a licensed-content regime
+                  sitting in the request path of all commercial generation; one or two media-native inference platforms
                   under everything; a persistent open-weights substrate (Chinese labs plus NVIDIA’s
                   Cosmos orbit) capping prices; and a handful of vertical modality winners —
                   audio’s already decided — with video’s independent labs either absorbed,
@@ -806,33 +808,55 @@ export default function MarketMapPage() {
 
               <div className="flex flex-col gap-4 mt-2">
                 <h3 className="text-[13px] font-semibold uppercase tracking-[0.14em] text-gray-500 dark:text-zinc-400">
-                  Five things we believe
+                  Five working conclusions
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <ChangeCard tag="01" tagColor={THESIS} title="Standalone video labs are melting assets" body="By 2028, no independent video-only model company commands a premium valuation without owned distribution or a robotics/simulation revenue line. Runway's GWM and Luma's pro-pipeline pivots are the leaders reading their own future." />
-                  <ChangeCard tag="02" tagColor={THESIS} title="Creative state is the next acquisition currency" body="The next wave of $1B+ GenMedia acquisitions will be workflow/state companies, not model labs (infrastructure like Decart excepted). Weavy at >$200M on ~$4M raised was the opening price, not the peak." />
+                  <ChangeCard tag="01" tagColor={THESIS} title="Standalone video labs hold depreciating positions" body="By 2028, no independent video-only model company sustains a premium position without owned distribution or a robotics/simulation revenue line. Runway's GWM and Luma's pro-pipeline pivots are the leaders reading their own future." />
+                  <ChangeCard tag="02" tagColor={THESIS} title="Creative state is what acquirers are buying next" body="The next wave of $1B+ GenMedia acquisitions will be workflow/state companies, not model labs (infrastructure like Decart excepted). Weavy at >$200M on ~$4M raised was the opening price, not the peak." />
                   <ChangeCard tag="03" tagColor={THESIS} title="China wins consumer; the West keeps enterprise" body="Compliance, IP litigation, and provenance mandates keep Western enterprise procurement in the licensed lane regardless of leaderboards — a durable price premium for Adobe, Moonvalley, and licensed-first labs that no Chinese model can compete away." />
-                  <ChangeCard tag="04" tagColor={THESIS} title="App-layer margins inflect upward from here" body="Inference cost falls ~10x per 18 months while credit prices fall slower; today's 50–60% gross-margin apps become 75%+ by 2028. The consensus 'wrapper compression' fear is backward-looking — the squeeze already happened." />
-                  <ChangeCard tag="05" tagColor={THESIS} title="An open serving standard halves orchestration margins" body="A vLLM-of-diffusion emerges within 24 months — too much value is pooled behind hand-built kernels for open source to ignore. fal's move up into agents is the incumbent hedging its own commoditization." />
+                  <ChangeCard tag="04" tagColor={THESIS} title="App-layer cost structures improve from here" body="Inference cost falls ~10x per 18 months while credit prices fall slower; apps keeping 50–60% of revenue after serving costs keep 75%+ by 2028. The consensus 'wrapper compression' fear is backward-looking — the squeeze already happened." />
+                  <ChangeCard tag="05" tagColor={THESIS} title="An open serving standard compresses orchestration pricing" body="A vLLM-of-diffusion emerges within 24 months — too much value is pooled behind hand-built kernels for open source to ignore. fal's move up into agents is the incumbent hedging its own commoditization." />
                 </div>
 
                 <h3 className="text-[13px] font-semibold uppercase tracking-[0.14em] text-gray-500 dark:text-zinc-400 mt-2">
                   Five things to watch
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <ChangeCard tag="W1" tagColor={FACT} title="Sony and UMG v. Suno" body="The two unsettled major-label suits — no fair-use ruling expected before 2027 (dispositive motions due April). A fair-use win for Suno weakens the licensed-catalog moat across all modalities; a loss cements licensing as the permanent tax on generation." />
+                  <ChangeCard tag="W1" tagColor={FACT} title="Sony and UMG v. Suno" body="The two unsettled major-label suits — no fair-use ruling expected before 2027 (dispositive motions due April). A fair-use win for Suno weakens the licensed-catalog advantage across all modalities; a loss cements licensing as a permanent per-generation fee." />
                   <ChangeCard tag="W2" tagColor={FACT} title="Does Anthropic–Decart close?" body="A frontier LLM lab paying ~$7B for media inference optimization would confirm that real-time media serving is strategic infrastructure — and start a bidding war for the remaining independents." />
-                  <ChangeCard tag="W3" tagColor={FACT} title="The Kling IPO" body="The spin-out closed in July — roughly $3B at $18B post, with Tencent and Alibaba among the investors — and a Hong Kong listing is targeted for 2027. A public comp for a Chinese video unit would test whether Western investors can own the consumer side of the bifurcated market." />
+                  <ChangeCard tag="W3" tagColor={FACT} title="The Kling IPO" body="The spin-out closed in July — roughly $3B at $18B post, with Tencent and Alibaba among the investors — and a Hong Kong listing is targeted for 2027. A public listing for a Chinese video unit would put audited disclosure behind the consumer side of the bifurcated ecosystem for the first time." />
                   <ChangeCard tag="W4" tagColor={FACT} title="Adobe's agent inside ChatGPT and Claude" body="The first real test of whether creative agents can live inside general assistants. If usage migrates there, the chat surface — not the creative suite — becomes the distribution layer for creative work." />
                   <ChangeCard tag="W5" tagColor={FACT} title="Meta's end-2026 full ad automation" body="If advertisers hand Meta a URL and a budget and get campaigns back, the third-party ad-creative category collapses into the platforms — and the largest commercial GenMedia use case disappears into an ad auction." />
                 </div>
+
+                <Figure
+                  id="fig-valuation-multiples"
+                  num={7}
+                  title="Committed capital vs demonstrated adoption"
+                  takeaway="Latest valuation against revenue, log-log. Dashed guides mark capital-to-revenue ratios; most of the $100M+ club clusters between 10x and 30x, and the outliers say the most about where expectations run ahead of evidence."
+                  notes={
+                    <p>
+                      A closing cross-check on everything above: where external capital has
+                      committed relative to what usage demonstrates, with evidence grade encoded
+                      in the marks. Ranges plot at their midpoint. Solid dots are company-stated
+                      or audited figures, half-tone dots third-party estimates, and the dashed
+                      hollow dot (Higgsfield) is claimed and unverified. Meshy sits alone near the
+                      35x guide — capital there is underwriting a world-model research program
+                      rather than current usage.<Cite id="33" /> The chart also can’t plot the
+                      map’s most cost-disciplined company: HeyGen — $200M ARR on about $74M raised
+                      — has no disclosed valuation.<Cite id="8" />
+                    </p>
+                  }
+                >
+                  <ValuationScatter entries={FINANCIALS} />
+                </Figure>
 
                 <div className="rounded-2xl border border-violet-200 dark:border-violet-800/30 bg-violet-50 dark:bg-violet-950/20 p-6 md:p-8 mt-2">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-violet-500/80 mb-3">
                     The one-sentence thesis
                   </p>
                   <p className="font-serif text-xl md:text-2xl leading-[1.5] text-gray-900 dark:text-white">
-                    The next era of generative media will be won by whoever owns the creative state —
+                    The next era of generative media belongs to whoever holds the creative state —
                     the characters, brands, and project memory that turn interchangeable models into
                     irreplaceable workflows — and the distribution to put it in front of a billion
                     people.
