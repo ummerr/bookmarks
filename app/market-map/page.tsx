@@ -137,7 +137,7 @@ export default function MarketMapPage() {
                   into the models themselves.
                 </p>
                 <p>
-                  Two events five weeks apart define the year. On March 24, 2026, OpenAI announced
+                  Two events define the year. On March 24, 2026, OpenAI announced
                   the shutdown of Sora — the best-known consumer video product in the West, dead in
                   six months on inference costs estimated anywhere from $1M to $15M a day against
                   roughly $2.1M of lifetime in-app revenue (both third-party
@@ -154,9 +154,9 @@ export default function MarketMapPage() {
                 </p>
               </Prose>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <ChangeCard tag="Fact" tagColor={FACT} title="The AI-video-as-feed thesis died" body="Sora shut down (app Apr 26, API Sep 24, 2026); Meta's Vibes limps at ~2M DAU with weak retention. AI video as a tool — inside CapCut, Shorts, ad platforms — is where the revenue actually is." />
+                <ChangeCard tag="Fact" tagColor={FACT} title="The AI-video-as-feed thesis died" body="Sora shut down (app Apr 26, API Sep 24, 2026); Meta's Vibes limps at ~2M DAU (Nov 2025) with weak retention. AI video as a tool — inside CapCut, Shorts, ad platforms — is where the revenue actually is." />
                 <ChangeCard tag="Fact" tagColor={FACT} title="Video quality converged; image held a frontier" body="~150 Elo covers the top 11 video models and 9 of the top 10 are Chinese. In image, GPT Image 2 still holds every #1 — though MAI-2.6's August debut cut the Arena lead from ~83 to 45 Elo — the one modality where frontier capability still differentiates." />
-                <ChangeCard tag="Fact" tagColor={FACT} title="Generation went free at the point of distribution" body="Veo free in YouTube Shorts, Seedance in CapCut, Adobe unlimited generations, Amazon giving ad creative away, Apple shipping photorealistic generation in iOS 27. The generation button is no longer a product." />
+                <ChangeCard tag="Fact" tagColor={FACT} title="Generation went free at the point of distribution" body="Veo free in YouTube Shorts, Seedance in CapCut, Adobe's 12-month unlimited-generations promo, Amazon giving ad creative away, Apple shipping photorealistic generation in iOS 27. The generation button is no longer a product." />
                 <ChangeCard tag="Fact" tagColor={FACT} title="Music flipped from lawsuits to licenses in nine months" body="WMG and BMG settled with Suno while UMG and WMG captured Udio as a label-controlled walled garden; UMG's suit against Suno is still live. Suno settled from strength at $5.4B, and licensed catalogs are now the durable advantage." />
                 <ChangeCard tag="Pattern" tagColor={PATTERN} title="Everyone shipped a creative agent in 2026" body="Adobe, fal, Flora, Krea, Creatify, Amazon — every layer of the stack converged on the same product. The durable advantage is shifting from model access to creative state: characters, brand constraints, project memory." />
                 <ChangeCard tag="Pattern" tagColor={PATTERN} title="Omni absorption is compressing the specialist tail" body="Native audio, lip-sync, video editing, and camera control folded into frontier models in 18 months. Specialists survive only behind hard workflow or real-time constraints: 3D rigging, fidelity upscaling, <500ms avatars." />
@@ -280,7 +280,7 @@ export default function MarketMapPage() {
                   March.<Cite id="10" /> Its drivers don’t reverse — a majority-Chinese video model
                   supply that Western apps won’t integrate one-by-one, bursty GPU economics, and
                   weekly model churn that makes single-vendor commitments irrational. Runware ($50M Series
-                  A, containerized 1MW inference pods) and WaveSpeed (fastest Western access to
+                  A, containerized 1MW inference pods) and WaveSpeed (fastest non-China access to
                   Chinese models) are growing in its wake.
                 </p>
                 <Figure
@@ -303,7 +303,7 @@ export default function MarketMapPage() {
                 <p>
                   Thin aggregation without that depth gets absorbed: Replicate — the #2 independent
                   media marketplace — sold to Cloudflare.<Cite id="12" /> Gateways (Vercel’s now
-                  lists 32 image and 30 video models) commoditize the unified-API surface from the
+                  lists 33 image and 32 video models) commoditize the unified-API surface from the
                   side, and hyperscalers own regulated-enterprise workloads by default. Meanwhile
                   ComfyUI’s JSON workflows are quietly becoming the portable orchestration format —
                   the closest thing GenMedia has to Terraform.<Cite id="13" />
@@ -331,8 +331,9 @@ export default function MarketMapPage() {
                   which forces queueing, webhooks, retries, and preemption-tolerant scheduling.
                   The model zoo is architecturally heterogeneous (DiT, autoregressive, GAN
                   upscalers, TTS, 3D) with no shared serving standard —{' '}
-                  <strong>there is no vLLM-of-diffusion</strong>, which is why fal builds tracing
-                  compilers and Decart builds sub-35ms kernels by hand. Chaining those
+                  <strong>there is no dominant open serving standard for diffusion</strong> —
+                  vLLM-Omni (open-sourced Nov 2025) is the first credible contender<Cite id="50" /> — which is why
+                  fal builds tracing compilers and Decart builds sub-40ms kernels by hand. Chaining those
                   architectures in one pipeline spikes VRAM unpredictably, and a mid-render
                   failure burns minutes of GPU time unless the stack does stateful checkpoint
                   recovery — a failure mode token streaming simply doesn’t have. Caching differs
@@ -346,7 +347,7 @@ export default function MarketMapPage() {
                   Acquirers have started registering these gaps. Cloudflare bought Replicate and
                   rights-marketplace Human Native; Anthropic is reportedly closing in on acquiring
                   Decart at ~$7B — advanced drafts exchanged by mid-August, mostly stock, with
-                  NVIDIA outbid — a frontier lab valuing a media inference-optimization stack at
+                  chosen over a higher NVIDIA offer — a frontier lab valuing a media inference-optimization stack at
                   acquisition scale.<Cite id="23" /><Cite id="48" /> On the compliance side, EU AI Act Article 50
                   transparency obligations began enforcement August 2, 2026, mandating C2PA
                   metadata plus imperceptible watermarking — 6,000+ organizations have adopted
@@ -428,7 +429,7 @@ export default function MarketMapPage() {
               <Prose>
                 <p>
                   Incumbent advantages bind in four places. <strong>Distribution and bundling</strong>:
-                  Google made video generation a feature of a 1B-MAU assistant and a $20–250/month
+                  Google made video generation a feature of a 1B-MAU assistant and a roughly $8–200/month
                   subscription ladder — after Sora’s exit it won the Western consumer field largely
                   uncontested.<Cite id="19" /> <strong>Ad-system data</strong>: Meta’s GEM models
                   optimize creative against auction outcomes, a closed loop no startup can enter,
@@ -449,7 +450,7 @@ export default function MarketMapPage() {
                 </p>
                 <p>
                   Startups can still build $10B+ companies in five lanes: <strong>audio</strong>{' '}
-                  (ElevenLabs at $11B and ~$500M ARR proves a full-stack modality winner where
+                  (ElevenLabs at $11B and $600M ARR proves a full-stack modality winner where
                   incumbents under-invested); <strong>enterprise vertical video</strong> (Synthesia
                   compounds at 140%+ NRR and HeyGen at break-even, beneath incumbent attention);{' '}
                   <strong>cost-disciplined consumer video</strong> (Kling, PixVerse, Hailuo — the
@@ -492,10 +493,10 @@ export default function MarketMapPage() {
                 <p>
                   The $100M+ ARR club as of August 2026, weighted by evidence quality: Higgsfield
                   (claimed $700M annualized on the heels of its Aug 17 round — company figures,
-                  unverified), Kling (~$475M run-rate per the Aug 19 Q2 filing), ElevenLabs (~$500M
-                  est.), Adobe AI-first (over $500M, earnings), Canva (~$4B+ total ARR with AI as
+                  unverified), Kling (~$475M run-rate per the Aug 19 Q2 filing), ElevenLabs ($600M,
+                  company-stated Jul 2026), Adobe AI-first (over $500M, earnings), Canva (~$4B+ total ARR with AI as
                   retention), fal (~$400M est.), Suno (~$300M est.), Runway (est. $100–300M
-                  with wide variance — the last hard figure is ~$90M in mid-2025), Magnific ($230M
+                  with wide variance — trackers est. ~$300M annualized by late 2025), Magnific ($230M
                   company-stated), HeyGen ($200M company-stated, near break-even), Synthesia
                   (~$150M), Gamma ($100M+, profitable), Midjourney (~$200–500M est., wide
                   variance).<Cite id="3" /><Cite id="8" /><Cite id="16" /><Cite id="40" />{' '}
@@ -601,7 +602,7 @@ export default function MarketMapPage() {
                   global video revenue leader (~$475M run-rate per the Aug 19 Q2 filing, ~70–75%
                   overseas as of Q1); MiniMax IPO’d in
                   Hong Kong with a +109% debut — beating every US lab to public markets; PixVerse
-                  raised $439M at a $2B+ valuation on 150M claimed international users; ByteDance ships
+                  raised $439M at a $2B+ valuation on 150M claimed registered users; ByteDance ships
                   Seedance to emerging markets first through CapCut.<Cite id="3" /><Cite id="24" /><Cite id="25" />{' '}
                   Alibaba and Tencent supply the open-weights substrate (Wan, Hunyuan) that runs
                   half the world’s ComfyUI workflows. The constraint is trust: Disney and Warner
@@ -683,7 +684,7 @@ export default function MarketMapPage() {
               </Prose>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <ChangeCard tag="White space" tagColor="#10b981" title="Automated media evaluation" body="Quality measurement is still blind human Elo. Agents can't self-evaluate, pipelines can't regression-test. Unsolved because taste resists metrics — but temporal consistency, character permanence, and edit fidelity are measurable. A trusted eval layer becomes the QA gate for every creative agent." />
-                <ChangeCard tag="White space" tagColor="#10b981" title="The vLLM of diffusion" body="No open standard serving engine exists for the heterogeneous media-model zoo; fal and Decart hand-build kernels, and that gap is literally priced at ~$7B (the Decart talks). An open engine + hosted control plane would restructure the inference layer — and compress its pricing overnight." />
+                <ChangeCard tag="White space" tagColor="#10b981" title="The vLLM of diffusion" body="No open serving engine dominates the heterogeneous media-model zoo yet — vLLM-Omni (Nov 2025) is the first credible contender — so fal and Decart still hand-build kernels, and that gap is literally priced at ~$7B (the Decart talks). A winning open engine + hosted control plane would restructure the inference layer — and compress its pricing overnight." />
                 <ChangeCard tag="White space" tagColor="#10b981" title="Prompt-level rights clearing" body="Likeness detection exists (Loti, Vermillio); a rail that clears identity, style, and catalog rights at generation time does not — despite music proving rights holders will deal. Whoever builds the clearing house collects a small percentage of an enormous base." />
                 <ChangeCard tag="White space" tagColor="#10b981" title="Long-form narrative generation" body="Retry-adjusted economics make minutes-long, character-consistent video 10–100x too expensive; the cost curve is solving seconds, not stories. Models generate inside isolated temporal windows with no global scene memory, so the likely winner is continuity middleware — converting rendered output into reusable 3D/keyframe state enforced across heterogeneous model APIs — combined with draft-then-upscale workflows and retry reduction." />
                 <ChangeCard tag="White space" tagColor="#10b981" title="Provenance that survives distribution" body="Article 50 mandates watermark + metadata, but re-encoding strips both and detection-at-consumption is unbuilt. Compliance demand now exceeds technical capability — a regulatory forcing function with fines attached and no adequate vendor." />
@@ -760,7 +761,7 @@ export default function MarketMapPage() {
                   gateway for professional work, selling everyone’s models through its own
                   surfaces. ElevenLabs, the cleanest full-stack modality winner. fal, which owns
                   the layer every new model release enriches. And the licensed-catalog holders —
-                  the majors, Suno post-settlement — who hold the only advantages courts actively
+                  the majors, Suno post-WMG-settlement — who hold the only advantages courts actively
                   enforce. The most interesting open cases are the state-layer startups:
                   Higgsfield, Magnific, and Flora are racing to accumulate enough creative state
                   before the incumbents arrive from both sides.
@@ -815,7 +816,7 @@ export default function MarketMapPage() {
                   <ChangeCard tag="02" tagColor={THESIS} title="Creative state is what acquirers are buying next" body="The next wave of $1B+ GenMedia acquisitions will be workflow/state companies, not model labs (infrastructure like Decart excepted). Weavy at >$200M on ~$4M raised was the opening price, not the peak." />
                   <ChangeCard tag="03" tagColor={THESIS} title="China wins consumer; the West keeps enterprise" body="Compliance, IP litigation, and provenance mandates keep Western enterprise procurement in the licensed lane regardless of leaderboards — a durable price premium for Adobe, Moonvalley, and licensed-first labs that no Chinese model can compete away." />
                   <ChangeCard tag="04" tagColor={THESIS} title="App-layer cost structures improve from here" body="Inference cost falls ~10x per 18 months while credit prices fall slower; apps keeping 50–60% of revenue after serving costs keep 75%+ by 2028. The consensus 'wrapper compression' fear is backward-looking — the squeeze already happened." />
-                  <ChangeCard tag="05" tagColor={THESIS} title="An open serving standard compresses orchestration pricing" body="A vLLM-of-diffusion emerges within 24 months — too much value is pooled behind hand-built kernels for open source to ignore. fal's move up into agents is the incumbent hedging its own commoditization." />
+                  <ChangeCard tag="05" tagColor={THESIS} title="An open serving standard compresses orchestration pricing" body="A vLLM-of-diffusion becomes the standard within 24 months — vLLM-Omni already shipped (Nov 2025) and too much value is pooled behind hand-built kernels for open source to ignore. fal's move up into agents is the incumbent hedging its own commoditization." />
                 </div>
 
                 <h3 className="text-[13px] font-semibold uppercase tracking-[0.14em] text-gray-500 dark:text-zinc-400 mt-2">

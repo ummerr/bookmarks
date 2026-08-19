@@ -1,6 +1,28 @@
 # Market Map — Multi-Agent Claim Validation, August 2026
 
-**Status: Round 1 applied (2026-08-19). Round 2 pending** — 8 of 13 critique agents were cut off by a session usage limit (resets 12:50pm PT) and will be resumed from cache; see "Round 2 scope" below.
+**Status: COMPLETE — rounds 1 and 2 applied (2026-08-19).**
+
+## Final result
+
+**Across both rounds: 352 findings — 291 confirmed · 32 corrected · 12 stale · 2 refuted · 15 unverifiable.** Enrichment: 65 of 74 companies now carry sourced `facts` (valuation / raised / key VCs / users / ARR / as-of); the other 9 are product lines of giants with no separable metrics (skip reasons logged). All corrections below are applied; `npm run build` green.
+
+### Round 2 highlights (applied on top of the Aug 19 voice-rewrite baseline, commit 3caacf1→9983565)
+
+- **Refuted (the review's strongest hit):** "there is no vLLM-of-diffusion" — vLLM-Omni (official vLLM project, Apache-2.0, Nov 2025) serves Wan/FLUX/Hailuo-class diffusion models in production. H8's verdict downgraded strongly-supported → supported; the claim reworded in H8, CP3, the moat matrix, §06, and both §14/§17 cards (now cited, source 50).
+- **ElevenLabs ARR $500M → $600M** (company-stated, Jul 2026) — updated in facts, Momentum #3, ARR chart, model table, §08, §09.
+- **Decart:** sub-35ms → **sub-40ms** (Lucy 2.5), and "NVIDIA outbid" **inverted the bidding** — NVIDIA reportedly offered more; shareholders preferred Anthropic. Fixed in 4 places.
+- **Suno/BMG was a license, not a settlement** (BMG never sued) — "settled WMG, licensed BMG" now everywhere; model-table entry no longer claims the licensed V6 has shipped (it hasn't; V5/V5.5 still power the platform).
+- **CapCut 400M+ MAU unsupported** → 300M+ (Feb 2026; a16z est. ~736M noted). **Sora 2 pricing** $0.10–0.70 → $0.10–0.50/sec. **Google's price ladder** $20–250 → ~$8–200/mo (I/O 2026 restructure). **Seedream 5.0** is now publicly ranked (#8 Arena T2I). **Tripo 2.5** renamed to current H3.1/P1.0 line. **Hailuo–Gemini AA gap** 3 → 11 Elo.
+- **Meshy ARR is genuinely contested:** $30M (TFN/3DPrint, GDC-era) vs $40M (Apr 2026 reporting, ~12x YoY per Series B PR) — now shown as "~$30–40M (reports conflict)" rather than either flat number.
+- **Tense/framing fixes:** Apple iOS 27 generation is announced, not shipped; Adobe "unlimited generations" is a 12-month promo; Muse "ends" → "set to replace" Midjourney/BFL licensing; "five weeks apart" pairing (broken by the Q2 re-anchor) dropped; Runway's ~$90M ghost figure removed from §09 (it survived round 1 only on the page); Canva has **no user-facing third-party model picker** (multi-model under the hood; Leonardo-lineage + licensed Veo 3) — note reworded; WaveSpeed is Singapore-based → "fastest non-China access"; Flora's Lionsgate is a FLORA client, not a FAUNA user; PixVerse's 150M are registered users.
+- **Sources repaired:** #3 (Kuaishou IR blocks bots → PR Newswire mirror), #27 (GlobeNewswire flaky → Yahoo syndication), #34 (SEC zero-padded-CIK 403 → canonical URL), #41 (paywalled Bloomberg whose own slug says $2B → co-lead BlueFive PR; label now notes the $2B initial close of the ~$3B round). Added #50 (vLLM-Omni), #51 (ElevenLabs $600M).
+- **All V7 rechecks settled** — Kling spin-out solid ($18B post, Tencent co-lead + Alibaba confirmed; $2B was the initial close), Advantage+ still pending as of mid-Aug (future-tense on the Jul 29 earnings call), Sony v. Suno dispositive motions due Apr 9 2027 (Jun 30 scheduling order), Wan open weights stop at 2.2, Gemini Notebook's 30M users is Google's own Jul 16 rebrand figure.
+- **Known stale-but-kept** (amber-dated, company-stated floors, no fresher figure exists): fal ~$400M (Feb/Mar 2026), Synthesia ~$150M + 140% NRR (Jan/Apr 2026), Magnific $230M (Apr 2026), Suno 2M subs/100M users (Feb 2026), Adobe >$5B AI-influenced (Sep 2025, now dated in H10), Tripo 6.5M creators (Mar 2026).
+- Completeness critic: ~85–90% of material claims verified, all high-stakes figures multiply so. Residual exposure: a handful of §01/§03/§06 prose numbers and some panel-4–8 entries whose figures were verified only via the enrichment agents' sourcing rather than a dedicated verifier (their source URLs are in the enrichment JSONs).
+
+---
+
+*The sections below are the round-1 log, kept for the audit trail.*
 
 ## How this was run
 
