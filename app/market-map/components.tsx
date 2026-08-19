@@ -1,4 +1,25 @@
-import type { CompanyKind, ModelDependency, Verdict } from './data'
+import type { Company, CompanyFacts, CompanyKind, ModelDependency, Verdict } from './data'
+import { REPORT_DATE } from './data'
+import { Logo } from './Logo'
+
+const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+const MONTH_ABBR: Record<string, number> = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 }
+
+export function formatReportDate(): string {
+  const [y, m, d] = REPORT_DATE.split('-').map(Number)
+  return `${MONTH_NAMES[m - 1]} ${d}, ${y}`
+}
+
+// A fact dated "MMM YYYY" is stale if the end of that month is more than 90 days
+// before REPORT_DATE. Anchored to REPORT_DATE (never Date.now()) so redeploys
+// don't silently flip flags; unparseable dates are treated as not stale.
+export function isStale(asOf: string): boolean {
+  const [mon, yr] = asOf.split(' ')
+  const m = MONTH_ABBR[mon]
+  if (m === undefined || !yr) return false
+  const endOfMonth = new Date(Number(yr), m + 1, 0).getTime()
+  return new Date(REPORT_DATE).getTime() - endOfMonth > 90 * 86400000
+}
 
 export function Section({ title, eyebrow, children, id }: {
   title: string
@@ -62,7 +83,7 @@ export function VerdictChip({ verdict }: { verdict: Verdict }) {
   )
 }
 
-const KIND_DOT: Record<CompanyKind, string> = {
+export const KIND_DOT: Record<CompanyKind, string> = {
   startup: 'bg-violet-500',
   incumbent: 'bg-gray-400 dark:bg-zinc-500',
   lab: 'bg-pink-500',
@@ -75,25 +96,73 @@ const DEP_LABELS: Record<ModelDependency, string> = {
   'open-weights': 'open weights',
 }
 
-export function CompanyChip({ name, kind, modelDependency, note, momentum }: {
-  name: string
-  kind: CompanyKind
-  modelDependency?: ModelDependency
-  note?: string
-  momentum?: boolean
-}) {
-  const tooltip = [note, modelDependency ? `Models: ${DEP_LABELS[modelDependency]}` : null]
-    .filter(Boolean)
-    .join(' — ')
+export function FactsLine({ facts }: { facts: CompanyFacts }) {
+  const segs: string[] = []
+  if (facts.valuation) segs.push(`${facts.valuation} val`)
+  if (facts.raised) segs.push(`${facts.raised} raised`)
+  if (facts.arr) segs.push(facts.arr)
+  if (facts.users) segs.push(facts.users)
+  if (facts.investors?.length) {
+    const extra = facts.investors.length - 3
+    segs.push(facts.investors.slice(0, 3).join(', ') + (extra > 0 ? ` +${extra}` : ''))
+  }
+  if (segs.length === 0 && !facts.asOf) return null
   return (
-    <span
-      title={tooltip || undefined}
-      className="inline-flex items-center gap-1.5 rounded-md border border-black/[0.08] dark:border-white/10 bg-white dark:bg-[#161616] px-2 py-1 text-[12px] text-gray-700 dark:text-zinc-200 leading-none cursor-default"
+    <div className="mt-1 text-[10.5px] leading-snug text-gray-400 dark:text-zinc-500 tabular-nums">
+      {segs.join(' · ')}
+      {facts.asOf && (
+        <span
+          className={isStale(facts.asOf) ? 'text-amber-500/80' : 'text-gray-300 dark:text-zinc-600'}
+          title={isStale(facts.asOf) ? `Older than 90 days at publication (${formatReportDate()})` : undefined}
+        >
+          {segs.length > 0 && ' — '}as of {facts.asOf}
+        </span>
+      )}
+      {facts.cite && <Cite id={facts.cite} />}
+    </div>
+  )
+}
+
+const STANCE_STYLES: Record<string, string> = {
+  Long: 'text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-700/50 bg-emerald-50 dark:bg-emerald-950/30',
+  Short: 'text-red-700 dark:text-red-400 border-red-300 dark:border-red-700/50 bg-red-50 dark:bg-red-950/30',
+  Watch: 'text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700/50 bg-amber-50 dark:bg-amber-950/30',
+}
+
+// "Long — reason" / "Short — reason" / "Watch — reason" → stance chip + reason.
+export function BetLine({ bet }: { bet: string }) {
+  const [stance, ...rest] = bet.split(' — ')
+  const reason = rest.join(' — ')
+  const cls = STANCE_STYLES[stance]
+  if (!cls || !reason) {
+    return <div className="mt-1.5 text-[11px] font-medium text-gray-700 dark:text-zinc-300 leading-snug">{bet}</div>
+  }
+  return (
+    <div className="mt-1.5 flex items-start gap-1.5 text-[11px] leading-snug">
+      <span className={`inline-flex shrink-0 rounded px-1 py-px text-[9px] font-bold uppercase tracking-wide border ${cls}`}>
+        {stance}
+      </span>
+      <span className="font-medium text-gray-700 dark:text-zinc-300">{reason}</span>
+    </div>
+  )
+}
+
+export function CompanyChip({ name, kind, modelDependency, note, momentum, facts, domain, bet, color }: Company & { color?: string }) {
+  return (
+    <div
+      className="px-3 py-2"
+      title={modelDependency ? `Models: ${DEP_LABELS[modelDependency]}` : undefined}
     >
-      <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${KIND_DOT[kind]}`} />
-      {name}
-      {momentum && <span className="text-amber-500 text-[10px] leading-none">▲</span>}
-    </span>
+      <div className="flex items-center gap-1.5 text-[12px] font-medium text-gray-800 dark:text-zinc-200 leading-none">
+        <Logo domain={domain} name={name} size={14} color={color} />
+        <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${KIND_DOT[kind]}`} />
+        {name}
+        {momentum && <span className="text-amber-500 text-[10px] leading-none">▲</span>}
+      </div>
+      {note && <div className="mt-1 text-[11px] text-gray-500 dark:text-zinc-400 leading-snug">{note}</div>}
+      {facts && <FactsLine facts={facts} />}
+      <BetLine bet={bet} />
+    </div>
   )
 }
 
@@ -104,16 +173,19 @@ export function MapLegend() {
       <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-gray-400 dark:bg-zinc-500" /> incumbent</span>
       <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-pink-500" /> frontier lab</span>
       <span className="inline-flex items-center gap-1.5"><span className="text-amber-500 text-[10px]">▲</span> momentum 25</span>
-      <span className="text-gray-400 dark:text-zinc-500">hover a chip for detail</span>
+      <span className="text-gray-400 dark:text-zinc-500">figures dated per entry · amber date = older than 90 days · Long / Short / Watch = the TL;DR bet</span>
     </div>
   )
 }
 
-export function StatTile({ stat, label }: { stat: string; label: string }) {
+export function StatTile({ stat, label, cite }: { stat: string; label: string; cite?: string }) {
   return (
     <div className="rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#111] p-4">
       <div className="font-mono text-lg md:text-xl font-bold tabular-nums text-gray-900 dark:text-white">{stat}</div>
-      <div className="mt-1 text-[11px] uppercase tracking-wide text-gray-400 dark:text-zinc-500 leading-snug">{label}</div>
+      <div className="mt-1 text-[11px] uppercase tracking-wide text-gray-400 dark:text-zinc-500 leading-snug">
+        {label}
+        {cite && <Cite id={cite} />}
+      </div>
     </div>
   )
 }

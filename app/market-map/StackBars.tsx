@@ -1,4 +1,5 @@
 import type { Layer, StackCompany } from './data'
+import { Logo } from './Logo'
 
 const LAYERS: { key: Layer; label: string }[] = [
   { key: 'distribution', label: 'Distribution' },
@@ -32,7 +33,10 @@ export default function StackBars({ companies }: { companies: StackCompany[] }) 
               i % 2 === 0 ? '' : 'bg-black/[0.015] dark:bg-white/[0.015]'
             }`}
           >
-            <div className="text-xs font-medium text-gray-900 dark:text-white truncate">{c.name}</div>
+            <div className="flex items-center gap-1.5 text-xs font-medium text-gray-900 dark:text-white min-w-0">
+              <Logo domain={c.domain} name={c.name} size={14} />
+              <span className="truncate">{c.name}</span>
+            </div>
             {LAYERS.map((l) => (
               <div key={l.key} className="flex justify-center">
                 <div

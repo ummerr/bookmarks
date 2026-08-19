@@ -20,9 +20,9 @@ export default function MarketMapGrid({ categories }: { categories: Category[] }
               </div>
               <div className="text-[11px] text-gray-500 dark:text-zinc-400 mt-0.5 leading-snug">{cat.jobToBeDone}</div>
             </div>
-            <div className="p-3 flex flex-wrap gap-1.5">
+            <div className="py-1 divide-y divide-black/[0.04] dark:divide-white/[0.05]">
               {cat.companies.map((c) => (
-                <CompanyChip key={c.name} {...c} />
+                <CompanyChip key={c.name} {...c} color={cat.color} />
               ))}
             </div>
           </div>
