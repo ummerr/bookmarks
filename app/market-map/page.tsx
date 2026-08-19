@@ -313,7 +313,9 @@ export default function MarketMapPage() {
                       load-bearing each integration is, not measured volume. Leverage sits at
                       the two ends — frontier models and owned distribution — while the middle
                       holds its position only by adding workflow state (fal Agent, ComfyUI JSON,
-                      Soul ID) on top of routing.<Cite id="10" /><Cite id="11" /><Cite id="13" />
+                      Soul ID) on top of routing. Google Flow is the first-party exception:
+                      orchestration that only ever routes Veo, holding the column by owning both
+                      ends instead.<Cite id="10" /><Cite id="11" /><Cite id="13" />
                     </p>
                   }
                 >

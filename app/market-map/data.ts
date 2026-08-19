@@ -800,6 +800,7 @@ export const FLOW: FlowData = {
     { id: 'gptimage', label: 'GPT Image 2', sub: 'OpenAI', domain: 'openai.com', color: '#64748b' },
   ],
   aggregators: [
+    { id: 'googleflow', label: 'Google Flow', sub: 'first-party · Veo only', domain: 'google.com', color: '#4285f4' },
     { id: 'fal', label: 'fal', sub: 'inference + agent', domain: 'fal.ai', color: '#ec4899' },
     { id: 'comfy', label: 'ComfyUI', sub: 'workflows-as-JSON', domain: 'comfy.org', color: '#10b981' },
     { id: 'krea', label: 'Krea', sub: 'real-time canvas', domain: 'krea.ai', color: '#8b5cf6' },
@@ -816,6 +817,8 @@ export const FLOW: FlowData = {
     { id: 'ecom', label: 'E-commerce & 3D', sub: 'catalogs, product media', color: '#6366f1' },
   ],
   links: [
+    // The first-party exception: Flow orchestrates only Google's own models.
+    { from: 'gemini', to: 'googleflow', weight: 3 },
     // The majority-Chinese shelf: apps won't integrate these one by one — aggregators do it for them.
     { from: 'seedance', to: 'fal', weight: 3 },
     { from: 'kling', to: 'fal', weight: 3 },
@@ -834,6 +837,8 @@ export const FLOW: FlowData = {
     { from: 'gemini', to: 'vercel', weight: 2 },
     { from: 'gptimage', to: 'vercel', weight: 2 },
     // Where the aggregated output actually lands.
+    { from: 'googleflow', to: 'social', weight: 2 },
+    { from: 'googleflow', to: 'film', weight: 2 },
     { from: 'fal', to: 'ads', weight: 3 },
     { from: 'fal', to: 'social', weight: 2 },
     { from: 'fal', to: 'enterprise', weight: 2 },

@@ -11,7 +11,7 @@ const WEIGHT_STROKE = { 1: 3, 2: 6, 3: 10 } as const
 
 function nodeY(col: keyof typeof COL_X, i: number): number {
   if (col === 'models') return 56 + i * 62
-  if (col === 'aggregators') return 74 + i * 64
+  if (col === 'aggregators') return 56 + i * 62
   return 92 + i * 90
 }
 
