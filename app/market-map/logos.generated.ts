@@ -56,6 +56,7 @@ export const LOGO_DOMAINS: ReadonlySet<string> = new Set([
   'promisestudios.com',
   'recraft.ai',
   'replicate.com',
+  'reve.com',
   'runware.ai',
   'runwayml.com',
   'scenario.com',

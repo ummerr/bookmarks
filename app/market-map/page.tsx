@@ -611,6 +611,23 @@ export default function MarketMapPage() {
                   arming the ecosystem the way Llama armed LLMs.<Cite id="21" />
                 </p>
                 <p>
+                  Wan is the cleanest case study in what open weights are now for. Alibaba’s own
+                  figures put the series past 6.9M downloads by August 2025, and the 2.1/2.2
+                  checkpoints remain the default base for ComfyUI video work and the dominant
+                  fine-tune target on Civitai — an installed base every Western aggregator
+                  resells.<Cite id="61" /> But the open line quietly stopped there: every flagship
+                  since — 2.5 through 3.0 — ships API-only on Alibaba Cloud at per-second pricing,
+                  while Apache-licensed side models keep goodwill flowing to the ecosystem. Read as
+                  a funnel, the conversion looks complete — build the substrate open, sell the
+                  frontier closed — and the community has registered it: the loudest response to
+                  Wan 3.0’s #1 debut came from the open-source side that built on 2.2, treating the
+                  release as confirmation the open era is over.<Cite id="62" /> The concentration
+                  underneath is easy to miss: counting the newer HappyHorse line from a second
+                  internal team, Alibaba holds five of the top eight slots on the AA text-to-video
+                  board. A workflow standardized on "open video" today is standardized on a line
+                  its owner has already stopped feeding.
+                </p>
+                <p>
                   So what do GenMedia models ultimately resemble — LLMs, cloud infrastructure,
                   creative software, or commodity compute? The answer splits: video models are
                   trending toward <strong>codecs</strong> — critical, everywhere, and rarely paid
@@ -633,13 +650,17 @@ export default function MarketMapPage() {
                   ~70–75% overseas as of Q1), and 36Kr-lineage reporting puts ByteDance’s Seedance
                   API at over RMB 1B a month — roughly 3.5x that, unaudited and almost entirely
                   domestic<Cite id="53" />; MiniMax IPO’d in
-                  Hong Kong with a +109% debut — beating every US lab to public markets; PixVerse
+                  Hong Kong with a +109% debut — beating every US lab to public markets, though its
+                  prospectus is candid about how early the monetization is: US$79M of FY2025
+                  company-wide revenue, with Hailuo an undisclosed slice of a $53.1M consumer
+                  bucket<Cite id="64" />; PixVerse
                   raised $439M at a $2B+ valuation on 150M claimed registered users; ByteDance ships
                   Seedance to emerging markets first through CapCut.<Cite id="3" /><Cite id="24" /><Cite id="25" />{' '}
                   Alibaba and Tencent supply the open-weights substrate (Wan, Hunyuan) that runs
-                  half the world’s ComfyUI workflows. The constraint is trust: Disney and Warner
-                  are suing MiniMax, and Western enterprise procurement mostly can’t adopt Chinese
-                  models — which bifurcates the market and protects Adobe/Runway/licensed-lane
+                  half the world’s ComfyUI workflows. The constraint is trust: the Disney, Universal, and
+                  Warner suit against MiniMax survived its motion to dismiss in May 2026 and is
+                  heading into the merits,<Cite id="63" /> and Western enterprise procurement mostly
+                  can’t adopt Chinese models — which bifurcates the market and protects Adobe/Runway/licensed-lane
                   pricing in regulated segments.
                 </p>
                 <p>

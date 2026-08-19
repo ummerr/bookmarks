@@ -92,3 +92,17 @@ Skipped with reason (product lines of giants, no separable metrics): Google Geni
 ## Verification
 
 `npm run build` passes after all round-1 changes (check-facts prebuild gate now scans app/market-map and validates all Cite/facts.cite ids against SOURCES).
+
+## Under-mention audit follow-up (2026-08-19, same day, later session)
+
+Trigger: the new mention-index component surfaced players whose arena/AA rank ran far ahead of essay mention-share (Reve, Wan/Alibaba, Hailuo/MiniMax). Three targeted web-research agents produced findings; all applied. Sources added: [59]–[64].
+
+**Reve — genuine blind spot, now filled.** $350M Series B at $1.9B (Nov 2025), ~$390M total — never press-announced (Sutter Hill Ventures incubation, Speiser playbook; ex-Adobe research founders, ex-Stability CEO Cantrell). Zero disclosed revenue/users/enterprise logos; API ~$0.20/image (relaunched Jul 14, 2026); on fal/Replicate/Krea shelves, absent from Freepik/Canva. Applied: new map-grid entry (workspaces, Unproven), enriched image-table row, cite [59]/[60], reve.com logo fetched, added to MENTION_INDEX.
+
+**Wan — framing gap, prose added (§11).** 6.9M+ downloads (Alibaba's own figure, Aug 2025 — no fresher first-party number exists); open line frozen at 2.2 (Jul 2025), every flagship 2.5→3.0 API-only per-second; Apache-2.0 open weights = unrestricted Western commercial use; Alibaba holds 5 of top 8 AA T2V slots incl. SECOND internal line "HappyHorse" (Alibaba-ATH unit); community reads Wan 3.0 as end-of-open-era (GitHub issue #181). Cites [61]/[62]. HappyHorse added as Alibaba alias in MENTION_INDEX.
+
+**Hailuo — under-mention confirmed correct; corrections applied.** IPO prospectus/FY2025: $79M company-wide revenue, Hailuo undisclosed inside $53.1M AI-native bucket shared with Talkie (plausibly $20–40M vs Kling ~$475M — order of magnitude gap). H3 image-to-video crown claim was STALE: as of Aug 19 both boards show Seedance #1, H3 #2 within error bars (H3 is #1 open-weights) — video-table note, H3 entry, and Momentum-25 entry corrected. Disney/Universal/WBD suit: motion to dismiss DENIED May 26, 2026 (Blumenfeld, C.D. Cal.) — §12 updated, cite [63]; §12 also now carries the $79M candor line, cite [64].
+
+**Watch items:** MiniMax H1 2026 interims Aug 26 (first possible Hailuo revenue isolate); Reve has video credits in its consumer plans (possible video-model entry); market cap HK$91.7B ≈ $11.7B as of Aug 19 (retraced from Stock Connect pop).
+
+`npm run build` passes after all changes.
