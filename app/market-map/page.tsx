@@ -137,13 +137,15 @@ export default function MarketMapPage() {
                 <p>
                   Two events five weeks apart define the year. On March 24, 2026, OpenAI announced
                   the shutdown of Sora — the best-known consumer video product in the West, dead in
-                  six months on an estimated ~$1M/day of inference against roughly $2.1M of lifetime
-                  in-app revenue.<Cite id="1" /> That same quarter, Kuaishou disclosed that Kling
-                  grew revenue 300% year-over-year to a ~$500M ARR run-rate, 75% of it from outside
-                  China — the best-audited number in the industry, because it sits in a listed
-                  company’s filings.<Cite id="3" /> The Q2 filing (August 19) shows the curve
-                  continuing but decelerating: over RMB 850M of quarterly Kling revenue, up more
-                  than 200% year-over-year — a ~$475M annualized run-rate.<Cite id="47" /> Frontier quality without distribution economics
+                  six months on inference costs estimated anywhere from $1M to $15M a day against
+                  roughly $2.1M of lifetime in-app revenue (both third-party
+                  estimates).<Cite id="1" /> That same quarter, Kuaishou disclosed that Kling grew
+                  revenue 300% year-over-year, ~70–75% of it from outside China (as of Q1) — the
+                  best-grounded number in the industry, because it sits in a listed company’s
+                  (unaudited interim) filings.<Cite id="3" /> The Q2 filing (August 19) shows the
+                  curve still climbing on a consistent quarterly-annualized basis — roughly $360M
+                  (Q1) to ~$475M (Q2), on over RMB 850M of quarterly revenue up more than 200%
+                  year-over-year.<Cite id="47" /> Frontier quality without distribution economics
                   died; good-enough quality inside an owned funnel became the revenue leader.
                 </p>
               </Prose>
@@ -151,7 +153,7 @@ export default function MarketMapPage() {
                 <ChangeCard tag="Fact" tagColor={FACT} title="The AI-video-as-feed thesis died" body="Sora shut down (app Apr 26, API Sep 24, 2026); Meta's Vibes limps at ~2M DAU with weak retention. AI video as a tool — inside CapCut, Shorts, ad platforms — is where the revenue actually is." />
                 <ChangeCard tag="Fact" tagColor={FACT} title="Video quality converged; image held a frontier" body="~150 Elo covers the top 11 video models and 9 of the top 10 are Chinese. In image, GPT Image 2 still holds every #1 — though MAI-2.6's August debut cut the Arena lead from ~83 to 45 Elo — the one modality where frontier capability still differentiates." />
                 <ChangeCard tag="Fact" tagColor={FACT} title="Generation went free at the point of distribution" body="Veo free in YouTube Shorts, Seedance in CapCut, Adobe unlimited generations, Amazon giving ad creative away, Apple shipping photorealistic generation in iOS 27. The generation button is no longer a product." />
-                <ChangeCard tag="Fact" tagColor={FACT} title="Music flipped from lawsuits to licenses in nine months" body="UMG and WMG converted suits against Udio and Suno into licensing regimes; Udio became a label-controlled walled garden while Suno settled from strength at $5.4B. Licensed catalogs are now moats." />
+                <ChangeCard tag="Fact" tagColor={FACT} title="Music flipped from lawsuits to licenses in nine months" body="WMG and BMG settled with Suno while UMG and WMG captured Udio as a label-controlled walled garden; UMG's suit against Suno is still live. Suno settled from strength at $5.4B, and licensed catalogs are now moats." />
                 <ChangeCard tag="Pattern" tagColor={PATTERN} title="Everyone shipped a creative agent in 2026" body="Adobe, fal, Flora, Krea, Creatify, Amazon — every layer of the stack converged on the same product. The moat is shifting from model access to creative state: characters, brand constraints, project memory." />
                 <ChangeCard tag="Pattern" tagColor={PATTERN} title="Omni absorption is compressing the specialist tail" body="Native audio, lip-sync, video editing, and camera control folded into frontier models in 18 months. Specialists survive only behind hard workflow or real-time constraints: 3D rigging, fidelity upscaling, <500ms avatars." />
                 <ChangeCard tag="Pattern" tagColor={PATTERN} title="World models became the capital magnet — and left entertainment" body="Over $3B into World Labs, Decart, and Odyssey in 2026, with monetization pivoting from playable worlds to AV/robotics simulation. GenMedia technology is exiting media at the frontier." />
@@ -219,7 +221,8 @@ export default function MarketMapPage() {
                   (Google, ByteDance, Kuaishou, xAI), independent pro-grade labs (Runway, BFL, Luma,
                   ElevenLabs, Reve), and open or China-first price leaders (Alibaba, Tencent,
                   MiniMax, Lightricks). A dated-as-of stamp matters more than any ranking: video
-                  leaderboard half-life is one to two quarters.<Cite id="28" /> Treat the arenas
+                  leaderboard half-life ran one to two quarters through 2025 and is now
+                  compressing toward weeks.<Cite id="28" /> Treat the arenas
                   (Artificial Analysis, and Arena — formerly LMArena, rebranded January
                   2026<Cite id="39" />) with a second caveat: the literature shows models post
                   inflated consistency scores on quasi-static scenes — motion magnitude trades off
@@ -357,7 +360,7 @@ export default function MarketMapPage() {
                   Startups can still build $10B+ companies in five lanes: <strong>audio</strong>{' '}
                   (ElevenLabs at $11B and ~$500M ARR proves a full-stack modality winner where
                   incumbents under-invested); <strong>enterprise vertical video</strong> (Synthesia
-                  and HeyGen compound with 140%+ NRR beneath incumbent attention);{' '}
+                  compounds at 140%+ NRR and HeyGen at break-even, beneath incumbent attention);{' '}
                   <strong>cost-disciplined consumer video</strong> (Kling, PixVerse, Hailuo — the
                   discipline Sora lacked); <strong>media-native infrastructure</strong> (fal — every
                   model war grows its TAM); and <strong>open-weights and world models</strong> (BFL,
@@ -382,7 +385,7 @@ export default function MarketMapPage() {
                   (claimed $700M annualized on the heels of its Aug 17 round — company figures,
                   unverified), Kling (~$475M run-rate per the Aug 19 Q2 filing), ElevenLabs (~$500M
                   est.), Adobe AI-first (over $500M, earnings), Canva (~$4B+ total ARR with AI as
-                  retention), fal (~$400M reported), Suno (~$300M est.), Runway (est. $100–300M
+                  retention), fal (~$400M est.), Suno (~$300M est.), Runway (est. $100–300M
                   with wide variance — the last hard figure is ~$90M in mid-2025), Magnific ($230M
                   company-stated), HeyGen ($200M company-stated, near break-even), Synthesia
                   (~$150M), Gamma ($100M+, profitable), Midjourney (~$200–500M est., wide
@@ -427,7 +430,7 @@ export default function MarketMapPage() {
               <Prose>
                 <p>
                   The open-closed gap now differs sharply by modality. In <strong>video</strong> it
-                  nearly closed: MiniMax’s H3 put open weights at #2 overall — with the
+                  nearly closed: MiniMax’s H3 put open weights at #3 overall — with the
                   geopolitical caveat that its license excludes local deployment in the US, EU, UK,
                   and Korea, a new "open for China and the rest-of-world" flavor. Truly permissive
                   open video (LTX-2’s 4K-plus-audio on a single consumer GPU, Hunyuan, Wan ≤2.2)
@@ -530,7 +533,8 @@ export default function MarketMapPage() {
                   leaders will starve the long tail at sub-$1/model pricing), AI presentations (Gamma
                   won just as Microsoft and Google shipped native equivalents), and ad-creative
                   SaaS (crushed between platform giveaways and synthetic-UGC fatigue — Icon’s
-                  pivot from "AI Admaker" to "Human Admaker" is the era’s best tell).
+                  pivot from "AI Admaker" to "Human Admaker", followed by a reported March 2026
+                  shutdown, is the era’s best tell).
                 </p>
                 <p>
                   <strong>Commoditizing:</strong> video model quality itself (the ~150-Elo pileup),
@@ -600,7 +604,7 @@ export default function MarketMapPage() {
                 </p>
                 <p>
                   <strong>What is commoditizing:</strong> video model quality (a ~150-Elo pileup
-                  with quarterly leadership turnover), raw generation interfaces, 3D asset pricing,
+                  with sub-quarterly leadership turnover), raw generation interfaces, 3D asset pricing,
                   assistive editing, standalone specialist models. <strong>What remains
                   scarce:</strong> distribution measured in billions of users; creative state that
                   accumulates switching costs; licensed catalogs and consent frameworks; media-native
@@ -678,7 +682,7 @@ export default function MarketMapPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <ChangeCard tag="W1" tagColor={FACT} title="Sony and UMG v. Suno" body="The two unsettled major-label suits — no fair-use ruling expected before 2027 (dispositive motions due April). A fair-use win for Suno weakens the licensed-catalog moat across all modalities; a loss cements licensing as the permanent tax on generation." />
                   <ChangeCard tag="W2" tagColor={FACT} title="Does Anthropic–Decart close?" body="A frontier LLM lab paying ~$7B for media inference optimization would confirm that real-time media serving is strategic infrastructure — and start a bidding war for the remaining independents." />
-                  <ChangeCard tag="W3" tagColor={FACT} title="The Kling IPO" body="The spin-out closed in July — roughly $3B at $18B post, with Tencent and Alibaba among 38 investors — and a Hong Kong listing is targeted for 2027. A public comp for a Chinese video unit would test whether Western investors can own the consumer side of the bifurcated market." />
+                  <ChangeCard tag="W3" tagColor={FACT} title="The Kling IPO" body="The spin-out closed in July — roughly $3B at $18B post, with Tencent and Alibaba among the investors — and a Hong Kong listing is targeted for 2027. A public comp for a Chinese video unit would test whether Western investors can own the consumer side of the bifurcated market." />
                   <ChangeCard tag="W4" tagColor={FACT} title="Adobe's agent inside ChatGPT and Claude" body="The first real test of whether creative agents can live inside general assistants. If usage migrates there, the chat surface — not the creative suite — becomes the distribution layer for creative work." />
                   <ChangeCard tag="W5" tagColor={FACT} title="Meta's end-2026 full ad automation" body="If advertisers hand Meta a URL and a budget and get campaigns back, the third-party ad-creative category collapses into the platforms — and the largest commercial GenMedia use case disappears into an ad auction." />
                 </div>

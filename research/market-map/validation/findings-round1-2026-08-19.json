@@ -1,0 +1,528 @@
+{
+ "counts": {
+  "confirmed": 35,
+  "unverifiable": 15,
+  "corrected": 9,
+  "stale": 1
+ },
+ "total": 60,
+ "completenessAssessment": "completeness agent skipped",
+ "summaries": {
+  "V1-map-panels-1-3": "Verified 39 discrete claims across the workspaces, ads-commerce, and film-video panels: 34 confirmed, 1 corrected, 1 stale, 3 unverifiable, 0 refuted. The one real error: Google Asset Studio's \"~70M Gemini-generated assets in Q4 2025 PMax alone\" — Google's Feb 11, 2026 blog says the ~70M figure spans AI Max AND Performance Max (\"alone\" modifies Q4, not PMax), so drop \"alone\" or add AI Max. Runway's \"last reported ~$90M mid-2025\" is stale — estimate trackers put annualized revenue at ~$300M by Oct 2025, consistent with the note's own $100-300M range but making \"$90M last reported\" misleading. Three sub-claims could not be corroborated despite multiple searches: Canva's \"third-party shelf,\" Figma Weave's \"shareable AI workflows in Figma Community,\" and Meta's \"Advantage+ rollout still pending as of mid-Aug\" (last evidence Jul 8: rollout \"coming weeks\"; no completion coverage found, so pendency is plausible but unproven).",
+  "consistency": "Checked data.ts + page.tsx against all six research files. Citation integrity is clean: all 27 page Cite ids and 15 facts.cite ids resolve to SOURCES (1 confirmed). Found 7 corrected items — the biggest are Meshy's ARR ($40M in the report vs $30M in the research quoting the same source, which also breaks the '~35x' multiple), Kling revenue mislabeled 'audited' when both IR sources are explicitly unaudited, and Magnific labeled 'bootstrapped' despite the research flagging EQT PE ownership. Found 12 unverifiable conflicts, led by three internal contradictions (Icon alive-in-§14 vs dead-in-moat-matrix; leaderboard half-life 'weeks' vs 'quarters' stated seven times two ways; UMG-v.-Suno live vs converted-to-license in §01) and several research-flagged conflicts stated as flat fact (Wan open-weights stopping at 2.2, Kling $18B spin-out vs a Bloomberg URL slug saying $2B, Runway's unsourced '~$90M mid-2025' that looks like a Kling figure cross-contamination, Sora's $1M/day picked from a $1M–15M range)."
+ },
+ "findings": [
+  {
+   "claim": "Leonardo models power Canva's generation",
+   "location": "data.ts CATEGORIES workspaces / Canva",
+   "verdict": "confirmed",
+   "note": "Canva acquired Leonardo.Ai (2024); Dream Lab runs on Leonardo Phoenix models.",
+   "sourceUrl": "https://www.canva.com/en_gb/help/set-up-leonardo-with-canva/",
+   "sourceDate": "2024 (acquisition), page current 2026",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Affinity now free",
+   "location": "data.ts CATEGORIES workspaces / Canva",
+   "verdict": "confirmed",
+   "note": "Canva made the unified Affinity app free for everyone on Oct 30, 2025 (Canva account required; premium AI features gated to paid Canva plans).",
+   "sourceUrl": "https://www.digitalcameraworld.com/photography/photo-editing/breaking-affinity-photo-is-now-free-for-everyone-as-the-editing-software-is-reborn-as-affinity-studio",
+   "sourceDate": "2025-10-30",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Canva has a third-party model shelf",
+   "location": "data.ts CATEGORIES workspaces / Canva",
+   "verdict": "unverifiable",
+   "note": "Multiple query phrasings found Leonardo/Phoenix in-house models but no clear coverage of a third-party model 'shelf' in Canva. Search budget exhausted before this could be pinned down.",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Adobe AI-first ARR over $500M, up 3x YoY",
+   "location": "data.ts CATEGORIES workspaces / Adobe Firefly",
+   "verdict": "confirmed",
+   "note": "Q2 FY2026 (reported Jun 12, 2026): AI-first ARR crossed $500M, tripling YoY; record $6.62B quarterly revenue.",
+   "sourceUrl": "https://www.marketscale.com/industries/software-and-technology/adobes-ai-first-arr-triples-year-over-year-surpassing-500-million-as-q2-revenue-hits-a-record-662-billion",
+   "sourceDate": "Jun 2026",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Flow+Whisk+ImageFX unified Feb 2026",
+   "location": "data.ts CATEGORIES workspaces / Google Flow",
+   "verdict": "confirmed",
+   "note": "Google's own blog (Feb 25, 2026): Whisk and ImageFX capabilities moved directly into Flow; Whisk fully shut down Apr 30, 2026.",
+   "sourceUrl": "https://blog.google/innovation-and-ai/models-and-research/google-labs/flow-updates-february-2026/",
+   "sourceDate": "2026-02-25",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Flow available in 140+ countries",
+   "location": "data.ts CATEGORIES workspaces / Google Flow",
+   "verdict": "confirmed",
+   "note": "Google's current Flow availability list shows ~187 countries/territories, so '140+' holds (arguably undersells; could update to '185+').",
+   "sourceUrl": "https://support.google.com/flow/answer/16353544",
+   "sourceDate": "accessed 2026-08-19",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Flow bundled with Google AI subscriptions",
+   "location": "data.ts CATEGORIES workspaces / Google Flow",
+   "verdict": "confirmed",
+   "note": "labs.google/flow/about shows Flow credits included in Google AI Plus/Pro/Ultra plans (200/1,000/10,000 monthly credits).",
+   "sourceUrl": "https://labs.google/flow/about",
+   "sourceDate": "accessed 2026-08-19",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Freepik/Magnific: every model under one roof; half of revenue from video",
+   "location": "data.ts CATEGORIES workspaces / Magnific (Freepik)",
+   "verdict": "confirmed",
+   "note": "Fortune (Apr 28, 2026): rebrand to Magnific at $230M ARR with AI video roughly half of revenue; multi-model aggregator positioning.",
+   "sourceUrl": "https://fortune.com/2026/04/28/freepik-magnific-joaquin-cuenca-abela-230-million-arr-video-generation-ai-pivot/",
+   "sourceDate": "2026-04-28",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Krea: real-time canvas, 60+ models, own Krea 2 open image model",
+   "location": "data.ts CATEGORIES workspaces / Krea",
+   "verdict": "confirmed",
+   "note": "Krea 2 announced May 12, 2026; K2 Raw/Turbo 12B DiT open weights released Jun 2026. Real-time canvas (<50ms) and 60+ models corroborated by 2026 reviews.",
+   "sourceUrl": "https://www.piclumen.com/blog/krea-ai-review/",
+   "sourceDate": "2026 (Krea 2 open weights Jun 2026)",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Weavy acquired for over $200M",
+   "location": "data.ts CATEGORIES workspaces / Figma Weave",
+   "verdict": "confirmed",
+   "note": "Figma's largest acquisition, announced Oct 30, 2025; Calcalist and SiliconANGLE report $200M+; Figma itself did not disclose price. Relaunched as Figma Weave.",
+   "sourceUrl": "https://www.calcalistech.com/ctechnews/article/byyrqlbjwg",
+   "sourceDate": "2025-10-30",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Shareable AI workflows in Figma Community",
+   "location": "data.ts CATEGORIES workspaces / Figma Weave",
+   "verdict": "unverifiable",
+   "note": "Acquisition coverage and figma.com pages checked; no source found confirming Weave workflows are shareable via Figma Community. Consider softening or citing the specific launch announcement if one exists.",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "OpenArt: shareable Recipes",
+   "location": "data.ts CATEGORIES workspaces / OpenArt",
+   "verdict": "confirmed",
+   "note": "Recipes are OpenArt's pre-built shareable workflow templates; $70M ARR / 8M MAU / 20 people also corroborated (Sacra, Canaan Series A Jan 2026).",
+   "sourceUrl": "https://sacra.com/c/openart/",
+   "sourceDate": "Jan-Feb 2026",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Recraft: design-grade image models, shifting from model shop to workspace",
+   "location": "data.ts CATEGORIES workspaces / Recraft",
+   "verdict": "confirmed",
+   "note": "Recraft V4/V4.1 (May 14, 2026) target professional design assets; Recraft Studio now aggregates third-party models (Nano Banana 2, GPT Image 2) — workspace pivot corroborated.",
+   "sourceUrl": "https://www.mindstudio.ai/blog/what-is-recraft-v4-1-ai-image-model-design-assets",
+   "sourceDate": "May 2026",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Lovart: 'AI design agent' archetype; ex-ByteDance founder",
+   "location": "data.ts CATEGORIES workspaces / Lovart",
+   "verdict": "confirmed",
+   "note": "Lovart markets itself as the first AI design agent; founder Melvin Chen (Chen Mian) was ByteDance/CapCut global commercialization lead.",
+   "sourceUrl": "https://www.cnbc.com/2025/07/23/chinas-tech-talent-making-big-strides-in-ai-creating-apps-for-world.html",
+   "sourceDate": "2025-07-23",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Meta targeting fully automated ad creation by end-2026",
+   "location": "data.ts CATEGORIES ads-commerce / Meta (GEM / Advantage+)",
+   "verdict": "confirmed",
+   "note": "WSJ-reported plan (mid-2025): advertisers supply product image + budget; AI generates creative and targeting, by end of 2026.",
+   "sourceUrl": "https://finance.yahoo.com/news/meta-looking-fully-automate-ad-113056107.html",
+   "sourceDate": "Jun 2025",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Muse model (Jul 2026) ends Midjourney/BFL licensing",
+   "location": "data.ts CATEGORIES ads-commerce / Meta (GEM / Advantage+)",
+   "verdict": "confirmed",
+   "note": "Muse Image launched Jul 7, 2026 (first Meta Superintelligence Labs image model), explicitly replacing licensed Midjourney and Black Forest Labs tech; #2 on Arena text-to-image.",
+   "sourceUrl": "https://www.cnbc.com/2026/07/07/meta-ai-muse-image.html",
+   "sourceDate": "2026-07-07",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Advantage+ advertiser rollout still pending as of mid-Aug",
+   "location": "data.ts CATEGORIES ads-commerce / Meta (GEM / Advantage+)",
+   "verdict": "unverifiable",
+   "note": "Last solid evidence is Jul 7-8 coverage saying Advantage+ advertiser access was 'coming in the coming weeks' with gradual rollout. Found no coverage confirming completion or continued pendency as of mid-Aug; claim is plausible but uncorroborated for the mid-Aug date.",
+   "sourceUrl": "https://www.digitalapplied.com/blog/meta-muse-image-video-paid-social-creative-2026",
+   "sourceDate": "2026-07-08",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Veo in Google Ads",
+   "location": "data.ts CATEGORIES ads-commerce / Google Asset Studio",
+   "verdict": "confirmed",
+   "note": "Veo 3 is live inside Google Ads Asset Studio for image-to-video ad generation.",
+   "sourceUrl": "https://business.google.com/en-all/accelerate/announcements/veo-google-ads/",
+   "sourceDate": "2026",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "~70M Gemini-generated assets in Q4 2025 PMax alone",
+   "location": "data.ts CATEGORIES ads-commerce / Google Asset Studio",
+   "verdict": "corrected",
+   "correctedValue": "~70M Gemini-generated assets in Q4 2025 across AI Max and Performance Max (not PMax alone)",
+   "note": "Google's exact wording (Feb 11, 2026): 'in Q4 alone, Gemini was used to generate nearly 70 million creative assets in AI Max and Performance Max.' The 'PMax alone' framing overstates — the figure spans both products; 'alone' in the source modifies Q4, not PMax.",
+   "sourceUrl": "https://blog.google/products/ads-commerce/digital-advertising-commerce-2026/",
+   "sourceDate": "2026-02-11",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Amazon: free conversational ad agent (Feb 2026), monetized via media spend",
+   "location": "data.ts CATEGORIES ads-commerce / Amazon Creative Agent",
+   "verdict": "confirmed",
+   "note": "Creative Agent launched Feb 12, 2026 — conversational chat inside Creative Studio, full ideation-to-video pipeline, offered at no additional cost to advertisers (UK/EU/Canada rollouts).",
+   "sourceUrl": "https://www.aboutamazon.eu/news/innovation/amazon-ads-launches-creative-agent-new-agentic-ai-tool-that-creates-professional-quality-ads",
+   "sourceDate": "2026-02-12",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Creatify Agent (May 2026) trained on 15M+ ads; locked brand facts as constraints",
+   "location": "data.ts CATEGORIES ads-commerce / Creatify",
+   "verdict": "confirmed",
+   "note": "Launched May 18, 2026; trained on 15M+ ads and $1B+ analyzed ad spend; launch PR emphasizes hallucination prevention/brand grounding.",
+   "sourceUrl": "https://www.prweb.com/releases/creatify-launches-the-first-ai-creative-agent-built-specifically-to-make-ads-that-convert-302775006.html",
+   "sourceDate": "2026-05-18",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Typeface: enterprise brand governance, Arc Agents",
+   "location": "data.ts CATEGORIES ads-commerce / Typeface",
+   "verdict": "confirmed",
+   "note": "Arc Agents + Arc Graph + Brand Agent for real-time brand governance are Typeface's current product line.",
+   "sourceUrl": "https://www.typeface.ai/product/arc-agents",
+   "sourceDate": "accessed 2026-08-19 (launched Mar 2025)",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Jasper: 900+ enterprise customers",
+   "location": "data.ts CATEGORIES ads-commerce / Jasper",
+   "verdict": "confirmed",
+   "note": "2026 coverage cites 900+ enterprise customers and ~20% of Fortune 500.",
+   "sourceUrl": "https://everything-pr.com/jasper-ai-the-enterprise-content-platform-that-pivoted-into-geo",
+   "sourceDate": "Jun 2026",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Jasper GEO Agent (Jun 2026)",
+   "location": "data.ts CATEGORIES ads-commerce / Jasper",
+   "verdict": "confirmed",
+   "note": "End-to-end GEO Agent announced Jun 16, 2026.",
+   "sourceUrl": "https://www.prnewswire.com/news-releases/jasper-launches-end-to-end-geo-agent-for-enterprise-marketers-302800957.html",
+   "sourceDate": "2026-06-16",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Arcads: AI-actor performance ads",
+   "location": "data.ts CATEGORIES ads-commerce / Arcads",
+   "verdict": "confirmed",
+   "note": "AI-actor video ad platform; ~$15M ARR and $25M total raised corroborated by 2026 trackers (matches facts fields).",
+   "sourceUrl": "https://getlatka.com/companies/arcads.ai",
+   "sourceDate": "2026",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Photoroom: product imagery leader",
+   "location": "data.ts CATEGORIES ads-commerce / Photoroom",
+   "verdict": "confirmed",
+   "note": "Processes 100M+ product images/month; positioned as the all-in-one AI product-photography tool for commerce. 'Squeezed by free platform tools' is thesis, not fact.",
+   "sourceUrl": "https://www.photoroom.com/inside-photoroom/new-in-photoroom-h1-2026-product-recap",
+   "sourceDate": "H1 2026",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Pencil: agency-embedded enterprise creative gen",
+   "location": "data.ts CATEGORIES ads-commerce / Pencil (Brandtech)",
+   "verdict": "confirmed",
+   "note": "Acquired by The Brandtech Group (2023); Pencil Pro enterprise tier with Unilever/Bayer; BCG partnership May 2025.",
+   "sourceUrl": "https://www.campaignlive.com/article/brandtech-group-acquires-ai-ad-generator-pencil/1826457",
+   "sourceDate": "2023 (BCG deal May 2025)",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Smartly Synapse orchestration layer (Jun 2026)",
+   "location": "data.ts CATEGORIES ads-commerce / Smartly",
+   "verdict": "confirmed",
+   "note": "Smartly Synapse AI orchestration/memory layer announced Jun 22, 2026 at Cannes Lions.",
+   "sourceUrl": "https://www.businesswire.com/news/home/20260622234186/en/Smartly-Introduces-Smartly-Synapse-the-Intelligent-AI-Orchestration-Layer-Powering-Its-Advertising-Platform",
+   "sourceDate": "2026-06-22",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Runway: Gen-4.5 + GWM world-model pivot; $5.3B / $315M Series E Feb 2026",
+   "location": "data.ts CATEGORIES film-video / Runway",
+   "verdict": "confirmed",
+   "note": "$315M Series E at $5.3B closed Feb 10, 2026 (General Atlantic lead; Nvidia, Fidelity et al.) explicitly to build General World Models (GWM-Worlds/Robotics/Avatars); Gen-4.5 ranked #1 on Artificial Analysis video.",
+   "sourceUrl": "https://techfundingnews.com/runway-315m-series-e-5-3b-valuation-world-models/",
+   "sourceDate": "2026-02-10",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Runway revenue: last reported ~$90M mid-2025",
+   "location": "data.ts CATEGORIES film-video / Runway",
+   "verdict": "stale",
+   "correctedValue": "~$300M annualized by Oct 2025 (Sacra/Getlatka estimates; company forecast $265-300M by end-2025)",
+   "note": "$90M annualized as of Jun 2025 is accurate but no longer the freshest number: estimate shops report ~$300M annualized reached by Oct 2025. The note's est. range $100-300M remains consistent, but 'last reported ~$90M' undersells.",
+   "sourceUrl": "https://sacra.com/c/runway/",
+   "sourceDate": "Oct 2025 (est.)",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Luma: Ray3.2 HDR/EXR pro deliverables",
+   "location": "data.ts CATEGORIES film-video / Luma",
+   "verdict": "confirmed",
+   "note": "Ray3.2 released Jun 9, 2026: native HDR, EXR export in ACES2065-1, 16 keyframes, first API access. $900M Series C at $4B led by HUMAIN (Nov 2025) also corroborated.",
+   "sourceUrl": "https://lumalabs.ai/news/introducing-ray-3-2",
+   "sourceDate": "2026-06-09",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Moonvalley: Marey trained exclusively on licensed data",
+   "location": "data.ts CATEGORIES film-video / Moonvalley",
+   "verdict": "confirmed",
+   "note": "Marey positioned as clean/fully-licensed model for studios (owned + licensed data, Asteria-produced gap footage).",
+   "sourceUrl": "https://venturebeat.com/ai/moonvalleys-marey-is-a-state-of-the-art-ai-video-model-trained-on-fully-licensed-data",
+   "sourceDate": "2025",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "LTX: open-sourced LTX-2 (Jan 2026)",
+   "location": "data.ts CATEGORIES film-video / LTX Studio (Lightricks)",
+   "verdict": "confirmed",
+   "note": "Lightricks open-sourced LTX-2 on Jan 6, 2026 — weights, inference, and training code; 19B DiT, native 4K synchronized audio+video. Script-to-screen LTX Studio pipeline corroborated.",
+   "sourceUrl": "https://www.globenewswire.com/news-release/2026/01/06/3213304/0/en/Lightricks-Open-Sources-LTX-2-the-First-Production-Ready-Audio-and-Video-Generation-Model-With-Truly-Open-Weights.html",
+   "sourceDate": "2026-01-06",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Adobe Premiere: Firefly in the timeline; Generative Extend on licensed data",
+   "location": "data.ts CATEGORIES film-video / Adobe Premiere",
+   "verdict": "confirmed",
+   "note": "Generative Extend in Premiere is powered by Firefly, trained only on licensed/public-domain content; Adobe expanded Firefly-in-Premiere Apr 15, 2026.",
+   "sourceUrl": "https://blog.adobe.com/en/publish/2026/04/15/adobe-extends-leadership-video-unleashing-new-ai-powered-creation-firefly-reinventing-color-editors-in-premiere",
+   "sourceDate": "2026-04-15",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "DaVinci Resolve: local-first AI free tier",
+   "location": "data.ts CATEGORIES film-video / DaVinci Resolve",
+   "verdict": "confirmed",
+   "note": "DaVinci Neural Engine runs AI features locally on GPU (no cloud, no usage limits); free version includes 10 of 15 AI features with no watermark.",
+   "sourceUrl": "https://www.toolfarm.com/tutorial/in-depth-davinci-resolve-studio-vs-the-free-version/",
+   "sourceDate": "2025-2026 (Resolve 20/21 era)",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Autodesk: ex-Wonder Dynamics video-to-CG; $200M into World Labs",
+   "location": "data.ts CATEGORIES film-video / Autodesk Flow Studio",
+   "verdict": "confirmed",
+   "note": "Flow Studio is the renamed Wonder Studio (Wonder Dynamics, acquired 2024) automating mocap/VFX from video. Autodesk invested $200M in World Labs' $1B round (Feb 18, 2026) — largest startup investment in Autodesk history.",
+   "sourceUrl": "https://adsknews.autodesk.com/en/news/autodesk-invests-in-world-labs/",
+   "sourceDate": "2026-02-18",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Promise: AI-native studio; a16z, Google AI Futures Fund, Crossbeam",
+   "location": "data.ts CATEGORIES film-video / Promise",
+   "verdict": "confirmed",
+   "note": "a16z-backed AI studio; strategic investment from Google's AI Futures Fund plus Crossbeam, Kivu, Saga announced May 20, 2025.",
+   "sourceUrl": "https://www.prnewswire.com/news-releases/promise-expands-investor-base-with-strategic-investment-from-googles-ai-futures-fund-crossbeam-kivu-ventures-saga-ventures--other-top-investors-302459916.html",
+   "sourceDate": "2025-05-20",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Flawless: consent-based visual dubbing for studios",
+   "location": "data.ts CATEGORIES film-video / Flawless",
+   "verdict": "confirmed",
+   "note": "TrueSync visual dubbing with Artistic Rights Treasury (A.R.T.) consent/rights tracking; Deluxe/Pixelogic studio localization partnerships.",
+   "sourceUrl": "https://flawlessai.com/localization-and-dubbing",
+   "sourceDate": "accessed 2026-08-19",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "Deepdub: production dubbing with voice-clone royalties",
+   "location": "data.ts CATEGORIES film-video / Deepdub",
+   "verdict": "confirmed",
+   "note": "Voice Artist Royalty Program (launched Dec 2023) pays voice actors per use of their AI voice clone; works with HBO Max/Fox-tier studios.",
+   "sourceUrl": "https://www.prnewswire.com/news-releases/deepdub-launches-first-ever-royalty-program-to-compensate-voice-actors-for-the-use-of-their-voice-in-generative-ai-302007438.html",
+   "sourceDate": "2023-12-28",
+   "agent": "V1-map-panels-1-3"
+  },
+  {
+   "claim": "All <Cite id> references in page.tsx and all facts.cite values in data.ts resolve to existing SOURCES entries",
+   "location": "cross: page.tsx (27 distinct Cite ids) vs data.ts SOURCES (ids 1–49)",
+   "verdict": "confirmed",
+   "note": "Grep-verified: page cites {1,3,8,10,11,12,13,14,15,16,17,19,21,23,24,25,27,28,29,30,31,36,38,39,40,47,48} and facts cites {4,5,6,7,8,9,10,13,14,16,22,23,25,33,40} all exist. No dangling citation ids.",
+   "agent": "consistency"
+  },
+  {
+   "claim": "Meshy at ~$40M ARR (facts + 3D table '\\$1.5B on ~$40M ARR', bet 'roughly 35x ARR')",
+   "location": "cross: data.ts CATEGORIES gaming-3d-worlds Meshy + MODEL_GROUPS 3D Meshy-6 vs research 2-creation-experiences-2.md §4",
+   "verdict": "corrected",
+   "correctedValue": "~$30M ARR (making the valuation multiple ~50x, not ~35x)",
+   "note": "Research file 2 cites the SAME TechFundingNews article (source 33, Jul 21 2026) and 3DPrint.com for '~$30M ARR reported'. data.ts says ~$40M citing source 33 — one of them misquotes the shared source; the research quote is explicit. If $30M stands, both the '~$40M' (2 places) and the '~35x'/'roughly 35x' multiple (2 places) need updating.",
+   "sourceUrl": "https://techfundingnews.com/from-mit-research-to-1-5b-unicorn-ethan-hus-meshy-raises-400m-for-ai-powered-3d-creation/",
+   "sourceDate": "Jul 21, 2026",
+   "agent": "consistency"
+  },
+  {
+   "claim": "Kling revenue evidence: 'audited' in FINANCIALS; 'the best-audited number in the industry' in §01",
+   "location": "cross: data.ts FINANCIALS Kling (evidence: 'audited') vs SOURCES 3/47 labels and research 5/6",
+   "verdict": "corrected",
+   "correctedValue": "evidence: 'company-stated' (or a new 'filed-unaudited' framing); prose: 'a listed-company filed figure' rather than 'best-audited'",
+   "note": "Both Kuaishou IR sources are explicitly titled 'unaudited financial results' (Q1 URL: ...first-quarter-2026-unaudited; Q2 URL: ...second-quarter-and-interim-2026-unaudited-financial-results). Calling interim unaudited results 'audited'/'best-audited' contradicts the report's own source labels.",
+   "sourceUrl": "https://www.prnewswire.com/news-releases/kuaishou-technology-announces-second-quarter-and-interim-2026-unaudited-financial-results-302855081.html",
+   "sourceDate": "Aug 19, 2026",
+   "agent": "consistency"
+  },
+  {
+   "claim": "Icon: alive-and-pivoted ('Human Admaker' pivot, §14) vs dead (MOAT_MATRIX 'consolidation and shutdowns (Icon, Visual Electric)')",
+   "location": "cross: page.tsx §14 prose vs data.ts MOAT_MATRIX 'Thin generation apps' row; research 4-agents-orchestration.md A4 + flags §2",
+   "verdict": "unverifiable",
+   "note": "The page uses Icon as a living pivot story in §14 while the moat matrix lists it among shutdowns. Research file 1 documents the pivot (icon.com live); research file 4 flags 'Tech Startups reported shutdown March 5, 2026... status contested — likely dead or zombie'. Pick one story; the research says the company's status needs external verification.",
+   "sourceUrl": "https://techstartups.com/2026/03/05/icon-the-ai-ad-startup-shuts-down-after-spending-12m-on-the-icon-com-domain/",
+   "sourceDate": "Mar 5, 2026",
+   "agent": "consistency"
+  },
+  {
+   "claim": "Magnific/Freepik: 'Bootstrapped and profitable — no disclosed valuation'",
+   "location": "cross: data.ts FINANCIALS Magnific note vs research 4-agents-orchestration.md A1 + flags §4",
+   "verdict": "corrected",
+   "correctedValue": "'PE-backed (EQT majority since 2020) and profitable — no disclosed valuation'",
+   "note": "Research file 4 explicitly flags: the 'bootstrapped, no VC' claim 'is misleading — Freepik has been majority-owned by EQT (PE) since 2020; treat as marketing framing.' data.ts repeats the marketing framing without the hedge. (Research file 1's 'bootstrapped-era stock-asset company' refers to its pre-2020 history.)",
+   "agent": "consistency"
+  },
+  {
+   "claim": "Video leaderboard half-life: 'measured in weeks' vs 'one to two quarters' vs 'quarterly'",
+   "location": "cross: data.ts MODEL_GROUPS video note + page §01 + H2 ('turns over in weeks') vs page §04 ('half-life is one to two quarters', Cite 28) + CONTROL_POINTS #4 + MOAT_MATRIX row 1 + §17 ('quarterly turnover')",
+   "verdict": "unverifiable",
+   "note": "Internal contradiction stated 7+ times with two different periods. Research file 3 (Aug 17) supports '~1–2 quarters' (Gen-4.5 Dec 2025 → dethroned by Aug 2026 = 8 months). The 'weeks' claim rests on the very recent Wan 3.0 debut; either harmonize on 'quarters, accelerating toward weeks' or verify externally which is defensible.",
+   "agent": "consistency"
+  },
+  {
+   "claim": "'MiniMax's H3 put open weights at #2 overall' (§11 Open Source)",
+   "location": "cross: page.tsx §11 prose vs data.ts MODEL_GROUPS video Hailuo H3 entry ('#3 on AA text-to-video')",
+   "verdict": "corrected",
+   "correctedValue": "'put open weights inside the frontier top 3' (or '#2 → #3 after Wan 3.0's debut')",
+   "note": "data.ts (updated Aug 19) has H3 at #3 on AA t2v after Wan 3.0 debuted #1 and pushed Gemini to #2; §11 still carries the pre-Wan '#2 overall' from research file 3 (Aug 17). Stale within the same page.",
+   "agent": "consistency"
+  },
+  {
+   "claim": "FLUX 3 Video '#6 on Arena image-to-video and #2 on text-to-video'",
+   "location": "cross: data.ts MODEL_GROUPS image FLUX.2/FLUX 3 entry vs same file's video note (Arena t2v #1 Gemini; AA t2v Wan/Gemini/Hailuo) and '9 of top 10 Chinese (AA)' stat",
+   "verdict": "unverifiable",
+   "note": "The board for '#2 on text-to-video' is unspecified. If AA: contradicts the AA ranking narrative (Wan #1, Gemini #2, H3 #3) and would break '9 of the top 10 are Chinese' (BFL is German, giving two non-Chinese in the top 10). If Arena: a claimed #2 t2v model is absent from the entire Video table. Research file 3 (FLUX 3 Early Access Jul 23) has no leaderboard claim; the Aug 5 GA release notes are the only cited source. Specify the board or re-verify.",
+   "agent": "consistency"
+  },
+  {
+   "claim": "'9 of the top 10' video models are Chinese (hero tile, §01 card, H3 rationale)",
+   "location": "cross: page.tsx hero StatTile + §01 ChangeCard + data.ts video note vs research 3-foundation-models.md §0.3 ('8 of the top 10', AA arena)",
+   "verdict": "unverifiable",
+   "note": "Research (Aug 17) says 8 of 10; the report says 9 of 10 as of Aug 2026. Plausibly correct if Wan 3.0's Aug-19 debut displaced a non-Chinese model from the top 10, but nothing in the corpus documents the shift from 8 to 9 — needs a fresh leaderboard check.",
+   "agent": "consistency"
+  },
+  {
+   "claim": "Decart facts headline '~$7B' backed by cite '23' (Bloomberg '$6B' article)",
+   "location": "cross: data.ts CATEGORIES gaming-3d-worlds Decart facts (cite: '23') vs SOURCES 23 label 'Anthropic in talks to buy Decart for ~$6B'",
+   "verdict": "corrected",
+   "correctedValue": "cite: '48' (Calcalist, Aug 16 — the ~$7B/mostly-stock/NVIDIA-outbid report)",
+   "note": "Every prose mention says ~$7B (Decart note, CONTROL_POINTS, white-space card, W2, H8, §06), which traces to source 48; source 23's label says ~$6B. The facts.cite backing the headline figure points at the $6B article. §06 correctly cites both 23 and 48; the facts block should too (or just 48).",
+   "agent": "consistency"
+  },
+  {
+   "claim": "Kling spin-out: '~$3B at $18B post, Tencent and Alibaba among 38 investors' stated as fact",
+   "location": "cross: data.ts Kling entries + page W3 card vs SOURCES 41 URL slug ('raises-2-billion') and research 4/6 ([CONFLICT]: $2.8–3B at $15–18B, 'single source, verify'; investors listed as Tencent+Alibaba+Baidu)",
+   "verdict": "unverifiable",
+   "note": "Three internal tensions: (1) source 41's Bloomberg URL slug says '$2 billion' while its label and all body text say '~$3B'; (2) research flagged the valuation as a conflicting $15–18B range from rumor-grade sources, and the report states $18B flat; (3) '38 investors' appears nowhere in the research corpus, and research's named co-investor Baidu is dropped. Verify against the Bloomberg piece before treating $18B/$3B/38 as settled.",
+   "sourceUrl": "https://www.bloomberg.com/news/articles/2026-07-02/china-s-kling-ai-raises-2-billion-to-expand-ai-video-operations",
+   "sourceDate": "Jul 2, 2026",
+   "agent": "consistency"
+  },
+  {
+   "claim": "Runway: 'last reported ~$90M mid-2025' and 'est. $100–300M' revenue",
+   "location": "cross: data.ts film-video Runway note + page §09 vs research 1/4/5 (Sacra est. ~$265–300M annualized 2026; GetLatka $121.6M for 2024; no $90M figure anywhere)",
+   "verdict": "unverifiable",
+   "note": "The '~$90M mid-2025 last hard figure' has no support in any research file and suspiciously matches Kling's Q1 2026 quarterly revenue (RMB 650M ≈ $90M, SCMP headline 'surges 300% to over $90M') — possible cross-contamination. The est. range also disagrees: research carries $265–300M (Sacra), the report widened it down to $100–300M without a documented basis. Both need re-sourcing.",
+   "agent": "consistency"
+  },
+  {
+   "claim": "UMG v. Suno status: 'UMG suit live / UMG still looms / UMG still litigating' — but §01 card says 'UMG and WMG converted suits against Udio and Suno into licensing regimes'",
+   "location": "cross: page.tsx §01 ChangeCard (music) vs data.ts Suno notes + MOMENTUM #8 + W1 card; research 2 §3 ('UMG also settled per mid-2026 reporting; Sony holds out') vs research 3 §4 ('UMG×Udio settled; Sony has settled with neither')",
+   "verdict": "unverifiable",
+   "note": "The §01 card implies UMG settled with BOTH Udio and Suno, contradicting the report's own repeated 'UMG suit [against Suno] live'. The research corpus itself conflicts (file 2 says UMG–Suno settled per mid-2026 reporting; file 3 lists UMG as settled only with Udio). Whether UMG–Suno is settled or live needs external verification; at minimum the §01 card and the Suno notes must agree.",
+   "agent": "consistency"
+  },
+  {
+   "claim": "'No fair-use ruling expected before 2027 (dispositive motions due April)' / 'Sony ruling not before 2027'",
+   "location": "cross: page.tsx W1 card + data.ts Suno note + audio table Suno entry vs research 2 ('fair-use summary-judgment hearing in D. Mass. expected ~July 2026') and research 5 ('Sony fair-use ruling expected summer 2026')",
+   "verdict": "unverifiable",
+   "note": "Research (cutoff Aug 17) twice says a Sony fair-use ruling was expected summer 2026; the report says not before 2027 with dispositive motions due April [2027?]. If the schedule genuinely slipped post-research, no source in the corpus documents it — the 2027 timeline and the 'motions due April' detail are unsourced.",
+   "agent": "consistency"
+  },
+  {
+   "claim": "Sora died 'on an estimated ~$1M/day of inference against roughly $2.1M of lifetime in-app revenue'",
+   "location": "cross: page.tsx §01 prose + §08 ('costs that killed Sora') vs research 5 B1 ('operating cost estimates range $1M/day (TechJournal) to $15M/day (Forbes) — conflicting; $2.1M revenue secondary-sourced, treat cautiously')",
+   "verdict": "unverifiable",
+   "note": "Research explicitly flags a 15x spread in the cost estimate and marks the $2.1M revenue figure as cautionary secondary sourcing; the page presents the low end of the range with only 'estimated' as a hedge. Consider '$1M–15M/day (estimates conflict)' or attribute the $1M figure.",
+   "agent": "consistency"
+  },
+  {
+   "claim": "'open-weights line stops at Wan 2.2 — the flagship is closed' / 'Wan ≤2.2' open",
+   "location": "cross: data.ts Wan 3.0 entry + page §11 + FLOW node 'Wan 2.2 / 3.0' vs research 3 notes ('Wan open-weights conflict: Alibaba Cloud blog says Wan 2.6 weights on HF vs Morphic says open line stops at 2.2 — Flagged, unresolved')",
+   "verdict": "unverifiable",
+   "note": "Research left this as an explicitly unresolved [CONFLICT]; the report states 'stops at 2.2' as flat fact in two places without hedging. Research 6 (Wan 2.5 closed-API) is consistent with 'stops at 2.2' but doesn't resolve the 2.6-on-HF claim.",
+   "agent": "consistency"
+  },
+  {
+   "claim": "Kling revenue '75% of it from outside China' (§01)",
+   "location": "cross: page.tsx §01 prose vs data.ts Kling adoption / MOMENTUM #1 / page §12 ('~70–75% overseas as of Q1')",
+   "verdict": "corrected",
+   "correctedValue": "'~70–75% of it from outside China (Q1)'",
+   "note": "The report states the hedged range '~70–75% (Q1)' in three places but the flat '75%' in §01. Research 5 says '~75%'. Harmonize on the hedged range the report itself adopted.",
+   "agent": "consistency"
+  },
+  {
+   "claim": "SOURCES 34: 'SEC — Getty terminates Shutterstock merger' dated 'Jul 7, 2026' with URL gety-20260813.htm",
+   "location": "cross: data.ts SOURCES 34 date field vs its URL (an Aug 13, 2026 SEC filing)",
+   "verdict": "corrected",
+   "correctedValue": "date: 'Jul 7, 2026 (SEC filing of Aug 13, 2026)' — or 'Aug 13, 2026' with the event date moved into the label",
+   "note": "The board terminated the merger July 7 (per research 6), but the linked document is an Aug 13 filing; as rendered, the source line reads as if the filing is dated Jul 7. Research 6 confirms both dates; the entry just conflates them.",
+   "agent": "consistency"
+  },
+  {
+   "claim": "Kling Q1 '~$500M ARR run-rate' followed by Q2 '~$475M annualized' described as 'the curve continuing'",
+   "location": "cross: page.tsx §01 prose (Cite 3 vs Cite 47)",
+   "verdict": "unverifiable",
+   "note": "Read literally, $500M → $475M is a decline, not a decelerating rise. The two figures use different bases (the Q1-era '~$500M ARR' was a March monthly-annualized claim via SCMP/IR framing; the $475M is 4× Q2 quarterly revenue). On a consistent quarterly-annualized basis the trajectory is ~$360M (Q1) → ~$475M (Q2), which IS growth. Worth a one-clause basis note in §01 to avoid the apparent contradiction.",
+   "agent": "consistency"
+  },
+  {
+   "claim": "'Synthesia and HeyGen compound with 140%+ NRR' (§08)",
+   "location": "cross: page.tsx §08 prose vs data.ts Synthesia bet/note (NRR claimed for Synthesia only) and research 2/6 (NRR >140% is a Synthesia disclosure; no HeyGen NRR figure anywhere)",
+   "verdict": "unverifiable",
+   "note": "The 140%+ NRR figure is sourced only to Synthesia in both data.ts and the research corpus; §08 extends it to HeyGen. Rephrase ('Synthesia compounds at 140%+ NRR; HeyGen at break-even') or verify a HeyGen NRR figure.",
+   "agent": "consistency"
+  },
+  {
+   "claim": "fal ~$400M annualized labeled evidence:'estimate' in FINANCIALS but described as 'reported' in §09",
+   "location": "cross: data.ts FINANCIALS fal (evidence: 'estimate') vs page §09 ('fal (~$400M reported)') and research 5 B1 ('reported via The Information — High confidence')",
+   "verdict": "corrected",
+   "correctedValue": "Align both: either evidence stays 'estimate' and §09 says '~$400M est.', or (matching research's 'reported via The Information') §09 keeps 'reported' and the chart evidence becomes 'company-stated'/reported-tier",
+   "note": "Minor but user-visible: the ARR chart badges fal as an estimate while the adjacent prose calls the same number 'reported'.",
+   "agent": "consistency"
+  }
+ ]
+}

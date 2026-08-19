@@ -198,13 +198,13 @@ export const CATEGORIES: Category[] = [
     companies: [
       { name: 'Canva', kind: 'incumbent', modelDependency: 'multi-model', domain: 'canva.com', bet: 'Long — 265M users make models interchangeable inputs', note: 'Leonardo models + third-party shelf; Affinity now free', facts: { arr: '~$4B+ ARR', users: '265M MAU', asOf: 'Aug 2026' }, momentum: true },
       { name: 'Adobe Firefly', kind: 'incumbent', modelDependency: 'multi-model', domain: 'adobe.com', bet: 'Long — governed workflow over everyone’s models is working', note: 'Own commercially-safe models + partner-model hub; AI-first ARR up 3x YoY', facts: { arr: 'over $500M AI-first ARR', asOf: 'Jun 2026', cite: '16' }, momentum: true },
-      { name: 'Google Flow', kind: 'lab', modelDependency: 'own-models', domain: 'google.com', bet: 'Long — bundled frontier gen rides a 1B-MAU assistant', note: 'Flow+Whisk+ImageFX unified Feb 2026, 140+ countries, bundled with AI subscriptions' },
+      { name: 'Google Flow', kind: 'lab', modelDependency: 'own-models', domain: 'google.com', bet: 'Long — bundled frontier gen rides a 1B-MAU assistant', note: 'Flow+Whisk+ImageFX unified Feb 2026, 140+ countries, bundled with AI subscriptions', facts: { users: '1.5B+ creations (claimed)', asOf: 'Feb 2026', cite: '18' } },
       { name: 'Magnific (Freepik)', kind: 'startup', modelDependency: 'multi-model', domain: 'freepik.com', bet: 'Long — integration speed and SEO distribution beat model ownership', note: 'Every model under one roof; half of revenue from video', facts: { arr: '$230M ARR', asOf: 'Apr 2026', cite: '4' }, momentum: true },
       { name: 'Krea', kind: 'startup', modelDependency: 'multi-model', domain: 'krea.ai', bet: 'Long — real-time canvas is a real paradigm; state must follow', note: 'Real-time canvas, 60+ models, own Krea 2 open image model', facts: { valuation: '$500M', asOf: 'Apr 2025' } },
-      { name: 'Figma Weave', kind: 'incumbent', modelDependency: 'multi-model', domain: 'figma.com', bet: 'Long — Community makes workflows a network effect', note: 'Weavy acquired for over $200M; shareable AI workflows in Figma Community' },
+      { name: 'Figma Weave', kind: 'incumbent', modelDependency: 'multi-model', domain: 'figma.com', bet: 'Long — Community makes workflows a network effect', note: 'Weavy acquired for over $200M; shareable AI workflows inside Figma', facts: { valuation: 'acq. >$200M (Figma)', raised: '$4M seed (as Weavy)', investors: ['Entrée Capital', 'Designer Fund', 'Founder Collective'], asOf: 'Oct 2025' } },
       { name: 'OpenArt', kind: 'startup', modelDependency: 'multi-model', domain: 'openart.ai', bet: 'Watch — Recipes are early state; free platform bundles loom', note: 'Shareable Recipes', facts: { arr: '$70M ARR', users: '8M MAU' } },
-      { name: 'Recraft', kind: 'startup', modelDependency: 'own-models', domain: 'recraft.ai', bet: 'Watch — model-shop-to-workspace pivot must outrun the frontier', note: 'Design-grade image models, shifting from model shop to workspace' },
-      { name: 'Lovart', kind: 'startup', modelDependency: 'multi-model', domain: 'lovart.ai', bet: 'Watch — agent-first design has no demand proof yet', note: '"AI design agent" archetype; ex-ByteDance founder' },
+      { name: 'Recraft', kind: 'startup', modelDependency: 'own-models', domain: 'recraft.ai', bet: 'Watch — model-shop-to-workspace pivot must outrun the frontier', note: 'Design-grade image models, shifting from model shop to workspace', facts: { raised: '$42M', investors: ['Accel', 'Khosla Ventures', 'Madrona'], users: '4M+ users (claimed)', asOf: 'May 2025' } },
+      { name: 'Lovart', kind: 'startup', modelDependency: 'multi-model', domain: 'lovart.ai', bet: 'Watch — agent-first design has no demand proof yet', note: '"AI design agent" archetype; ex-ByteDance founder; no disclosed funding', facts: { users: '10M+ users (claimed)', arr: '~$30M annualized (claimed)', asOf: 'Aug 2026' } },
     ],
   },
   {
@@ -214,7 +214,7 @@ export const CATEGORIES: Category[] = [
     color: '#f59e0b',
     companies: [
       { name: 'Meta (GEM / Advantage+)', kind: 'incumbent', modelDependency: 'own-models', domain: 'meta.com', bet: 'Long — the ad auction is a closed loop no startup can enter', note: 'Targeting fully automated ad creation by end-2026; Muse model (Jul 2026) ends Midjourney/BFL licensing — Advantage+ advertiser rollout still pending as of mid-Aug', momentum: true },
-      { name: 'Google Asset Studio', kind: 'incumbent', modelDependency: 'own-models', domain: 'google.com', bet: 'Long — creative folds into media spend', note: 'Veo in Google Ads; ~70M Gemini-generated assets in Q4 2025 PMax alone' },
+      { name: 'Google Asset Studio', kind: 'incumbent', modelDependency: 'own-models', domain: 'google.com', bet: 'Long — creative folds into media spend', note: 'Veo in Google Ads; ~70M Gemini-generated assets in Q4 2025 across AI Max + PMax' },
       { name: 'Amazon Creative Agent', kind: 'incumbent', modelDependency: 'own-models', domain: 'amazon.com', bet: 'Long — free creative subsidized by retail media', note: 'Free conversational ad agent (Feb 2026), monetized via media spend' },
       { name: 'Creatify', kind: 'startup', modelDependency: 'multi-model', domain: 'creatify.ai', bet: 'Watch — the 15M-ad corpus is real; platform absorption risk is too', note: 'Creatify Agent (May 2026) trained on 15M+ ads; locked brand facts as constraints' },
       { name: 'Typeface', kind: 'startup', modelDependency: 'partner-models', domain: 'typeface.ai', bet: 'Watch — brand governance sells; suite bundling squeezes', note: 'Enterprise brand governance, Arc Agents' },
@@ -231,7 +231,7 @@ export const CATEGORIES: Category[] = [
     jobToBeDone: 'Studio-grade production and post',
     color: '#f43f5e',
     companies: [
-      { name: 'Runway', kind: 'startup', modelDependency: 'own-models', domain: 'runwayml.com', bet: 'Long — GWM gives a second act beyond media rents', note: 'Gen-4.5 + GWM world-model pivot; revenue undisclosed (est. $100–300M; last reported ~$90M mid-2025)', facts: { valuation: '$5.3B', raised: '$315M Series E', asOf: 'Feb 2026', cite: '5' }, momentum: true },
+      { name: 'Runway', kind: 'startup', modelDependency: 'own-models', domain: 'runwayml.com', bet: 'Long — GWM gives a second act beyond media rents', note: 'Gen-4.5 + GWM world-model pivot; revenue undisclosed (est. $100–300M; trackers est. ~$300M annualized by late 2025)', facts: { valuation: '$5.3B', raised: '$315M Series E', asOf: 'Feb 2026', cite: '5' }, momentum: true },
       { name: 'Luma', kind: 'startup', modelDependency: 'own-models', domain: 'lumalabs.ai', bet: 'Watch — pro deliverables niche vs omni gravity; HUMAIN compute buys time', note: 'Ray3.2 HDR/EXR pro deliverables', facts: { valuation: '$4B', raised: '$900M', investors: ['HUMAIN'] } },
       { name: 'Moonvalley', kind: 'startup', modelDependency: 'own-models', domain: 'moonvalley.ai', bet: 'Long — provenance is what studio procurement actually buys', note: 'Marey trained exclusively on licensed data — the clean-model studio wedge' },
       { name: 'LTX Studio (Lightricks)', kind: 'startup', modelDependency: 'open-weights', domain: 'ltx.studio', bet: 'Long — the Linux-of-video position compounds', note: 'Open-sourced LTX-2 (Jan 2026); script-to-screen pipeline + own open models', momentum: true },
@@ -283,16 +283,16 @@ export const CATEGORIES: Category[] = [
     color: '#6366f1',
     companies: [
       { name: 'World Labs', kind: 'startup', modelDependency: 'own-models', domain: 'worldlabs.ai', bet: 'Long — mesh-native worlds drop into real pipelines', note: 'Marble GA; mesh-native worlds', facts: { raised: '$1B round', investors: ['Autodesk ($200M)'], asOf: 'Feb 2026', cite: '22' }, momentum: true },
-      { name: 'Decart', kind: 'startup', modelDependency: 'own-models', domain: 'decart.ai', bet: 'Long — the optimization stack is worth more than the demos', note: 'Sub-35ms real-time; Anthropic acquisition reported near signing at ~$7B, mostly stock, NVIDIA outbid (Aug 16 — still unsigned)', facts: { valuation: '~$4B', raised: '$300M', asOf: 'Aug 2026', cite: '23' }, momentum: true },
+      { name: 'Decart', kind: 'startup', modelDependency: 'own-models', domain: 'decart.ai', bet: 'Long — the optimization stack is worth more than the demos', note: 'Sub-35ms real-time; Anthropic acquisition reported near signing at ~$7B, mostly stock, NVIDIA outbid (Aug 16 — still unsigned)', facts: { valuation: '~$4B', raised: '$300M', asOf: 'Aug 2026', cite: '48' }, momentum: true },
       { name: 'Google Genie', kind: 'lab', modelDependency: 'own-models', domain: 'google.com', bet: 'Long — first consumer world model; bundling does the rest', note: 'Project Genie shipped Jan 2026 to $250/mo Ultra subscribers, US-only' },
       { name: 'NVIDIA Cosmos', kind: 'incumbent', modelDependency: 'open-weights', domain: 'nvidia.com', bet: 'Long — arming everyone beats betting on anyone', note: 'Cosmos 3 open omnimodel + Coalition (BFL, Runway, LTX) — Llama-izing world models' },
       { name: 'Odyssey', kind: 'startup', modelDependency: 'own-models', domain: 'odyssey.systems', bet: 'Watch — simulation pivot chases robotics budgets', note: 'Pivoting to simulation infrastructure', facts: { valuation: '$1.45B', raised: '$310M' } },
-      { name: 'Meshy', kind: 'startup', modelDependency: 'own-models', domain: 'meshy.ai', bet: 'Short — priced on optionality at roughly 35x ARR', note: 'Priced on world-model optionality; 12x YoY growth claimed', facts: { valuation: '$1.5B', raised: '~$400M Series B', arr: '~$40M ARR', asOf: 'Jul 2026', cite: '33' } },
+      { name: 'Meshy', kind: 'startup', modelDependency: 'own-models', domain: 'meshy.ai', bet: 'Short — priced on optionality at roughly 50x ARR', note: 'Priced on world-model optionality; 12x YoY growth claimed', facts: { valuation: '$1.5B', raised: '~$400M Series B', arr: '~$30M ARR', asOf: 'Jul 2026', cite: '33' } },
       { name: 'Tripo', kind: 'startup', modelDependency: 'own-models', domain: 'tripo3d.ai', bet: 'Watch — speed lead in a commoditizing category', note: 'Speed + topology leader in 3D assets', facts: { raised: '~$200M' } },
-      { name: 'Rodin (Deemos)', kind: 'startup', modelDependency: 'own-models', domain: 'deemos.com', bet: 'Watch — sub-$1 pricing proves the commodity endgame', note: 'Lowe’s 30k-item catalog at <$1/model — 3D pricing already commoditized' },
-      { name: 'Inworld', kind: 'startup', modelDependency: 'own-models', domain: 'inworld.ai', bet: 'Watch — NPC infra leader hedging into voice', note: 'NPC infra leader, diversifying into voice agents' },
-      { name: 'Scenario', kind: 'startup', modelDependency: 'multi-model', domain: 'scenario.com', bet: 'Short — style-lock is becoming a frontier-model feature', note: 'Style-locked game assets; thin moat vs frontier models' },
-      { name: 'Hidden Door', kind: 'startup', modelDependency: 'multi-model', domain: 'hiddendoor.co', bet: 'Watch — licensed-IP fiction, the games analog of music licensing', note: 'Licensed-IP interactive fiction' },
+      { name: 'Rodin (Deemos)', kind: 'startup', modelDependency: 'own-models', domain: 'deemos.com', bet: 'Watch — sub-$1 pricing proves the commodity endgame', note: 'Lowe’s 30k-item catalog at <$1/model — 3D pricing already commoditized', facts: { raised: 'CNY 100Ms round (Jun 2026)', investors: ['Cathay Capital', 'Shanghai SSCI'], asOf: 'Jun 2026' } },
+      { name: 'Inworld', kind: 'startup', modelDependency: 'own-models', domain: 'inworld.ai', bet: 'Watch — NPC infra leader hedging into voice', note: 'NPC infra leader, diversifying into voice agents', facts: { valuation: '>$500M (Aug 2023)', raised: '~$120M', investors: ['Lightspeed', 'M12 (Microsoft)', 'Samsung Next'], asOf: 'Jul 2026' } },
+      { name: 'Scenario', kind: 'startup', modelDependency: 'multi-model', domain: 'scenario.com', bet: 'Short — style-lock is becoming a frontier-model feature', note: 'Style-locked game assets; thin moat vs frontier models', facts: { raised: '$11M', asOf: 'Jan 2023' } },
+      { name: 'Hidden Door', kind: 'startup', modelDependency: 'multi-model', domain: 'hiddendoor.co', bet: 'Watch — licensed-IP fiction, the games analog of music licensing', note: 'Licensed-IP interactive fiction', facts: { raised: '$9M', investors: ['Northzone', 'Makers Fund', 'Betaworks'], asOf: 'Aug 2025' } },
       { name: 'Ubisoft / EA (internal)', kind: 'incumbent', modelDependency: 'multi-model', bet: 'Watch — internal pipelines cut costs, not add revenue', note: 'Ubisoft’s studio-wide generative pipeline (Ghostwriter, NEO NPCs); EA co-developing with Stability' },
     ],
   },
@@ -306,9 +306,9 @@ export const CATEGORIES: Category[] = [
       { name: 'HeyGen', kind: 'startup', modelDependency: 'multi-model', domain: 'heygen.com', bet: 'Long — the capital-efficiency benchmark of the app layer', note: 'Cash-flow break-even; burned only $25M of the $74M raised', facts: { arr: '$200M ARR', raised: '~$74M total', asOf: 'Jun 2026', cite: '8' }, momentum: true },
       { name: 'Gamma', kind: 'startup', modelDependency: 'partner-models', domain: 'gamma.app', bet: 'Watch — profitable and lean; native rivals arrived', note: 'Profitable with ~50 people; MSFT/Google now ship native rivals', facts: { valuation: '$2.1B', arr: 'over $100M ARR', asOf: 'Nov 2025' } },
       { name: 'Gemini Notebook', kind: 'incumbent', modelDependency: 'own-models', domain: 'google.com', bet: 'Long — free doc-to-video caps the category', note: 'ex-NotebookLM, 30M users; free doc→video caps the explainer category' },
-      { name: 'Tavus', kind: 'startup', modelDependency: 'own-models', domain: 'tavus.io', bet: 'Watch — real-time niche defensible; TAM question open', note: 'Real-time conversational avatars, <500ms end-to-end' },
-      { name: 'Sync', kind: 'startup', modelDependency: 'own-models', domain: 'sync.so', bet: 'Watch — the API layer rivals quietly resell', note: 'Lip-sync API layer powering other platforms' },
-      { name: 'Argil', kind: 'startup', modelDependency: 'own-models', domain: 'argil.ai', bet: 'Watch — must outrun avatars-as-a-feature', note: 'Creator clone videos; notable European entrant' },
+      { name: 'Tavus', kind: 'startup', modelDependency: 'own-models', domain: 'tavus.io', bet: 'Watch — real-time niche defensible; TAM question open', note: 'Real-time conversational avatars, <500ms end-to-end', facts: { valuation: '~$250M (secondary est.)', raised: '$64M', investors: ['CRV', 'Sequoia', 'Scale Venture Partners'], asOf: 'Aug 2026' } },
+      { name: 'Sync', kind: 'startup', modelDependency: 'own-models', domain: 'sync.so', bet: 'Watch — the API layer rivals quietly resell', note: 'Lip-sync API layer powering other platforms', facts: { raised: '~$5.5M seed', investors: ['GV', 'Y Combinator'], asOf: 'Aug 2026' } },
+      { name: 'Argil', kind: 'startup', modelDependency: 'own-models', domain: 'argil.ai', bet: 'Watch — must outrun avatars-as-a-feature', note: 'Creator clone videos; notable European entrant', facts: { raised: '€4.9M', investors: ['EQT Ventures', 'Seedcamp'], asOf: 'Nov 2024' } },
     ],
   },
   {
@@ -321,11 +321,11 @@ export const CATEGORIES: Category[] = [
       { name: 'ComfyUI', kind: 'startup', modelDependency: 'open-weights', domain: 'comfy.org', bet: 'Long — workflows-as-JSON is becoming the substrate', note: 'Workflows-as-JSON is the portable orchestration format', facts: { valuation: '$500M', raised: '$30M', users: '4M+ users', asOf: 'Apr 2026', cite: '13' } },
       { name: 'Flora', kind: 'startup', modelDependency: 'multi-model', domain: 'florafauna.ai', bet: 'Watch — FAUNA plus marquee logos; needs enterprise state', note: 'FAUNA agent wires node pipelines from a brief; Nike/Netflix/Lionsgate', facts: { raised: '$42M Series A', asOf: 'Jan 2026', cite: '14' } },
       { name: 'Adobe Firefly Assistant', kind: 'incumbent', modelDependency: 'multi-model', domain: 'adobe.com', bet: 'Long — the agent already lives where work happens', note: 'Creative agent across CC apps; embedded into ChatGPT and Claude (Jun 2026)' },
-      { name: 'Replicate (Cloudflare)', kind: 'incumbent', modelDependency: 'multi-model', domain: 'replicate.com', bet: 'Short — thin marketplaces get absorbed; the deal proved it', note: 'Acquired Nov 2025 — thin marketplaces get absorbed' },
+      { name: 'Replicate (Cloudflare)', kind: 'incumbent', modelDependency: 'multi-model', domain: 'replicate.com', bet: 'Short — thin marketplaces get absorbed; the deal proved it', note: 'Acquired Nov 2025 — thin marketplaces get absorbed', facts: { valuation: 'acq. by Cloudflare (terms undisclosed)', users: '50K+ hosted models', asOf: 'Nov 2025', cite: '12' } },
       { name: 'Runware', kind: 'startup', modelDependency: 'multi-model', domain: 'runware.ai', bet: 'Watch — EU champion on owned hardware; scale gap vs fal', note: '1MW containerized inference pods; the EU champion', facts: { raised: '$50M Series A' } },
       { name: 'WaveSpeed', kind: 'startup', modelDependency: 'multi-model', domain: 'wavespeed.ai', bet: 'Watch — fastest Western shelf for Chinese models; fragile edge', note: 'Fastest Western access to Chinese models' },
-      { name: 'Vercel AI Gateway', kind: 'incumbent', modelDependency: 'multi-model', domain: 'vercel.com', bet: 'Watch — gateways commoditize routing from above', note: '32 image + 30 video models; gateways treat media as first-class now' },
-      { name: 'Baseten / Modal / Together', kind: 'startup', modelDependency: 'multi-model', bet: 'Watch — media as catalog extension, not focus', note: 'General inference clouds serving media as catalog extension' },
+      { name: 'Vercel AI Gateway', kind: 'incumbent', modelDependency: 'multi-model', domain: 'vercel.com', bet: 'Watch — gateways commoditize routing from above', note: '32 image + 30 video models; gateways treat media as first-class now', facts: { users: '200K+ teams (claimed)', asOf: 'Jul 2026' } },
+      { name: 'Baseten / Modal / Together', kind: 'startup', modelDependency: 'multi-model', bet: 'Watch — media as catalog extension, not focus', note: 'General inference clouds serving media as catalog extension', facts: { valuation: 'Baseten $13B · Modal $4.65B · Together $8.3B', asOf: 'Jul 2026' } },
     ],
   },
 ]
@@ -357,7 +357,7 @@ export const MODEL_GROUPS: ModelGroup[] = [
       { name: 'MAI-Image-2.6', developer: 'Microsoft', openness: 'closed', capability: 'Arena #2 at 1336 Elo (Aug 10); +79 Elo over 2.5 in one release; cut the GPT Image lead to 45 Elo', pricing: 'Copilot-bundled', adoption: 'Copilot/Bing; OpenAI-independence signal' },
       { name: 'Reve 2.1', developer: 'Reve', openness: 'closed', capability: '#2 on AA; layout-first (posters, typography, packaging)', pricing: 'n/a public', adoption: 'Independent lab holding a podium spot' },
       { name: 'Nano Banana 2 (Gemini 3.1 Flash Image)', developer: 'Google', openness: 'closed', capability: '#3 AA; Imagen 4 Fast is the $0.02/image cost floor', pricing: '$0.02–0.15/image', adoption: 'Gemini, Flow, Workspace, Vertex' },
-      { name: 'FLUX.2 / FLUX 3', developer: 'Black Forest Labs', openness: 'hybrid', capability: 'Dev (32B) is the open standard; Klein Apache-2.0; FLUX 3 goes omni — FLUX 3 Video GA Aug 5, #6 on Arena image-to-video and #2 on text-to-video', pricing: '~$0.03/MP API', adoption: '~$300M contract value: Meta ($140M), Adobe, Canva' },
+      { name: 'FLUX.2 / FLUX 3', developer: 'Black Forest Labs', openness: 'hybrid', capability: 'Dev (32B) is the open standard; Klein Apache-2.0; FLUX 3 goes omni — FLUX 3 Video GA Aug 5, #6 on Arena image-to-video and #2 on Arena text-to-video (not yet listed on AA)', pricing: '~$0.03/MP API', adoption: '~$300M contract value: Meta ($140M), Adobe, Canva' },
       { name: 'Midjourney V8.2', developer: 'Midjourney', openness: 'closed', capability: 'Aesthetics-led; still no API; video stuck at V1', pricing: 'Subscription only', adoption: '~$200–500M revenue est. (wide variance); Disney suit in discovery' },
       { name: 'HunyuanImage 3.0', developer: 'Tencent', openness: 'open', capability: '80B MoE — largest open image model; Instruct adds reasoning', pricing: 'Self-host', adoption: 'Open-ecosystem anchor' },
       { name: 'Seedream 4.5 / 5.0', developer: 'ByteDance', openness: 'closed', capability: '5.0 announced Jun 2026, not independently demoed', pricing: 'Ark platform', adoption: 'Dreamina, Doubao, partner shelves' },
@@ -379,7 +379,7 @@ export const MODEL_GROUPS: ModelGroup[] = [
     modality: '3D',
     note: 'Workflow-dominated, not leaderboard-dominated. No omni model has absorbed rigging or retopology — the long tail here is durable, but unit pricing already commoditized (<$1/model in enterprise e-commerce).',
     entries: [
-      { name: 'Meshy-6', developer: 'Meshy', openness: 'closed', capability: 'Most production-ready meshes + texturing; engine export', pricing: 'Subscription + API', adoption: '~$400M Series B @ $1.5B on ~$40M ARR', flagship: true },
+      { name: 'Meshy-6', developer: 'Meshy', openness: 'closed', capability: 'Most production-ready meshes + texturing; engine export', pricing: 'Subscription + API', adoption: '~$400M Series B @ $1.5B on ~$30M ARR', flagship: true },
       { name: 'Tripo 2.5', developer: 'VAST', openness: 'closed', capability: 'Clean low-poly in ~2s; rigs bipeds and creatures', pricing: 'Subscription + API', adoption: '~$200M raised; 6.5M creators claimed' },
       { name: 'Rodin Gen-2.5', developer: 'Deemos', openness: 'closed', capability: 'Sculpt-level detail, production topology controls', pricing: '<$1/model at volume', adoption: 'Lowe’s 30k-item 2D→3D conversion' },
       { name: 'Hunyuan3D 2.5', developer: 'Tencent', openness: 'open', capability: 'Best open 3D; near-proprietary fidelity', pricing: 'Self-host', adoption: 'Open-ecosystem anchor' },
@@ -506,7 +506,7 @@ export const CONTROL_POINTS: ControlPoint[] = [
   },
   {
     title: 'Frontier omni models with owned distribution',
-    why: 'Pure model quality has a one-to-two-quarter half-life, but a frontier model fused to a billion-user surface (Gemini Omni + YouTube, Seedance + CapCut) compounds data, cost, and default status simultaneously.',
+    why: 'Pure model quality has a half-life now measured in weeks to quarters, but a frontier model fused to a billion-user surface (Gemini Omni + YouTube, Seedance + CapCut) compounds data, cost, and default status simultaneously.',
     leaders: 'Google, ByteDance, Kuaishou; OpenAI in image only post-Sora; MiniMax as the public-market pure-play',
     defensibility: 'Capital intensity of frontier training + proprietary usage data + subsidized inference. Distribution is the differentiator, not the checkpoint.',
     absorption: 'This is incumbent territory already; independent labs (Runway, Luma, BFL) survive via pro niches, licensing, or robotics pivots.',
@@ -538,7 +538,7 @@ export const CONTROL_POINTS: ControlPoint[] = [
 export const MOAT_MATRIX: MatrixRow[] = [
   {
     layer: 'Frontier video models',
-    differentiation: 'Eroding fast — ~150 Elo across the top 11; leadership turns over quarterly',
+    differentiation: 'Eroding fast — ~150 Elo across the top 11; leadership turnover compressed from quarterly to weeks',
     risk: 'high',
     moat: 'Fusion with owned distribution and subsidized inference; otherwise none durable',
     valueCapture: 'Migrates to distribution owners; standalone labs pivot to pro niches or robotics',
@@ -625,7 +625,7 @@ export const STACK_COMPANIES: StackCompany[] = [
 // ——— Momentum 25 ———
 
 export const MOMENTUM: MomentumEntry[] = [
-  { rank: 1, name: 'Kling (Kuaishou)', what: 'video model + app', domain: 'klingai.com', why: 'Q2 revenue over RMB 850M, up over 200% YoY (filed Aug 19, 2026 — a ~$475M annualized run-rate), ~70–75% overseas as of Q1 — the global revenue benchmark for AI video, spun out with a ~$3B round at $18B post (Jul 2026; Tencent and Alibaba among 38 investors), HK IPO targeted 2027.' },
+  { rank: 1, name: 'Kling (Kuaishou)', what: 'video model + app', domain: 'klingai.com', why: 'Q2 revenue over RMB 850M, up over 200% YoY (filed Aug 19, 2026 — a ~$475M annualized run-rate), ~70–75% overseas as of Q1 — the global revenue benchmark for AI video, spun out with a ~$3B round at $18B post (Jul 2026; Tencent and Alibaba among the investors), HK IPO targeted 2027.' },
   { rank: 2, name: 'Google (Gemini / Veo / Flow)', what: 'full stack', domain: 'google.com', why: 'Gemini passed 1B MAU, Omni Flash still tops the Arena text-to-video board (though Wan 3.0 just took the AA #1), and Flow unified into a 140-country workspace — Google won the Western consumer field largely by Sora’s forfeit.' },
   { rank: 3, name: 'ElevenLabs', what: 'audio platform', domain: 'elevenlabs.io', why: '~$500M ARR (est.), $11B Series D, Spotify distribution, licensed music expansion — the cleanest scale-up in all of GenMedia.' },
   { rank: 4, name: 'ByteDance (Seedance / CapCut)', what: 'model + funnel', domain: 'bytedance.com', why: 'Seedance 2.5 (30s single-pass, public Jul 31) ships into a 400M-MAU editor; the only company fusing frontier video with a billion-user creation-to-publication funnel.' },
@@ -679,19 +679,19 @@ export const POSITIONING: PositionedCompany[] = [
 
 export const FINANCIALS: CompanyFinancials[] = [
   { name: 'Higgsfield', domain: 'higgsfield.ai', kind: 'startup', arrLowM: 700, arrLabel: '$700M annualized (claimed)', evidence: 'claimed', valuationM: 5400, valuationLabel: '$5.4B', raisedM: 400, note: 'Aug 17 Series B; revenue figures company-claimed, not audited' },
-  { name: 'Kling', domain: 'klingai.com', kind: 'incumbent', arrLowM: 475, arrLabel: '~$475M run-rate (Q2 2026)', evidence: 'audited', valuationM: 18000, valuationLabel: '$18B post', note: 'Q2 revenue RMB 850M+, up over 200% YoY, per Kuaishou filing of Aug 19, 2026' },
+  { name: 'Kling', domain: 'klingai.com', kind: 'incumbent', arrLowM: 475, arrLabel: '~$475M run-rate (Q2 2026)', evidence: 'company-stated', valuationM: 18000, valuationLabel: '$18B post', note: 'Q2 revenue RMB 850M+, up over 200% YoY, per Kuaishou filing of Aug 19, 2026 (unaudited interim results)' },
   { name: 'ElevenLabs', domain: 'elevenlabs.io', kind: 'startup', arrLowM: 500, arrLabel: '~$500M ARR (est.)', evidence: 'estimate', valuationM: 11000, valuationLabel: '$11B', note: 'Company-stated floor: over $330M ARR at end-2025' },
   { name: 'Adobe (AI-first)', domain: 'adobe.com', kind: 'incumbent', arrLowM: 500, arrLabel: 'over $500M AI-first ARR', evidence: 'company-stated', note: 'Earnings-call figure; whole-company scale sits far above this line' },
   { name: 'fal', domain: 'fal.ai', kind: 'startup', arrLowM: 400, arrLabel: '~$400M annualized', evidence: 'estimate', valuationM: 4500, valuationLabel: '$4.5B', note: '~$8B round in talks since March, unclosed' },
   { name: 'Midjourney', domain: 'midjourney.com', kind: 'startup', arrLowM: 200, arrHighM: 500, arrLabel: '$200–500M (est., wide variance)', evidence: 'estimate' },
   { name: 'Suno', domain: 'suno.com', kind: 'startup', arrLowM: 300, arrLabel: '~$300M ARR (est.)', evidence: 'estimate', valuationM: 5400, valuationLabel: '$5.4B', raisedM: 400 },
-  { name: 'Magnific', domain: 'freepik.com', kind: 'startup', arrLowM: 230, arrLabel: '$230M ARR', evidence: 'company-stated', note: 'Bootstrapped and profitable — no disclosed valuation' },
+  { name: 'Magnific', domain: 'freepik.com', kind: 'startup', arrLowM: 230, arrLabel: '$230M ARR', evidence: 'company-stated', note: 'Profitable; no VC rounds, though parent Freepik has been EQT-majority-owned since 2020 — no disclosed valuation' },
   { name: 'HeyGen', domain: 'heygen.com', kind: 'startup', arrLowM: 200, arrLabel: '$200M ARR', evidence: 'company-stated', raisedM: 74, note: 'Break-even; burned only $25M of $74M raised' },
   { name: 'Runway', domain: 'runwayml.com', kind: 'startup', arrLowM: 100, arrHighM: 300, arrLabel: 'est. $100–300M', evidence: 'estimate', valuationM: 5300, valuationLabel: '$5.3B', raisedM: 315 },
   { name: 'Synthesia', domain: 'synthesia.io', kind: 'startup', arrLowM: 150, arrLabel: '~$150M ARR', evidence: 'company-stated', valuationM: 4000, valuationLabel: '$4B', raisedM: 200 },
   { name: 'Gamma', domain: 'gamma.app', kind: 'startup', arrLowM: 100, arrLabel: 'over $100M ARR', evidence: 'company-stated', valuationM: 2100, valuationLabel: '$2.1B' },
   { name: 'OpenArt', domain: 'openart.ai', kind: 'startup', arrLowM: 70, arrLabel: '$70M+ ARR', evidence: 'company-stated' },
-  { name: 'Meshy', domain: 'meshy.ai', kind: 'startup', arrLowM: 40, arrLabel: '~$40M ARR', evidence: 'company-stated', valuationM: 1500, valuationLabel: '$1.5B', raisedM: 400, note: 'The ~35x multiple outlier — priced on world-model optionality' },
+  { name: 'Meshy', domain: 'meshy.ai', kind: 'startup', arrLowM: 30, arrLabel: '~$30M ARR', evidence: 'company-stated', valuationM: 1500, valuationLabel: '$1.5B', raisedM: 400, note: 'The ~50x multiple outlier — priced on world-model optionality' },
 ]
 
 // ——— Aggregator flow: models → aggregation → where the output goes ———
@@ -792,7 +792,7 @@ export const SOURCES: Source[] = [
   { id: '31', label: 'CNBC — Meta launches in-house Muse image model', url: 'https://www.cnbc.com/2026/07/07/meta-ai-muse-image.html', date: 'Jul 7, 2026' },
   { id: '32', label: 'Billboard — what the Suno/Udio licensing deals mean', url: 'https://www.billboard.com/pro/what-suno-udio-licensing-deals-mean-future-ai-music/', date: '2025–26' },
   { id: '33', label: 'TechFundingNews — Meshy raises ~$400M at $1.5B', url: 'https://techfundingnews.com/from-mit-research-to-1-5b-unicorn-ethan-hus-meshy-raises-400m-for-ai-powered-3d-creation/', date: 'Jul 21, 2026' },
-  { id: '34', label: 'SEC — Getty terminates Shutterstock merger', url: 'https://www.sec.gov/Archives/edgar/data/0001898496/000162828026056698/gety-20260813.htm', date: 'Jul 7, 2026' },
+  { id: '34', label: 'SEC — Getty terminates Shutterstock merger (board action Jul 7)', url: 'https://www.sec.gov/Archives/edgar/data/0001898496/000162828026056698/gety-20260813.htm', date: 'Aug 13, 2026' },
   { id: '35', label: 'TechCrunch — Decart’s Oasis 3 world model', url: 'https://techcrunch.com/2026/06/10/decarts-new-world-model-can-simulate-hours-of-photorealistic-driving-with-some-caveats/', date: 'Jun 10, 2026' },
   { id: '36', label: 'Dodo Payments / Bessemer — AI-native gross margin benchmarks', url: 'https://dodopayments.com/blogs/ai-pricing-models', date: 'Feb 2026' },
   { id: '37', label: 'Atlas Cloud — cheapest AI video generation APIs 2026', url: 'https://www.atlascloud.ai/blog/guides/cheapest-ai-video-generation-api-2026', date: '2026' },
