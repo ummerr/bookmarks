@@ -44,6 +44,8 @@ const MODEL_FAMILIES: { label: string; patterns: string[] }[] = [
   { label: "ElevenLabs",       patterns: ["elevenlabs"] },
   { label: "Suno",             patterns: ["suno"] },
   { label: "Udio",             patterns: ["udio"] },
+  { label: "GPT Image",        patterns: ["gpt image", "gpt-image", "4o image"] },
+  { label: "Grok",             patterns: ["grok", "aurora"] },
   { label: "ChatGPT",          patterns: ["chatgpt", "gpt-4", "gpt4"] },
   { label: "Claude",           patterns: ["claude"] },
   { label: "Nano Banana",      patterns: ["nano banana", "gemini"] },
@@ -108,6 +110,14 @@ async function run() {
   `) as unknown as Row[];
 
   console.log(`Loaded ${rows.length} prompt rows.`);
+
+  // bookmarked_at may arrive as a string depending on driver/column type — coerce
+  for (const r of rows) {
+    if (r.bookmarked_at && !(r.bookmarked_at instanceof Date)) {
+      const d = new Date(r.bookmarked_at as unknown as string);
+      r.bookmarked_at = isNaN(d.getTime()) ? null : d;
+    }
+  }
 
   const monthOf = (d: Date | null) =>
     d ? `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}` : "unknown";
@@ -175,10 +185,12 @@ async function run() {
     ].join(""));
   }
 
-  // ── 3. Seedance-specific slice ───────────────────────────────────────────
-  hr("3. SEEDANCE SLICE (all-time)");
-  const seedance = rows.filter((r) => modelToFamily(r.detected_model) === "Seedance");
-  console.log(`Seedance rows: ${seedance.length} of ${rows.length} (${pct(seedance.length, rows.length)})`);
+  // ── 3. Hero-family slice (default Seedance; override with --hero=Family) ─
+  const heroArg = process.argv.find((a) => a.startsWith("--hero="))?.slice("--hero=".length);
+  const heroFamily = heroArg || "Seedance";
+  hr(`3. ${heroFamily.toUpperCase()} SLICE (all-time)`);
+  const seedance = rows.filter((r) => modelToFamily(r.detected_model) === heroFamily);
+  console.log(`${heroFamily} rows: ${seedance.length} of ${rows.length} (${pct(seedance.length, rows.length)})`);
   if (seedance.length) {
     const themeCounts = new Map<string, number>();
     const refCounts = new Map<string, number>();
