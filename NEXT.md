@@ -16,8 +16,11 @@
 - Freeze the scoring rubric before re-scoring the corpus, and report the delta on a stable window (so "sentiment improved" is distinguishable from "we changed how we count").
 
 ## Done since
+- *(2026-08-19)* Market-map daily audit rerun (3 agents + link check): Wan 3.0 took AA T2V #1 from Gemini, Kling Q2 filed (RMB 850M+, >200% YoY → ~$475M run-rate, replacing ~$500M/+300%), Decart talks escalated to ~$7B near-signing, fixed "Wan 2.6 open" and "Hunyuan3D 3.0" errors. Log: research/market-map/validation/audit-2026-08-19.md. Build green.
 - *(2026-07-11)* Refreshed Omni report + Flow brief to rev. 8 (199-post corpus). — then the tree went quiet with 23 files uncommitted.
 
 ## Auto session log
 - **2026-07-23** — session ended: 24 file(s) dirty, 0 commit(s) unpushed. Last touched: `.gitignore`. <!-- campfire:2026-07-23 -->
 - **2026-08-17** — session ended: 3 file(s) dirty, 0 commit(s) unpushed. Last touched: `components/Nav.tsx`. <!-- campfire:2026-08-17 -->
+- **2026-08-18** — session ended: 1 file(s) dirty, 0 commit(s) unpushed. Last touched: `research/`. <!-- campfire:2026-08-18 -->
+- **2026-08-19** — session ended: 17 file(s) dirty, 0 commit(s) unpushed. Last touched: `NEXT.md`. <!-- campfire:2026-08-19 -->
