@@ -7,7 +7,7 @@
 import { createHash } from "crypto";
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from "fs";
 import { join } from "path";
-import { CATEGORIES, MOMENTUM, STACK_COMPANIES, POSITIONING, FINANCIALS, FLOW } from "../app/market-map/data";
+import { CATEGORIES, MOMENTUM, NEAR_MOMENTUM, STACK_COMPANIES, POSITIONING, FINANCIALS, FLOW } from "../app/market-map/data";
 
 const ROOT = join(new URL(".", import.meta.url).pathname, "..");
 const LOGO_DIR = join(ROOT, "public", "logos");
@@ -19,6 +19,7 @@ function collectDomains(): string[] {
   const domains = new Set<string>();
   for (const cat of CATEGORIES) for (const c of cat.companies) if (c.domain) domains.add(c.domain);
   for (const m of MOMENTUM) if (m.domain) domains.add(m.domain);
+  for (const n of NEAR_MOMENTUM) if (n.domain) domains.add(n.domain);
   for (const s of STACK_COMPANIES) if (s.domain) domains.add(s.domain);
   for (const p of POSITIONING) if (p.domain) domains.add(p.domain);
   for (const f of FINANCIALS) if (f.domain) domains.add(f.domain);

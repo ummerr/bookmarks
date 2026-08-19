@@ -157,6 +157,15 @@ export interface MomentumEntry {
   domain?: string
 }
 
+export interface NearMomentumEntry {
+  /** 'honorable' = evidence just short of the cut; 'latent' = position without 2026 motion */
+  group: 'honorable' | 'latent'
+  name: string
+  what: string
+  note: string
+  domain?: string
+}
+
 export interface Source {
   id: string
   label: string
@@ -714,6 +723,23 @@ export const MOMENTUM: MomentumEntry[] = [
   { rank: 23, name: 'xAI (Grok Imagine)', what: 'model + X distribution', domain: 'x.ai', why: 'Took #1 on both AA video arenas in late January and holds image podium spots (#2 image-edit, #3 text-to-image since MAI-2.6 arrived); Video 1.5 now prices at ~$4.20/min — 86% below Sora 2 — with own models bundled into X, but paid-only since March and no disclosed usage or revenue.' },
   { rank: 24, name: 'Meta Muse', what: 'image model', domain: 'meta.com', why: 'Launched July 2026 into Meta AI, Stories, and WhatsApp at billion-user scale, with the Advantage+ advertiser rollout next; the "infinite creative" pipeline optimized against auction outcomes is a closed loop no startup can enter.' },
   { rank: 25, name: 'Tencent Hunyuan', what: 'open ecosystem', domain: 'tencent.com', why: 'The most modality-diverse open lineage (80B image, video, 3D, world) — the open-weights supply chain under indie GenMedia tooling worldwide.' },
+]
+
+// ——— Just outside the 25 ———
+// 'honorable' = a real 2026 case that missed on evidence, and the entry says which
+// evidence. 'latent' = a position strong enough to reshape the list with nothing
+// shipped or filed in 2026 that moves it yet.
+
+export const NEAR_MOMENTUM: NearMomentumEntry[] = [
+  { group: 'honorable', name: 'Alibaba (Wan)', what: 'open video models', domain: 'alibaba.com', note: 'Wan 3.0 took the AA text-to-video #1 in August, and the Wan lineage is (with Hunyuan) the open-weights substrate under half the world’s ComfyUI workflows — the strongest case for a 26th slot, held back only by zero disclosed revenue or funding events for the model line.' },
+  { group: 'honorable', name: 'Krea', what: 'real-time canvas', domain: 'krea.ai', note: 'The strongest pure-product year of anything off the list — K2 open weights cracked the AA text-to-image top 10, an open-sourced real-time video model, the first creative-facing node agent, 30M+ users. What’s missing is the money signal: no new capital since Apr 2025, no ARR disclosure, and a 7x traffic gap to Higgsfield in its own lane.' },
+  { group: 'honorable', name: 'Mirage (Captions)', what: 'creator video', domain: 'captions.ai', note: '$75M of revenue-linked financing implies real recurring revenue, and it renamed itself around its own short-form models — edged out once xAI’s leaderboard run demanded a slot.' },
+  { group: 'honorable', name: 'Cartesia', what: 'speech models', domain: 'cartesia.ai', note: 'Sonic 3.6 tops both AA speech arenas (Aug 18) — but ElevenLabs owns the audio narrative, the enterprise logos, and the licensing story, so capability alone doesn’t move the audio hierarchy yet.' },
+  { group: 'honorable', name: 'Microsoft (MAI-Image)', what: 'image models', domain: 'microsoft.com', note: 'MAI-Image-2.6 launched at #2 on Arena (Aug 10) with Copilot and Bing as distribution — real capability arriving late, still a derivative GenMedia strategy rather than an owned lane.' },
+  { group: 'latent', name: 'OpenAI', what: 'post-Sora', domain: 'openai.com', note: 'GPT Image 2 still leads the image arena and ChatGPT remains the largest creative-adjacent surface in the West. Sora died of distribution economics, not capability — video re-entry is a unit-economics decision away, and the list would rearrange the week it happens.' },
+  { group: 'latent', name: 'Apple', what: 'OS-level generation', domain: 'apple.com', note: 'Free photorealistic generation announced for iOS 27, shipping this fall — OS-level distribution that would reset consumer image economics. Announced is not shipped, so it stays latent by definition.' },
+  { group: 'latent', name: 'Anthropic', what: 'acquirer-in-waiting', domain: 'anthropic.com', note: 'The reported ~$7B Decart acquisition was near signing as of Aug 16. If it closes, a frontier lab enters real-time generation by purchase — the largest single bet on the modality to date.' },
+  { group: 'latent', name: 'Udio', what: 'licensed music', domain: 'udio.com', note: 'Captured by the majors — UMG and WMG turned their lawsuit into ownership. A label-licensed music catalog product is sitting in inventory until relaunch; when it ships, it lands on Suno’s position from above.' },
 ]
 
 // ——— Positioning 2x2: model ownership vs distribution ownership ———

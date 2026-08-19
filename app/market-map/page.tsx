@@ -9,6 +9,7 @@ import {
   MOAT_MATRIX,
   MODEL_GROUPS,
   MOMENTUM,
+  NEAR_MOMENTUM,
   POSITIONING,
   SECTIONS,
   SOURCES,
@@ -690,6 +691,38 @@ export default function MarketMapPage() {
                   </li>
                 ))}
               </ol>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {(
+                  [
+                    ['honorable', 'Honorable mentions', 'Real 2026 cases that missed on evidence — each entry says which.'],
+                    ['latent', 'Latent players', 'Positions strong enough to reshape the list, with nothing shipped or filed in 2026 that moves it yet.'],
+                  ] as const
+                ).map(([group, heading, sub]) => (
+                  <div
+                    key={group}
+                    className="rounded-xl border border-dashed border-black/[0.1] dark:border-white/[0.14] bg-transparent p-4 flex flex-col gap-3"
+                  >
+                    <div>
+                      <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400 dark:text-zinc-500">
+                        {heading}
+                      </div>
+                      <div className="text-[12px] text-gray-400 dark:text-zinc-500 mt-0.5">{sub}</div>
+                    </div>
+                    {NEAR_MOMENTUM.filter((e) => e.group === group).map((e) => (
+                      <div key={e.name} className="min-w-0">
+                        <div className="flex items-center gap-2 text-[13px] font-semibold text-gray-900 dark:text-white leading-snug">
+                          <Logo domain={e.domain} name={e.name} size={14} />
+                          <span>
+                            {e.name}
+                            <span className="ml-2 font-normal text-gray-400 dark:text-zinc-500 text-[12px]">{e.what}</span>
+                          </span>
+                        </div>
+                        <div className="text-[13px] text-gray-500 dark:text-zinc-400 leading-[1.7] mt-0.5">{e.note}</div>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
             </Section>
 
             {/* §14 Open problems */}
