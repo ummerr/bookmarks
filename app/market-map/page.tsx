@@ -28,9 +28,9 @@ import ValuationScatter from './ValuationScatter'
 import QuadrantChart from './QuadrantChart'
 import FlowDiagram from './FlowDiagram'
 
-const TITLE = 'Generative Media Market Map — August 2026'
+const TITLE = 'Generative Media Ecosystem Map — August 2026'
 const DESCRIPTION =
-  'An investor-grade map of the generative media ecosystem: where value is accruing, which layers are commoditizing, and the strategic control points of the next era of creative computing.'
+  'A systems-level map of the generative media stack: how the architecture is consolidating, which layers are commoditizing, and where durable control points are forming in creative computing.'
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -83,33 +83,34 @@ export default function MarketMapPage() {
             {/* Hero */}
             <header className="flex flex-col gap-5">
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-violet-500/70">
-                Market map · Data as of {formatReportDate()}
+                Field map · Data as of {formatReportDate()}
               </p>
               <h1 className="font-serif text-3xl md:text-5xl tracking-tight leading-[1.1]">
-                The Generative Media Market Map
+                The Generative Media Ecosystem — An Architectural Map
               </h1>
               <p className="text-[15px] md:text-base text-gray-500 dark:text-zinc-400 leading-[1.75] max-w-3xl">
-                Not a list of companies — a view of how the market is structured, where value is
-                accruing, which layers are commoditizing, and where durable control points are
-                emerging. Compiled from six research passes across roughly 150 sources, weighted
-                toward January–August 2026 developments. Figures marked <em>est.</em> are
-                third-party estimates, not company-reported.
+                A working map of how the generative media stack is actually structured: which
+                layers are consolidating, which are commoditizing, and where durable control
+                points appear to be forming. Treat it as a set of evolving hypotheses grounded in
+                shipped systems rather than a settled verdict. Compiled from six research passes
+                across roughly 150 sources, weighted toward January–August 2026 developments;
+                figures marked <em>est.</em> are third-party estimates, not company-reported.
               </p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-1">
                 <StatTile stat="$5.6B" label="AI-video funding, 2026 YTD — +43% vs all of 2025" />
-                <StatTile stat="~$475M" label="Kling run-rate, Q2 2026 (filed Aug 19) — the revenue benchmark" />
+                <StatTile stat="~$475M" label="Kling run-rate, Q2 2026 (filed Aug 19) — the adoption benchmark: filed, not claimed" />
                 <StatTile stat=">10x" label="Video inference cost decline since 2024" />
                 <StatTile stat="9 of 10" label="Top video models that are Chinese (AA arena, Aug 2026)" />
               </div>
             </header>
 
             {/* §01 Thesis */}
-            <Section id="thesis" title="Market Thesis: What Changed, 2023 → 2026" eyebrow="§ 01">
+            <Section id="thesis" title="What Changed, 2023 → 2026: From Single-Turn Generation to Continuous Creative Systems" eyebrow="§ 01">
               <Prose>
                 <p>
-                  In 2023 generative media was a party trick with a three-step loop:{' '}
+                  In 2023 generative media ran on a three-step loop:{' '}
                   <strong>prompt → model → output</strong>. You typed, a diffusion model dreamed,
-                  and you got one artifact — impressive, uncontrollable, disposable. By August 2026
+                  and you got one artifact — impressive, hard to steer, disposable. By August 2026
                   the loop that matters is{' '}
                   <strong>
                     intent → plan → generate → evaluate → edit → compose → collaborate → publish
@@ -124,8 +125,8 @@ export default function MarketMapPage() {
                 <p>
                   The competitive battleground moved with it. In 2023–24 the fight was raw model
                   capability. In 2024–25 it was generation products. In 2025–26 it became creative
-                  workflows — and the 2026 bet, made simultaneously by incumbents, startups, and
-                  infrastructure companies, is that the endgame is{' '}
+                  workflows — and the 2026 working hypothesis, held simultaneously by incumbents,
+                  startups, and infrastructure companies, is that the end state is{' '}
                   <strong>multimodal creative agents: systems of creation, not tools of generation</strong>.
                   Raw capability is now the least defensible layer in the stack: video-model
                   leadership now turns over in weeks, and the top eleven models sit within
@@ -146,19 +147,21 @@ export default function MarketMapPage() {
                   (unaudited interim) filings.<Cite id="3" /> The Q2 filing (August 19) shows the
                   curve still climbing on a consistent quarterly-annualized basis — roughly $360M
                   (Q1) to ~$475M (Q2), on over RMB 850M of quarterly revenue up more than 200%
-                  year-over-year.<Cite id="47" /> Frontier quality without distribution economics
-                  died; good-enough quality inside an owned funnel became the revenue leader.
+                  year-over-year.<Cite id="47" /> Frontier quality with no distribution surface to
+                  amortize its serving costs did not survive, while good-enough quality inside an
+                  owned funnel became the revenue leader — a difference of system architecture,
+                  not of model capability.
                 </p>
               </Prose>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <ChangeCard tag="Fact" tagColor={FACT} title="The AI-video-as-feed thesis died" body="Sora shut down (app Apr 26, API Sep 24, 2026); Meta's Vibes limps at ~2M DAU with weak retention. AI video as a tool — inside CapCut, Shorts, ad platforms — is where the revenue actually is." />
                 <ChangeCard tag="Fact" tagColor={FACT} title="Video quality converged; image held a frontier" body="~150 Elo covers the top 11 video models and 9 of the top 10 are Chinese. In image, GPT Image 2 still holds every #1 — though MAI-2.6's August debut cut the Arena lead from ~83 to 45 Elo — the one modality where frontier capability still differentiates." />
                 <ChangeCard tag="Fact" tagColor={FACT} title="Generation went free at the point of distribution" body="Veo free in YouTube Shorts, Seedance in CapCut, Adobe unlimited generations, Amazon giving ad creative away, Apple shipping photorealistic generation in iOS 27. The generation button is no longer a product." />
-                <ChangeCard tag="Fact" tagColor={FACT} title="Music flipped from lawsuits to licenses in nine months" body="WMG and BMG settled with Suno while UMG and WMG captured Udio as a label-controlled walled garden; UMG's suit against Suno is still live. Suno settled from strength at $5.4B, and licensed catalogs are now moats." />
-                <ChangeCard tag="Pattern" tagColor={PATTERN} title="Everyone shipped a creative agent in 2026" body="Adobe, fal, Flora, Krea, Creatify, Amazon — every layer of the stack converged on the same product. The moat is shifting from model access to creative state: characters, brand constraints, project memory." />
+                <ChangeCard tag="Fact" tagColor={FACT} title="Music flipped from lawsuits to licenses in nine months" body="WMG and BMG settled with Suno while UMG and WMG captured Udio as a label-controlled walled garden; UMG's suit against Suno is still live. Suno settled from strength at $5.4B, and licensed catalogs are now the durable advantage." />
+                <ChangeCard tag="Pattern" tagColor={PATTERN} title="Everyone shipped a creative agent in 2026" body="Adobe, fal, Flora, Krea, Creatify, Amazon — every layer of the stack converged on the same product. The durable advantage is shifting from model access to creative state: characters, brand constraints, project memory." />
                 <ChangeCard tag="Pattern" tagColor={PATTERN} title="Omni absorption is compressing the specialist tail" body="Native audio, lip-sync, video editing, and camera control folded into frontier models in 18 months. Specialists survive only behind hard workflow or real-time constraints: 3D rigging, fidelity upscaling, <500ms avatars." />
                 <ChangeCard tag="Pattern" tagColor={PATTERN} title="World models became the capital magnet — and left entertainment" body="Over $3B into World Labs, Decart, and Odyssey in 2026, with monetization pivoting from playable worlds to AV/robotics simulation. GenMedia technology is exiting media at the frontier." />
-                <ChangeCard tag="Thesis" tagColor={THESIS} title="The market bifurcated by geography and business model" body="The West monetizes GenMedia as enterprise software and platform features; China monetizes it as direct consumer and creator revenue. Durable moats are distribution, creative state, and licenses — not model checkpoints." />
+                <ChangeCard tag="Thesis" tagColor={THESIS} title="The market bifurcated by geography and business model" body="The West monetizes GenMedia as enterprise software and platform features; China monetizes it as direct consumer and creator revenue. What holds up under churn is distribution, creative state, and licenses — not model checkpoints." />
               </div>
             </Section>
 
@@ -174,8 +177,8 @@ export default function MarketMapPage() {
               <Figure
                 id="fig-market-map"
                 num={1}
-                title="The Generative Media Market Map, August 2026"
-                takeaway="Eight categories by job-to-be-done, strategically meaningful companies only — with the TL;DR bet (Long / Short / Watch) inline on every entry."
+                title="The Generative Media Ecosystem Map, August 2026"
+                takeaway="Eight categories by job-to-be-done, architecturally meaningful companies only — with a one-line technical thesis (Durable / Fragile / Unproven) inline on every entry."
                 notes={
                   <>
                     <p>
@@ -210,27 +213,32 @@ export default function MarketMapPage() {
                   inference layer.<Cite id="11" /><Cite id="14" />
                 </p>
                 <p>
-                  The moat being built here is not model access — everyone rents the same shelf. It
-                  is <strong>creative state</strong>: Higgsfield’s Soul ID carries a trained
+                  What accumulates in this layer is not model access — every player rents the same
+                  shelf — but <strong>creative state</strong>: Higgsfield’s Soul ID carries a trained
                   character identity across models and sessions; Creatify locks verified brand facts
                   as generation constraints; fal Agent keeps persistent project memory; Figma turned
                   Weave workflows into shareable community assets.<Cite id="15" /> State means
                   switching costs, and switching costs are what the model layer structurally lacks.
                 </p>
                 <p>
-                  The exits already price this in. Weavy raised ~$4M and sold to Figma for over
-                  $200M; Visual Electric’s team went to Perplexity and the product died; Leonardo
-                  disappeared into Canva. And the layer’s biggest corpse argues the same case from
-                  the other side: Sora had the best-known model in the world and no workflow, no
-                  B2B motion, no state — and it’s gone.<Cite id="1" />
+                  The acquisitions already register what buyers think accumulates here. Weavy
+                  raised ~$4M and sold to Figma for over $200M; Visual Electric’s team went to
+                  Perplexity and the product died; Leonardo disappeared into Canva. The layer’s
+                  most instructive shutdown argues the same case from the other side: Sora had the
+                  best-known model in the world and no workflow, no B2B motion, no state — and
+                  it’s gone.<Cite id="1" />
                 </p>
                 <Callout tone="violet">
-                  <strong>Verdict:</strong> the workflow/agent layer is becoming the primary control
-                  point of GenMedia — but it is being squeezed from above (Adobe, Google Flow,
-                  Canva, Figma) and below (fal, ComfyUI) simultaneously. Independent workflow
-                  companies must convert 2026 growth into enterprise state moats before the pincer
-                  closes. Best positioned: Adobe, Figma, and Google among incumbents; Higgsfield,
-                  Magnific, and Flora among startups; fal as the infrastructure insurgent.
+                  <strong>Verdict:</strong> the workflow/agent layer is becoming the primary
+                  control point of GenMedia, but it is contested from both directions at once —
+                  Adobe, Google Flow, Canva, and Figma extend down into it from owned surfaces
+                  while fal and ComfyUI build up into it from the serving layer. The open question
+                  for independent workflow companies is whether 2026’s growth converts into
+                  accumulated enterprise state — project memory, brand constraints, reusable
+                  pipelines — before both fronts arrive. On current evidence the strongest
+                  positions belong to Adobe, Figma, and Google among incumbents; Higgsfield,
+                  Magnific, and Flora among startups; and fal as the infrastructure entrant
+                  working upward.
                 </Callout>
               </Prose>
             </Section>
@@ -271,7 +279,7 @@ export default function MarketMapPage() {
                   months, raised at $4.5B in December, and was reportedly in talks at ~$8B by
                   March.<Cite id="10" /> Its drivers don’t reverse — a majority-Chinese video model
                   supply that Western apps won’t integrate one-by-one, bursty GPU economics, and
-                  weekly model churn that makes single-vendor bets irrational. Runware ($50M Series
+                  weekly model churn that makes single-vendor commitments irrational. Runware ($50M Series
                   A, containerized 1MW inference pods) and WaveSpeed (fastest Western access to
                   Chinese models) are growing in its wake.
                 </p>
@@ -283,10 +291,10 @@ export default function MarketMapPage() {
                   notes={
                     <p>
                       Band color follows the source model; weights are editorial judgments of how
-                      load-bearing each integration is, not measured volume. Pricing power sits at
+                      load-bearing each integration is, not measured volume. Leverage sits at
                       the two ends — frontier models and owned distribution — while the middle
-                      keeps margin only by adding workflow state (fal Agent, ComfyUI JSON, Soul ID)
-                      on top of routing.<Cite id="10" /><Cite id="11" /><Cite id="13" />
+                      holds its position only by adding workflow state (fal Agent, ComfyUI JSON,
+                      Soul ID) on top of routing.<Cite id="10" /><Cite id="11" /><Cite id="13" />
                     </p>
                   }
                 >
@@ -301,11 +309,15 @@ export default function MarketMapPage() {
                   the closest thing GenMedia has to Terraform.<Cite id="13" />
                 </p>
                 <Callout tone="amber">
-                  <strong>Where the pricing power sits:</strong> at the two ends, not the middle.
-                  Frontier model owners set wholesale prices; consumer aggregators with state moats
-                  set retail. Naked resellers in between compete on latency and price. The tell is
-                  fal itself launching an agent in August 2026 — even the winning orchestrator
-                  doesn’t believe raw orchestration holds margin forever.<Cite id="11" />
+                  <strong>Where the leverage sits:</strong> at the two ends of the pipeline rather
+                  than the middle, and the gradient looks structural rather than cyclical. Model
+                  owners set the marginal cost floor, while surfaces holding accumulated state —
+                  characters, brand constraints, project memory — set what users actually pay; a
+                  pure router between them competes on latency and price with no state of its own
+                  to defend. The most honest signal comes from fal itself, which launched an agent
+                  in August 2026 despite winning the orchestration layer — a working admission
+                  that raw routing, however well engineered, does not hold its margin structure
+                  once the serving problem is solved more than once.<Cite id="11" />
                 </Callout>
               </Prose>
             </Section>
@@ -326,12 +338,12 @@ export default function MarketMapPage() {
                   recovery — a failure mode token streaming simply doesn’t have. Caching differs
                   in kind too: hot-swappable LoRA weights and reusable keyframe latents, not
                   prefix caches. Intermediate assets are gigabyte-scale per job, making storage
-                  and egress a real COGS line. And evaluation is still blind human preference:
+                  and egress a real serving-cost line. And evaluation is still blind human preference:
                   nothing machine-scores temporal consistency, character permanence, or edit
                   fidelity at scale.
                 </p>
                 <p>
-                  The market has started pricing these gaps. Cloudflare bought Replicate and
+                  Acquirers have started registering these gaps. Cloudflare bought Replicate and
                   rights-marketplace Human Native; Anthropic is reportedly closing in on acquiring
                   Decart at ~$7B — advanced drafts exchanged by mid-August, mostly stock, with
                   NVIDIA outbid — a frontier lab valuing a media inference-optimization stack at
@@ -371,13 +383,14 @@ export default function MarketMapPage() {
                 id="fig-ownership-2x2"
                 num={3}
                 title="Model ownership vs distribution ownership"
-                takeaway="Up-and-right compounds — model fused to a billion-user surface. The lower-right, frontier labs without a funnel, is the melting quadrant."
+                takeaway="Up-and-right compounds — a model fused to a billion-user surface closes its own feedback loop. The lower-right, frontier labs without a surface, has no loop to close."
                 notes={
                   <p>
                     Positions are editorial judgments on a 0–100 scale, not measurements. Dot color
                     follows the map legend (violet startup, gray incumbent, pink frontier lab). The
                     washed quadrant marks the compounding position; Sora is the case study for what
-                    happens in the lower-right without distribution economics.<Cite id="1" />
+                    happens in the lower-right with no distribution surface to close the
+                    loop.<Cite id="1" />
                   </p>
                 }
               >
