@@ -241,11 +241,13 @@ export default function MarketMapPage() {
                   Adobe’s suite, HeyGen’s avatar product — not by the agent itself: fal Agent is a
                   week old, Adobe reports Firefly Assistant “traction” without disclosing usage,
                   and FAUNA’s marquee logos come with no revenue attribution. The most telling
-                  signal may be Google, which has the widest distribution in the field and an
-                  Agent Mode for Flow visible in app build traces since May — still unshipped as
-                  of mid-August.<Cite id="58" /> When the player with the least to prove is the
-                  most patient, the agent pattern reads as a defensive consensus, not a
-                  demonstrated behavior change.
+                  signal may be Google, which shipped Flow Agent to every tier at I/O in May —
+                  free accounts included — while keeping Veo generation itself behind the
+                  paywall.<Cite id="58" /> The player best positioned to charge for an agent
+                  chose to price it at zero and monetize the layer beneath it. Three months in,
+                  that is the honest read on the whole pattern: the agent is a funnel to
+                  generation spend, not yet a product anyone has demonstrated people will pay
+                  for.
                 </p>
                 <Callout tone="violet">
                   <strong>Verdict:</strong> the workflow/agent layer is becoming the primary
