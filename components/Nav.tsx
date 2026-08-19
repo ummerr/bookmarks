@@ -15,7 +15,6 @@ const LINKS = [
 ]
 
 const RIGHT_LINKS = [
-  { href: '/state-of-prompting',  label: 'State of Prompting' },
   { href: '/market-map',          label: 'Market Map' },
 ]
 

@@ -470,10 +470,10 @@ export default function LandingPage() {
               Browse prompts
             </Link>
             <Link
-              href="/state-of-prompting"
+              href="/market-map"
               className="rounded-xl border border-black/[0.12] dark:border-white/[0.12] px-6 py-3 text-sm font-semibold text-gray-700 dark:text-zinc-300 hover:bg-black/[0.03] dark:hover:bg-white/[0.03] transition-colors"
             >
-              State of Prompting 2026
+              GenMedia Market Map
             </Link>
           </div>
         </div>

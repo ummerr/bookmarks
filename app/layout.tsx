@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter, Instrument_Serif, JetBrains_Mono } from 'next/font/google'
+import Link from 'next/link'
 import Nav from '@/components/Nav'
 import SiteGate from '@/components/SiteGate'
 import './globals.css'
@@ -54,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <span className="hidden sm:inline">Next.js + Supabase + Vercel</span>
             </div>
             <div className="flex items-center gap-4">
+              <Link href="/state-of-prompting" className="hover:text-gray-600 dark:hover:text-zinc-300 transition-colors">State of Prompting (archive)</Link>
               <a href="https://x.com/ummerr" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 dark:hover:text-zinc-300 transition-colors">@ummerr</a>
               <a href="https://github.com/ummerr" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 dark:hover:text-zinc-300 transition-colors">GitHub</a>
             </div>

@@ -349,9 +349,23 @@ export default function StateOfPromptingPage() {
     <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
       <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-12">
 
+        {/* Archive notice */}
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/[0.07] px-5 py-4 mb-6 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+          <p className="text-sm text-gray-700 dark:text-zinc-300 leading-relaxed flex-1">
+            <span className="font-semibold">This report is archived.</span> It reflects the landscape as of April 2026 and is no longer updated. For the current picture, see the market map.
+          </p>
+          <Link
+            href="/market-map"
+            className="shrink-0 rounded-lg bg-gray-900 dark:bg-white px-4 py-2 text-xs font-semibold text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-zinc-100 transition-colors text-center"
+          >
+            Read the Market Map →
+          </Link>
+        </div>
+
         {/* Hero */}
         <div className="rounded-2xl border border-black/[0.08] dark:border-white/8 bg-white dark:bg-[#111] p-6 md:p-8 flex flex-col gap-5 mb-10">
           <div className="flex flex-wrap gap-2 items-center">
+            <Badge color="#71717a">Archived</Badge>
             <Badge color="#10b981">Q2 2026</Badge>
             <Badge color="#8b5cf6">Video & Image AI</Badge>
             <Badge color="#f97316">Prompting Research</Badge>
