@@ -54,11 +54,6 @@ export default function ArrBars({ entries }: { entries: CompanyFinancials[] }) {
           </span>
         ))}
       </div>
-      <p className="text-[12px] leading-relaxed text-gray-400 dark:text-zinc-500">
-        Annual recurring revenue, $M, as of the date on each entry in the map above. Canva (~$4B total ARR)
-        is excluded — its revenue is not GenMedia-attributable and would break the scale. Lighter extensions
-        mark estimate ranges (Runway, Midjourney).
-      </p>
     </div>
   )
 }

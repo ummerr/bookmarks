@@ -1,7 +1,7 @@
 import type { CompanyFinancials } from './data'
 import { LOGO_DOMAINS } from './logos.generated'
 
-// Valuation vs ARR, log-log, with 10x/30x/100x multiple guides.
+// Latest valuation vs ARR, log-log, with 10x/30x/100x capital-to-revenue ratio guides.
 // Single-hue marks; identity is carried by the direct label on every point.
 
 const X_MIN = Math.log10(30) // $30M ARR
@@ -38,7 +38,7 @@ export default function ValuationScatter({ entries }: { entries: CompanyFinancia
   return (
     <div className="flex flex-col gap-2">
       <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
-        <svg viewBox="0 0 640 420" className="min-w-[560px] w-full" role="img" aria-label="Valuation versus ARR, log-log scatter">
+        <svg viewBox="0 0 640 420" className="min-w-[560px] w-full" role="img" aria-label="Latest valuation versus ARR, log-log scatter">
           {/* gridlines + ticks */}
           {X_TICKS.map((t) => (
             <g key={`x${t}`}>
@@ -112,17 +112,10 @@ export default function ValuationScatter({ entries }: { entries: CompanyFinancia
             ARR, $M · log scale
           </text>
           <text x={14} y={(PLOT.top + PLOT.bottom) / 2} textAnchor="middle" transform={`rotate(-90 14 ${(PLOT.top + PLOT.bottom) / 2})`} className="fill-gray-400 dark:fill-zinc-500 text-[10px] uppercase tracking-wider">
-            Valuation · log scale
+            Latest valuation · log scale
           </text>
         </svg>
       </div>
-      <p className="text-[12px] leading-relaxed text-gray-400 dark:text-zinc-500">
-        Dashed guides mark valuation-to-ARR multiples; ranges plot at their midpoint. Solid dots are
-        company-stated or audited figures, half-tone dots third-party estimates, and the dashed hollow dot
-        (Higgsfield) is claimed and unverified. Meshy sits alone near the 35x line — priced on world-model
-        optionality, not revenue. The chart also can’t plot its most efficient company: HeyGen — $200M ARR on
-        about $74M raised — has no disclosed valuation.
-      </p>
     </div>
   )
 }

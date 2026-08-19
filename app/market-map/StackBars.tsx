@@ -1,53 +1,98 @@
 import type { Layer, StackCompany } from './data'
 import { Logo } from './Logo'
 
-const LAYERS: { key: Layer; label: string }[] = [
-  { key: 'distribution', label: 'Distribution' },
-  { key: 'application', label: 'Application' },
-  { key: 'workflow', label: 'Workflow / Agent' },
-  { key: 'model', label: 'Model' },
-  { key: 'infrastructure', label: 'Infra / Compute' },
+// Each stack layer carries its own hue (validated light + dark, fixed order),
+// so owned layers read as a connected spectrum — the more color, the deeper the
+// vertical integration. Unowned layers are quiet dots, not gray bars.
+const LAYERS: { key: Layer; label: string; fill: string; dot: string }[] = [
+  { key: 'distribution', label: 'Distribution', fill: 'bg-sky-500 dark:bg-sky-600', dot: 'bg-sky-500 dark:bg-sky-600' },
+  { key: 'application', label: 'Application', fill: 'bg-violet-500', dot: 'bg-violet-500' },
+  { key: 'workflow', label: 'Workflow', fill: 'bg-pink-500', dot: 'bg-pink-500' },
+  { key: 'model', label: 'Model', fill: 'bg-amber-500 dark:bg-amber-600', dot: 'bg-amber-500 dark:bg-amber-600' },
+  { key: 'infrastructure', label: 'Infra', fill: 'bg-emerald-500 dark:bg-emerald-600', dot: 'bg-emerald-500 dark:bg-emerald-600' },
 ]
 
-const KIND_FILL: Record<StackCompany['kind'], string> = {
-  startup: 'bg-violet-500/70',
-  incumbent: 'bg-gray-400/70 dark:bg-zinc-500/70',
-  lab: 'bg-pink-500/70',
-}
+const GRID = 'grid grid-cols-[minmax(8rem,13rem)_1fr_2.5rem] gap-x-3 md:gap-x-4'
 
 export default function StackBars({ companies }: { companies: StackCompany[] }) {
+  const sorted = [...companies].sort((a, b) => b.layers.length - a.layers.length)
   return (
     <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
       <div className="min-w-[640px] rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#111] overflow-hidden">
-        <div className="grid grid-cols-[minmax(7rem,10rem)_repeat(5,1fr)] text-[10px] md:text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-500 border-b border-black/[0.06] dark:border-white/[0.08] px-4 py-2.5 gap-1.5">
-          <div>Company</div>
-          {LAYERS.map((l) => (
-            <div key={l.key} className="text-center">{l.label}</div>
-          ))}
+        <div className={`${GRID} items-center border-b border-black/[0.06] dark:border-white/[0.08] px-4 py-2.5`}>
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-500">
+            Company
+          </div>
+          <div className="grid grid-cols-5">
+            {LAYERS.map((l) => (
+              <div
+                key={l.key}
+                className="flex items-center justify-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400"
+              >
+                <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${l.dot}`} />
+                <span className="truncate">{l.label}</span>
+              </div>
+            ))}
+          </div>
+          <div className="text-right text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-500">
+            Owns
+          </div>
         </div>
-        {companies.map((c, i) => (
+        {sorted.map((c, i) => (
           <div
             key={c.name}
-            title={c.note}
-            className={`grid grid-cols-[minmax(7rem,10rem)_repeat(5,1fr)] px-4 py-2 items-center gap-1.5 ${
+            className={`${GRID} items-center px-4 py-2.5 ${
               i % 2 === 0 ? '' : 'bg-black/[0.015] dark:bg-white/[0.015]'
             }`}
           >
-            <div className="flex items-center gap-1.5 text-xs font-medium text-gray-900 dark:text-white min-w-0">
-              <Logo domain={c.domain} name={c.name} size={14} />
-              <span className="truncate">{c.name}</span>
-            </div>
-            {LAYERS.map((l) => (
-              <div key={l.key} className="flex justify-center">
-                <div
-                  className={`h-3 w-full max-w-16 rounded-sm ${
-                    c.layers.includes(l.key)
-                      ? KIND_FILL[c.kind]
-                      : 'bg-black/[0.04] dark:bg-white/[0.05]'
-                  }`}
-                />
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 text-[12px] font-semibold text-gray-900 dark:text-white leading-tight">
+                <Logo domain={c.domain} name={c.name} size={14} />
+                <span className="truncate">{c.name}</span>
               </div>
-            ))}
+              {c.note && (
+                <div className="hidden md:block mt-0.5 text-[10.5px] leading-snug text-gray-400 dark:text-zinc-500">
+                  {c.note}
+                </div>
+              )}
+            </div>
+            <div className="grid grid-cols-5">
+              {LAYERS.map((l, j) => {
+                const owned = c.layers.includes(l.key)
+                const prevOwned = j > 0 && c.layers.includes(LAYERS[j - 1].key)
+                const nextOwned = j < LAYERS.length - 1 && c.layers.includes(LAYERS[j + 1].key)
+                return (
+                  <div
+                    key={l.key}
+                    className="flex h-6 items-center"
+                    title={`${c.name} — ${owned ? 'owns' : 'does not own'} ${l.label.toLowerCase()}`}
+                  >
+                    {owned ? (
+                      <div
+                        className={`h-3.5 w-full ${l.fill} ${prevOwned ? '' : 'rounded-l-full'} ${
+                          nextOwned ? '' : 'rounded-r-full'
+                        }`}
+                        style={{ marginLeft: prevOwned ? 1 : 2, marginRight: nextOwned ? 1 : 2 }}
+                      />
+                    ) : (
+                      <span className="mx-auto h-1 w-1 rounded-full bg-black/[0.12] dark:bg-white/[0.14]" />
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+            <div className="text-right font-mono text-[11px] tabular-nums leading-none">
+              <span
+                className={
+                  c.layers.length === 5
+                    ? 'font-bold text-violet-600 dark:text-violet-400'
+                    : 'font-bold text-gray-900 dark:text-white'
+                }
+              >
+                {c.layers.length}
+              </span>
+              <span className="text-gray-300 dark:text-zinc-600">/5</span>
+            </div>
           </div>
         ))}
       </div>

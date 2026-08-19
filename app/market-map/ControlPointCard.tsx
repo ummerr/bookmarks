@@ -23,10 +23,10 @@ export default function ControlPointCard({ cp, number }: { cp: ControlPoint; num
       <p className="text-[14px] text-gray-600 dark:text-zinc-300 leading-[1.75]">{cp.why}</p>
       <div className="flex flex-col gap-2 border-t border-black/[0.05] dark:border-white/[0.06] pt-3">
         <Row label="Leads today" value={cp.leaders} />
-        <Row label="Defensibility" value={cp.defensibility} />
-        <Row label="Incumbent risk" value={cp.absorption} />
-        <Row label="Commoditizer" value={cp.commoditization} />
-        <Row label="Value pool" value={cp.valuePool} />
+        <Row label="Why it holds" value={cp.defensibility} />
+        <Row label="Absorption path" value={cp.absorption} />
+        <Row label="Commoditization path" value={cp.commoditization} />
+        <Row label="Stakes" value={cp.valuePool} />
       </div>
     </div>
   )

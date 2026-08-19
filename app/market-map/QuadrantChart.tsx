@@ -60,10 +60,6 @@ export default function QuadrantChart({ companies }: { companies: PositionedComp
           </div>
         </div>
       </div>
-      <p className="text-[12px] leading-relaxed text-gray-400 dark:text-zinc-500">
-        Positions are editorial judgments, not measurements. Dot color follows the map legend
-        (violet startup, gray incumbent, pink frontier lab).
-      </p>
     </div>
   )
 }

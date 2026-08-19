@@ -124,18 +124,18 @@ export function FactsLine({ facts }: { facts: CompanyFacts }) {
 }
 
 const STANCE_STYLES: Record<string, string> = {
-  Long: 'text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-700/50 bg-emerald-50 dark:bg-emerald-950/30',
-  Short: 'text-red-700 dark:text-red-400 border-red-300 dark:border-red-700/50 bg-red-50 dark:bg-red-950/30',
-  Watch: 'text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700/50 bg-amber-50 dark:bg-amber-950/30',
+  Durable: 'text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-700/50 bg-emerald-50 dark:bg-emerald-950/30',
+  Fragile: 'text-red-700 dark:text-red-400 border-red-300 dark:border-red-700/50 bg-red-50 dark:bg-red-950/30',
+  Unproven: 'text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700/50 bg-amber-50 dark:bg-amber-950/30',
 }
 
-// "Long — reason" / "Short — reason" / "Watch — reason" → stance chip + reason.
-export function BetLine({ bet }: { bet: string }) {
-  const [stance, ...rest] = bet.split(' — ')
+// "Durable — reason" / "Fragile — reason" / "Unproven — reason" → tier chip + reason.
+export function ThesisLine({ thesis }: { thesis: string }) {
+  const [stance, ...rest] = thesis.split(' — ')
   const reason = rest.join(' — ')
   const cls = STANCE_STYLES[stance]
   if (!cls || !reason) {
-    return <div className="mt-1.5 text-[11px] font-medium text-gray-700 dark:text-zinc-300 leading-snug">{bet}</div>
+    return <div className="mt-1.5 text-[11px] font-medium text-gray-700 dark:text-zinc-300 leading-snug">{thesis}</div>
   }
   return (
     <div className="mt-1.5 flex items-start gap-1.5 text-[11px] leading-snug">
@@ -147,7 +147,7 @@ export function BetLine({ bet }: { bet: string }) {
   )
 }
 
-export function CompanyChip({ name, kind, modelDependency, note, momentum, facts, domain, bet, color }: Company & { color?: string }) {
+export function CompanyChip({ name, kind, modelDependency, note, momentum, facts, domain, thesis, color }: Company & { color?: string }) {
   return (
     <div
       className="px-3 py-2"
@@ -161,7 +161,7 @@ export function CompanyChip({ name, kind, modelDependency, note, momentum, facts
       </div>
       {note && <div className="mt-1 text-[11px] text-gray-500 dark:text-zinc-400 leading-snug">{note}</div>}
       {facts && <FactsLine facts={facts} />}
-      <BetLine bet={bet} />
+      <ThesisLine thesis={thesis} />
     </div>
   )
 }
@@ -173,7 +173,7 @@ export function MapLegend() {
       <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-gray-400 dark:bg-zinc-500" /> incumbent</span>
       <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-pink-500" /> frontier lab</span>
       <span className="inline-flex items-center gap-1.5"><span className="text-amber-500 text-[10px]">▲</span> momentum 25</span>
-      <span className="text-gray-400 dark:text-zinc-500">figures dated per entry · amber date = older than 90 days · Long / Short / Watch = the TL;DR bet</span>
+      <span className="text-gray-400 dark:text-zinc-500">figures dated per entry · amber date = older than 90 days · Durable / Fragile / Unproven = our read on how each position holds up</span>
     </div>
   )
 }

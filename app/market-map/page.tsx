@@ -14,6 +14,7 @@ import {
   STACK_COMPANIES,
 } from './data'
 import { Section, Prose, Callout, StatTile, Cite, formatReportDate } from './components'
+import Figure from './Figure'
 import { Logo } from './Logo'
 import MarketMapTOC from './MarketMapTOC'
 import MarketMapGrid from './MarketMapGrid'
@@ -170,7 +171,29 @@ export default function MarketMapPage() {
                   separately in §04, and who-owns-which-layers in §07.
                 </p>
               </Prose>
-              <MarketMapGrid categories={CATEGORIES} />
+              <Figure
+                id="fig-market-map"
+                num={1}
+                title="The Generative Media Market Map, August 2026"
+                takeaway="Eight categories by job-to-be-done, strategically meaningful companies only — with the TL;DR bet (Long / Short / Watch) inline on every entry."
+                notes={
+                  <>
+                    <p>
+                      Panel color groups the category; the dot beside each name marks company kind
+                      (violet startup, gray incumbent, pink frontier lab). ▲ marks membership in the
+                      Momentum 25 (§13). Figures are dated per entry — an amber date means the
+                      underlying number was more than 90 days old at publication.
+                    </p>
+                    <p>
+                      Inclusion is editorial: companies appear only where they hold a strategically
+                      distinct position, so absence is not a judgment of quality. The
+                      foundation-model layer is mapped separately in §04.
+                    </p>
+                  </>
+                }
+              >
+                <MarketMapGrid categories={CATEGORIES} />
+              </Figure>
             </Section>
 
             {/* §03 Workflow layer */}
@@ -252,7 +275,23 @@ export default function MarketMapPage() {
                   A, containerized 1MW inference pods) and WaveSpeed (fastest Western access to
                   Chinese models) are growing in its wake.
                 </p>
-                <FlowDiagram flow={FLOW} />
+                <Figure
+                  id="fig-model-flow"
+                  num={2}
+                  title="The model supply chain"
+                  takeaway="Foundation models → aggregators → output surfaces. Band width marks how load-bearing a connection is; the heavy left-side bands are the point — the video shelf is majority-Chinese, and Western apps reach it through aggregators."
+                  notes={
+                    <p>
+                      Band color follows the source model; weights are editorial judgments of how
+                      load-bearing each integration is, not measured volume. Pricing power sits at
+                      the two ends — frontier models and owned distribution — while the middle
+                      keeps margin only by adding workflow state (fal Agent, ComfyUI JSON, Soul ID)
+                      on top of routing.<Cite id="10" /><Cite id="11" /><Cite id="13" />
+                    </p>
+                  }
+                >
+                  <FlowDiagram flow={FLOW} />
+                </Figure>
                 <p>
                   Thin aggregation without that depth gets absorbed: Replicate — the #2 independent
                   media marketplace — sold to Cloudflare.<Cite id="12" /> Gateways (Vercel’s now
@@ -328,8 +367,47 @@ export default function MarketMapPage() {
                   the bars underneath show the full layer-by-layer detail.
                 </p>
               </Prose>
-              <QuadrantChart companies={POSITIONING} />
-              <StackBars companies={STACK_COMPANIES} />
+              <Figure
+                id="fig-ownership-2x2"
+                num={3}
+                title="Model ownership vs distribution ownership"
+                takeaway="Up-and-right compounds — model fused to a billion-user surface. The lower-right, frontier labs without a funnel, is the melting quadrant."
+                notes={
+                  <p>
+                    Positions are editorial judgments on a 0–100 scale, not measurements. Dot color
+                    follows the map legend (violet startup, gray incumbent, pink frontier lab). The
+                    washed quadrant marks the compounding position; Sora is the case study for what
+                    happens in the lower-right without distribution economics.<Cite id="1" />
+                  </p>
+                }
+              >
+                <QuadrantChart companies={POSITIONING} />
+              </Figure>
+              <Figure
+                id="fig-stack-ownership"
+                num={4}
+                title="Who owns which layers of the stack"
+                takeaway="Each color is a layer; an unbroken run of color is vertical integration — the compounding position. Quiet dots mark layers a company rents from someone else."
+                notes={
+                  <>
+                    <p>
+                      Layer ownership is an editorial judgment of where a company operates with
+                      strategic weight, not a product inventory — Adobe’s de-emphasized own models
+                      still count as a model layer; Vercel-style gateways don’t make everyone an
+                      infrastructure owner. Rows sort by layers owned.
+                    </p>
+                    <p>
+                      Full-stack (5/5) demands frontier capital intensity — only Google and
+                      ByteDance sustain it. Deliberate single-layer specialists (Black Forest Labs
+                      licensing models, fal owning inference) trade ceiling for focus. The dangerous
+                      position is the unowned middle: an application renting models with no workflow
+                      state above and no cost advantage below.
+                    </p>
+                  </>
+                }
+              >
+                <StackBars companies={STACK_COMPANIES} />
+              </Figure>
             </Section>
 
             {/* §08 Incumbents */}
@@ -378,7 +456,24 @@ export default function MarketMapPage() {
                 <StatTile stat="$0.02–0.75" label="Per-second video API price envelope, frontier to challenger" />
                 <StatTile stat="~$400M" label="fal annualized revenue — the orchestration proof point" />
               </div>
-              <ArrBars entries={FINANCIALS} />
+              <Figure
+                id="fig-arr-club"
+                num={5}
+                title="The $100M+ ARR club"
+                takeaway="Annual recurring revenue in $M, sorted by midpoint. Fill saturation encodes evidence quality — from filed numbers down to claimed-and-unverified."
+                notes={
+                  <p>
+                    Figures are as of the date on each entry in the map above. Canva (~$4B total
+                    ARR) is excluded — its revenue is not GenMedia-attributable and would break the
+                    scale. Lighter extensions mark estimate ranges (Runway, Midjourney). Evidence
+                    tiers: audited/filed figures (Kling, via Kuaishou’s interim
+                    filings<Cite id="47" />), company-stated, third-party estimates, and claimed
+                    (Higgsfield’s $700M annualized is company-claimed and unverified<Cite id="40" />).
+                  </p>
+                }
+              >
+                <ArrBars entries={FINANCIALS} />
+              </Figure>
               <Prose>
                 <p>
                   The $100M+ ARR club as of August 2026, weighted by evidence quality: Higgsfield
@@ -394,7 +489,24 @@ export default function MarketMapPage() {
                   2025 — concentrated in model builders and world models, while thin-wrapper seed
                   activity visibly cooled.<Cite id="30" />
                 </p>
-                <ValuationScatter entries={FINANCIALS} />
+                <Figure
+                  id="fig-valuation-multiples"
+                  num={6}
+                  title="Valuation vs revenue, log-log"
+                  takeaway="Dashed guides mark valuation-to-ARR multiples. Most of the club clusters between 10x and 30x; the outliers are the story."
+                  notes={
+                    <p>
+                      Ranges plot at their midpoint. Solid dots are company-stated or audited
+                      figures, half-tone dots third-party estimates, and the dashed hollow dot
+                      (Higgsfield) is claimed and unverified. Meshy sits alone near the 35x line —
+                      priced on world-model optionality, not revenue.<Cite id="33" /> The chart
+                      also can’t plot its most efficient company: HeyGen — $200M ARR on about $74M
+                      raised — has no disclosed valuation.<Cite id="8" />
+                    </p>
+                  }
+                >
+                  <ValuationScatter entries={FINANCIALS} />
+                </Figure>
                 <p>
                   <strong>Who captures the margin when an app calls someone else’s model?</strong>{' '}
                   The pools sit at the bottom and at the optimization layer: GPU landlords
@@ -422,7 +534,22 @@ export default function MarketMapPage() {
 
             {/* §10 Moats */}
             <Section id="moats" title="Moats & Commoditization" eyebrow="§ 10">
-              <MoatMatrix rows={MOAT_MATRIX} />
+              <Figure
+                id="fig-moat-matrix"
+                num={7}
+                title="Moats and commoditization risk, layer by layer"
+                takeaway="Where durable moats can still form — and which layers are already commodity. Low risk clusters where courts, capital intensity, or regulation enforce the moat."
+                notes={
+                  <p>
+                    Risk is the likelihood that the layer’s current differentiation commoditizes
+                    within roughly 24 months. Assessments are editorial, synthesized from the
+                    leaderboard-turnover, pricing, and licensing evidence in §04, §09, and
+                    §11.<Cite id="28" /><Cite id="36" />
+                  </p>
+                }
+              >
+                <MoatMatrix rows={MOAT_MATRIX} />
+              </Figure>
             </Section>
 
             {/* §11 Open source */}

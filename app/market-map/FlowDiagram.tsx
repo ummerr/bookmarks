@@ -84,13 +84,6 @@ export default function FlowDiagram({ flow }: { flow: FlowData }) {
           {flow.outputs.map((n, i) => <Node key={n.id} node={n} col="outputs" i={i} />)}
         </svg>
       </div>
-      <p className="text-[12px] leading-relaxed text-gray-400 dark:text-zinc-500">
-        Band width marks how load-bearing a connection is; band color follows the source. The heavy
-        left-side bands are the point: the video shelf is majority-Chinese, and Western apps reach it
-        through aggregators rather than one-by-one integrations. Pricing power sits at the two ends —
-        frontier models and owned distribution — while the middle keeps margin only by adding
-        workflow state (fal Agent, ComfyUI JSON, Soul ID) on top of routing.
-      </p>
     </div>
   )
 }

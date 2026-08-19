@@ -43,6 +43,18 @@ for (const dir of SCAN_DIRS) {
   }
 }
 
+// Every company thesis must parse into a known tier chip — otherwise ThesisLine
+// silently falls back to plain text and the tier legend lies.
+const THESIS_RE = /^(Durable|Fragile|Unproven) — .+/
+for (const cat of CATEGORIES) {
+  for (const c of cat.companies) {
+    if (!THESIS_RE.test(c.thesis)) {
+      hits++;
+      console.error(`data.ts CATEGORIES "${c.name}"  thesis "${c.thesis}" does not match "Durable|Fragile|Unproven — reason"`);
+    }
+  }
+}
+
 // Every Cite id used in the market map (and StatTile cite props) must exist in SOURCES.
 const validIds = new Set(SOURCES.map((s) => s.id));
 const CITE_RE = /(?:<Cite id|cite)="([^"]+)"/g;

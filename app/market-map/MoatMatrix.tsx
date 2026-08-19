@@ -14,8 +14,8 @@ export default function MoatMatrix({ rows }: { rows: MatrixRow[] }) {
           <div>Layer</div>
           <div>Current differentiation</div>
           <div>Commodit. risk</div>
-          <div>Potential moat</div>
-          <div>Likely value capture</div>
+          <div>Durability lever</div>
+          <div>Where leverage settles</div>
         </div>
         {rows.map((r, i) => (
           <div
@@ -31,8 +31,8 @@ export default function MoatMatrix({ rows }: { rows: MatrixRow[] }) {
                 {r.risk}
               </span>
             </div>
-            <div className="text-gray-600 dark:text-zinc-300 leading-relaxed">{r.moat}</div>
-            <div className="text-gray-500 dark:text-zinc-400 leading-relaxed">{r.valueCapture}</div>
+            <div className="text-gray-600 dark:text-zinc-300 leading-relaxed">{r.durability}</div>
+            <div className="text-gray-500 dark:text-zinc-400 leading-relaxed">{r.leverage}</div>
           </div>
         ))}
       </div>
