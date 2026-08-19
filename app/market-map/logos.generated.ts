@@ -40,6 +40,7 @@ export const LOGO_DOMAINS: ReadonlySet<string> = new Set([
   'lumalabs.ai',
   'meshy.ai',
   'meta.com',
+  'microsoft.com',
   'midjourney.com',
   'minimax.io',
   'moonvalley.ai',

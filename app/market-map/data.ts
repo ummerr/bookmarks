@@ -190,6 +190,63 @@ export const SECTIONS: SectionDef[] = [
   { id: 'sources', label: 'Sources' },
 ]
 
+// — Mention index (powers the click-to-highlight company index under the hero) —
+// Aliases are matched case-sensitively on word boundaries against the rendered
+// essay text, so counts self-correct on every content edit. Include the product
+// and model names a reader would recognize as "that company" (Veo → Google).
+export interface MentionCompany {
+  name: string
+  domain?: string
+  aliases: string[]
+}
+
+export const MENTION_INDEX: MentionCompany[] = [
+  { name: 'Google', domain: 'google.com', aliases: ['Google', 'DeepMind', 'Veo', 'Gemini', 'YouTube', 'Genie', 'Lyria', 'Imagen', 'Whisk', 'ImageFX', 'Nano Banana'] },
+  { name: 'ByteDance', domain: 'bytedance.com', aliases: ['ByteDance', 'Seedance', 'Seedream', 'CapCut', 'Dreamina', 'Jimeng', 'Doubao', 'Volcano'] },
+  { name: 'Kling', domain: 'klingai.com', aliases: ['Kling', 'Kuaishou'] },
+  { name: 'OpenAI', domain: 'openai.com', aliases: ['OpenAI', 'Sora', 'ChatGPT', 'GPT Image'] },
+  { name: 'Adobe', domain: 'adobe.com', aliases: ['Adobe', 'Firefly', 'Photoshop', 'Premiere'] },
+  { name: 'Meta', domain: 'meta.com', aliases: ['Meta', 'Vibes', 'Advantage+', 'Movie Gen', 'Muse', 'GEM'] },
+  { name: 'fal', domain: 'fal.ai', aliases: ['fal'] },
+  { name: 'Runway', domain: 'runwayml.com', aliases: ['Runway', 'Gen-4.5', 'GWM'] },
+  { name: 'ElevenLabs', domain: 'elevenlabs.io', aliases: ['ElevenLabs', 'Eleven v3', 'Eleven Music'] },
+  { name: 'Suno', domain: 'suno.com', aliases: ['Suno'] },
+  { name: 'Higgsfield', domain: 'higgsfield.ai', aliases: ['Higgsfield', 'Soul ID'] },
+  { name: 'MiniMax', domain: 'minimax.io', aliases: ['MiniMax', 'Hailuo'] },
+  { name: 'Alibaba', aliases: ['Alibaba', 'Wan'] },
+  { name: 'Tencent', domain: 'tencent.com', aliases: ['Tencent', 'Hunyuan', 'Hunyuan3D', 'HunyuanImage'] },
+  { name: 'Lightricks', domain: 'ltx.studio', aliases: ['Lightricks', 'LTX'] },
+  { name: 'Luma', domain: 'lumalabs.ai', aliases: ['Luma', 'Ray3'] },
+  { name: 'Black Forest Labs', domain: 'bfl.ai', aliases: ['Black Forest Labs', 'BFL', 'FLUX'] },
+  { name: 'Midjourney', domain: 'midjourney.com', aliases: ['Midjourney'] },
+  { name: 'Canva', domain: 'canva.com', aliases: ['Canva', 'Leonardo', 'Affinity'] },
+  { name: 'Figma', domain: 'figma.com', aliases: ['Figma', 'Weave', 'Weavy'] },
+  { name: 'ComfyUI', domain: 'comfy.org', aliases: ['ComfyUI'] },
+  { name: 'Krea', domain: 'krea.ai', aliases: ['Krea'] },
+  { name: 'Freepik', domain: 'freepik.com', aliases: ['Freepik', 'Magnific'] },
+  { name: 'Flora', domain: 'florafauna.ai', aliases: ['Flora', 'FLORA', 'FAUNA'] },
+  { name: 'Synthesia', domain: 'synthesia.io', aliases: ['Synthesia'] },
+  { name: 'HeyGen', domain: 'heygen.com', aliases: ['HeyGen'] },
+  { name: 'Decart', domain: 'decart.ai', aliases: ['Decart', 'Oasis', 'Lucy'] },
+  { name: 'World Labs', domain: 'worldlabs.ai', aliases: ['World Labs', 'Marble'] },
+  { name: 'Anthropic', aliases: ['Anthropic', 'Claude'] },
+  { name: 'NVIDIA', domain: 'nvidia.com', aliases: ['NVIDIA', 'Cosmos'] },
+  { name: 'Microsoft', aliases: ['Microsoft', 'MAI-Image', 'MAI-2.6', 'Copilot', 'Bing'] },
+  { name: 'Amazon', domain: 'amazon.com', aliases: ['Amazon', 'Nova'] },
+  { name: 'Apple', aliases: ['Apple', 'iOS 27'] },
+  { name: 'xAI', domain: 'x.ai', aliases: ['xAI', 'Grok'] },
+  { name: 'PixVerse', domain: 'pixverse.ai', aliases: ['PixVerse'] },
+  { name: 'Cartesia', domain: 'cartesia.ai', aliases: ['Cartesia', 'Sonic'] },
+  { name: 'Udio', domain: 'udio.com', aliases: ['Udio'] },
+  { name: 'Vercel', domain: 'vercel.com', aliases: ['Vercel'] },
+  { name: 'Cloudflare', aliases: ['Cloudflare'] },
+  { name: 'Replicate', domain: 'replicate.com', aliases: ['Replicate'] },
+  { name: 'Moonvalley', domain: 'moonvalley.ai', aliases: ['Moonvalley', 'Marey'] },
+  { name: 'Meshy', domain: 'meshy.ai', aliases: ['Meshy'] },
+  { name: 'Stability', domain: 'stability.ai', aliases: ['Stability'] },
+  { name: 'Gamma', domain: 'gamma.app', aliases: ['Gamma'] },
+]
+
 // ——— The ecosystem map: 8 problem domains, architecturally meaningful companies only ———
 
 export const CATEGORIES: Category[] = [
@@ -203,7 +260,7 @@ export const CATEGORIES: Category[] = [
       { name: 'Adobe Firefly', kind: 'incumbent', modelDependency: 'multi-model', domain: 'adobe.com', thesis: 'Durable — governed workflow over everyone’s models is working', note: 'Own commercially-safe models + partner-model hub; AI-first ARR up 3x YoY', facts: { arr: 'over $500M AI-first ARR', asOf: 'Jun 2026', cite: '16' }, momentum: true },
       { name: 'Google Flow', kind: 'lab', modelDependency: 'own-models', domain: 'google.com', thesis: 'Durable — bundled frontier gen rides a 1B-MAU assistant', note: 'Flow+Whisk+ImageFX unified Feb 2026, 140+ countries, bundled with AI subscriptions', facts: { users: '1.5B+ creations (claimed)', asOf: 'Feb 2026', cite: '18' } },
       { name: 'Magnific (Freepik)', kind: 'startup', modelDependency: 'multi-model', domain: 'freepik.com', thesis: 'Durable — integration speed and SEO distribution beat model ownership', note: 'Every model under one roof; half of revenue from video', facts: { arr: '$230M ARR', asOf: 'Apr 2026', cite: '4' }, momentum: true },
-      { name: 'Krea', kind: 'startup', modelDependency: 'multi-model', domain: 'krea.ai', thesis: 'Durable — real-time canvas is a real paradigm; state must follow', note: 'Real-time canvas, 60+ models, own Krea 2 open image model', facts: { valuation: '$500M', asOf: 'Apr 2025' } },
+      { name: 'Krea', kind: 'startup', modelDependency: 'multi-model', domain: 'krea.ai', thesis: 'Durable — real-time canvas is a real paradigm; state must follow', note: 'Real-time canvas, 60+ models; K2 open weights cracked the AA text-to-image top 10 (Jun 2026); enterprise logos incl. LEGO, Samsung, Microsoft — but no new capital since Apr 2025', facts: { valuation: '$500M (Apr 2025)', users: '30M+ users', asOf: 'Jun 2026', cite: '57' } },
       { name: 'Figma Weave', kind: 'incumbent', modelDependency: 'multi-model', domain: 'figma.com', thesis: 'Durable — Community makes workflows a network effect', note: 'Weavy acquired for over $200M; shareable AI workflows inside Figma', facts: { valuation: 'acq. >$200M (Figma)', raised: '$4M seed (as Weavy)', investors: ['Entrée Capital', 'Designer Fund', 'Founder Collective'], asOf: 'Oct 2025' } },
       { name: 'OpenArt', kind: 'startup', modelDependency: 'multi-model', domain: 'openart.ai', thesis: 'Unproven — Recipes are early state; free platform bundles loom', note: 'Shareable Recipes', facts: { arr: '$70M ARR', users: '8M MAU' } },
       { name: 'Recraft', kind: 'startup', modelDependency: 'own-models', domain: 'recraft.ai', thesis: 'Unproven — model-shop-to-workspace pivot must outrun the frontier', note: 'Design-grade image models, shifting from model shop to workspace', facts: { raised: '$42M', investors: ['Accel', 'Khosla Ventures', 'Madrona'], users: '4M+ users (claimed)', asOf: 'May 2025' } },
@@ -252,9 +309,9 @@ export const CATEGORIES: Category[] = [
     jobToBeDone: 'Short-form creation at meme speed',
     color: '#0ea5e9',
     companies: [
-      { name: 'CapCut / Dreamina', kind: 'incumbent', modelDependency: 'own-models', domain: 'capcut.com', thesis: 'Durable — the largest creation funnel on earth feeds its own model', note: 'Seedance 2.5 (public Jul 31) into a 300M+-MAU editor', momentum: true, facts: { users: '300M+ MAU (a16z est. ~736M)', asOf: 'Mar 2026' } },
+      { name: 'CapCut / Dreamina', kind: 'incumbent', modelDependency: 'own-models', domain: 'capcut.com', thesis: 'Durable — the largest creation funnel on earth feeds its own model', note: 'Seedance 2.5 (public Jul 31) into a 300M+-MAU editor; Seedance API reportedly past RMB 1B/month (36Kr-lineage, unaudited)', momentum: true, facts: { users: '300M+ MAU (a16z est. ~736M)', asOf: 'Jun 2026', cite: '53' } },
       { name: 'YouTube Shorts + Veo', kind: 'incumbent', modelDependency: 'own-models', domain: 'youtube.com', thesis: 'Durable — free frontier video in the feed ends standalone apps', note: 'Free frontier video gen inside the feed — the biggest distribution event in GenMedia', facts: { users: '200B+ daily Shorts views', asOf: 'Apr 2026' } },
-      { name: 'Grok Imagine', kind: 'lab', modelDependency: 'own-models', domain: 'x.ai', thesis: 'Unproven — arena wins and X distribution; retention unproven', note: '#1 on video arenas in early 2026 at ~$4.20/min; Image 2.0 slipped to Arena #3 in image (MAI-2.6 took #2) but holds #2 in image-edit; X distribution', facts: { users: '20M+ images/day (claimed, Aug 2025)', asOf: 'Mar 2026' } },
+      { name: 'Grok Imagine', kind: 'lab', modelDependency: 'own-models', domain: 'x.ai', thesis: 'Unproven — arena wins and X distribution; retention unproven', note: '#1 on video arenas in early 2026; Video 1.5 now ~$4.20/min; Image 2.0 slipped to Arena #3 in image (MAI-2.6 took #2) but holds #2 in image-edit; X distribution', momentum: true, facts: { users: '20M+ images/day (claimed, Aug 2025)', asOf: 'Mar 2026' } },
       { name: 'Higgsfield', kind: 'startup', modelDependency: 'multi-model', domain: 'higgsfield.ai', thesis: 'Unproven — revenue still company-claimed; Soul ID persistence is the real test', note: 'Soul ID character persistence is the accumulated state; revenue figures company-claimed, not audited', facts: { valuation: '$5.4B', raised: '$400M Series B', arr: '$700M annualized (claimed)', asOf: 'Aug 2026', cite: '40' }, momentum: true },
       { name: 'PixVerse', kind: 'startup', modelDependency: 'own-models', domain: 'pixverse.ai', thesis: 'Unproven — huge consumer reach; serving-cost structure opaque', note: 'Real-time R1 model', facts: { valuation: 'over $2B', raised: '$439M', users: '150M users (claimed)', asOf: 'Jul 2026', cite: '25' }, momentum: true },
       { name: 'Mirage (Captions)', kind: 'startup', modelDependency: 'own-models', domain: 'captions.ai', thesis: 'Unproven — revenue-linked financing implies real recurring revenue', note: 'Own short-form video models', facts: { raised: '$75M revenue-linked', asOf: 'Mar 2026' } },
@@ -342,8 +399,8 @@ export const MODEL_GROUPS: ModelGroup[] = [
     entries: [
       { name: 'Gemini Omni Flash', developer: 'Google', openness: 'closed', capability: 'Still #1 on Arena text-to-video, but slipped to #2 on AA (Wan 3.0 debuted 10 Elo above it this week) and #3 on image-to-video — the lead is contested weekly; conversational editing without re-prompting', pricing: '$0.10/sec', adoption: 'Gemini app, Flow, YouTube Shorts, Vertex', flagship: true },
       { name: 'Hailuo H3', developer: 'MiniMax', openness: 'hybrid', capability: '#1 on Arena image-to-video (Seedance 2.5 now within error bars), #3 on AA text-to-video, 11 Elo behind Gemini; 15s, 2K, native stereo; first frontier-quality open-weights video (license excludes US/EU/UK/KR local deploy)', pricing: '~1/3 of rivals (est.)', adoption: 'HK-listed; aggregator shelves everywhere' },
-      { name: 'Seedance 2.5', developer: 'ByteDance', openness: 'closed', capability: '30s single-pass, 4K, 50 multimodal reference inputs; debuted #2 on Arena image-to-video within error bars of #1', pricing: '$0.05–0.40/sec by tier', adoption: 'CapCut (400M+ MAU), Jimeng/Dreamina, Volcano API' },
-      { name: 'Kling 3.0 Omni', developer: 'Kuaishou', openness: 'closed', capability: 'Native 4K/60fps, 15s, in-model lip-sync; image gen too; 3.0 Turbo speed tier (Jun 2026)', pricing: '~$0.11–0.17/sec', adoption: 'Q2 revenue RMB 850M+, up over 200% YoY (filed Aug 19) — the revenue leader, ~70–75% overseas (Q1); spun out at $18B post (Jul 2026)' },
+      { name: 'Seedance 2.5', developer: 'ByteDance', openness: 'closed', capability: '30s single-pass, 4K, 50 multimodal reference inputs; #2 on Arena image-to-video within error bars of #1, #1 on the new Video Edit board; Seedance 2.0 still holds AA image-to-video #1', pricing: '$0.05–0.40/sec by tier', adoption: 'CapCut (400M+ MAU), Jimeng/Dreamina, Volcano API — reportedly over RMB 1B/month (36Kr-lineage, unaudited)' },
+      { name: 'Kling 3.0 Omni', developer: 'Kuaishou', openness: 'closed', capability: 'Native 4K/60fps, 15s, in-model lip-sync; image gen too; 3.0 Turbo speed tier (Jun 2026)', pricing: '~$0.11–0.17/sec', adoption: 'Q2 revenue RMB 850M+, up over 200% YoY (filed Aug 19) — the filed-revenue leader, ~70–75% overseas (Q1); spun out at $18B post (Jul 2026)' },
       { name: 'Gen-4.5', developer: 'Runway', openness: 'closed', capability: '1-minute multi-shot, native audio, character consistency; GWM world-model track', pricing: '~$0.12/sec (Gen-4.5 class)', adoption: 'Studio deals (Lionsgate, AMC); enterprise workflows' },
       { name: 'Veo 3.1', developer: 'Google', openness: 'closed', capability: '8s, up to 4K, native audio; slid to #9 (Arena) – #12 (AA) as Omni took over', pricing: '$0.05–0.75/sec by tier', adoption: 'Google Ads, Shorts, API' },
       { name: 'Wan 3.0', developer: 'Alibaba', openness: 'hybrid', capability: 'Debuted #1 on AA text-to-video (Aug 2026); 30s single-pass in public beta since Aug 6; open-weights line stops at Wan 2.2 — the flagship is closed', pricing: '~$0.05/sec', adoption: 'Top open-video lineage in ComfyUI workflows' },
@@ -632,10 +689,10 @@ export const STACK_COMPANIES: StackCompany[] = [
 // ——— Momentum 25 ———
 
 export const MOMENTUM: MomentumEntry[] = [
-  { rank: 1, name: 'Kling (Kuaishou)', what: 'video model + app', domain: 'klingai.com', why: 'Q2 revenue over RMB 850M, up over 200% YoY (filed Aug 19, 2026 — a ~$475M annualized run-rate), ~70–75% overseas as of Q1 — the global revenue benchmark for AI video, spun out with a ~$3B round at $18B post (Jul 2026; Tencent and Alibaba among the investors), HK IPO targeted 2027.' },
-  { rank: 2, name: 'Google (Gemini / Veo / Flow)', what: 'full stack', domain: 'google.com', why: 'Gemini passed 1B MAU, Omni Flash still tops the Arena text-to-video board (though Wan 3.0 just took the AA #1), and Flow unified into a 140-country workspace — Google won the Western consumer field largely by Sora’s forfeit.' },
-  { rank: 3, name: 'ElevenLabs', what: 'audio platform', domain: 'elevenlabs.io', why: '$600M ARR (Jul 2026), $11B Series D, Spotify distribution, licensed music expansion — the cleanest scale-up in all of GenMedia.' },
-  { rank: 4, name: 'ByteDance (Seedance / CapCut)', what: 'model + funnel', domain: 'bytedance.com', why: 'Seedance 2.5 (30s single-pass, public Jul 31) ships into a 300M+-MAU editor; the only company fusing frontier video with a billion-user creation-to-publication funnel.' },
+  { rank: 1, name: 'ByteDance (Seedance / CapCut)', what: 'model + funnel', domain: 'bytedance.com', why: 'The biggest reported business in GenMedia: Seedance API revenue passed RMB 1B/month by June (~$1.7B annualized — 36Kr-lineage reporting, not a filing), over half of Volcano Engine’s RMB 15B MaaS target, ~95% of China’s short-drama industry. Seedance 2.0 holds #1 on AA image-to-video, 2.5 (public Jul 31) debuted #1 on Arena’s Video Edit board, and it all ships into a 300M+-MAU editor. The asterisks: monetization is China-domestic behind RMB 10M-minimum contracts, and the Hollywood deepfake fight (MPA demand, Disney/Paramount cease-and-desists) is unresolved.' },
+  { rank: 2, name: 'Kling (Kuaishou)', what: 'video model + app', domain: 'klingai.com', why: 'The hardest evidence in GenMedia: Q2 revenue over RMB 850M, up over 200% YoY (filed Aug 19, 2026 — a ~$475M annualized run-rate), ~70–75% overseas as of Q1, spun out with a ~$3B round at $18B post (Jul 2026), HK IPO targeted 2027. Smaller than Seedance’s reported numbers — but this one sits in a listed company’s filings, and no rival matches the overseas mix.' },
+  { rank: 3, name: 'ElevenLabs', what: 'audio platform', domain: 'elevenlabs.io', why: '$600M ARR (Jul 2026), $11B Series D, Spotify distribution, licensed music expansion — the cleanest scale-up in all of GenMedia, and the largest company-stated figure that is directly GenMedia-attributable.' },
+  { rank: 4, name: 'Google (Gemini / Veo / Flow)', what: 'full stack', domain: 'google.com', why: 'Gemini passed 1B MAU and Flow unified into a 140-country workspace — the widest distribution in the field, won largely by Sora’s forfeit. But Wan 3.0 just took the AA text-to-video #1 from Omni Flash, and none of the 1B-MAU scale converts to attributable GenMedia revenue.' },
   { rank: 5, name: 'Adobe', what: 'workspace + agent', domain: 'adobe.com', why: 'AI-first ARR >$500M (+3x YoY); Firefly became a multi-model hub and its creative agent now lives inside ChatGPT and Claude — the incumbent that adapted.' },
   { rank: 6, name: 'fal', what: 'inference / orchestration', domain: 'fal.ai', why: '~$400M annualized (doubled in months), Sequoia-led $4.5B with an ~$8B round in talks since March, and an Aug 2026 move up into agents — the tooling-layer winner.' },
   { rank: 7, name: 'Runway', what: 'video lab', domain: 'runwayml.com', why: '$315M Series E at $5.3B with NVIDIA and Adobe as investors; Gen-4.5 plus the GWM world-model line gives it a second act beyond media.' },
@@ -654,7 +711,7 @@ export const MOMENTUM: MomentumEntry[] = [
   { rank: 20, name: 'Midjourney', what: 'image', domain: 'midjourney.com', why: 'Still ~$200–500M revenue (est.) with zero funding and ~40 people — but no API, no C2PA, and Disney’s suit in discovery make it momentum with an asterisk.' },
   { rank: 21, name: 'NVIDIA Cosmos', what: 'open world models', domain: 'nvidia.com', why: 'Cosmos 3 (Jun 2026) plus the Coalition arms the whole ecosystem with open world models — the Llama play for physical AI, run by the compute monopolist.' },
   { rank: 22, name: 'ComfyUI', what: 'workflow substrate', domain: 'comfy.org', why: '$30M at $500M, 4M+ users, Comfy Cloud out of beta — its JSON workflows are becoming the portable orchestration format of the industry.' },
-  { rank: 23, name: 'xAI (Grok Imagine)', what: 'model + X distribution', domain: 'x.ai', why: 'Took #1 on both AA video arenas in late January at ~$4.20/min — 86% below Sora 2 — and holds image podium spots (#2 image-edit, #3 text-to-image since MAI-2.6 arrived); own models bundled into X, but paid-only since March with no disclosed usage or revenue.' },
+  { rank: 23, name: 'xAI (Grok Imagine)', what: 'model + X distribution', domain: 'x.ai', why: 'Took #1 on both AA video arenas in late January and holds image podium spots (#2 image-edit, #3 text-to-image since MAI-2.6 arrived); Video 1.5 now prices at ~$4.20/min — 86% below Sora 2 — with own models bundled into X, but paid-only since March and no disclosed usage or revenue.' },
   { rank: 24, name: 'Meta Muse', what: 'image model', domain: 'meta.com', why: 'Launched July 2026 into Meta AI, Stories, and WhatsApp at billion-user scale, with the Advantage+ advertiser rollout next; the "infinite creative" pipeline optimized against auction outcomes is a closed loop no startup can enter.' },
   { rank: 25, name: 'Tencent Hunyuan', what: 'open ecosystem', domain: 'tencent.com', why: 'The most modality-diverse open lineage (80B image, video, 3D, world) — the open-weights supply chain under indie GenMedia tooling worldwide.' },
 ]
@@ -820,4 +877,10 @@ export const SOURCES: Source[] = [
   { id: '50', label: 'vLLM-Omni — open-source diffusion/omni model serving (vLLM project)', url: 'https://github.com/vllm-project/vllm-omni', date: 'Nov 2025' },
   { id: '51', label: 'ElevenLabs reaches $600M ARR', url: 'https://www.arr.club/elevenlabs/elevenlabs-arr-hit-600m-within-just-29-months-of-launching-its-first-product', date: 'Jul 2026' },
   { id: '52', label: 'Tech Times — Grok Imagine Video 1.5 tops AI video leaderboard at 86% below Sora', url: 'https://www.techtimes.com/articles/318635/20260618/grok-imagine-video-15-goes-live-xai-tops-ai-video-leaderboard-86-percent-below-sora.htm', date: 'Jun 18, 2026' },
+  { id: '53', label: 'KrAsia (36Kr) — ByteDance raises Volcano Engine MaaS target on Seedance 2.0 growth (>RMB 1B/month)', url: 'https://kr-asia.com/bytedance-raises-volcano-engines-maas-revenue-target-on-seedance-2-0-growth', date: 'Jun 5, 2026' },
+  { id: '54', label: 'BigGo (36Kr-lineage) — Seedance contract minimums, margins, ~95% short-drama penetration', url: 'https://finance.biggo.com/news/98d36dcf-1051-463b-a962-430c503d70ca', date: 'Jul 7, 2026' },
+  { id: '55', label: 'Arena — Seedance 2.5 #2 image-to-video, #1 on the new Video Edit board', url: 'https://x.com/arena/status/2089448812159045848', date: 'Aug 2026' },
+  { id: '56', label: 'Artificial Analysis — image-to-video leaderboard (Seedance 2.0 #1; Kling 3.0 Pro #12)', url: 'https://artificialanalysis.ai/video/leaderboard/image-to-video', date: 'Aug 19, 2026' },
+  { id: '57', label: 'VentureBeat — Krea 2 Raw/Turbo open weights; 30M+ users, enterprise logos', url: 'https://venturebeat.com/technology/enterprise-grade-ai-image-generation-in-2-seconds-is-here-krea-2-raw-and-turbo-available-as-open-weights-under-custom-license', date: 'Jun 2026' },
+  { id: '58', label: 'TestingCatalog — Google tests Agent Mode on Flow (build traces, unshipped)', url: 'https://www.testingcatalog.com/google-prepares-agent-mode-for-flow-to-automate-video-production/', date: 'May 2026' },
 ]

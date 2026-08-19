@@ -5,6 +5,7 @@ import {
   FINANCIALS,
   FLOW,
   HYPOTHESES,
+  MENTION_INDEX,
   MOAT_MATRIX,
   MODEL_GROUPS,
   MOMENTUM,
@@ -17,6 +18,7 @@ import { Section, Prose, Callout, StatTile, Cite, formatReportDate } from './com
 import Figure from './Figure'
 import { Logo } from './Logo'
 import MarketMapTOC from './MarketMapTOC'
+import MentionIndex from './MentionIndex'
 import MarketMapGrid from './MarketMapGrid'
 import ModelTable from './ModelTable'
 import MoatMatrix from './MoatMatrix'
@@ -79,7 +81,7 @@ export default function MarketMapPage() {
     <div className="min-h-screen bg-[#f7f6f3] dark:bg-[#0a0a0a] text-gray-900 dark:text-white">
       <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-12">
         <div className="flex gap-10 items-start">
-          <main className="flex-1 min-w-0 flex flex-col gap-12 md:gap-14">
+          <main id="mm-essay" className="flex-1 min-w-0 flex flex-col gap-12 md:gap-14">
             {/* Hero */}
             <header className="flex flex-col gap-5">
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-violet-500/70">
@@ -102,6 +104,7 @@ export default function MarketMapPage() {
                 <StatTile stat=">10x" label="Video inference cost decline since 2024" />
                 <StatTile stat="9 of 10" label="Top video models that are Chinese (AA arena, Aug 2026)" />
               </div>
+              <MentionIndex companies={MENTION_INDEX} />
             </header>
 
             {/* §01 Thesis */}
@@ -149,8 +152,11 @@ export default function MarketMapPage() {
                   (Q1) to ~$475M (Q2), on over RMB 850M of quarterly revenue up more than 200%
                   year-over-year.<Cite id="47" /> Frontier quality with no distribution surface to
                   amortize its serving costs did not survive, while good-enough quality inside an
-                  owned funnel became the revenue leader — a difference of system architecture,
-                  not of model capability.
+                  owned funnel became the industry’s filed-revenue benchmark — a difference of
+                  system architecture, not of model capability. If the 36Kr-lineage reporting on
+                  ByteDance holds — Seedance API revenue past RMB 1B a month by June, unaudited —
+                  the same architecture is working at ~3.5x that scale inside
+                  China.<Cite id="53" />
                 </p>
               </Prose>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -227,6 +233,18 @@ export default function MarketMapPage() {
                   most instructive shutdown argues the same case from the other side: Sora had the
                   best-known model in the world and no workflow, no B2B motion, no state — and
                   it’s gone.<Cite id="1" />
+                </p>
+                <p>
+                  What no one in this layer has yet shown is demand-side proof. Every revenue
+                  figure here is earned by the surface underneath the agent — fal’s inference,
+                  Adobe’s suite, HeyGen’s avatar product — not by the agent itself: fal Agent is a
+                  week old, Adobe reports Firefly Assistant “traction” without disclosing usage,
+                  and FAUNA’s marquee logos come with no revenue attribution. The most telling
+                  signal may be Google, which has the widest distribution in the field and an
+                  Agent Mode for Flow visible in app build traces since May — still unshipped as
+                  of mid-August.<Cite id="58" /> When the player with the least to prove is the
+                  most patient, the agent pattern reads as a defensive consensus, not a
+                  demonstrated behavior change.
                 </p>
                 <Callout tone="violet">
                   <strong>Verdict:</strong> the workflow/agent layer is becoming the primary
@@ -442,9 +460,16 @@ export default function MarketMapPage() {
                 </p>
                 <p>
                   Incumbents also failed visibly: OpenAI exited consumer video; Meta’s Movie Gen
-                  never shipped and Vibes has no retention story; Microsoft has no video model;
-                  Amazon’s Nova is an ads utility nobody picks on merit; Apple is two years behind
-                  on quality. The pattern: incumbency wins where an existing engine (ads, enterprise
+                  never shipped and Vibes has no retention story; Microsoft has no video model
+                  (its MAI foray is image-only so far — though MAI-Image-2.6 debuted at Arena #2
+                  in August<Cite id="43" />); Amazon’s Nova is an ads utility nobody picks on
+                  merit; Apple is two years behind on quality. xAI is the ambiguous case: Grok
+                  Imagine took both AA video arenas in late January, Video 1.5 now prices at
+                  ~$4.20 per minute (~86% below Sora), and it ships
+                  inside X — distribution plus a cheap in-house frontier model — yet it went
+                  paid-only in March, the Chinese wave has since pushed it down the video boards,
+                  and xAI discloses no usage or revenue.<Cite id="52" /> The pattern: incumbency
+                  wins where an existing engine (ads, enterprise
                   seats, OS distribution) absorbs generation as a feature — not where incumbents
                   chase new consumer behavior.
                 </p>
@@ -480,7 +505,9 @@ export default function MarketMapPage() {
                   <p>
                     Figures are as of the date on each entry in the map above. Canva (~$4B total
                     ARR) is excluded — its revenue is not GenMedia-attributable and would break the
-                    scale. Lighter extensions mark estimate ranges (Runway, Midjourney). Evidence
+                    scale. ByteDance’s Seedance is also off the chart: reportedly over RMB 1B a
+                    month (~$1.7B annualized) via 36Kr-lineage press<Cite id="53" />, with no
+                    company-disclosed figure to plot. Lighter extensions mark estimate ranges (Runway, Midjourney). Evidence
                     tiers: audited/filed figures (Kling, via Kuaishou’s interim
                     filings<Cite id="47" />), company-stated, third-party estimates, and claimed
                     (Higgsfield’s $700M annualized is company-claimed and unverified<Cite id="40" />).
@@ -599,8 +626,10 @@ export default function MarketMapPage() {
               <Prose>
                 <p>
                   <strong>China owns consumer GenMedia revenue and export.</strong> Kling is the
-                  global video revenue leader (~$475M run-rate per the Aug 19 Q2 filing, ~70–75%
-                  overseas as of Q1); MiniMax IPO’d in
+                  global filed-revenue leader in video (~$475M run-rate per the Aug 19 Q2 filing,
+                  ~70–75% overseas as of Q1), and 36Kr-lineage reporting puts ByteDance’s Seedance
+                  API at over RMB 1B a month — roughly 3.5x that, unaudited and almost entirely
+                  domestic<Cite id="53" />; MiniMax IPO’d in
                   Hong Kong with a +109% debut — beating every US lab to public markets; PixVerse
                   raised $439M at a $2B+ valuation on 150M claimed registered users; ByteDance ships
                   Seedance to emerging markets first through CapCut.<Cite id="3" /><Cite id="24" /><Cite id="25" />{' '}
@@ -632,8 +661,9 @@ export default function MarketMapPage() {
               <Prose>
                 <p>
                   The companies with the strongest January–August 2026 evidence — product
-                  breakthroughs, audited revenue, funding at higher marks, enterprise wins, or
-                  strategic distribution. Anti-momentum, for balance: OpenAI Sora (dead), Stability
+                  breakthroughs, filed or credibly reported revenue, funding at higher marks,
+                  enterprise wins, or strategic distribution. Where a figure is reported rather
+                  than filed — ByteDance at #1 — the entry says so. Anti-momentum, for balance: OpenAI Sora (dead), Stability
                   (survival mode), Getty–Shutterstock (merger terminated), Pika (quiet), Meta Vibes
                   (no retention), Amazon Nova creative (no traction).
                 </p>
@@ -866,7 +896,8 @@ export default function MarketMapPage() {
               </div>
             </Section>
 
-            {/* §18 Sources */}
+            {/* §18 Sources — data-mention-skip: source labels shouldn't count as essay mentions */}
+            <div data-mention-skip>
             <Section id="sources" title="Sources" eyebrow="§ 18">
               <Prose>
                 <p>
@@ -892,6 +923,7 @@ export default function MarketMapPage() {
                 ))}
               </ol>
             </Section>
+            </div>
           </main>
 
           <aside className="hidden xl:block w-44 shrink-0 sticky top-20 self-start max-h-[calc(100vh-6rem)] overflow-y-auto">
