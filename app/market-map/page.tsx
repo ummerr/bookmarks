@@ -28,6 +28,7 @@ import StackBars from './StackBars'
 import HypothesisCard from './HypothesisCard'
 import ControlPointCard from './ControlPointCard'
 import ArrBars from './ArrBars'
+import MarginScenarios from './MarginScenarios'
 import ValuationScatter from './ValuationScatter'
 import QuadrantChart from './QuadrantChart'
 import FlowDiagram from './FlowDiagram'
@@ -598,6 +599,26 @@ export default function MarketMapPage() {
                   2026 data yet shows whether the deflation accrues to the apps or gets competed
                   away as cheaper generations.
                 </p>
+              </Prose>
+              <Figure
+                id="fig-margin-scenarios"
+                num={6}
+                title="Where app margins settle as inference deflates"
+                takeaway="Three schematic paths for the revenue an app keeps after model-serving costs, 2026 → 2028. The driver is fixed — inference cost falls ~10x per 18 months — and the open variable is how fast competition passes it through to credit prices."
+                notes={
+                  <p>
+                    An illustrative mechanism, not a forecast: only the starting band is measured
+                    — apps on third-party models keep 50–60% of revenue after serving costs
+                    (Bessemer, Feb 2026)<Cite id="36" /> — and the three paths are editorial
+                    readings of one unresolved variable. The ~75% endpoint is the ceiling argued
+                    in §12; the bottom path is the consensus wrapper-compression case. Which path
+                    the market takes is the margin question the 2026 data does not yet answer.
+                  </p>
+                }
+              >
+                <MarginScenarios />
+              </Figure>
+              <Prose>
                 <p>
                   Attractive economics: audio/voice, enterprise avatar video, media inference
                   infrastructure, model-licensing-to-platforms (BFL’s ~$300M of contracts), and
