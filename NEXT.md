@@ -16,6 +16,7 @@
 - Freeze the scoring rubric before re-scoring the corpus, and report the delta on a stable window (so "sentiment improved" is distinguishable from "we changed how we count").
 
 ## Done since
+- *(2026-08-19, later)* **Full multi-agent market-map validation + enrichment COMPLETE** — two Workflow fleets (6 section verifiers, adversarial skeptic, consistency critic, source auditor, recheck agent, completeness critic + 6 enrichment researchers): 352 findings (291 confirmed / 32 corrected / 12 stale / 2 refuted), all applied; 65/74 companies now carry sourced facts lines (valuation · raised · VCs · users/ARR · as-of, amber when >90d stale). Headline fixes: vLLM-Omni refutes "no vLLM-of-diffusion" (H8 → supported), ElevenLabs $600M ARR, Decart sub-40ms / chosen over a higher NVIDIA offer, Suno-BMG license≠settlement, CapCut 300M+ MAU, Moonvalley absorbed into Reka AI. Ran concurrently with a voice rewrite (bet→thesis, Durable/Fragile/Unproven) via cross-session coordination. Report + changelog: research/market-map/validation/validation-2026-08.md.
 - *(2026-08-19)* Market-map daily audit rerun (3 agents + link check): Wan 3.0 took AA T2V #1 from Gemini, Kling Q2 filed (RMB 850M+, >200% YoY → ~$475M run-rate, replacing ~$500M/+300%), Decart talks escalated to ~$7B near-signing, fixed "Wan 2.6 open" and "Hunyuan3D 3.0" errors. Log: research/market-map/validation/audit-2026-08-19.md. Build green.
 - *(2026-07-11)* Refreshed Omni report + Flow brief to rev. 8 (199-post corpus). — then the tree went quiet with 23 files uncommitted.
 
