@@ -176,27 +176,25 @@ export interface Source {
 export interface SectionDef {
   id: string
   label: string
+  // 'appendix' entries render demoted in the TOC — research depth, off the main path.
+  tier?: 'main' | 'appendix'
 }
 
 export const SECTIONS: SectionDef[] = [
   { id: 'thesis', label: 'What Changed' },
   { id: 'market-map', label: 'The Map' },
-  { id: 'workflow-layer', label: 'Creative Agents & Workflow' },
+  { id: 'vertical-integration', label: 'Surface vs Model' },
+  { id: 'workflow-layer', label: 'Agents & State' },
+  { id: 'orchestration', label: 'Infra & Orchestration' },
   { id: 'models', label: 'Foundation Models' },
-  { id: 'orchestration', label: 'Orchestration' },
-  { id: 'infrastructure', label: 'Infrastructure' },
-  { id: 'vertical-integration', label: 'Vertical Integration' },
-  { id: 'incumbents', label: 'Incumbents vs Startups' },
-  { id: 'economics', label: 'Cost Structure' },
-  { id: 'moats', label: 'Durability by Layer' },
-  { id: 'open-source', label: 'Open Source' },
-  { id: 'geography', label: 'Geography' },
+  { id: 'economics', label: 'Economics' },
+  { id: 'moats', label: 'What Holds Up' },
   { id: 'momentum', label: 'Momentum 25' },
   { id: 'white-space', label: 'Open Problems' },
   { id: 'control-points', label: 'Control Points 2030' },
   { id: 'state-of-genmedia', label: 'The State of GenMedia' },
-  { id: 'hypotheses', label: 'Appendix: Ten Hypotheses' },
-  { id: 'sources', label: 'Sources' },
+  { id: 'hypotheses', label: 'Ten Hypotheses', tier: 'appendix' },
+  { id: 'sources', label: 'Sources', tier: 'appendix' },
 ]
 
 // — Mention index (powers the click-to-highlight company index under the hero) —

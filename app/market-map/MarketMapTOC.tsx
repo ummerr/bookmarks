@@ -42,28 +42,41 @@ export default function MarketMapTOC({ sections }: { sections: SectionDef[] }) {
     }
   }, [sections])
 
+  const main = sections.filter((s) => s.tier !== 'appendix')
+  const appendix = sections.filter((s) => s.tier === 'appendix')
+
+  const link = (s: SectionDef, demoted: boolean) => (
+    <a
+      key={s.id}
+      href={`#${s.id}`}
+      onClick={(e) => {
+        e.preventDefault()
+        document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }}
+      className={`px-2 py-1 rounded-md transition-colors leading-snug ${demoted ? 'text-[11px]' : 'text-xs'} ${
+        activeId === s.id
+          ? 'text-gray-900 dark:text-white bg-black/[0.06] dark:bg-white/[0.08] font-medium'
+          : 'text-gray-400 dark:text-zinc-500 hover:text-gray-700 dark:hover:text-zinc-300'
+      }`}
+    >
+      {s.label}
+    </a>
+  )
+
   return (
     <nav className="flex flex-col gap-0.5">
       <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 mb-2 px-2">
         On this page
       </p>
-      {sections.map((s) => (
-        <a
-          key={s.id}
-          href={`#${s.id}`}
-          onClick={(e) => {
-            e.preventDefault()
-            document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-          }}
-          className={`text-xs px-2 py-1 rounded-md transition-colors leading-snug ${
-            activeId === s.id
-              ? 'text-gray-900 dark:text-white bg-black/[0.06] dark:bg-white/[0.08] font-medium'
-              : 'text-gray-400 dark:text-zinc-500 hover:text-gray-700 dark:hover:text-zinc-300'
-          }`}
-        >
-          {s.label}
-        </a>
-      ))}
+      {main.map((s) => link(s, false))}
+      {appendix.length > 0 && (
+        <>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-300 dark:text-zinc-600 mt-3 mb-1 px-2">
+            Appendix
+          </p>
+          {appendix.map((s) => link(s, true))}
+        </>
+      )}
     </nav>
   )
 }

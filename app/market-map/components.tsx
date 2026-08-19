@@ -21,9 +21,11 @@ export function isStale(asOf: string): boolean {
   return new Date(REPORT_DATE).getTime() - endOfMonth > 90 * 86400000
 }
 
-export function Section({ title, eyebrow, children, id }: {
+export function Section({ title, eyebrow, takeaway, children, id }: {
   title: string
   eyebrow?: string
+  // One-line executive skim layer, used sparingly on major sections only.
+  takeaway?: string
   children: React.ReactNode
   id: string
 }) {
@@ -38,6 +40,14 @@ export function Section({ title, eyebrow, children, id }: {
         <h2 className="font-serif text-xl md:text-2xl text-gray-900 dark:text-white tracking-tight">
           {title}
         </h2>
+        {takeaway && (
+          <p className="mt-1.5 text-[13px] leading-relaxed text-gray-500 dark:text-zinc-400 max-w-3xl">
+            <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-violet-500/80 mr-1.5">
+              Takeaway
+            </span>
+            {takeaway}
+          </p>
+        )}
       </div>
       {children}
     </div>

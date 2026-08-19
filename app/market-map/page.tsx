@@ -199,7 +199,7 @@ export default function MarketMapPage() {
                 <p>
                   Eight categories, organized by job-to-be-done rather than model modality, holding
                   only strategically meaningful companies. The foundation-model layer is mapped
-                  separately in §04, and who-owns-which-layers in §07.
+                  separately in §06, and who-owns-which-layers in §03.
                 </p>
               </Prose>
               <Figure
@@ -212,13 +212,13 @@ export default function MarketMapPage() {
                     <p>
                       Panel color groups the category; the dot beside each name marks company kind
                       (violet startup, gray incumbent, pink frontier lab). ▲ marks membership in the
-                      Momentum 25 (§13). Figures are dated per entry — an amber date means the
+                      Momentum 25 (§09). Figures are dated per entry — an amber date means the
                       underlying number was more than 90 days old at publication.
                     </p>
                     <p>
                       Inclusion is editorial: companies appear only where they hold a strategically
                       distinct position, so absence is not a judgment of quality. The
-                      foundation-model layer is mapped separately in §04.
+                      foundation-model layer is mapped separately in §06.
                     </p>
                   </>
                 }
@@ -227,204 +227,24 @@ export default function MarketMapPage() {
               </Figure>
             </Section>
 
-            {/* §03 Workflow layer */}
-            <Section id="workflow-layer" title="Creative Agents & the Workflow Layer" eyebrow="§ 03">
+            {/* §03 Battle A: the surface — vertical integration + incumbents vs startups */}
+            <Section
+              id="vertical-integration"
+              title="The Battle for the Surface: Model Ownership vs Distribution"
+              eyebrow="§ 03"
+              takeaway="A model fused to owned distribution compounds data, cost, and default status; a frontier model without a surface has no loop to close."
+            >
               <Prose>
                 <p>
-                  A genuine new layer formed between applications and foundation models, and 2026 is
-                  the year every player in the stack tried to claim it. The node-canvas cohort
-                  (Flora, Krea Nodes, Freepik Spaces, ComfyUI) made multi-model pipelines a
-                  first-class artifact; the defining pattern of 2026 is that each of them then
-                  shipped an <strong>agent that builds the workflow for you</strong> — Flora’s FAUNA,
-                  Krea’s Node Agent, Adobe’s Firefly Assistant orchestrating Photoshop-to-Premiere,
-                  Amazon’s free Creative Agent, and in August, fal Agent reaching up from the
-                  inference layer.<Cite id="11" /><Cite id="14" />
-                </p>
-                <p>
-                  What accumulates in this layer is not model access — every player rents the same
-                  shelf — but <strong>creative state</strong>: Higgsfield’s Soul ID carries a trained
-                  character identity across models and sessions; Creatify locks verified brand facts
-                  as generation constraints; fal Agent keeps persistent project memory; Figma turned
-                  Weave workflows into shareable community assets.<Cite id="15" /> State means
-                  switching costs, and switching costs are what the model layer structurally lacks.
-                </p>
-                <p>
-                  The acquisitions already register what buyers think accumulates here. Weavy
-                  raised ~$4M and sold to Figma for over $200M; Visual Electric’s team went to
-                  Perplexity and the product died; Leonardo disappeared into Canva. The layer’s
-                  most instructive shutdown argues the same case from the other side: Sora had the
-                  best-known model in the world and no workflow, no B2B motion, no state — and
-                  it’s gone.<Cite id="1" />
-                </p>
-                <p>
-                  What no one in this layer has yet shown is demand-side proof. Every revenue
-                  figure here is earned by the surface underneath the agent — fal’s inference,
-                  Adobe’s suite, HeyGen’s avatar product — not by the agent itself: fal Agent is a
-                  week old, Adobe reports Firefly Assistant “traction” without disclosing usage,
-                  and FAUNA’s marquee logos come with no revenue attribution. The most telling
-                  signal may be Google, which shipped Flow Agent to every tier at I/O in May —
-                  free accounts included — while keeping Veo generation itself behind the
-                  paywall.<Cite id="58" /> The player best positioned to charge for an agent
-                  chose to price it at zero and monetize the layer beneath it. Three months in,
-                  that is the honest read on the whole pattern: the agent is a funnel to
-                  generation spend, not yet a product anyone has demonstrated people will pay
-                  for.
-                </p>
-                <Callout tone="violet">
-                  <strong>Verdict:</strong> the workflow/agent layer is becoming the primary
-                  control point of GenMedia, but it is contested from both directions at once —
-                  Adobe, Google Flow, Canva, and Figma extend down into it from owned surfaces
-                  while fal and ComfyUI build up into it from the serving layer. The open question
-                  for independent workflow companies is whether 2026’s growth converts into
-                  accumulated enterprise state — project memory, brand constraints, reusable
-                  pipelines — before both fronts arrive. On current evidence the strongest
-                  positions belong to Adobe, Figma, and Google among incumbents; Higgsfield,
-                  Magnific, and Flora among startups; and fal as the infrastructure entrant
-                  working upward.
-                </Callout>
-              </Prose>
-            </Section>
-
-            {/* §04 Models */}
-            <Section id="models" title="The Foundation Model Landscape" eyebrow="§ 04">
-              <Prose>
-                <p>
-                  No single model wins every workload, and none is on track to. The landscape has
-                  consolidated into three durable archetypes: distribution-owned omni models
-                  (Google, ByteDance, Kuaishou, xAI), independent pro-grade labs (Runway, BFL, Luma,
-                  ElevenLabs, Reve), and open or China-first price leaders (Alibaba, Tencent,
-                  MiniMax, Lightricks). A dated-as-of stamp matters more than any ranking: video
-                  leaderboard half-life ran one to two quarters through 2025 and is now
-                  compressing toward weeks.<Cite id="28" /> Treat the arenas
-                  (Artificial Analysis, and Arena — formerly LMArena, rebranded January
-                  2026<Cite id="39" />) with a second caveat: the literature shows models post
-                  inflated consistency scores on quasi-static scenes — motion magnitude trades off
-                  against temporal coherence — so professional buyers increasingly select on
-                  control surfaces (first/last-frame conditioning, motion masks, reference counts)
-                  rather than rank.
-                </p>
-              </Prose>
-              <div className="flex flex-col gap-8">
-                {MODEL_GROUPS.map((g) => (
-                  <ModelTable key={g.modality} group={g} />
-                ))}
-              </div>
-            </Section>
-
-            {/* §05 Orchestration */}
-            <Section id="orchestration" title="Orchestration & Aggregation" eyebrow="§ 05">
-              <Prose>
-                <p>
-                  Model proliferation created a real orchestration layer — but 2026 showed it splits
-                  into two fates. Media-native orchestration with hard engineering depth is durable
-                  and compounding: fal roughly doubled from ~$200M to ~$400M annualized revenue in
-                  months, raised at $4.5B in December, and was reportedly in talks at ~$8B by
-                  March.<Cite id="10" /> Its drivers don’t reverse — a majority-Chinese video model
-                  supply that Western apps won’t integrate one-by-one, bursty GPU economics, and
-                  weekly model churn that makes single-vendor commitments irrational. Runware ($50M Series
-                  A, containerized 1MW inference pods) and WaveSpeed (fastest non-China access to
-                  Chinese models) are growing in its wake.
-                </p>
-                <Figure
-                  id="fig-model-flow"
-                  num={2}
-                  title="The model supply chain"
-                  takeaway="Foundation models → aggregators → output surfaces. Band width marks how load-bearing a connection is; the heavy left-side bands are the point — the video shelf is majority-Chinese, and Western apps reach it through aggregators."
-                  notes={
-                    <p>
-                      Band color follows the source model; weights are editorial judgments of how
-                      load-bearing each integration is, not measured volume. Leverage sits at
-                      the two ends — frontier models and owned distribution — while the middle
-                      holds its position only by adding workflow state (fal Agent, ComfyUI JSON,
-                      Soul ID) on top of routing. Google Flow is the first-party exception:
-                      orchestration that only ever routes Veo, holding the column by owning both
-                      ends instead.<Cite id="10" /><Cite id="11" /><Cite id="13" />
-                    </p>
-                  }
-                >
-                  <FlowDiagram flow={FLOW} />
-                </Figure>
-                <p>
-                  Thin aggregation without that depth gets absorbed: Replicate — the #2 independent
-                  media marketplace — sold to Cloudflare.<Cite id="12" /> Gateways (Vercel’s now
-                  lists 33 image and 32 video models) commoditize the unified-API surface from the
-                  side, and hyperscalers own regulated-enterprise workloads by default. Meanwhile
-                  ComfyUI’s JSON workflows are quietly becoming the portable orchestration format —
-                  the closest thing GenMedia has to Terraform.<Cite id="13" />
-                </p>
-                <Callout tone="amber">
-                  <strong>Where the leverage sits:</strong> at the two ends of the pipeline rather
-                  than the middle, and the gradient looks structural rather than cyclical. Model
-                  owners set the marginal cost floor, while surfaces holding accumulated state —
-                  characters, brand constraints, project memory — set what users actually pay; a
-                  pure router between them competes on latency and price with no state of its own
-                  to defend. The most honest signal comes from fal itself, which launched an agent
-                  in August 2026 despite winning the orchestration layer — a working admission
-                  that raw routing, however well engineered, does not hold its margin structure
-                  once the serving problem is solved more than once.<Cite id="11" />
-                </Callout>
-              </Prose>
-            </Section>
-
-            {/* §06 Infrastructure */}
-            <Section id="infrastructure" title="Infrastructure" eyebrow="§ 06">
-              <Prose>
-                <p>
-                  Media generation is not LLM inference with bigger outputs — it is structurally
-                  different work. A video job is a long-running batch process, not a token stream,
-                  which forces queueing, webhooks, retries, and preemption-tolerant scheduling.
-                  The model zoo is architecturally heterogeneous (DiT, autoregressive, GAN
-                  upscalers, TTS, 3D) with no shared serving standard —{' '}
-                  <strong>there is no dominant open serving standard for diffusion</strong> —
-                  vLLM-Omni (open-sourced Nov 2025) is the first credible contender<Cite id="50" /> — which is why
-                  fal builds tracing compilers and Decart builds sub-40ms kernels by hand. Chaining those
-                  architectures in one pipeline spikes VRAM unpredictably, and a mid-render
-                  failure burns minutes of GPU time unless the stack does stateful checkpoint
-                  recovery — a failure mode token streaming simply doesn’t have. Caching differs
-                  in kind too: hot-swappable LoRA weights and reusable keyframe latents, not
-                  prefix caches. Intermediate assets are gigabyte-scale per job, making storage
-                  and egress a real serving-cost line. And evaluation is still blind human preference:
-                  nothing machine-scores temporal consistency, character permanence, or edit
-                  fidelity at scale.
-                </p>
-                <p>
-                  Acquirers have started registering these gaps. Cloudflare bought Replicate and
-                  rights-marketplace Human Native; Anthropic is reportedly closing in on acquiring
-                  Decart at ~$7B — advanced drafts exchanged by mid-August, mostly stock, with
-                  chosen over a higher NVIDIA offer — a frontier lab valuing a media inference-optimization stack at
-                  acquisition scale.<Cite id="23" /><Cite id="48" /> On the compliance side, EU AI Act Article 50
-                  transparency obligations began enforcement August 2, 2026, mandating C2PA
-                  metadata plus imperceptible watermarking — 6,000+ organizations have adopted
-                  C2PA, with Midjourney the prominent holdout — while China’s labeling regime has
-                  been live since September 2025.<Cite id="29" /><Cite id="38" /> Demand for
-                  provenance now outruns the technology: metadata still doesn’t survive re-encoding
-                  and platform uploads.
-                </p>
-                <p>
-                  What remains genuinely unsolved at this layer — a standard serving engine,
-                  automated evaluation, provenance that survives distribution, long-form
-                  continuity at viable unit cost, rights clearing — is cataloged with the rest of
-                  the open problems in the Saturated Zones & Open Problems section (§14).
-                </p>
-              </Prose>
-            </Section>
-
-            {/* §07 Vertical integration */}
-            <Section id="vertical-integration" title="Vertical Integration" eyebrow="§ 07">
-              <Prose>
-                <p>
-                  Who owns which layers. Full-stack strategies (Google, ByteDance) compound data,
-                  cost, and default status — but demand frontier capital intensity. Deliberate
-                  single-layer specialists (BFL licensing models to platforms, fal owning
-                  inference) trade ceiling for focus and capital efficiency. The dangerous place is
-                  the unowned middle: an application renting models with no workflow state above and
-                  no cost advantage below. The 2x2 plots the two ownership axes that decide this;
-                  the bars underneath show the full layer-by-layer detail.
+                  Who owns which layers decides who keeps the margin when model quality
+                  converges. The 2x2 plots the two ownership axes that matter most — model
+                  ownership and distribution ownership — and the bars underneath give the full
+                  layer-by-layer detail; the incumbent and startup evidence follows from them.
                 </p>
               </Prose>
               <Figure
                 id="fig-ownership-2x2"
-                num={3}
+                num={2}
                 title="Model ownership vs distribution ownership"
                 takeaway="Up-and-right compounds — a model fused to a billion-user surface closes its own feedback loop. The lower-right, frontier labs without a surface, has no loop to close."
                 notes={
@@ -441,7 +261,7 @@ export default function MarketMapPage() {
               </Figure>
               <Figure
                 id="fig-stack-ownership"
-                num={4}
+                num={3}
                 title="Who owns which layers of the stack"
                 takeaway="Each color is a layer; an unbroken run of color is vertical integration — the compounding position. Quiet dots mark layers a company rents from someone else."
                 notes={
@@ -464,10 +284,7 @@ export default function MarketMapPage() {
               >
                 <StackBars companies={STACK_COMPANIES} />
               </Figure>
-            </Section>
-
-            {/* §08 Incumbents */}
-            <Section id="incumbents" title="Incumbents vs Startups" eyebrow="§ 08">
+              <span id="incumbents" className="block scroll-mt-20" aria-hidden />
               <Prose>
                 <p>
                   Incumbent advantages bind in four places. <strong>Distribution and bundling</strong>:
@@ -512,8 +329,216 @@ export default function MarketMapPage() {
               </Prose>
             </Section>
 
-            {/* §09 Economics */}
-            <Section id="economics" title="Cost Structure & Adoption Signals" eyebrow="§ 09">
+            {/* §04 Battle B: state — creative agents & the workflow layer */}
+            <Section
+              id="workflow-layer"
+              title="The Battle for State: Creative Agents & the Workflow Layer"
+              eyebrow="§ 04"
+              takeaway="Every layer of the stack shipped a creative agent in 2026; what accumulates is creative state. Demand-side proof that creators want delegation is still missing."
+            >
+              <Prose>
+                <p>
+                  A genuine new layer formed between applications and foundation models, and 2026 is
+                  the year every player in the stack tried to claim it. The node-canvas cohort
+                  (Flora, Krea Nodes, Freepik Spaces, ComfyUI) made multi-model pipelines a
+                  first-class artifact; the defining pattern of 2026 is that each of them then
+                  shipped an <strong>agent that builds the workflow for you</strong> — Flora’s FAUNA,
+                  Krea’s Node Agent, Adobe’s Firefly Assistant orchestrating Photoshop-to-Premiere,
+                  Amazon’s free Creative Agent, and in August, fal Agent reaching up from the
+                  inference layer.<Cite id="11" /><Cite id="14" />
+                </p>
+                <p>
+                  What accumulates in this layer is not model access — every player rents the same
+                  shelf — but <strong>creative state</strong>: Higgsfield’s Soul ID carries a trained
+                  character identity across models and sessions; Creatify locks verified brand facts
+                  as generation constraints; fal Agent keeps persistent project memory; Figma turned
+                  Weave workflows into shareable community assets.<Cite id="15" /> State means
+                  switching costs, and switching costs are what the model layer structurally lacks.
+                  The mechanism compounds: accumulated state raises first-pass success, fewer
+                  retries lower effective generation cost, better output feeds back into richer
+                  state — and each pass deepens the switching cost.
+                </p>
+                <p>
+                  The acquisitions already register what buyers think accumulates here. Weavy
+                  raised ~$4M and sold to Figma for over $200M; Visual Electric’s team went to
+                  Perplexity and the product died; Leonardo disappeared into Canva. The layer’s
+                  most instructive shutdown argues the same case from the other side: Sora had the
+                  best-known model in the world and no workflow, no B2B motion, no state — and
+                  it’s gone.<Cite id="1" />
+                </p>
+                <p>
+                  What no one in this layer has yet shown is demand-side proof. Every revenue
+                  figure here is earned by the surface underneath the agent — fal’s inference,
+                  Adobe’s suite, HeyGen’s avatar product — not by the agent itself: fal Agent is a
+                  week old, Adobe reports Firefly Assistant “traction” without disclosing usage,
+                  and FAUNA’s marquee logos come with no revenue attribution. The most telling
+                  signal may be Google, which shipped Flow Agent to every tier at I/O in May —
+                  free accounts included — while keeping Veo generation itself behind the
+                  paywall.<Cite id="58" /> The player best positioned to charge for an agent
+                  chose to price it at zero and monetize the layer beneath it. Three months in,
+                  that is the honest read on the whole pattern: the agent is a funnel to
+                  generation spend, not yet a product anyone has demonstrated people will pay
+                  for.
+                </p>
+                <Callout tone="violet">
+                  <strong>Verdict:</strong> the workflow/agent layer is becoming the primary
+                  control point of GenMedia, but it is contested from both directions at once —
+                  Adobe, Google Flow, Canva, and Figma extend down into it from owned surfaces
+                  while fal and ComfyUI build up into it from the serving layer. The open question
+                  for independent workflow companies is whether 2026’s growth converts into
+                  accumulated enterprise state — project memory, brand constraints, reusable
+                  pipelines — before both fronts arrive. On current evidence the strongest
+                  positions belong to Adobe, Figma, and Google among incumbents; Higgsfield,
+                  Magnific, and Flora among startups; and fal as the infrastructure entrant
+                  working upward.
+                </Callout>
+              </Prose>
+            </Section>
+
+            {/* §05 Battle C: underneath — infrastructure & orchestration (merged) */}
+            <Section
+              id="orchestration"
+              title="The Battle Underneath: Infrastructure & Orchestration"
+              eyebrow="§ 05"
+              takeaway="Media serving is structurally different work from LLM inference — durable while the model zoo stays heterogeneous, compressed the day an open serving standard wins."
+            >
+              <span id="infrastructure" className="block scroll-mt-20" aria-hidden />
+              <Prose>
+                <p>
+                  Media generation is not LLM inference with bigger outputs — it is structurally
+                  different work. A video job is a long-running batch process, not a token stream,
+                  which forces queueing, webhooks, retries, and preemption-tolerant scheduling.
+                  The model zoo is architecturally heterogeneous (DiT, autoregressive, GAN
+                  upscalers, TTS, 3D) with no shared serving standard —{' '}
+                  <strong>there is no dominant open serving standard for diffusion</strong> —
+                  vLLM-Omni (open-sourced Nov 2025) is the first credible contender<Cite id="50" /> — which is why
+                  fal builds tracing compilers and Decart builds sub-40ms kernels by hand. Chaining those
+                  architectures in one pipeline spikes VRAM unpredictably, and a mid-render
+                  failure burns minutes of GPU time unless the stack does stateful checkpoint
+                  recovery — a failure mode token streaming simply doesn’t have. Caching differs
+                  in kind too: hot-swappable LoRA weights and reusable keyframe latents, not
+                  prefix caches. Intermediate assets are gigabyte-scale per job, making storage
+                  and egress a real serving-cost line. And evaluation is still blind human preference:
+                  nothing machine-scores temporal consistency, character permanence, or edit
+                  fidelity at scale.
+                </p>
+                <p>
+                  Model proliferation created a real orchestration layer — but 2026 showed it splits
+                  into two fates. Media-native orchestration with hard engineering depth is durable
+                  and compounding: fal roughly doubled from ~$200M to ~$400M annualized revenue in
+                  months, raised at $4.5B in December, and was reportedly in talks at ~$8B by
+                  March.<Cite id="10" /> Its drivers don’t reverse — a majority-Chinese video model
+                  supply that Western apps won’t integrate one-by-one, bursty GPU economics, and
+                  weekly model churn that makes single-vendor commitments irrational. Runware ($50M Series
+                  A, containerized 1MW inference pods) and WaveSpeed (fastest non-China access to
+                  Chinese models) are growing in its wake.
+                </p>
+                <Figure
+                  id="fig-model-flow"
+                  num={4}
+                  title="The model supply chain"
+                  takeaway="Foundation models → aggregators → output surfaces. Band width marks how load-bearing a connection is; the heavy left-side bands are the point — the video shelf is majority-Chinese, and Western apps reach it through aggregators."
+                  notes={
+                    <p>
+                      Band color follows the source model; weights are editorial judgments of how
+                      load-bearing each integration is, not measured volume. Leverage sits at
+                      the two ends — frontier models and owned distribution — while the middle
+                      holds its position only by adding workflow state (fal Agent, ComfyUI JSON,
+                      Soul ID) on top of routing. Google Flow is the first-party exception:
+                      orchestration that only ever routes Veo, holding the column by owning both
+                      ends instead.<Cite id="10" /><Cite id="11" /><Cite id="13" />
+                    </p>
+                  }
+                >
+                  <FlowDiagram flow={FLOW} />
+                </Figure>
+                <p>
+                  Thin aggregation without that depth gets absorbed: Replicate — the #2 independent
+                  media marketplace — sold to Cloudflare.<Cite id="12" /> Gateways (Vercel’s now
+                  lists 33 image and 32 video models) commoditize the unified-API surface from the
+                  side, and hyperscalers own regulated-enterprise workloads by default. Meanwhile
+                  ComfyUI’s JSON workflows are quietly becoming the portable orchestration format —
+                  the closest thing GenMedia has to Terraform.<Cite id="13" />
+                </p>
+                <p>
+                  Acquirers have started registering these gaps. Cloudflare bought Replicate and
+                  rights-marketplace Human Native; Anthropic is reportedly closing in on acquiring
+                  Decart at ~$7B — advanced drafts exchanged by mid-August, mostly stock, with
+                  chosen over a higher NVIDIA offer — a frontier lab valuing a media inference-optimization stack at
+                  acquisition scale.<Cite id="23" /><Cite id="48" /> On the compliance side, EU AI Act Article 50
+                  transparency obligations began enforcement August 2, 2026, mandating C2PA
+                  metadata plus imperceptible watermarking — 6,000+ organizations have adopted
+                  C2PA, with Midjourney the prominent holdout — while China’s labeling regime has
+                  been live since September 2025.<Cite id="29" /><Cite id="38" /> Demand for
+                  provenance now outruns the technology: metadata still doesn’t survive re-encoding
+                  and platform uploads.
+                </p>
+                <p>
+                  What remains genuinely unsolved at this layer — a standard serving engine,
+                  automated evaluation, provenance that survives distribution, long-form
+                  continuity at viable unit cost, rights clearing — is cataloged with the rest of
+                  the open problems in the Saturated Zones & Open Problems section (§10).
+                </p>
+                <Callout tone="amber">
+                  <strong>Where the leverage sits:</strong> at the two ends of the pipeline rather
+                  than the middle, and the gradient looks structural rather than cyclical. Model
+                  owners set the marginal cost floor, while surfaces holding accumulated state —
+                  characters, brand constraints, project memory — set what users actually pay; a
+                  pure router between them competes on latency and price with no state of its own
+                  to defend. The most honest signal comes from fal itself, which launched an agent
+                  in August 2026 despite winning the orchestration layer — a working admission
+                  that raw routing, however well engineered, does not hold its margin structure
+                  once the serving problem is solved more than once.<Cite id="11" />
+                </Callout>
+              </Prose>
+            </Section>
+
+            {/* §06 Models */}
+            <Section
+              id="models"
+              title="The Foundation Model Landscape"
+              eyebrow="§ 06"
+              takeaway="No single model wins every workload, and each modality is converging toward a different economic structure; treat every ranking as dated the week it posts."
+            >
+              <Prose>
+                <p>
+                  There is no single foundation-model market. Each modality is converging toward
+                  a different economic structure: video toward codec-like ubiquity — critical,
+                  everywhere, rarely paid for directly, monetized by whoever owns the surface it
+                  runs in; image holding an LLM-like frontier premium for now; audio behaving
+                  like creative software fused to content licensing; 3D defended by hard workflow
+                  constraints; and world models trading as simulation optionality.
+                </p>
+                <p>
+                  The landscape has
+                  consolidated into three durable archetypes: distribution-owned omni models
+                  (Google, ByteDance, Kuaishou, xAI), independent pro-grade labs (Runway, BFL, Luma,
+                  ElevenLabs, Reve), and open or China-first price leaders (Alibaba, Tencent,
+                  MiniMax, Lightricks). A dated-as-of stamp matters more than any ranking: video
+                  leaderboard half-life ran one to two quarters through 2025 and is now
+                  compressing toward weeks.<Cite id="28" /> Treat the arenas
+                  (Artificial Analysis, and Arena — formerly LMArena, rebranded January
+                  2026<Cite id="39" />) with a second caveat: the literature shows models post
+                  inflated consistency scores on quasi-static scenes — motion magnitude trades off
+                  against temporal coherence — so professional buyers increasingly select on
+                  control surfaces (first/last-frame conditioning, motion masks, reference counts)
+                  rather than rank.
+                </p>
+              </Prose>
+              <div className="flex flex-col gap-8">
+                {MODEL_GROUPS.map((g) => (
+                  <ModelTable key={g.modality} group={g} />
+                ))}
+              </div>
+            </Section>
+
+            {/* §07 Economics */}
+            <Section
+              id="economics"
+              title="Economics: Cost Structure & Adoption Signals"
+              eyebrow="§ 07"
+              takeaway="The durable revenue pools sit at the bottom of the stack and in owned weights; app-layer economics hinge on whether inference deflation accrues to margins or is competed away."
+            >
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <StatTile stat="50–60%" label="Revenue kept after model-serving costs — apps on third-party models (Bessemer, Feb 2026)" />
                 <StatTile stat="2–5x" label="Effective cost vs list price once retries are counted" />
@@ -555,7 +580,7 @@ export default function MarketMapPage() {
                   2025 — concentrated in model builders and world models, while thin-wrapper seed
                   activity visibly cooled.<Cite id="30" /> How that committed capital compares
                   with demonstrated adoption, company by company, is charted in the closing
-                  section (Fig. 07).
+                  section (Fig. 08).
                 </p>
                 <p>
                   <strong>Where does the money settle when an app calls someone else’s
@@ -586,38 +611,43 @@ export default function MarketMapPage() {
               </Prose>
             </Section>
 
-            {/* §10 Durability by layer */}
-            <Section id="moats" title="Durability & Commoditization by Layer" eyebrow="§ 10">
+            {/* §08 What holds up: durability + open weights + geography (merged) */}
+            <Section
+              id="moats"
+              title="What Holds Up: Durability, Open Weights & Geography"
+              eyebrow="§ 08"
+              takeaway="Positions anchored in accumulated state, enforceable rights, or physical capital hold under model churn; positions anchored in model capability alone do not."
+            >
               <Prose>
                 <p>
                   Layer by layer: which forms of differentiation hold up under model churn, which
                   architectural levers make them stick, and where the current advantage is likely
                   to commoditize within a couple of years. The pattern that emerges is consistent
-                  with the rest of the map — positions anchored in accumulated state, enforceable
-                  licenses, or capital-intensive physical infrastructure hold; positions anchored
-                  in model capability alone do not.
+                  with the rest of the map: durability comes from distribution, accumulated
+                  state, enforceable rights, hard workflow or real-time constraints, a
+                  proprietary cost advantage, or capital-intensive physical infrastructure — and
+                  model capability alone holds only while it is fused to one of them.
                 </p>
               </Prose>
               <Figure
                 id="fig-moat-matrix"
-                num={6}
+                num={7}
                 title="Durability and commoditization risk, layer by layer"
                 takeaway="Where durable advantages can still form — and which layers are already commodity. Low risk clusters where courts, capital intensity, or regulation enforce the position."
                 notes={
                   <p>
                     Risk is the likelihood that the layer’s current differentiation commoditizes
                     within roughly 24 months. Assessments are editorial, synthesized from the
-                    leaderboard-turnover, pricing, and licensing evidence in §04, §09, and
-                    §11.<Cite id="28" /><Cite id="36" />
+                    leaderboard-turnover, pricing, and licensing evidence in §06, §07, and the
+                    open-weights record below.<Cite id="28" /><Cite id="36" />
                   </p>
                 }
               >
                 <MoatMatrix rows={MOAT_MATRIX} />
               </Figure>
-            </Section>
-
-            {/* §11 Open source */}
-            <Section id="open-source" title="Open Source" eyebrow="§ 11">
+              <h3 id="open-source" className="text-[13px] font-semibold uppercase tracking-[0.14em] text-gray-500 dark:text-zinc-400 mt-2 scroll-mt-20">
+                Open weights: what open is now for
+              </h3>
               <Prose>
                 <p>
                   The open-closed gap now differs sharply by modality. In <strong>video</strong> it
@@ -652,28 +682,21 @@ export default function MarketMapPage() {
                   its owner has already stopped feeding.
                 </p>
                 <p>
-                  So what do GenMedia models ultimately resemble — LLMs, cloud infrastructure,
-                  creative software, or commodity compute? The answer splits: video models are
-                  trending toward <strong>codecs</strong> — critical, everywhere, and rarely paid
-                  for directly, monetized by whoever owns the surface they run in. Image retains an
-                  LLM-like frontier premium for now. Audio behaves like creative software fused to
-                  content licensing. The implication for pricing: open models cap the price
-                  umbrella in every modality they reach, which pushes closed labs toward
-                  distribution fusion, licensing, or robotics — exactly the pivots Runway, BFL, and
-                  Luma made this year.
+                  The pricing implication holds across every modality open weights reach: they
+                  cap the price umbrella, which pushes closed labs toward distribution fusion,
+                  licensing, or robotics — exactly the pivots Runway, BFL, and Luma made this
+                  year.
                 </p>
               </Prose>
-            </Section>
-
-            {/* §12 Geography */}
-            <Section id="geography" title="Geography" eyebrow="§ 12">
+              <h3 id="geography" className="text-[13px] font-semibold uppercase tracking-[0.14em] text-gray-500 dark:text-zinc-400 mt-2 scroll-mt-20">
+                Geography: who owns which revenue
+              </h3>
               <Prose>
                 <p>
                   <strong>China owns consumer GenMedia revenue and export.</strong> Kling is the
-                  global filed-revenue leader in video (~$475M run-rate per the Aug 19 Q2 filing,
-                  ~70–75% overseas as of Q1), and 36Kr-lineage reporting puts ByteDance’s Seedance
-                  API at over RMB 1B a month — roughly 3.5x that, unaudited and almost entirely
-                  domestic<Cite id="53" />; MiniMax IPO’d in
+                  global filed-revenue leader in video and ByteDance’s Seedance API reportedly
+                  runs at roughly 3.5x that scale, unaudited and almost entirely domestic — the
+                  figures are in §01<Cite id="53" />; MiniMax IPO’d in
                   Hong Kong with a +109% debut — beating every US lab to public markets, though its
                   prospectus is candid about how early the monetization is: US$79M of FY2025
                   company-wide revenue, with Hailuo an undisclosed slice of a $53.1M consumer
@@ -696,16 +719,15 @@ export default function MarketMapPage() {
                   (Magnific, Spain; Runware, UK) — while the EU AI Act makes provenance a
                   compliance advantage for whoever already has the machinery.<Cite id="29" />{' '}
                   <strong>Israel</strong> punches above its weight in open video (Lightricks) and
-                  real-time inference (Decart). Regulation is converging on mandatory provenance —
-                  China since September 2025, the EU since August 2026 — a fixed compliance cost
-                  small consumer apps struggle to carry, and a tailwind for watermarking
-                  infrastructure.<Cite id="38" />
+                  real-time inference (Decart). Regulation converging on mandatory provenance (§05) is a fixed
+                  compliance cost small consumer apps struggle to carry — and a tailwind for
+                  watermarking infrastructure.<Cite id="38" />
                 </p>
               </Prose>
             </Section>
 
-            {/* §13 Momentum */}
-            <Section id="momentum" title="Momentum 25" eyebrow="§ 13">
+            {/* §09 Momentum */}
+            <Section id="momentum" title="Momentum 25" eyebrow="§ 09">
               <Prose>
                 <p>
                   The companies with the strongest January–August 2026 evidence — product
@@ -769,8 +791,8 @@ export default function MarketMapPage() {
               </div>
             </Section>
 
-            {/* §14 Open problems */}
-            <Section id="white-space" title="Saturated Zones & Open Problems" eyebrow="§ 14">
+            {/* §10 Open problems */}
+            <Section id="white-space" title="Saturated Zones & Open Problems" eyebrow="§ 10">
               <Prose>
                 <p>
                   <strong>Saturated:</strong> consumer text-to-video apps (free platform bundles
@@ -785,7 +807,7 @@ export default function MarketMapPage() {
                   <strong>Commoditizing:</strong> video model quality itself (the ~150-Elo pileup),
                   assistive editing AI (free in DaVinci Resolve), product photography, standalone
                   lip-sync and SFX (absorbed by omni models). <strong>Emerging control
-                  points:</strong> covered in §15 — distribution surfaces, the state layer,
+                  points:</strong> covered in §11 — distribution surfaces, the state layer,
                   media-native inference, licensed data, world models.
                 </p>
               </Prose>
@@ -798,8 +820,8 @@ export default function MarketMapPage() {
               </div>
             </Section>
 
-            {/* §15 Control points */}
-            <Section id="control-points" title="Architectural Control Points, 2030" eyebrow="§ 15">
+            {/* §11 Control points */}
+            <Section id="control-points" title="Architectural Control Points, 2030" eyebrow="§ 11">
               <Prose>
                 <p>
                   Derived from the research, not assumed: six places where ownership plausibly
@@ -813,8 +835,8 @@ export default function MarketMapPage() {
               </div>
             </Section>
 
-            {/* §16 Closing thesis */}
-            <Section id="state-of-genmedia" title="The State of Generative Media — August 2026" eyebrow="§ 16">
+            {/* §12 Closing thesis */}
+            <Section id="state-of-genmedia" title="The State of Generative Media — August 2026" eyebrow="§ 12">
               <Prose>
                 <p>
                   <strong>The wrong question.</strong> The industry entered 2026 still organized
@@ -921,7 +943,7 @@ export default function MarketMapPage() {
 
                 <Figure
                   id="fig-valuation-multiples"
-                  num={7}
+                  num={8}
                   title="Committed capital vs demonstrated adoption"
                   takeaway="Latest valuation against revenue, log-log. Dashed guides mark capital-to-revenue ratios; most of the $100M+ club clusters between 10x and 30x, and the outliers say the most about where expectations run ahead of evidence."
                   notes={
@@ -981,9 +1003,9 @@ export default function MarketMapPage() {
               </details>
             </Section>
 
-            {/* §17 Sources — data-mention-skip: source labels shouldn't count as essay mentions */}
+            {/* §13 Sources — data-mention-skip: source labels shouldn't count as essay mentions */}
             <div data-mention-skip>
-            <Section id="sources" title="Sources" eyebrow="§ 17">
+            <Section id="sources" title="Sources" eyebrow="§ 13">
               <Prose>
                 <p>
                   Key primary and reported sources. Leaderboard positions and private-company
