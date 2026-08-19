@@ -193,9 +193,9 @@ export const SECTIONS: SectionDef[] = [
   { id: 'geography', label: 'Geography' },
   { id: 'momentum', label: 'Momentum 25' },
   { id: 'white-space', label: 'Open Problems' },
-  { id: 'hypotheses', label: 'Ten Hypotheses' },
   { id: 'control-points', label: 'Control Points 2030' },
   { id: 'state-of-genmedia', label: 'The State of GenMedia' },
+  { id: 'hypotheses', label: 'Appendix: Ten Hypotheses' },
   { id: 'sources', label: 'Sources' },
 ]
 

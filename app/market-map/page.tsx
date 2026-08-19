@@ -9,6 +9,7 @@ import {
   MOAT_MATRIX,
   MODEL_GROUPS,
   MOMENTUM,
+  type MomentumEntry,
   NEAR_MOMENTUM,
   POSITIONING,
   SECTIONS,
@@ -76,6 +77,26 @@ function ChangeCard({ tag, tagColor, title, body }: { tag: string; tagColor: str
 const FACT = '#0ea5e9'
 const PATTERN = '#f59e0b'
 const THESIS = '#8b5cf6'
+
+function MomentumItem({ m }: { m: MomentumEntry }) {
+  return (
+    <li className="rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#111] p-4 flex gap-4">
+      <span className="font-mono text-sm font-bold tabular-nums text-violet-500 shrink-0 mt-0.5">
+        {String(m.rank).padStart(2, '0')}
+      </span>
+      <div className="min-w-0">
+        <div className="flex items-center gap-2 text-[14px] font-semibold text-gray-900 dark:text-white leading-snug">
+          <Logo domain={m.domain} name={m.name} size={16} />
+          <span>
+            {m.name}
+            <span className="ml-2 font-normal text-gray-400 dark:text-zinc-500 text-[12px]">{m.what}</span>
+          </span>
+        </div>
+        <div className="text-[13px] text-gray-500 dark:text-zinc-400 leading-[1.7] mt-1">{m.why}</div>
+      </div>
+    </li>
+  )
+}
 
 export default function MarketMapPage() {
   return (
@@ -161,9 +182,9 @@ export default function MarketMapPage() {
                 </p>
               </Prose>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <ChangeCard tag="Fact" tagColor={FACT} title="The AI-video-as-feed thesis died" body="Sora shut down (app Apr 26, API Sep 24, 2026); Meta's Vibes limps at ~2M DAU (Nov 2025) with weak retention. AI video as a tool — inside CapCut, Shorts, ad platforms — is where the revenue actually is." />
+                <ChangeCard tag="Fact" tagColor={FACT} title="Standalone AI-video feeds haven't held" body="Sora shut down (app Apr 26, API Sep 24, 2026); Meta's Vibes limps at ~2M DAU (Nov 2025) with weak retention. AI video as a tool — inside CapCut, Shorts, ad platforms — is where the revenue actually is." />
                 <ChangeCard tag="Fact" tagColor={FACT} title="Video quality converged; image held a frontier" body="~150 Elo covers the top 11 video models and 9 of the top 10 are Chinese. In image, GPT Image 2 still holds every #1 — though MAI-2.6's August debut cut the Arena lead from ~83 to 45 Elo — the one modality where frontier capability still differentiates." />
-                <ChangeCard tag="Fact" tagColor={FACT} title="Generation went free at the point of distribution" body="Veo free in YouTube Shorts, Seedance in CapCut, Adobe's 12-month unlimited-generations promo, Amazon giving ad creative away, Apple shipping photorealistic generation in iOS 27. The generation button is no longer a product." />
+                <ChangeCard tag="Fact" tagColor={FACT} title="Generation went free at the point of distribution" body="Veo free in YouTube Shorts, Seedance in CapCut, Adobe's 12-month unlimited-generations promo, Amazon giving ad creative away, Apple shipping photorealistic generation in iOS 27. The standalone generation button is rapidly losing pricing power." />
                 <ChangeCard tag="Fact" tagColor={FACT} title="Music flipped from lawsuits to licenses in nine months" body="WMG and BMG settled with Suno while UMG and WMG captured Udio as a label-controlled walled garden; UMG's suit against Suno is still live. Suno settled from strength at $5.4B, and licensed catalogs are now the durable advantage." />
                 <ChangeCard tag="Pattern" tagColor={PATTERN} title="Everyone shipped a creative agent in 2026" body="Adobe, fal, Flora, Krea, Creatify, Amazon — every layer of the stack converged on the same product. The durable advantage is shifting from model access to creative state: characters, brand constraints, project memory." />
                 <ChangeCard tag="Pattern" tagColor={PATTERN} title="Omni absorption is compressing the specialist tail" body="Native audio, lip-sync, video editing, and camera control folded into frontier models in 18 months. Specialists survive only behind hard workflow or real-time constraints: 3D rigging, fidelity upscaling, <500ms avatars." />
@@ -380,12 +401,10 @@ export default function MarketMapPage() {
                   and platform uploads.
                 </p>
                 <p>
-                  Five problems remain genuinely unsolved as of August 2026: a standard serving
-                  engine for heterogeneous media models; automated media evaluation; provenance
-                  that survives distribution; long-form, character-consistent generation at viable
-                  unit cost (retries make effective cost 2–5x list price, so minutes-long narrative
-                  is still 10–100x too expensive); and prompt-level rights and likeness clearing —
-                  detection exists, a clearing rail does not.
+                  What remains genuinely unsolved at this layer — a standard serving engine,
+                  automated evaluation, provenance that survives distribution, long-form
+                  continuity at viable unit cost, rights clearing — is cataloged with the rest of
+                  the open problems in the Saturated Zones & Open Problems section (§14).
                 </p>
               </Prose>
             </Section>
@@ -548,8 +567,11 @@ export default function MarketMapPage() {
                   models send 40–50% of revenue back out as model serving cost and escape through
                   credit-pricing breakage, retry reduction, and riding a cost curve that
                   falls ~10x per 18 months while their credit prices fall slower.<Cite id="36" />{' '}
-                  That last point is under-appreciated: app-layer cost structures structurally{' '}
-                  <em>improve</em> with every quarter of inference deflation.
+                  That last point is the open variable rather than a settled tailwind: app-layer
+                  cost structures <em>improve</em> with every quarter of inference deflation only
+                  if credit prices keep falling slower than serving costs — and nothing in the
+                  2026 data yet shows whether the deflation accrues to the apps or gets competed
+                  away as cheaper generations.
                 </p>
                 <p>
                   Attractive economics: audio/voice, enterprise avatar video, media inference
@@ -689,33 +711,30 @@ export default function MarketMapPage() {
                   The companies with the strongest January–August 2026 evidence — product
                   breakthroughs, filed or credibly reported revenue, funding at higher marks,
                   enterprise wins, or strategic distribution. Where a figure is reported rather
-                  than filed — ByteDance at #1 — the entry says so. Anti-momentum, for balance: OpenAI Sora (dead), Stability
+                  than filed — ByteDance at #1 — the entry says so. The top twelve are shown;
+                  ranks 13–25 expand below. Anti-momentum, for balance: OpenAI Sora (dead), Stability
                   (survival mode), Getty–Shutterstock (merger terminated), Pika (quiet), Meta Vibes
                   (no retention), Amazon Nova creative (no traction).
                 </p>
               </Prose>
               <ol className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {MOMENTUM.map((m) => (
-                  <li
-                    key={m.rank}
-                    className="rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#111] p-4 flex gap-4"
-                  >
-                    <span className="font-mono text-sm font-bold tabular-nums text-violet-500 shrink-0 mt-0.5">
-                      {String(m.rank).padStart(2, '0')}
-                    </span>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 text-[14px] font-semibold text-gray-900 dark:text-white leading-snug">
-                        <Logo domain={m.domain} name={m.name} size={16} />
-                        <span>
-                          {m.name}
-                          <span className="ml-2 font-normal text-gray-400 dark:text-zinc-500 text-[12px]">{m.what}</span>
-                        </span>
-                      </div>
-                      <div className="text-[13px] text-gray-500 dark:text-zinc-400 leading-[1.7] mt-1">{m.why}</div>
-                    </div>
-                  </li>
+                {MOMENTUM.slice(0, 12).map((m) => (
+                  <MomentumItem key={m.rank} m={m} />
                 ))}
               </ol>
+              <details className="group rounded-lg border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.015] dark:bg-white/[0.02] px-3.5 py-2">
+                <summary className="cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300">
+                  <span className="inline-block transition-transform group-open:rotate-90" aria-hidden>
+                    ▸
+                  </span>
+                  Show ranks 13–25 — the research-complete list
+                </summary>
+                <ol className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3 pb-1">
+                  {MOMENTUM.slice(12).map((m) => (
+                    <MomentumItem key={m.rank} m={m} />
+                  ))}
+                </ol>
+              </details>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {(
                   [
@@ -766,31 +785,21 @@ export default function MarketMapPage() {
                   <strong>Commoditizing:</strong> video model quality itself (the ~150-Elo pileup),
                   assistive editing AI (free in DaVinci Resolve), product photography, standalone
                   lip-sync and SFX (absorbed by omni models). <strong>Emerging control
-                  points:</strong> covered in §16 — distribution surfaces, the state layer,
+                  points:</strong> covered in §15 — distribution surfaces, the state layer,
                   media-native inference, licensed data, world models.
                 </p>
               </Prose>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <ChangeCard tag="White space" tagColor="#10b981" title="Automated media evaluation" body="Quality measurement is still blind human Elo. Agents can't self-evaluate, pipelines can't regression-test. Unsolved because taste resists metrics — but temporal consistency, character permanence, and edit fidelity are measurable. A trusted eval layer becomes the QA gate for every creative agent." />
                 <ChangeCard tag="White space" tagColor="#10b981" title="The vLLM of diffusion" body="No open serving engine dominates the heterogeneous media-model zoo yet — vLLM-Omni (Nov 2025) is the first credible contender — so fal and Decart still hand-build kernels, and that gap is literally priced at ~$7B (the Decart talks). A winning open engine + hosted control plane would restructure the inference layer — and compress its pricing overnight." />
-                <ChangeCard tag="White space" tagColor="#10b981" title="Prompt-level rights clearing" body="Likeness detection exists (Loti, Vermillio); a rail that clears identity, style, and catalog rights at generation time does not — despite music proving rights holders will deal. Whoever builds the clearing house collects a small percentage of an enormous base." />
+                <ChangeCard tag="White space" tagColor="#10b981" title="Rights, likeness & provenance clearing" body="Likeness detection exists (Loti, Vermillio); a rail that clears identity, style, and catalog rights at generation time does not — despite music proving rights holders will deal. Provenance is the same rail's flip side: Article 50 mandates watermark plus metadata, but re-encoding strips both and detection-at-consumption is unbuilt, so compliance demand exceeds technical capability with fines attached. Whoever builds the clearing-and-attestation layer collects a small percentage of an enormous base." />
                 <ChangeCard tag="White space" tagColor="#10b981" title="Long-form narrative generation" body="Retry-adjusted economics make minutes-long, character-consistent video 10–100x too expensive; the cost curve is solving seconds, not stories. Models generate inside isolated temporal windows with no global scene memory, so the likely winner is continuity middleware — converting rendered output into reusable 3D/keyframe state enforced across heterogeneous model APIs — combined with draft-then-upscale workflows and retry reduction." />
-                <ChangeCard tag="White space" tagColor="#10b981" title="Provenance that survives distribution" body="Article 50 mandates watermark + metadata, but re-encoding strips both and detection-at-consumption is unbuilt. Compliance demand now exceeds technical capability — a regulatory forcing function with fines attached and no adequate vendor." />
                 <ChangeCard tag="White space" tagColor="#10b981" title="Portable creative memory" body="Characters, brand systems, and project state are locked inside each workspace (Soul ID in Higgsfield, Weave in Figma). A cross-platform asset/context layer — the creative equivalent of a password manager — doesn't exist, and whoever owns it owns switching costs across the whole map." />
               </div>
             </Section>
 
-            {/* §15 Hypotheses */}
-            <Section id="hypotheses" title="Ten Hypotheses, Tested" eyebrow="§ 15">
-              <div className="flex flex-col gap-3">
-                {HYPOTHESES.map((h) => (
-                  <HypothesisCard key={h.id} h={h} />
-                ))}
-              </div>
-            </Section>
-
-            {/* §16 Control points */}
-            <Section id="control-points" title="Architectural Control Points, 2030" eyebrow="§ 16">
+            {/* §15 Control points */}
+            <Section id="control-points" title="Architectural Control Points, 2030" eyebrow="§ 15">
               <Prose>
                 <p>
                   Derived from the research, not assumed: six places where ownership plausibly
@@ -804,29 +813,16 @@ export default function MarketMapPage() {
               </div>
             </Section>
 
-            {/* §17 Closing thesis */}
-            <Section id="state-of-genmedia" title="The State of Generative Media — August 2026" eyebrow="§ 17">
+            {/* §16 Closing thesis */}
+            <Section id="state-of-genmedia" title="The State of Generative Media — August 2026" eyebrow="§ 16">
               <Prose>
                 <p>
-                  <strong>Where the market came from.</strong> Generative media spent 2023 as a
-                  demo, 2024 as a product race, and 2025 as a contested workflow build-out. The industry that
-                  entered 2026 was still organized around a simple question — whose model makes the
-                  best pixels? — and the industry exiting August 2026 has concluded that this was
-                  the wrong question. The best pixels changed hands five times in twelve months.
-                  What didn’t change hands: YouTube’s two billion users, Adobe’s enterprise
-                  contracts, CapCut’s creation funnel, the labels’ catalogs.
-                </p>
-                <p>
-                  <strong>What changed in the last twelve months</strong> compresses into five
-                  events. Sora died — the most capable consumer video product in the West could not
-                  survive its own inference bill, and its shutdown handed the consumer field to
-                  Google and ByteDance. Kling posted a ~$475M filed run-rate and became the
-                  industry’s revenue benchmark. Music’s lawsuits became licenses, converting the
-                  industry’s largest legal risk into its most enforceable advantage. Every layer of the
-                  stack shipped a creative agent, from Adobe down to fal. And world models pulled in
-                  over $3B while quietly leaving entertainment for simulation — the first sign that
-                  GenMedia’s frontier technology may ultimately be worth more outside media than
-                  inside it.
+                  <strong>The wrong question.</strong> The industry entered 2026 still organized
+                  around a simple question — whose model makes the best pixels? — and exits
+                  August 2026 having concluded it was the wrong one. The best pixels changed
+                  hands five times in twelve months. What didn’t change hands: YouTube’s two
+                  billion users, Adobe’s enterprise contracts, CapCut’s creation funnel, the
+                  labels’ catalogs.
                 </p>
                 <p>
                   <strong>What is commoditizing:</strong> video model quality (a ~150-Elo pileup
@@ -861,9 +857,11 @@ export default function MarketMapPage() {
                   weeks it behaves like a depreciating one — a recurring engineering expense that
                   buys temporary placement rather than durable position. App-layer cost
                   compression is read as permanent when the underlying curve says otherwise:
-                  inference cost falls roughly 10x every 18 months while credit prices fall
-                  slower, so an app that keeps 50–60% of revenue after serving costs today has
-                  structural room to widen toward 75%, not narrow. And China registers as a threat
+                  inference cost falls roughly 10x every 18 months while credit prices have so
+                  far fallen slower, so an app that keeps 50–60% of revenue after serving costs
+                  today has room to widen toward 75% — if competition keeps letting that gap
+                  accrue to the app rather than pricing it away, the one part of the mechanism
+                  2026 has not settled. And China registers as a threat
                   to Western model labs when the adoption data points elsewhere — Chinese models
                   pressure Western <em>consumer apps</em> while simultaneously supplying the model
                   shelf that makes Western aggregators and workflow layers more capable.
@@ -883,15 +881,18 @@ export default function MarketMapPage() {
                   explorable worlds instead.
                 </p>
                 <p>
-                  <strong>The stack in 2030, most likely shape:</strong> two or three full-stack
-                  distribution giants (Google, ByteDance, possibly Meta) serving casual creation as
-                  a free feature; an enterprise workflow duopoly (Adobe, plus whoever wins the
-                  agent race) collecting a fee on professional work; a licensed-content regime
-                  sitting in the request path of all commercial generation; one or two media-native inference platforms
-                  under everything; a persistent open-weights substrate (Chinese labs plus NVIDIA’s
+                  <strong>The stack in 2030, as the current evidence points:</strong> a small set
+                  of full-stack distribution giants (Google, ByteDance, possibly Meta) serving
+                  casual creation as a free feature; enterprise workflow concentrated around
+                  Adobe plus whoever wins the agent race — if the agent hypothesis survives
+                  contact with demand; a licensed-content regime sitting in the request path of
+                  commercial generation, unless a fair-use ruling breaks it; media-native
+                  inference held by a few platforms, or compressed outright if an open serving
+                  standard wins; a persistent open-weights substrate (Chinese labs plus NVIDIA’s
                   Cosmos orbit) capping prices; and a handful of vertical modality winners —
-                  audio’s already decided — with video’s independent labs either absorbed,
-                  IPO’d as robotics companies, or gone.
+                  audio looks decided — with video’s independent labs absorbed, IPO’d as robotics
+                  companies, or gone. Each clause carries its condition; the watch list below is
+                  what would move them.
                 </p>
               </Prose>
 
@@ -903,7 +904,7 @@ export default function MarketMapPage() {
                   <ChangeCard tag="01" tagColor={THESIS} title="Standalone video labs hold depreciating positions" body="By 2028, no independent video-only model company sustains a premium position without owned distribution or a robotics/simulation revenue line. Runway's GWM and Luma's pro-pipeline pivots are the leaders reading their own future." />
                   <ChangeCard tag="02" tagColor={THESIS} title="Creative state is what acquirers are buying next" body="The next wave of $1B+ GenMedia acquisitions will be workflow/state companies, not model labs (infrastructure like Decart excepted). Weavy at >$200M on ~$4M raised was the opening price, not the peak." />
                   <ChangeCard tag="03" tagColor={THESIS} title="China wins consumer; the West keeps enterprise" body="Compliance, IP litigation, and provenance mandates keep Western enterprise procurement in the licensed lane regardless of leaderboards — a durable price premium for Adobe, Moonvalley, and licensed-first labs that no Chinese model can compete away." />
-                  <ChangeCard tag="04" tagColor={THESIS} title="App-layer cost structures improve from here" body="Inference cost falls ~10x per 18 months while credit prices fall slower; apps keeping 50–60% of revenue after serving costs keep 75%+ by 2028. The consensus 'wrapper compression' fear is backward-looking — the squeeze already happened." />
+                  <ChangeCard tag="04" tagColor={THESIS} title="App-layer cost structures have room to improve" body="Inference cost falls ~10x per 18 months; if credit prices keep falling slower — the unresolved variable — apps keeping 50–60% of revenue after serving costs reach 75%+ by 2028. The consensus 'wrapper compression' fear is backward-looking either way: the squeeze already happened." />
                   <ChangeCard tag="05" tagColor={THESIS} title="An open serving standard compresses orchestration pricing" body="A vLLM-of-diffusion becomes the standard within 24 months — vLLM-Omni already shipped (Nov 2025) and too much value is pooled behind hand-built kernels for open source to ignore. fal's move up into agents is the incumbent hedging its own commoditization." />
                 </div>
 
@@ -954,9 +955,35 @@ export default function MarketMapPage() {
               </div>
             </Section>
 
-            {/* §18 Sources — data-mention-skip: source labels shouldn't count as essay mentions */}
+            {/* Appendix A — Hypotheses (research depth, demoted from the main reading path) */}
+            <Section id="hypotheses" title="Ten Hypotheses, Tested" eyebrow="Appendix A">
+              <Prose>
+                <p>
+                  The ten hypotheses this research set out to test, scored against the evidence
+                  in the sections above. Most are settled; the two still genuinely open are H9 —
+                  whether creative agents change demand-side behavior, the map’s biggest
+                  unresolved question — and H8, whether hand-built media serving holds its
+                  position now that vLLM-Omni exists.
+                </p>
+              </Prose>
+              <details className="group rounded-lg border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.015] dark:bg-white/[0.02] px-3.5 py-2">
+                <summary className="cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300">
+                  <span className="inline-block transition-transform group-open:rotate-90" aria-hidden>
+                    ▸
+                  </span>
+                  Show the full scorecard
+                </summary>
+                <div className="flex flex-col gap-3 pt-3 pb-1">
+                  {HYPOTHESES.map((h) => (
+                    <HypothesisCard key={h.id} h={h} />
+                  ))}
+                </div>
+              </details>
+            </Section>
+
+            {/* §17 Sources — data-mention-skip: source labels shouldn't count as essay mentions */}
             <div data-mention-skip>
-            <Section id="sources" title="Sources" eyebrow="§ 18">
+            <Section id="sources" title="Sources" eyebrow="§ 17">
               <Prose>
                 <p>
                   Key primary and reported sources. Leaderboard positions and private-company
