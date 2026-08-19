@@ -170,20 +170,20 @@ export interface SectionDef {
 }
 
 export const SECTIONS: SectionDef[] = [
-  { id: 'thesis', label: 'Market Thesis' },
-  { id: 'market-map', label: 'The Market Map' },
+  { id: 'thesis', label: 'What Changed' },
+  { id: 'market-map', label: 'The Map' },
   { id: 'workflow-layer', label: 'Creative Agents & Workflow' },
   { id: 'models', label: 'Foundation Models' },
   { id: 'orchestration', label: 'Orchestration' },
   { id: 'infrastructure', label: 'Infrastructure' },
   { id: 'vertical-integration', label: 'Vertical Integration' },
   { id: 'incumbents', label: 'Incumbents vs Startups' },
-  { id: 'economics', label: 'Economics' },
-  { id: 'moats', label: 'Moats & Commoditization' },
+  { id: 'economics', label: 'Cost Structure' },
+  { id: 'moats', label: 'Durability by Layer' },
   { id: 'open-source', label: 'Open Source' },
   { id: 'geography', label: 'Geography' },
   { id: 'momentum', label: 'Momentum 25' },
-  { id: 'white-space', label: 'Winners & White Space' },
+  { id: 'white-space', label: 'Open Problems' },
   { id: 'hypotheses', label: 'Ten Hypotheses' },
   { id: 'control-points', label: 'Control Points 2030' },
   { id: 'state-of-genmedia', label: 'The State of GenMedia' },
@@ -536,7 +536,7 @@ export const CONTROL_POINTS: ControlPoint[] = [
   },
 ]
 
-// ——— Commoditization / moats matrix ———
+// ——— Durability / commoditization matrix ———
 
 export const MOAT_MATRIX: MatrixRow[] = [
   {
