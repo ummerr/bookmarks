@@ -5,10 +5,10 @@
 ## Status
 - **Flagship, shipped & live** — prompts.ummerr.com (password-gated). 277 commits, 139 tests, 7 runtime deps, $0. Chrome extension → Haiku triage → Sonnet extraction → curated gen-media prompt dataset.
 - **Omni + Flow reaction report** at rev. 8 (199-post scored corpus, private/unlisted/`noindex`) — the artifact a Google gen-media PM actually uses.
-- **⚠️ Working tree is DIRTY as of 2026-07-23** — 23 uncommitted files sitting since 2026-07-11 (12 days). This is the flagship's newest work, unsaved. See "The next ONE thing."
+- **/market-map is validated, enriched, and live** as of 2026-08-19 — 352-finding multi-agent audit applied, 65/74 companies carry sourced facts lines, researcher-voice rewrite + mention index shipped. Tree CLEAN, all pushed through `cb52362`.
 
 ## The next ONE thing
-→ **Commit the 23-file working tree — but review, don't blind-commit.** It bundles unrelated work that should land in logical chunks: a **security migration** (`supabase/migrations/010_enable_rls.sql`) + **schema change** (`supabase/schema.sql`), new `evals/`, the `check-facts.ts` prebuild gate + other `scripts/*.ts`, `robots.ts`, `Nav.tsx`/`page.tsx`/classifier edits, and an image-to-prompt tool. Group by concern (RLS+schema together and reviewed carefully; scripts; UI; tool) so the history stays legible and the RLS change is auditable.
+→ **Validate sources 53–57** (the post-audit ByteDance-to-#1 Momentum re-rank: Seedance API "reportedly >RMB 1B/mo / ~$1.7B annualized" via 36Kr-lineage, Krea 30M+ users). They shipped evidence-flagged but AFTER the 352-finding audit closed — one small verification pass brings them to the same standard. Everything needed is in `research/market-map/validation/validation-2026-08.md` (method + residual-exposure list).
 
 ## ⚠️ Gotchas
 - The **10s Vercel Hobby timeout** is the antagonist of the whole architecture — long classification jobs run **client-side** with `localStorage` persistence, not on the server. Don't reintroduce a long server loop.
